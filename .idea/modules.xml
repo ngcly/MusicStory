@@ -3,8 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/MusicBook.iml" filepath="$PROJECT_DIR$/.idea/modules/MusicBook.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MusicBook_main.iml" filepath="$PROJECT_DIR$/.idea/modules/MusicBook_main.iml" group="MusicBook" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MusicBook_test.iml" filepath="$PROJECT_DIR$/.idea/modules/MusicBook_test.iml" group="MusicBook" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/backstage.iml" filepath="$PROJECT_DIR$/.idea/modules/backstage.iml" group="backstage" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/backstage/backstage_main.iml" filepath="$PROJECT_DIR$/.idea/modules/backstage/backstage_main.iml" group="backstage" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/backstage/backstage_test.iml" filepath="$PROJECT_DIR$/.idea/modules/backstage/backstage_test.iml" group="backstage" />
