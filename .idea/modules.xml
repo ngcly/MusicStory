@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MusicBook.iml" filepath="$PROJECT_DIR$/.idea/modules/MusicBook.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MusicBook_main.iml" filepath="$PROJECT_DIR$/.idea/modules/MusicBook_main.iml" group="MusicBook" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MusicBook_test.iml" filepath="$PROJECT_DIR$/.idea/modules/MusicBook_test.iml" group="MusicBook" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/backstage.iml" filepath="$PROJECT_DIR$/.idea/modules/backstage.iml" group="backstage" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/backstage/backstage_main.iml" filepath="$PROJECT_DIR$/.idea/modules/backstage/backstage_main.iml" group="backstage" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/backstage/backstage_test.iml" filepath="$PROJECT_DIR$/.idea/modules/backstage/backstage_test.iml" group="backstage" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/commons.iml" filepath="$PROJECT_DIR$/.idea/modules/commons.iml" group="commons" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/commons/commons_main.iml" filepath="$PROJECT_DIR$/.idea/modules/commons/commons_main.iml" group="commons" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/commons/commons_test.iml" filepath="$PROJECT_DIR$/.idea/modules/commons/commons_test.iml" group="commons" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/interface.iml" filepath="$PROJECT_DIR$/.idea/modules/interface.iml" group="interface" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/interface/interface_main.iml" filepath="$PROJECT_DIR$/.idea/modules/interface/interface_main.iml" group="interface" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/interface/interface_test.iml" filepath="$PROJECT_DIR$/.idea/modules/interface/interface_test.iml" group="interface" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/repository.iml" filepath="$PROJECT_DIR$/.idea/modules/repository.iml" group="repository" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/repository/repository_main.iml" filepath="$PROJECT_DIR$/.idea/modules/repository/repository_main.iml" group="repository" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/repository/repository_test.iml" filepath="$PROJECT_DIR$/.idea/modules/repository/repository_test.iml" group="repository" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/service.iml" filepath="$PROJECT_DIR$/.idea/modules/service.iml" group="service" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/service/service_main.iml" filepath="$PROJECT_DIR$/.idea/modules/service/service_main.iml" group="service" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/service/service_test.iml" filepath="$PROJECT_DIR$/.idea/modules/service/service_test.iml" group="service" />
+    </modules>
+  </component>
+</project>

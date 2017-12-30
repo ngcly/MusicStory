@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.glassfish.hk2.external:asm-all-repackaged:2.5.0-b32">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2.external/asm-all-repackaged/2.5.0-b32/dc705f1d54cd5a96cbc5a473525e75ef1cb59a9e/asm-all-repackaged-2.5.0-b32.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.glassfish.hk2.external/asm-all-repackaged/2.5.0-b32/42ca38e0c071e301b3bc752495eecc3e77213b21/asm-all-repackaged-2.5.0-b32-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

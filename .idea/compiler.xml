@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="backstage_main" target="1.8" />
+      <module name="backstage_test" target="1.8" />
+      <module name="commons_main" target="1.8" />
+      <module name="commons_test" target="1.8" />
+      <module name="interface_main" target="1.8" />
+      <module name="interface_test" target="1.8" />
+      <module name="MusicBook_main" target="1.8" />
+      <module name="MusicBook_test" target="1.8" />
+      <module name="repository_main" target="1.8" />
+      <module name="repository_test" target="1.8" />
+      <module name="service_main" target="1.8" />
+      <module name="service_test" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
