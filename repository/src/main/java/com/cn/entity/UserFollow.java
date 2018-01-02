@@ -3,6 +3,7 @@ package com.cn.entity;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * 会员关注关系表
@@ -21,6 +22,7 @@ public class UserFollow {
     private String id;
     private String userId;    //关注者ID
     private String followId;  //被关注的人ID
+    private Date createTime;  //关注时间
 
     public String getId() {
         return id;
@@ -44,5 +46,13 @@ public class UserFollow {
 
     public void setFollowId(String followId) {
         this.followId = followId;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 }

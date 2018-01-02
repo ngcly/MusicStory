@@ -47,7 +47,7 @@ public class User implements Serializable {
     private Date createTime;       //创建时间
     private Date updateTime;       //最后更新时间
     private Date lastLogin;        //最后登录时间
-    private Byte state;//用户状态,0:创建未认证 1:正常状态,2：用户被锁定.
+    private Byte state;//用户状态,0:不可用 1:正常状态,2：异常.
 
     @ManyToMany(fetch= FetchType.EAGER)//立即从数据库中进行加载数据;
     @JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns ={@JoinColumn(name = "role_id") })

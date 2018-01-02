@@ -20,12 +20,12 @@ public class Essay {
     @GenericGenerator(name = "id", strategy = "uuid")
     @Column(name="id")
     private String id;
-    private String title;
-    private String content;
-    private String classifyId;
-    private Date createTime;
-    private Date updateTime;
-    private Integer readNum;
+    private String title;      //文章标题
+    private String content;    //文章内容
+    private String classifyId; //分类ID
+    private Date createTime;   //创建时间
+    private Date updateTime;   //修改时间
+    private Integer readNum;   //阅览数
 
     public String getId() {
         return id;

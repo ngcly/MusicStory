@@ -17,8 +17,8 @@ public class Classify {
     @GeneratedValue(strategy= GenerationType.AUTO)
     @Column(name="id")
     private Long id;
-    private String name;    //分类名称
-    private String describe;  //分类说明
+    private String name;     //分类名称
+    private String describe; //分类说明
     private Date createTime; //创建时间
     private Date updateTime; //修改时间
 

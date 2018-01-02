@@ -3,6 +3,7 @@ package com.cn.entity;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * 用户点赞收藏表
@@ -24,6 +25,7 @@ public class UserFaves {
     private String id;
     private String userId;   //会员ID
     private String essayId;  //文章ID
+    private Date createTime; //创建时间
     private Byte faveType;   //类型 1-点赞 2-收藏
 
     public String getId() {
@@ -56,5 +58,13 @@ public class UserFaves {
 
     public void setFaveType(Byte faveType) {
         this.faveType = faveType;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 }

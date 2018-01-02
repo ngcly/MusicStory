@@ -28,7 +28,7 @@ public class Manager implements Serializable {
     private String sex;       //性别
     private String realName;  //真实姓名
     private Date birthday;    //生日
-    private Byte state;       //状态
+    private Byte state;       //状态,0:创建未认证 1:正常状态,2：用户被锁定.
     @ManyToMany(fetch= FetchType.EAGER)//立即从数据库中进行加载数据;
     @JoinTable(name = "manager_role", joinColumns = { @JoinColumn(name = "manager_id") }, inverseJoinColumns ={@JoinColumn(name = "role_id") })
     private Set<Role> roleList;// 一个用户具有多个角色

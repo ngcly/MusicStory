@@ -21,15 +21,6 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 backstage/out/production/classes/
-backstage/src/main/java/com/cn/config/
-backstage/src/main/java/com/cn/controller/
-backstage/src/main/resources/static/
-backstage/src/main/resources/templates/
 backstage/src/test/
-commons/src/
-interface/src/main/java/com/cn/config/
-interface/src/main/java/com/cn/controller/
 interface/src/test/
-repository/src/main/java/com/cn/dao/
 repository/src/test/
-service/src/
