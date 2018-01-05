@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"><!-- Thymeleaf为我们提供的Spring Security的标签支持 -->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>首页</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">layui 后台布局</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item layadmin-flexible" lay-unselect="">
+                <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
+                    <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                </a>
+            </li>
+            <li class="layui-nav-item"><a href="">控制台</a></li>
+            <li class="layui-nav-item"><a href="">商品管理</a></li>
+            <li class="layui-nav-item"><a href="">用户</a></li>
+            <li class="layui-nav-item">
+                <a href="javascript:;">其它系统</a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">邮件管理</a></dd>
+                    <dd><a href="">消息管理</a></dd>
+                    <dd><a href="">授权管理</a></dd>
+                </dl>
+            </li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <!-- 天气信息 -->
+                <div class="weather">
+                    <div id="tp-weather-widget"></div>
+                    <script>(function(T,h,i,n,k,P,a,g,e){g=function(){P=h.createElement(i);a=h.getElementsByTagName(i)[0];P.src=k;P.charset="utf-8";P.async=1;a.parentNode.insertBefore(P,a)};T["ThinkPageWeatherWidgetObject"]=n;T[n]||(T[n]=function(){(T[n].q=T[n].q||[]).push(arguments)});T[n].l=+new Date();if(T.attachEvent){T.attachEvent("onload",g)}else{T.addEventListener("load",g,false)}}(window,document,"script","tpwidget","//widget.seniverse.com/widget/chameleon.js"))</script>
+                    <script>tpwidget("init", {
+                        "flavor": "slim",
+                        "location": "WX4FBXXFKE4F",
+                        "geolocation": "enabled",
+                        "language": "zh-chs",
+                        "unit": "c",
+                        "theme": "chameleon",
+                        "container": "tp-weather-widget",
+                        "bubble": "disabled",
+                        "alarmType": "badge",
+                        "color": "#FFFFFF",
+                        "uid": "U9EC08A15F",
+                        "hash": "039da28f5581f4bcb5c799fb4cdfb673"
+                    });
+                    tpwidget("show");</script>
+                </div>
+            </li>
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                    <!--非 sec 标签获取当前用户名的写法-->
+                    <!--<span th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}"></span>-->
+                    <span sec:authentication="name"></span><!--&lt;!&ndash; 获得当前用户的用户名 &ndash;&gt;-->
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="">安全设置</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item">
+                <form name="out" th:action="@{/logout}" method="post">
+                    <a href="javascript:document.out.submit();" >退出</a>
+               </form>
+            </li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;">所有商品</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;">列表一</a></dd>
+                        <dd><a href="javascript:;">列表二</a></dd>
+                        <dd><a href="admin/list" target="content">列表三</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item"><a href="">云市场</a></li>
+
+                <li class="layui-nav-item" th:each="menuList:${menuList}">
+                    <a class="" href="javascript:;" th:text="${menuList.name}"></a>
+                    <dl class="layui-nav-child">
+                        <dd th:each="menuChild:${menuList.children}">
+                            <!--<a href="javascript:;" th:data="${menuChild.menuUrl}" th:text="${menuChild.name}"></a>-->
+                            <a th:href="${menuChild.menuUrl}" th:text="${menuChild.name}" target="content"></a>
+                        </dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <!--<div style="padding: 15px;" id="content">-->
+            <iframe name="content" id="content" src="/admin/list" frameborder="false" scrolling="auto" style="border:none;" width="100%" height="auto" allowtransparency="true"></iframe>
+        <!--</div>-->
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © copy right cly00.top
+    </div>
+</div>
+<script src="js/jquery-3.2.1.min.js"></script>
+<script src="layui/layui.js"></script>
+<!--让iframe正确高度-->
+<script src="js/index.js"></script>
+<script>
+    //JavaScript代码区域
+    layui.use('element', function(){
+        var element = layui.element;
+
+    });
+    //    利用ajax 将菜单内容加载到指定区域 避免使用iframe
+//    $(".layui-nav-child a").click(function(){
+//        var code = $(this).attr("data");
+//        $("#content").load(code);
+//        $.ajax({
+//            url:code,
+//            type:"get",
+//            dataType:"html",
+//            success:function(data){
+//                $("#content").html(data);
+//            },
+//            error : function() {
+//                $("#content").load('admin/list');
+//            }
+//        })
+//
+
+//    });
+</script>
+</body>
+</html>

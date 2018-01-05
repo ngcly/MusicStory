@@ -5,7 +5,7 @@ import java.util.List;
 
 
 /**
- * 权限实体类
+ * 后台资源实体类
  * Created by chen on 2017/6/23.
  */
 
@@ -27,7 +27,7 @@ public class Permission implements Serializable {
     private String parentIds; //父编号列表
     private Boolean available = Boolean.FALSE;
     private Integer sort; //排序
-    private Byte permType; //资源所属 1-后台 2-前台
+
     @ManyToMany
     @JoinTable(name="role_permission",joinColumns={@JoinColumn(name="permission_id")},inverseJoinColumns={@JoinColumn(name="role_id")})
     private List<Role> roles;
@@ -104,13 +104,6 @@ public class Permission implements Serializable {
         this.sort = sort;
     }
 
-    public Byte getPermType() {
-        return permType;
-    }
-
-    public void setPermType(Byte permType) {
-        this.permType = permType;
-    }
 
     @Override
     public String toString() {

@@ -20,7 +20,7 @@ import java.util.List;
 //@Qualifier("permissionRepository")
 public interface PermissionRepository extends JpaRepository<Permission,Long> {
 
-    @Query("select t from Permission t where t.permType=:pType and t.available= true order by t.sort")
-    List<Permission> findMenuList(@Param("pType") String pType);
+    @Query("select t from Permission t where t.available= true order by t.sort")
+    List<Permission> findMenuList();
 }
 

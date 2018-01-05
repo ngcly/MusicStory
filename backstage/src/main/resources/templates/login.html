@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <title>登录</title>
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="stylesheet" href="/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="/css/login.css" media="all" />
+</head>
+<body>
+<video class="video-player" preload="auto" autoplay="autoplay" loop="loop" data-height="1080" data-width="1920" height="1080" width="1920">
+    <source src="/media/login.mp4" type="video/mp4" />
+</video>
+<div class="video_mask"></div>
+<div class="login">
+    <h1>后台管理登录</h1>
+    <form class="layui-form" th:action="@{/login}" method="post">
+        <div class="layui-form-item">
+            <input class="layui-input" name="username" value="admin" placeholder="用户名" lay-verify="required" type="text" autocomplete="off" />
+        </div>
+        <div class="layui-form-item">
+            <input class="layui-input" name="password" value="123456" placeholder="密码" lay-verify="required" type="password" autocomplete="off" />
+        </div>
+        <div class="layui-form-item form_code">
+            <input class="layui-input" name="randomcode" placeholder="验证码" lay-verify="required" type="text" autocomplete="off" />
+            <div class="code"><img src="/admin/kaptcha" onclick="random(this)" width="116" height="36" title="看不清,点击换一张" /></div>
+        </div>
+        <button class="layui-btn login_btn" lay-submit="" lay-filter="login">登录</button>
+        <input id="remember-me" name="remember-me" type="checkbox"/> 记住我
+    </form>
+</div>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script>
+    layui.config({
+        base : "/layui"
+    }).use(['form','layer'],function(){
+            $ = layui.jquery;
+        //video背景
+        $(window).resize(function(){
+            if($(".video-player").width() > $(window).width()){
+                $(".video-player").css({"height":$(window).height(),"width":"auto","left":-($(".video-player").width()-$(window).width())/2});
+            }else{
+                $(".video-player").css({"width":$(window).width(),"height":"auto","left":-($(".video-player").width()-$(window).width())/2});
+            }
+        }).resize();
+    })
+
+    //跳出 iframe 框架
+    if (window != top)
+        top.location.href = location.href;
+    //获取验证码
+    function random(tmp){
+        tmp.src="/admin/kaptcha?_"+Date.now();
+    }
+</script>
+</body>
+</html>

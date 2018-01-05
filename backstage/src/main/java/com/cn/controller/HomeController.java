@@ -49,10 +49,10 @@ public class HomeController {
         if (!"admin".equals(principal.getName())) {
             roleList.forEach(role -> menuList.addAll(role.getPermissions()));
         } else {
-            menuList.addAll(permissionRepository.findMenuList("1"));
+            menuList.addAll(permissionRepository.findMenuList());
         }
         model.addAttribute("menuList", MenuUtil.makeTreeList(menuList));
-        return "index";
+        return "home";
     }
 
     /**

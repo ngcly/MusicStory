@@ -47,6 +47,7 @@
     <orderEntry type="library" name="Gradle: javax.servlet:javax.servlet-api:3.1.0" level="project" />
     <orderEntry type="library" name="Gradle: com.jhlabs:filters:2.0.235-1" level="project" />
     <orderEntry type="module" module-name="repository_main" />
+    <orderEntry type="library" name="Gradle: org.apache.httpcomponents:httpclient:4.5.3" level="project" />
     <orderEntry type="library" name="Gradle: io.swagger:swagger-annotations:1.5.13" level="project" />
     <orderEntry type="library" name="Gradle: io.swagger:swagger-models:1.5.13" level="project" />
     <orderEntry type="library" name="Gradle: io.springfox:springfox-spi:2.7.0" level="project" />
@@ -90,6 +91,8 @@
     <orderEntry type="library" name="Gradle: mysql:mysql-connector-java:5.1.44" level="project" />
     <orderEntry type="library" name="Gradle: javax.xml.bind:jaxb-api:2.3.0" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-data-jpa:1.5.9.RELEASE" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.httpcomponents:httpcore:4.4.8" level="project" />
+    <orderEntry type="library" name="Gradle: commons-codec:commons-codec:1.10" level="project" />
     <orderEntry type="library" name="Gradle: io.springfox:springfox-core:2.7.0" level="project" />
     <orderEntry type="library" name="Gradle: org.reflections:reflections:0.9.11" level="project" />
     <orderEntry type="library" name="Gradle: ch.qos.logback:logback-core:1.1.11" level="project" />
