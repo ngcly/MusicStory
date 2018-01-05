@@ -5,34 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ab0ee552-6b86-48d4-9403-2b9af313a525" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/backstage/src/main/resources/static/media/login.mp4" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__commons_codec_commons_codec_1_10.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__org_apache_httpcomponents_httpclient_4_5_3.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__org_apache_httpcomponents_httpclient_4_5_4.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__org_apache_httpcomponents_httpcore_4_4_8.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/backstage/src/main/resources/templates/error/403.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/backstage/src/main/resources/templates/error/404.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/backstage/src/main/resources/templates/error/500.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/backstage/src/main/resources/templates/foot.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/backstage/src/main/resources/templates/head.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/backstage/src/main/resources/templates/home.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/backstage/src/main/resources/templates/login.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/commons/src/main/java/com/cn/util/HttpUtil.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/commons/src/main/java/com/cn/util/IpUtil.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/commons/src/main/java/com/cn/util/RestUtil.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules/backstage/backstage_main.iml" afterPath="$PROJECT_DIR$/.idea/modules/backstage/backstage_main.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules/backstage/backstage_test.iml" afterPath="$PROJECT_DIR$/.idea/modules/backstage/backstage_test.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules/commons/commons_main.iml" afterPath="$PROJECT_DIR$/.idea/modules/commons/commons_main.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules/commons/commons_test.iml" afterPath="$PROJECT_DIR$/.idea/modules/commons/commons_test.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules/interface/interface_main.iml" afterPath="$PROJECT_DIR$/.idea/modules/interface/interface_main.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules/interface/interface_test.iml" afterPath="$PROJECT_DIR$/.idea/modules/interface/interface_test.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backstage/src/main/java/com/cn/config/LoginSuccessHandler.java" afterPath="$PROJECT_DIR$/backstage/src/main/java/com/cn/config/LoginSuccessHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backstage/src/main/java/com/cn/config/WebSecurityConfig.java" afterPath="$PROJECT_DIR$/backstage/src/main/java/com/cn/config/WebSecurityConfig.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backstage/src/main/java/com/cn/controller/HomeController.java" afterPath="$PROJECT_DIR$/backstage/src/main/java/com/cn/controller/HomeController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/commons/build.gradle" afterPath="$PROJECT_DIR$/commons/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/repository/src/main/java/com/cn/dao/PermissionRepository.java" afterPath="$PROJECT_DIR$/repository/src/main/java/com/cn/dao/PermissionRepository.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/repository/src/main/java/com/cn/entity/Permission.java" afterPath="$PROJECT_DIR$/repository/src/main/java/com/cn/entity/Permission.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backstage/out/production/resources/application.properties" afterPath="$PROJECT_DIR$/backstage/out/production/resources/application.properties" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -116,7 +91,7 @@
         <entry file="file://$PROJECT_DIR$/backstage/src/main/java/com/cn/controller/HomeController.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-503">
-              <caret line="31" column="11" lean-forward="true" selection-start-line="31" selection-start-column="11" selection-end-line="31" selection-end-column="11" />
+              <caret line="31" column="11" lean-forward="false" selection-start-line="31" selection-start-column="11" selection-end-line="31" selection-end-column="11" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -124,11 +99,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RestUtil.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="RestUtil.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/commons/src/main/java/com/cn/util/RestUtil.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1102">
-              <caret line="58" column="1" lean-forward="true" selection-start-line="58" selection-start-column="1" selection-end-line="58" selection-end-column="1" />
+              <caret line="58" column="1" lean-forward="false" selection-start-line="58" selection-start-column="1" selection-end-line="58" selection-end-column="1" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="551">
+              <caret line="29" column="0" lean-forward="true" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -138,7 +123,7 @@
         <entry file="file://$PROJECT_DIR$/commons/src/main/java/com/cn/util/MenuUtil.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1064">
-              <caret line="62" column="22" lean-forward="true" selection-start-line="62" selection-start-column="22" selection-end-line="62" selection-end-column="22" />
+              <caret line="62" column="22" lean-forward="false" selection-start-line="62" selection-start-column="22" selection-end-line="62" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -148,7 +133,7 @@
         <entry file="file://$PROJECT_DIR$/commons/src/main/java/com/cn/util/IpUtil.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="380">
-              <caret line="23" column="9" lean-forward="true" selection-start-line="23" selection-start-column="9" selection-end-line="23" selection-end-column="9" />
+              <caret line="23" column="9" lean-forward="false" selection-start-line="23" selection-start-column="9" selection-end-line="23" selection-end-column="9" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -160,7 +145,7 @@
         <entry file="file://$PROJECT_DIR$/backstage/src/main/java/com/cn/config/WebSecurityConfig.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="494">
-              <caret line="35" column="81" lean-forward="true" selection-start-line="35" selection-start-column="81" selection-end-line="35" selection-end-column="81" />
+              <caret line="35" column="81" lean-forward="false" selection-start-line="35" selection-start-column="81" selection-end-line="35" selection-end-column="81" />
               <folding />
             </state>
           </provider>
@@ -1508,7 +1493,6 @@
         <option value="$PROJECT_DIR$/backstage/src/main/java/com/cn/config/SecurityManager.java" />
         <option value="$PROJECT_DIR$/commons/src/main/java/com/cn/dto/TreeDTO.java" />
         <option value="$PROJECT_DIR$/commons/src/main/java/com/cn/util/MenuUtil.java" />
-        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/backstage/src/main/java/com/cn/config/ManagerDetail.java" />
         <option value="$PROJECT_DIR$/backstage/src/main/java/com/cn/config/ManagerDetailService.java" />
         <option value="$PROJECT_DIR$/service/src/main/java/com/cn/UserService.java" />
@@ -1528,6 +1512,7 @@
         <option value="$PROJECT_DIR$/commons/src/main/java/com/cn/util/HttpUtil.java" />
         <option value="$PROJECT_DIR$/commons/src/main/java/com/cn/util/RestUtil.java" />
         <option value="$PROJECT_DIR$/backstage/src/main/resources/templates/error/500.html" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -1827,6 +1812,7 @@
     <property name="project.structure.side.proportion" value="0.0" />
     <property name="last_opened_file_path" value="D:/workTest/speedy" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="add_unversioned_files" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -1977,7 +1963,7 @@
       <workItem from="1514688188924" duration="698000" />
       <workItem from="1514877981559" duration="12171000" />
       <workItem from="1514948872677" duration="929000" />
-      <workItem from="1515117066040" duration="6462000" />
+      <workItem from="1515117066040" duration="6651000" />
     </task>
     <task id="LOCAL-00001" summary="初始化项目">
       <created>1514621689467</created>
@@ -2007,11 +1993,18 @@
       <option name="project" value="LOCAL" />
       <updated>1514891578699</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="添加工具类">
+      <created>1515124988863</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1515124988863</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="32597000" />
+    <option name="totallyTimeSpent" value="32786000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="2576" height="1416" extended-state="6" />
@@ -2029,6 +2022,7 @@
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -2050,7 +2044,6 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32994527" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
@@ -2066,7 +2059,8 @@
     <MESSAGE value="添加代码" />
     <MESSAGE value="修改忽略文件" />
     <MESSAGE value="新增部分业务代码" />
-    <option name="LAST_COMMIT_MESSAGE" value="新增部分业务代码" />
+    <MESSAGE value="添加工具类" />
+    <option name="LAST_COMMIT_MESSAGE" value="添加工具类" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -2178,13 +2172,6 @@
         <state relative-caret-position="209">
           <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="34" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="456">
-          <caret line="24" column="19" lean-forward="true" selection-start-line="24" selection-start-column="19" selection-end-line="24" selection-end-column="19" />
         </state>
       </provider>
     </entry>
@@ -2432,7 +2419,7 @@
     <entry file="file://$PROJECT_DIR$/backstage/src/main/java/com/cn/config/WebSecurityConfig.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="494">
-          <caret line="35" column="81" lean-forward="true" selection-start-line="35" selection-start-column="81" selection-end-line="35" selection-end-column="81" />
+          <caret line="35" column="81" lean-forward="false" selection-start-line="35" selection-start-column="81" selection-end-line="35" selection-end-column="81" />
           <folding />
         </state>
       </provider>
@@ -2467,7 +2454,7 @@
     <entry file="file://$PROJECT_DIR$/backstage/src/main/java/com/cn/controller/HomeController.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-503">
-          <caret line="31" column="11" lean-forward="true" selection-start-line="31" selection-start-column="11" selection-end-line="31" selection-end-column="11" />
+          <caret line="31" column="11" lean-forward="false" selection-start-line="31" selection-start-column="11" selection-end-line="31" selection-end-column="11" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -2493,7 +2480,7 @@
     <entry file="file://$PROJECT_DIR$/commons/src/main/java/com/cn/util/IpUtil.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="380">
-          <caret line="23" column="9" lean-forward="true" selection-start-line="23" selection-start-column="9" selection-end-line="23" selection-end-column="9" />
+          <caret line="23" column="9" lean-forward="false" selection-start-line="23" selection-start-column="9" selection-end-line="23" selection-end-column="9" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -2503,7 +2490,7 @@
     <entry file="file://$PROJECT_DIR$/commons/src/main/java/com/cn/util/MenuUtil.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1064">
-          <caret line="62" column="22" lean-forward="true" selection-start-line="62" selection-start-column="22" selection-end-line="62" selection-end-column="22" />
+          <caret line="62" column="22" lean-forward="false" selection-start-line="62" selection-start-column="22" selection-end-line="62" selection-end-column="22" />
           <folding />
         </state>
       </provider>
@@ -2511,7 +2498,15 @@
     <entry file="file://$PROJECT_DIR$/commons/src/main/java/com/cn/util/RestUtil.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1102">
-          <caret line="58" column="1" lean-forward="true" selection-start-line="58" selection-start-column="1" selection-end-line="58" selection-end-column="1" />
+          <caret line="58" column="1" lean-forward="false" selection-start-line="58" selection-start-column="1" selection-end-line="58" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="551">
+          <caret line="29" column="0" lean-forward="true" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
           <folding />
         </state>
       </provider>
