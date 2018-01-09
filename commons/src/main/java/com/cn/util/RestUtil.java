@@ -9,7 +9,7 @@ import org.springframework.ui.ModelMap;
  * @date 2018-01-05 11:15
  */
 public class RestUtil {
-
+//TODO 统一错误编码
 
     /**
      * 一般成功 统一返回
@@ -17,7 +17,6 @@ public class RestUtil {
     public static ModelMap Success(Object obj) {
         ModelMap mp = new ModelMap();
         mp.put("code", 200);
-        mp.put("state", "success");
         mp.put("msg", "操作成功");
         mp.put("data", obj);
         return mp;
@@ -29,7 +28,6 @@ public class RestUtil {
     public static ModelMap Success(String msg, Object obj) {
         ModelMap map = new ModelMap();
         map.put("code", 200);
-        map.put("state", "success");
         map.put("msg", msg);
         map.put("data", obj);
         return map;
@@ -41,7 +39,6 @@ public class RestUtil {
     public static ModelMap Error(int code) {
         ModelMap map = new ModelMap();
         map.put("code", code);
-        map.put("state", "error");
         map.put("msg", "操作失败");
         return map;
     }
@@ -52,7 +49,6 @@ public class RestUtil {
     public static ModelMap Error(int code,String msg) {
         ModelMap mp = new ModelMap();
         mp.put("code", code);
-        mp.put("state", "error");
         mp.put("msg", msg);
         return mp;
     }

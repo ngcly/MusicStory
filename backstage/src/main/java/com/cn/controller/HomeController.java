@@ -49,6 +49,7 @@ public class HomeController {
         if (!"admin".equals(principal.getName())) {
             roleList.forEach(role -> menuList.addAll(role.getPermissions()));
         } else {
+            //管理员拥有最高权限
             menuList.addAll(permissionRepository.findMenuList());
         }
         model.addAttribute("menuList", MenuUtil.makeTreeList(menuList));
