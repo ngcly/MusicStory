@@ -39,7 +39,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
+                //表单登录的 登录页
                 .loginPage("/login")
+                .successHandler(loginSuccessHandler())
 //                .defaultSuccessUrl("/").failureUrl("/login")
                 .permitAll()
                 .and()
@@ -80,4 +82,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder(4);
     }
 
+    @Bean
+    public LoginSuccessHandler loginSuccessHandler(){
+        return new LoginSuccessHandler();
+    }
 }
