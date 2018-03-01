@@ -4,6 +4,12 @@
     <facet type="Spring" name="Spring">
       <configuration />
     </facet>
+    <facet type="web" name="Web">
+      <configuration>
+        <webroots />
+        <sourceRoots />
+      </configuration>
+    </facet>
   </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
     <output-test url="file://$MODULE_DIR$/../../../interface/out/test/classes" />
@@ -21,8 +27,10 @@
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-jersey:1.5.9.RELEASE" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-security:1.5.9.RELEASE" level="project" />
     <orderEntry type="library" name="Gradle: com.github.penggle:kaptcha:2.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.alibaba:fastjson:1.2.46" level="project" />
     <orderEntry type="module" module-name="service_main" />
     <orderEntry type="library" name="Gradle: io.springfox:springfox-swagger2:2.7.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jsoup:jsoup:1.11.2" level="project" />
     <orderEntry type="library" name="Gradle: junit:junit:4.12" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot:1.5.9.RELEASE" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-autoconfigure:1.5.9.RELEASE" level="project" />

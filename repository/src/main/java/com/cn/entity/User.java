@@ -31,14 +31,15 @@ public class User implements Serializable {
     @Column(name="username",unique = true)
     private String username;       //用户名
     private String password;       //密码
+    private String nickName;       //昵称
     private Date birthday;         //生日
     @Column(columnDefinition="enum('男','女')")
-    private String sex ;           //性别
+    private String gender ;        //性别
     private String address;        //地址
     private String realName;       //真实姓名
     private String personDesc;     //个人简介
     private String signature;      //个性签名
-    private String headPortrait;   //头像
+    private String avatar;         //头像
     private String phone;          //手机号
     private String email;          //邮箱地址
     private BigDecimal balance;    //账户余额
@@ -75,11 +76,12 @@ public class User implements Serializable {
         this.birthday = birthday;
     }
 
-    public String getSex() {
-        return sex;
+    public String getGender() {
+        return gender;
     }
-    public void setSex(String sex) {
-        this.sex = sex;
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getAddress() {
@@ -135,12 +137,20 @@ public class User implements Serializable {
         this.signature = signature;
     }
 
-    public String getHeadPortrait() {
-        return headPortrait;
+    public String getAvatar() {
+        return avatar;
     }
 
-    public void setHeadPortrait(String headPortrait) {
-        this.headPortrait = headPortrait;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
     public String getPhone() {
@@ -210,7 +220,7 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "User [id=" + id + ", username=" + username + ", birthday="
-                + birthday + ", sex=" + sex + ", address=" + address + "]";
+                + birthday + ", sex=" + gender + ", address=" + address + "]";
     }
 
 }
