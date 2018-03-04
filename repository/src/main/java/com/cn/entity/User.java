@@ -33,8 +33,7 @@ public class User implements Serializable {
     private String password;       //密码
     private String nickName;       //昵称
     private Date birthday;         //生日
-    @Column(columnDefinition="enum('男','女')")
-    private String gender ;        //性别
+    private Byte gender ;          //性别
     private String address;        //地址
     private String realName;       //真实姓名
     private String personDesc;     //个人简介
@@ -76,11 +75,11 @@ public class User implements Serializable {
         this.birthday = birthday;
     }
 
-    public String getGender() {
+    public Byte getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Byte gender) {
         this.gender = gender;
     }
 

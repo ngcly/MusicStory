@@ -1,6 +1,7 @@
 package com.cn.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -12,13 +13,15 @@ import java.util.Date;
 
 @Entity
 @Table(name = "classify")
-public class Classify {
+public class Classify implements Serializable{
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     @Column(name="id")
     private Long id;
     private String name;     //分类名称
-    private String describe; //分类说明
+    private String introduction; //分类说明
     private Date createTime; //创建时间
     private Date updateTime; //修改时间
 
@@ -39,12 +42,12 @@ public class Classify {
         this.name = name;
     }
 
-    public String getDescribe() {
-        return describe;
+    public String getIntroduction() {
+        return introduction;
     }
 
-    public void setDescribe(String describe) {
-        this.describe = describe;
+    public void setIntroduction(String introduction) {
+        this.introduction = introduction;
     }
 
     public Date getCreateTime() {

@@ -14,5 +14,11 @@ dependencies {
 
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.7.0'
     compile group: 'org.jsoup', name: 'jsoup', version: '1.11.2'
+
+    compile 'org.springframework.social:spring-social-config:1.1.5.RELEASE'
+    compile 'org.springframework.social:spring-social-core:1.1.5.RELEASE'
+    compile 'org.springframework.social:spring-social-security:1.1.5.RELEASE'
+    compile 'org.springframework.social:spring-social-web:1.1.5.RELEASE'
+
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

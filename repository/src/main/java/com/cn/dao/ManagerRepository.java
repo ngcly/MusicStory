@@ -4,6 +4,7 @@ import com.cn.entity.Manager;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
  * @author chen
  * @date 2018-01-02 17:11
  */
+@Repository
 public interface ManagerRepository extends JpaRepository<Manager,String> {
 
     @Query("select t from Manager t where t.username=:name")

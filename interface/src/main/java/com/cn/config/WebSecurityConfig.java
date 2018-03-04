@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.social.security.SpringSocialConfigurer;
 
 /**
  * Spring Security 配置
@@ -24,6 +25,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     CustomerDetailService customerDetailService;
+    @Autowired
+    SpringSocialConfigurer customSpringSocialConfig;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -47,12 +50,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //登陆失败后的处理
                 .failureHandler(new SimpleUrlAuthenticationFailureHandler())
                 .and()
+                .apply(customSpringSocialConfig)
+                .and()
                 //登出后的处理
                 .logout().logoutSuccessHandler(logoutSuccessHandler())
                 .and()
                 //认证不通过后的处理
                 .exceptionHandling()
-                .authenticationEntryPoint(authenticationFailurHandler())
+                .authenticationEntryPoint(restAuthenticationEntryPoint())
                 .and()
                 //开启cookie保存用户数据
                 .rememberMe()
@@ -69,8 +74,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .rememberMe()
                 .tokenValiditySeconds(1209600);
-        // 在 UsernamePasswordAuthenticationFilter 前添加 QQAuthenticationFilter
-        http.addFilterAt(qqAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+//        // 在 UsernamePasswordAuthenticationFilter 前添加 QQAuthenticationFilter
+//        http.addFilterAt(qqAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
 
@@ -98,8 +103,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public AuthenticationFailHandler authenticationFailurHandler(){
-        return new AuthenticationFailHandler();
+    public RestAuthenticationEntryPoint restAuthenticationEntryPoint(){
+        return new RestAuthenticationEntryPoint();
     }
 
     /**

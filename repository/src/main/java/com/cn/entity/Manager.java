@@ -24,8 +24,7 @@ public class Manager implements Serializable {
     private String id;
     private String username;  //用户名
     private String password;  //密码
-    @Column(columnDefinition="enum('男','女')")
-    private String sex;       //性别
+    private Byte gender;      //性别
     private String realName;  //真实姓名
     private Date birthday;    //生日
     private Byte state;       //状态,0:创建未认证 1:正常状态,2：用户被锁定.
@@ -57,12 +56,12 @@ public class Manager implements Serializable {
         this.password = password;
     }
 
-    public String getSex() {
-        return sex;
+    public Byte getGender() {
+        return gender;
     }
 
-    public void setSex(String sex) {
-        this.sex = sex;
+    public void setGender(Byte gender) {
+        this.gender = gender;
     }
 
     public String getRealName() {

@@ -8,17 +8,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 权限不通过处理
+ * 将 security 无权限自动跳转 修改为 Rest 信息 401
  *
  * @author chen
  * @date 2018-03-01 11:03
  */
-public class AuthenticationFailHandler implements AuthenticationEntryPoint {
+public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                "Authentication Failed: " + authException.getMessage());
+                "抱歉！你没有权限访问");
     }
 }
