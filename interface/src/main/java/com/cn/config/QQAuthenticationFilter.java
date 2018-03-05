@@ -18,7 +18,8 @@ import java.util.regex.Pattern;
 
 /**
  * QQ授权过滤器
- *
+ * 流程：前台页面放置QQ官网授权地址 客户点击同意授权 官网将带上code跳转到指定的当前地址 通过code加上 appId和appKey 去获取access_token 最后根据access_token获取openId
+ * 最后根据上面的信息获取用户信息
  * @author chen
  * @date 2018-03-01 11:14
  */

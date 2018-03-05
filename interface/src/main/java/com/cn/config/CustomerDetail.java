@@ -18,7 +18,7 @@ import java.util.Set;
  * @author chen
  * @date 2018-02-28 16:57
  */
-public class CustomerDetail extends User implements UserDetails,SocialUserDetails{
+public class CustomerDetail extends User implements SocialUserDetails{
     private static final long serialVersionUID = 1L;
     public CustomerDetail(User user) {
         if(user != null)

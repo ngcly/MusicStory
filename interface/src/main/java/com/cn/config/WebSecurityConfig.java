@@ -3,14 +3,17 @@ package com.cn.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.social.UserIdSource;
+import org.springframework.social.security.AuthenticationNameUserIdSource;
 import org.springframework.social.security.SpringSocialConfigurer;
 
 /**
@@ -23,8 +26,6 @@ import org.springframework.social.security.SpringSocialConfigurer;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)//开启security注解
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    CustomerDetailService customerDetailService;
     @Autowired
     SpringSocialConfigurer customSpringSocialConfig;
 
@@ -79,19 +80,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        //指定密码加密所使用的加密器为passwordEncoder()
-        //需要将密码加密后写入数据库
-        auth.userDetailsService(customerDetailService).passwordEncoder(passwordEncoder());
-        auth.eraseCredentials(false);
-    }
-
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(4);
-    }
-
     @Bean
     public LoginSuccessHandler loginSuccessHandler(){
         return new LoginSuccessHandler();
@@ -106,6 +94,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public RestAuthenticationEntryPoint restAuthenticationEntryPoint(){
         return new RestAuthenticationEntryPoint();
     }
+
+    @Bean
+    public UserIdSource userIdSource() {
+        return new AuthenticationNameUserIdSource();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
+    }
+
+    @Bean
+    public TextEncryptor textEncryptor() {
+        return Encryptors.noOpText();
+    }
+
 
     /**
      * 自定义 QQ登录 过滤器

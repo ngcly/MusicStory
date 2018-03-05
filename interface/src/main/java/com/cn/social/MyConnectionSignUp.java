@@ -5,6 +5,7 @@ import org.springframework.social.connect.ConnectionSignUp;
 import org.springframework.stereotype.Component;
 
 /**
+ * 隐式注册
  * @author chenning
  * @date 2018/3/4 下午3:18
  */
