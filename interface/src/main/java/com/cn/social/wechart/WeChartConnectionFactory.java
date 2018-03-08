@@ -16,8 +16,8 @@ import org.springframework.social.oauth2.OAuth2ServiceProvider;
  */
 public class WeChartConnectionFactory extends OAuth2ConnectionFactory<WeChart> {
 
-    public WeChartConnectionFactory(String providerId, String appId, String appSecret) {
-        super(providerId, new WeChartServiceProvider(appId, appSecret), new WeChartAdapter());
+    public WeChartConnectionFactory(String appId, String appSecret) {
+        super("wechart", new WeChartServiceProvider(appId, appSecret), new WeChartAdapter());
     }
 
     /**

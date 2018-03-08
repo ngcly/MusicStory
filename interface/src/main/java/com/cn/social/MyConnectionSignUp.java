@@ -1,7 +1,12 @@
 package com.cn.social;
 
+import com.cn.dao.UserRepository;
+import com.cn.entity.User;
+import com.cn.social.qq.QQUserInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionSignUp;
+import org.springframework.social.connect.UserProfile;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,9 +16,18 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class MyConnectionSignUp implements ConnectionSignUp{
+    @Autowired
+    UserRepository userRepository;
+
     @Override
     public String execute(Connection<?> connection) {
         //根据社交用户信息，默认创建用户并返回用户唯一标识
-        return connection.getDisplayName();
+        UserProfile profile = connection.fetchUserProfile();
+        User user = new User();
+        user.setId(profile.getId());
+        user.setUsername(profile.getUsername());
+        user.setEmail(profile.getEmail());
+        userRepository.save(user);
+        return user.getUsername();
     }
 }

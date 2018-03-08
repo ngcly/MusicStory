@@ -1,6 +1,8 @@
 package com.cn.social.qq;
 
-public interface QQ {
+import org.springframework.social.ApiBinding;
+
+public interface QQ extends ApiBinding {
     /**
      * 获取用户信息
      * @return
