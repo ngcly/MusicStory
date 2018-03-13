@@ -1,11 +1,66 @@
 <div th:fragment="header">
-    <div class="navbar-branding">
-        <a class="navbar-brand" href="../dashboard.html">
-            <b>Isona</b>
-        </a>
-        <span id="toggle_sidemenu_l" class="ad ad-lines"></span>
+    <div class="layui-header">
+        <div class="layui-logo">layui 后台布局</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item layadmin-flexible" lay-unselect="">
+                <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
+                    <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                </a>
+            </li>
+            <li class="layui-nav-item"><a href="">控制台</a></li>
+            <li class="layui-nav-item"><a href="">商品管理</a></li>
+            <li class="layui-nav-item"><a href="">用户</a></li>
+            <li class="layui-nav-item">
+                <a href="javascript:;">其它系统</a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">邮件管理</a></dd>
+                    <dd><a href="">消息管理</a></dd>
+                    <dd><a href="">授权管理</a></dd>
+                </dl>
+            </li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <!-- 天气信息 -->
+                <div class="weather">
+                    <div id="tp-weather-widget"></div>
+                    <script>(function(T,h,i,n,k,P,a,g,e){g=function(){P=h.createElement(i);a=h.getElementsByTagName(i)[0];P.src=k;P.charset="utf-8";P.async=1;a.parentNode.insertBefore(P,a)};T["ThinkPageWeatherWidgetObject"]=n;T[n]||(T[n]=function(){(T[n].q=T[n].q||[]).push(arguments)});T[n].l=+new Date();if(T.attachEvent){T.attachEvent("onload",g)}else{T.addEventListener("load",g,false)}}(window,document,"script","tpwidget","//widget.seniverse.com/widget/chameleon.js"))</script>
+                    <script>tpwidget("init", {
+                        "flavor": "slim",
+                        "location": "WX4FBXXFKE4F",
+                        "geolocation": "enabled",
+                        "language": "zh-chs",
+                        "unit": "c",
+                        "theme": "chameleon",
+                        "container": "tp-weather-widget",
+                        "bubble": "disabled",
+                        "alarmType": "badge",
+                        "color": "#FFFFFF",
+                        "uid": "U9EC08A15F",
+                        "hash": "039da28f5581f4bcb5c799fb4cdfb673"
+                    });
+                    tpwidget("show");</script>
+                </div>
+            </li>
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                    <!--非 sec 标签获取当前用户名的写法-->
+                    <!--<span th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}"></span>-->
+                    <span sec:authentication="name"></span><!--&lt;!&ndash; 获得当前用户的用户名 &ndash;&gt;-->
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="">安全设置</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item">
+                <form name="out" th:action="@{/logout}" method="post">
+                    <a href="javascript:document.out.submit();" >退出</a>
+                </form>
+            </li>
+        </ul>
     </div>
-    <ul class="nav navbar-nav navbar-right">
-    </ul>
 </div>
 

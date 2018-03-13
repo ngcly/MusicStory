@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:layout="http://www.w3.org/1999/xhtml"><!-- Thymeleaf为我们提供的Spring Security的标签支持 -->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>首页</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+</head>
+
+<body class="layui-layout-body">
+<!-- Start: Main -->
+<div class="layui-layout layui-layout-admin">
+    <!-- Start: Header -->
+    <header class="navbar navbar-fixed-top navbar-shadow" th:include="layout/header :: header"></header>
+    <!-- End: Header -->
+
+    <!-- Start: Sidebar -->
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;">所有商品</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;">列表一</a></dd>
+                        <dd><a href="javascript:;">列表二</a></dd>
+                        <dd><a href="admin/list" target="content">列表三</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item"><a href="">云市场</a></li>
+
+                <li class="layui-nav-item" th:each="menuList:${menuList}">
+                    <a class="" href="javascript:;" th:text="${menuList.name}"></a>
+                    <dl class="layui-nav-child">
+                        <dd th:each="menuChild:${menuList.children}">
+                            <!--<a href="javascript:;" th:data="${menuChild.menuUrl}" th:text="${menuChild.name}"></a>-->
+                            <a th:href="${menuChild.menuUrl}" th:text="${menuChild.name}" target="content"></a>
+                        </dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- End: Sidebar Left -->
+
+    <!-- End: Content-Wrapper -->
+    <div class="layui-body" id="content" layout:fragment="content"></div>
+
+    <div class="layui-footer" th:include="layout/footer :: footer"></div>
+
+</div>
+<!-- End: Main -->
+</body>
+</html>

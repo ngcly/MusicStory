@@ -28,10 +28,10 @@
         </div>
         <div class="layui-form-item form_code">
             <input class="layui-input" name="randomcode" placeholder="验证码" lay-verify="required" type="text" autocomplete="off" />
-            <div class="code"><img src="/admin/kaptcha" onclick="random(this)" width="116" height="36" title="看不清,点击换一张" /></div>
+            <div class="code"><img src="/kaptcha" onclick="random(this)" width="116" height="36" title="看不清,点击换一张" /></div>
         </div>
         <button class="layui-btn login_btn" lay-submit="" lay-filter="login">登录</button>
-        <input id="remember-me" name="remember-me" type="checkbox"/> 记住我
+        <input class="login_rm" id="remember-me" name="remember-me" type="checkbox"/> 记住我
     </form>
 </div>
 <script type="text/javascript" src="/layui/layui.js"></script>
