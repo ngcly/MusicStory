@@ -32,6 +32,7 @@
         </div>
         <button class="layui-btn login_btn" lay-submit="" lay-filter="login">登录</button>
         <input class="login_rm" id="remember-me" name="remember-me" type="checkbox"/> 记住我
+        <span th:if="${error=='true'}" th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></span>
     </form>
 </div>
 <script type="text/javascript" src="/layui/layui.js"></script>
@@ -55,7 +56,7 @@
         top.location.href = location.href;
     //获取验证码
     function random(tmp){
-        tmp.src="/admin/kaptcha?_"+Date.now();
+        tmp.src="/kaptcha?_"+Date.now();
     }
 </script>
 </body>

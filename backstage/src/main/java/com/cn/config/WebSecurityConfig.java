@@ -33,7 +33,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/admin/validateCode", "/kaptcha").permitAll()
+                .antMatchers("/kaptcha","/login").permitAll()
 //                .antMatchers("/admin/**").hasRole("ADMIN")  //该URL只有ADMIN权限才可访问
 //                .antMatchers("/db/**").access("hasRole('ADMIN') and hasRole('DBA')") //该URL需具备设定的两个权限才可访问
                 .anyRequest().authenticated()
@@ -42,7 +42,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //表单登录的 登录页
                 .loginPage("/login")
                 .successHandler(loginSuccessHandler())
-//                .defaultSuccessUrl("/").failureUrl("/login")
+//                .defaultSuccessUrl("/")
+                //登录失败跳转页面
+                .failureUrl("/login?error=true")
                 .permitAll()
                 .and()
                 //开启cookie保存用户数据

@@ -1,16 +1,20 @@
 package com.cn.controller;
 
+import com.cn.ManagerService;
 import com.cn.config.ManagerDetail;
 import com.cn.dao.PermissionRepository;
+import com.cn.entity.Manager;
 import com.cn.entity.Permission;
 import com.cn.entity.Role;
 import com.cn.util.MenuUtil;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
@@ -35,6 +39,8 @@ public class HomeController {
     PermissionRepository permissionRepository;
     @Autowired
     DefaultKaptcha defaultKaptcha;
+    @Autowired
+    ManagerService managerService;
 
     /**
      * 默认根目录为spring data rest 配置文件根目录
@@ -62,7 +68,14 @@ public class HomeController {
      * @return login.html
      */
     @RequestMapping("/login")
-    public String login() {
+    public String login(@RequestParam(required = false)String error,Model model) {
+//        Manager manager = new Manager();
+//        manager.setUsername("admin");
+//        manager.setPassword("123456");
+//        BCryptPasswordEncoder bc=new BCryptPasswordEncoder(4);
+//        manager.setPassword(bc.encode(manager.getPassword()));
+//        managerService.saveManager(manager);
+        model.addAttribute("error",error);
         return "login";
     }
 

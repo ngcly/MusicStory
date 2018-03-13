@@ -24,8 +24,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String randomcode = request.getParameter("randomcode");
         // 输入的验证码和session中的验证进行对比
         if (randomcode != null && validateCode != null && !randomcode.equals(validateCode)) {
-            // 如果校验失败，将验证码错误失败信息，通过shiroLoginFailure设置到request中
-            throw new AuthenticationServiceException("validateCode is invalidate");
+            // 如果校验失败，将验证码错误失败信息设置到request中
+            throw new AuthenticationServiceException("验证码错误");
         }
         return super.attemptAuthentication(request, response);
     }
