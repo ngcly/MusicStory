@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html layout:decorator="layout">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Title</title>
 </head>
 <body>
-抱歉 你没有权限
+<div layout:fragment="content" >
+    抱歉 你没有权限
+</div>
 </body>
 </html>

@@ -31,16 +31,17 @@
             <div class="code"><img src="/kaptcha" onclick="random(this)" width="116" height="36" title="看不清,点击换一张" /></div>
         </div>
         <button class="layui-btn login_btn" lay-submit="" lay-filter="login">登录</button>
-        <input class="login_rm" id="remember-me" name="remember-me" type="checkbox"/> 记住我
-        <span th:if="${error=='true'}" th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></span>
+        <input id="remember-me" name="remember-me" type="checkbox" title="记住我" />
+        <!--<span th:if="${error=='true'}" th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></span>-->
     </form>
+    <input th:id="ms" th:type="hidden" th:value="${error}" />
 </div>
 <script type="text/javascript" src="/layui/layui.js"></script>
 <script>
     layui.config({
         base : "/layui"
     }).use(['form','layer'],function(){
-            $ = layui.jquery;
+        $ = layui.jquery;
         //video背景
         $(window).resize(function(){
             if($(".video-player").width() > $(window).width()){
@@ -49,7 +50,11 @@
                 $(".video-player").css({"width":$(window).width(),"height":"auto","left":-($(".video-player").width()-$(window).width())/2});
             }
         }).resize();
-    })
+
+        if($('#ms').val()){
+            layer.msg('用户名或密码错误',{time:1000});
+        }
+    });
 
     //跳出 iframe 框架
     if (window != top)

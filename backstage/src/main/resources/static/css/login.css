@@ -6,5 +6,4 @@ body{overflow:hidden;}
 .login h1{ text-align:center; color:#fff; font-size:24px; margin-bottom:20px; }
 .form_code{ position:relative; }
 .form_code .code{ position:absolute; right:0; top:1px; cursor:pointer; }
-.login_btn{ width:60%; }
-.login_rm{margin-left: 5px}
+.login_btn{ width:50%; margin-right: 10px}
