@@ -1,5 +1,6 @@
 package com.cn.entity;
 
+import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -11,7 +12,7 @@ import java.util.Date;
  * @author chen
  * @date 2017-12-30 17:21
  */
-
+@Data
 @Entity
 @Table(name = "user_follow")
 public class UserFollow {
@@ -24,35 +25,4 @@ public class UserFollow {
     private String followId;  //被关注的人ID
     private Date createTime;  //关注时间
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getFollowId() {
-        return followId;
-    }
-
-    public void setFollowId(String followId) {
-        this.followId = followId;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
 }

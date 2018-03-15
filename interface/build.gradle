@@ -25,5 +25,5 @@ dependencies {
     compile 'org.springframework.social:spring-social-security:1.1.5.RELEASE'
     compile 'org.springframework.social:spring-social-web:1.1.5.RELEASE'
 
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile('io.projectreactor:reactor-test')
 }

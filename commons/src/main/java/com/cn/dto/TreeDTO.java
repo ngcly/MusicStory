@@ -1,5 +1,7 @@
 package com.cn.dto;
 
+import lombok.Data;
+
 import java.util.List;
 
 /**
@@ -8,6 +10,7 @@ import java.util.List;
  * @author chen
  * @date 2018-01-02 17:56
  */
+@Data
 public class TreeDTO {
     private long id;
 
@@ -26,59 +29,5 @@ public class TreeDTO {
         this.parentId = parentId;
         this.menuUrl = url;
         this.checked = checked;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public long getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(long parentId) {
-        this.parentId = parentId;
-    }
-
-    public List<TreeDTO> getChildren() {
-        return children;
-    }
-
-    public void setChildren(List<TreeDTO> children) {
-        this.children = children;
-    }
-
-    public String getMenuUrl() {
-        return menuUrl;
-    }
-
-    public void setMenuUrl(String menuUrl) {
-        this.menuUrl = menuUrl;
-    }
-
-    public boolean isChecked() {
-        return checked;
-    }
-
-    public void setChecked(boolean checked) {
-        this.checked = checked;
-    }
-
-    @Override
-    public String toString() {
-        return "Tree [id=" + id + ", name=" + name + ", parentId=" + parentId
-                + ", childrens=" + children + "]";
     }
 }

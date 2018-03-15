@@ -1,5 +1,6 @@
 package com.cn.entity;
 
+import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -11,7 +12,7 @@ import java.util.Date;
  * @author chen
  * @date 2017-12-30 17:41
  */
-
+@Data
 @Entity
 @Table(name = "carousel")
 public class Carousel {
@@ -27,59 +28,4 @@ public class Carousel {
     private String managerId;    //创建人ID
     private Date createTime;     //创建时间
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public String getImageDesc() {
-        return imageDesc;
-    }
-
-    public void setImageDesc(String imageDesc) {
-        this.imageDesc = imageDesc;
-    }
-
-    public String getImageTip() {
-        return imageTip;
-    }
-
-    public void setImageTip(String imageTip) {
-        this.imageTip = imageTip;
-    }
-
-    public String getManagerId() {
-        return managerId;
-    }
-
-    public void setManagerId(String managerId) {
-        this.managerId = managerId;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
 }

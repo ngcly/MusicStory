@@ -1,5 +1,6 @@
 package com.cn.entity;
 
+import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -10,7 +11,7 @@ import javax.persistence.*;
  * @author chen
  * @date 2017-12-30 17:40
  */
-
+@Data
 @Entity
 @Table(name = "music")
 public class Music {
@@ -25,51 +26,4 @@ public class Music {
     private String essayId;//文章ID
     private String linkUrl;//链接地址
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSinger() {
-        return singer;
-    }
-
-    public void setSinger(String singer) {
-        this.singer = singer;
-    }
-
-    public String getAlbum() {
-        return album;
-    }
-
-    public void setAlbum(String album) {
-        this.album = album;
-    }
-
-    public String getEssayId() {
-        return essayId;
-    }
-
-    public void setEssayId(String essayId) {
-        this.essayId = essayId;
-    }
-
-    public String getLinkUrl() {
-        return linkUrl;
-    }
-
-    public void setLinkUrl(String linkUrl) {
-        this.linkUrl = linkUrl;
-    }
 }

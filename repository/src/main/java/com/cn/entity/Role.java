@@ -1,17 +1,19 @@
 package com.cn.entity;
 
-/**
- * 角色表
- * Created by chen on 2017/6/23.
- */
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 角色表
+ * Created by chen on 2017/6/23.
+ */
+
+@Data
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class,property = "@id") //该注解是为了解决当前json序列化的bug 由于many to many会让json序列化产生无限循环 所以该注解能避免restful json产生的死循环
 @Table(name="role")
@@ -43,68 +45,4 @@ public class Role implements Serializable {
     @JoinTable(name="role_permission",joinColumns={@JoinColumn(name="role_id")},inverseJoinColumns={@JoinColumn(name="permission_id")})
     private List<Permission> permissions;
 
-
-    public List<User> getUserInfos() {
-        return userInfos;
-    }
-    public void setUserInfos(List<User> userInfos) {
-        this.userInfos = userInfos;
-    }
-
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getRole() {
-        return role;
-    }
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Boolean getAvailable() {
-        return available;
-    }
-    public void setAvailable(Boolean available) {
-        this.available = available;
-    }
-
-    public List<Permission> getPermissions() {
-        return permissions;
-    }
-    public void setPermissions(List<Permission> permissions) {
-        this.permissions = permissions;
-    }
-
-    public Byte getRoleType() {
-        return roleType;
-    }
-
-    public void setRoleType(Byte roleType) {
-        this.roleType = roleType;
-    }
-
-    public List<Manager> getManagers() {
-        return managers;
-    }
-
-    public void setManagers(List<Manager> managers) {
-        this.managers = managers;
-    }
-
-    @Override
-    public String toString() {
-        return "Role [id=" + id + ", role=" + role + ", description=" + description + ", available=" + available
-                + ", permissions=" + permissions + "]";
-    }
 }
