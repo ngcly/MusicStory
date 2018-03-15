@@ -11,17 +11,17 @@
 <!-- Start: Main -->
 <div class="layui-layout layui-layout-admin">
     <!-- Start: Header -->
-    <div class="layui-header" th:include="header :: header"></div>
+    <div class="layui-header" th:insert="header :: header"></div>
     <!-- End: Header -->
 
     <!-- Start: Sidebar -->
-    <div class="layui-side layui-bg-black" th:include="menu :: menu(tab='f')"></div>
+    <div class="layui-side layui-bg-black" th:insert="menu :: menu(tab=${tab})"></div>
     <!-- End: Sidebar Left -->
 
     <!-- End: Content-Wrapper -->
     <div class="layui-body" id="content" layout:fragment="content"></div>
 
-    <div class="layui-footer" th:include="footer :: footer"></div>
+    <div class="layui-footer" th:insert="footer :: footer"></div>
 
 </div>
 <!-- End: Main -->

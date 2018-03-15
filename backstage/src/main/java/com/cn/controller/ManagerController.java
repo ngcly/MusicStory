@@ -3,7 +3,7 @@ package com.cn.controller;
 import com.cn.ManagerService;
 import com.cn.entity.Manager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
@@ -14,6 +14,7 @@ import javax.validation.Valid;
  * @author chen
  * @date 2018-01-02 18:25
  */
+@RequestMapping("/admin")
 public class ManagerController {
     @Autowired
     ManagerService managerService;
@@ -31,19 +32,13 @@ public class ManagerController {
 
 
     /**
-     * 注册
+     * 新增或修改管理员信息
      * @param manager
      * @return
      */
-    @RequestMapping("/register")
-    public String register(@Valid Manager manager){
-        Manager manager1 = managerService.findUserByName(manager.getUsername()).get();
-        if(manager1!=null){
-            //将密码加密
-            BCryptPasswordEncoder bc=new BCryptPasswordEncoder(4);
-            manager.setPassword(bc.encode(manager.getPassword()));
-            managerService.saveManager(manager);
-        }
-        return "login";
+    @RequestMapping("/update")
+    public String register(@Valid Manager manager, Model model){
+        model.addAttribute("msg",managerService.saveManager(manager));
+        return "manager/list";
     }
 }

@@ -59,7 +59,8 @@ public class HomeController {
             menuList.addAll(permissionRepository.findMenuList());
         }
         model.addAttribute("menuList", MenuUtil.makeTreeList(menuList));
-        return "home";
+        model.addAttribute("tab","s");
+        return "user/userList";
     }
 
     /**
