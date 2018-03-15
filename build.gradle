@@ -5,7 +5,7 @@ version '1.0-SNAPSHOT'
 
 buildscript { //构建脚本
     //定义版本号
-    ext { springBootVersion = '1.5.9.RELEASE' }
+    ext { springBootVersion = '2.0.0.RELEASE' }
     repositories { mavenCentral() } //jar包仓库   使用maven中心库
     dependencies { classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") }
 }
@@ -19,6 +19,7 @@ subprojects {  //子项目通配
     apply plugin: 'java'
     apply plugin: 'idea'
     apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
 
     //编译使用UTF-8
     [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'

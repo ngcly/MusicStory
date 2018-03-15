@@ -5,6 +5,7 @@ import com.cn.entity.LoginLog;
 import com.cn.entity.Manager;
 import com.cn.util.IpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
@@ -24,6 +25,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
     @Autowired
     LoginLogRepository loginLogRepository;
 
+    @Async
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response, Authentication authentication) throws IOException,
