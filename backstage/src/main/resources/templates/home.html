@@ -9,14 +9,14 @@
     <link rel="stylesheet" href="/layui/css/layui.css">
 </head>
 <body class="layui-layout-body">
-<div class="layui-layout layui-layout-admin">
+<div class="layui-layout layui-layout-admin showMenu">
     <div class="layui-header">
         <div class="layui-logo">layui 后台布局</div>
         <!-- 头部区域（可配合layui已有的水平导航） -->
         <ul class="layui-nav layui-layout-left">
             <li class="layui-nav-item layadmin-flexible" lay-unselect="">
                 <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
-                    <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                    <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible">ss</i>
                 </a>
             </li>
             <li class="layui-nav-item"><a href="">控制台</a></li>
@@ -114,32 +114,39 @@
         © copy right cly00.top
     </div>
 </div>
-<script src="/js/jquery-3.2.1.min.js"></script>
+<!--<script src="/js/jquery-3.2.1.min.js"></script>-->
 <script src="/layui/layui.js"></script>
 <!--让iframe正确高度-->
-<script src="/js/index.js"></script>
+<!--<script src="/js/index.js"></script>-->
 <script>
     //JavaScript代码区域
     layui.use('element', function(){
         var element = layui.element;
+        $ = layui.jquery;
+        //    利用ajax 将菜单内容加载到指定区域 避免使用iframe
+        $(".layui-nav-child a").click(function(){
+            var code = $(this).attr("data");
+            $("#content").load(code);
+            $.ajax({
+                url:code,
+                type:"get",
+                dataType:"html",
+                success:function(data){
+                    $("#content").html(data);
+                },
+                error : function(xhr) {
+                    if(xhr.status==404){
+                        $("#content").load('404');
+                    }else if(xhr.status=403){
+                        $("#content").load('403');
+                    }else{
+                        $("#content").load('500');
+                    }
+                }
+            })
+        });
 
     });
-    //    利用ajax 将菜单内容加载到指定区域 避免使用iframe
-   $(".layui-nav-child a").click(function(){
-       var code = $(this).attr("data");
-       $("#content").load(code);
-       $.ajax({
-           url:code,
-           type:"get",
-           dataType:"html",
-           success:function(data){
-               $("#content").html(data);
-           },
-           error : function() {
-               $("#content").load('admin/list');
-           }
-       })
-   });
 </script>
 </body>
 </html>

@@ -6,18 +6,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>首页</title>
-    <link rel="stylesheet" href="layui/css/layui.css">
+    <link rel="stylesheet" href="/layui/css/layui.css">
 </head>
 <body class="layui-layout-body">
-<div class="layui-layout layui-layout-admin">
-    <!--<header class="navbar navbar-fixed-top navbar-shadow" th:include="layout/header :: header"></header>-->
+<div class="layui-layout layui-layout-admin showMenu">
     <div class="layui-header">
         <div class="layui-logo">layui 后台布局</div>
         <!-- 头部区域（可配合layui已有的水平导航） -->
         <ul class="layui-nav layui-layout-left">
             <li class="layui-nav-item layadmin-flexible" lay-unselect="">
-                <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
-                    <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                <a href="javascript:;" class="seraph hideMenu icon-caidan" layadmin-event="flexible" title="侧边伸缩">
+                    <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible">ss</i>
                 </a>
             </li>
             <li class="layui-nav-item"><a href="">控制台</a></li>
@@ -79,22 +78,22 @@
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-                <li class="layui-nav-item layui-nav-itemed">
-                    <a class="" href="javascript:;">所有商品</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;">列表一</a></dd>
-                        <dd><a href="javascript:;">列表二</a></dd>
-                        <dd><a href="admin/list" target="content">列表三</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item"><a href="">云市场</a></li>
+                <!--<li class="layui-nav-item layui-nav-itemed">-->
+                    <!--<a class="" href="javascript:;">所有商品</a>-->
+                    <!--<dl class="layui-nav-child">-->
+                        <!--<dd><a href="javascript:;">列表一</a></dd>-->
+                        <!--<dd><a href="javascript:;">列表二</a></dd>-->
+                        <!--<dd><a href="admin/list" target="content">列表三</a></dd>-->
+                    <!--</dl>-->
+                <!--</li>-->
+                <!--<li class="layui-nav-item"><a href="">云市场</a></li>-->
 
                 <li class="layui-nav-item" th:each="menuList:${menuList}">
                     <a class="" href="javascript:;" th:text="${menuList.name}"></a>
                     <dl class="layui-nav-child">
                         <dd th:each="menuChild:${menuList.children}">
-                            <!--<a href="javascript:;" th:data="${menuChild.menuUrl}" th:text="${menuChild.name}"></a>-->
-                            <a th:href="${menuChild.menuUrl}" th:text="${menuChild.name}" target="content"></a>
+                            <a href="javascript:;" th:data="${menuChild.menuUrl}" th:text="${menuChild.name}"></a>
+                            <!--<a th:href="${menuChild.menuUrl}" th:text="${menuChild.name}" target="content"></a>-->
                         </dd>
                     </dl>
                 </li>
@@ -104,9 +103,10 @@
 
     <div class="layui-body">
         <!-- 内容主体区域 -->
-        <!--<div style="padding: 15px;" id="content">-->
-            <iframe name="content" id="content" src="/admin/list" frameborder="false" scrolling="auto" style="border:none;" width="100%" height="auto" allowtransparency="true"></iframe>
-        <!--</div>-->
+        <div style="padding: 15px;" id="content">
+            欢迎
+            <!--<iframe name="content" id="content" src="/admin/list" frameborder="false" scrolling="auto" style="border:none;" width="100%" height="auto" allowtransparency="true"></iframe>-->
+        </div>
     </div>
 
     <div class="layui-footer">
@@ -114,34 +114,52 @@
         © copy right cly00.top
     </div>
 </div>
-<script src="js/jquery-3.2.1.min.js"></script>
-<script src="layui/layui.js"></script>
+<!--<script src="/js/jquery-3.2.1.min.js"></script>-->
+<script src="/layui/layui.js"></script>
 <!--让iframe正确高度-->
-<script src="js/index.js"></script>
+<!--<script src="/js/index.js"></script>-->
 <script>
     //JavaScript代码区域
     layui.use('element', function(){
         var element = layui.element;
+        $ = layui.jquery;
+        //    利用ajax 将菜单内容加载到指定区域 避免使用iframe
+        $(".layui-nav-child a").click(function(){
+            var code = $(this).attr("data");
+            $("#content").load(code);
+            $.ajax({
+                url:code,
+                type:"get",
+                dataType:"html",
+                success:function(data){
+                    $("#content").html(data);
+                },
+                error : function(xhr) {
+                    if(xhr.status==404){
+                        $("#content").load('404');
+                    }else if(xhr.status=403){
+                        $("#content").load('403');
+                    }else{
+                        $("#content").load('500');
+                    }
+                }
+            })
+        });
+
+        $(".seraph a").click(function (){
+            var width = $(window).width();
+            if ($('.layui-layout').hasClass("showMenu")) {
+                $('.layui-layout').removeClass("showMenu");
+                $(".layui-body,.layui-footer").css("width", parseInt(width) - 200 + "px").animate({left: '200px'});
+                $(".layui-side").animate({left: '0px'}).fadeIn("slow");
+            } else {
+                $('.layui-layout').addClass("showMenu").animate({left: '0px'});
+                $(".layui-body,.layui-footer").css("width", parseInt(width) + "px").animate({left: '0px'});
+                $(".layui-side").animate({left: '-200px'});
+            }
+        })
 
     });
-    //    利用ajax 将菜单内容加载到指定区域 避免使用iframe
-//    $(".layui-nav-child a").click(function(){
-//        var code = $(this).attr("data");
-//        $("#content").load(code);
-//        $.ajax({
-//            url:code,
-//            type:"get",
-//            dataType:"html",
-//            success:function(data){
-//                $("#content").html(data);
-//            },
-//            error : function() {
-//                $("#content").load('admin/list');
-//            }
-//        })
-//
-
-//    });
 </script>
 </body>
 </html>

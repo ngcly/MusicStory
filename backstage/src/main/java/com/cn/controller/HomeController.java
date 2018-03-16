@@ -59,7 +59,7 @@ public class HomeController {
             menuList.addAll(permissionRepository.findMenuList());
         }
         model.addAttribute("menuList", MenuUtil.makeTreeList(menuList));
-        model.addAttribute("tab","s");
+//        model.addAttribute("tab","s");
         return "home";
     }
 
@@ -111,5 +111,25 @@ public class HomeController {
         responseOutputStream.write(captchaChallengeAsJpeg);
         responseOutputStream.flush();
         responseOutputStream.close();
+    }
+
+    /**
+     * 默认情况下spring 遇错时会自动跳转到对应的错误页面
+     * 由于使用的 ajax 加载页面 所以此处需要指定错误页面
+     * @return
+     */
+    @RequestMapping("/404")
+    public String error404(){
+        return "error/404";
+    }
+
+    @RequestMapping("/403")
+    public String error403(){
+        return "error/403";
+    }
+
+    @RequestMapping("/500")
+    public String error500(){
+        return "error/500";
     }
 }

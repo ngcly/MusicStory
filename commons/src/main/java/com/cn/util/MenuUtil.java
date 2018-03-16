@@ -3,10 +3,7 @@ package com.cn.util;
 import com.cn.dto.TreeDTO;
 import com.cn.entity.Permission;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 菜单工具类
@@ -21,7 +18,7 @@ public class MenuUtil {
      * 根据条件将菜单转成Tree对象
      */
     public static Set<TreeDTO> makeTreeList(List<Permission> originMenus){
-        Set<TreeDTO> trees = new HashSet<>();
+        Set<TreeDTO> trees = new LinkedHashSet<>();
         TreeDTO tree1;
         for(Permission permission:originMenus){
             if("menu".equals(permission.getResourceType())){

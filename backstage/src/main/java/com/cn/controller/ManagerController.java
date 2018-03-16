@@ -3,6 +3,7 @@ package com.cn.controller;
 import com.cn.ManagerService;
 import com.cn.entity.Manager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,14 +32,23 @@ public class ManagerController {
      * @PreFilter(filterTarget="ids", value="filterObject%2==0") 对方法参数进行过滤 如有多参则指定参数 ids为其中一个参数
      */
 
+    /**
+     * 管理员列表页
+     * @return
+     */
     @RequestMapping("/list")
     public String showList(){
         return "user/userList";
     }
 
-    @RequestMapping("/show")
-    public String show(){
-        return "error/404";
+    /**
+     * 管理员编辑页
+     * @return
+     */
+    @PreAuthorize("hasRole('admin')")
+    @RequestMapping("/alt")
+    public String altManager(){
+        return "manager/managerAlt";
     }
 
     /**
@@ -46,7 +56,7 @@ public class ManagerController {
      * @param manager
      * @return
      */
-    @RequestMapping("/update")
+    @RequestMapping("/save")
     public String register(@Valid Manager manager, Model model){
         model.addAttribute("msg",managerService.saveManager(manager));
         return "manager/managerList";
