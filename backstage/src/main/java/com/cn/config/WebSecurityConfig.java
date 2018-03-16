@@ -67,7 +67,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .rememberMe()
                 .tokenValiditySeconds(1209600);
         //设置可以iframe访问
-        http.headers().frameOptions().sameOrigin();
+//        http.headers().frameOptions().sameOrigin();
     }
 
 

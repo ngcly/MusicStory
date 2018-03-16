@@ -60,7 +60,7 @@ public class HomeController {
         }
         model.addAttribute("menuList", MenuUtil.makeTreeList(menuList));
         model.addAttribute("tab","s");
-        return "user/userList";
+        return "home";
     }
 
     /**
@@ -73,8 +73,6 @@ public class HomeController {
 //        Manager manager = new Manager();
 //        manager.setUsername("admin");
 //        manager.setPassword("123456");
-//        BCryptPasswordEncoder bc=new BCryptPasswordEncoder(4);
-//        manager.setPassword(bc.encode(manager.getPassword()));
 //        managerService.saveManager(manager);
         model.addAttribute("error",error);
         return "login";

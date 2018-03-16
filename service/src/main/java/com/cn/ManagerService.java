@@ -29,7 +29,7 @@ public class ManagerService {
      * @param manager
      * @return
      */
-    public String  saveManager(Manager manager){
+    public String saveManager(Manager manager){
         Manager manager1 = managerRepository.findUserByName(manager.getUsername());
         if(StringUtil.isNullOrEmpty(manager.getId())){
             if(manager1!=null){

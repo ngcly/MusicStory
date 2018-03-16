@@ -4,9 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>首页</title>
-    <link rel="stylesheet" href="layui/css/layui.css">
+    <!--前面加上 / 不然两层路径之后就无法访问 -->
+    <link rel="stylesheet" href="/layui/css/layui.css">
 </head>
-
+<!--该布局有个缺陷就是每次都会刷新 同时每个页面都要传递动态菜单参数 放弃-->
 <body class="layui-layout-body">
 <!-- Start: Main -->
 <div class="layui-layout layui-layout-admin">
@@ -19,14 +20,16 @@
     <!-- End: Sidebar Left -->
 
     <!-- End: Content-Wrapper -->
-    <div class="layui-body" id="content" layout:fragment="content"></div>
+    <div class="layui-body">
+        <div id="content" style="padding: 15px;" layout:fragment="content">首页</div>
+    </div>
 
     <div class="layui-footer" th:insert="footer :: footer"></div>
 
 </div>
 <!-- End: Main -->
 <!--<script src="js/jquery-3.2.1.min.js"></script>-->
-<script src="layui/layui.js"></script>
+<script src="/layui/layui.js"></script>
 <script>
     //JavaScript代码区域
     layui.use('element', function(){

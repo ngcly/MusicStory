@@ -11,7 +11,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
     //弱化 thymeleaf 校验
     compile('net.sourceforge.nekohtml:nekohtml:1.9.22')
-    //sec 标签依赖 与springboot整合要特别注意版本问题 否则不生效 当前只能用2版本 3版本会无效
     compile group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity4', version: '3.0.2.RELEASE'
+    compile group: 'nz.net.ultraq.thymeleaf', name: 'thymeleaf-layout-dialect', version: '2.3.0'
     testCompile('io.projectreactor:reactor-test')
 }
