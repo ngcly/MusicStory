@@ -45,7 +45,7 @@ public class HomeController {
     /**
      * 默认根目录为spring data rest 配置文件根目录
      * 这里必须得配置个 / 不然所有静态文件全部不起作用
-     * 只有security才这样 shiro正常 原因尚不知
+     * 只有security才这样 shiro正常 可能是由于rest repository的原因
      */
     @RequestMapping("/")
     public String index(Principal principal, Model model) {
@@ -59,7 +59,6 @@ public class HomeController {
             menuList.addAll(permissionRepository.findMenuList());
         }
         model.addAttribute("menuList", MenuUtil.makeTreeList(menuList));
-//        model.addAttribute("tab","s");
         return "home";
     }
 
@@ -70,10 +69,6 @@ public class HomeController {
      */
     @RequestMapping("/login")
     public String login(@RequestParam(required = false)String error,Model model) {
-//        Manager manager = new Manager();
-//        manager.setUsername("admin");
-//        manager.setPassword("123456");
-//        managerService.saveManager(manager);
         model.addAttribute("error",error);
         return "login";
     }
@@ -118,18 +113,18 @@ public class HomeController {
      * 由于使用的 ajax 加载页面 所以此处需要指定错误页面
      * @return
      */
-    @RequestMapping("/404")
-    public String error404(){
-        return "error/404";
-    }
-
-    @RequestMapping("/403")
-    public String error403(){
-        return "error/403";
-    }
-
-    @RequestMapping("/500")
-    public String error500(){
-        return "error/500";
-    }
+//    @RequestMapping("/404")
+//    public String error404(){
+//        return "error/404";
+//    }
+//
+//    @RequestMapping("/403")
+//    public String error403(){
+//        return "error/403";
+//    }
+//
+//    @RequestMapping("/500")
+//    public String error500(){
+//        return "error/500";
+//    }
 }

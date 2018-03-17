@@ -7,6 +7,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
 
@@ -47,7 +49,8 @@ public class ManagerController {
      */
     @PreAuthorize("hasRole('admin')")
     @RequestMapping("/alt")
-    public String altManager(){
+    public String altManager(@RequestParam(required = false)String managerId,Model model){
+
         return "manager/managerAlt";
     }
 
@@ -56,9 +59,15 @@ public class ManagerController {
      * @param manager
      * @return
      */
+    @ResponseBody
     @RequestMapping("/save")
-    public String register(@Valid Manager manager, Model model){
-        model.addAttribute("msg",managerService.saveManager(manager));
-        return "manager/managerList";
+    public String register(@Valid Manager manager){
+        String msg;
+        try {
+            msg = managerService.saveManager(manager);
+        }catch (Exception e){
+            msg = "保存失败";
+        }
+        return msg;
     }
 }

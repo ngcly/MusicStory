@@ -7,16 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>首页</title>
     <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 <body class="layui-layout-body">
-<div class="layui-layout layui-layout-admin showMenu">
+<div class="layui-layout layui-layout-admin">
     <div class="layui-header">
         <div class="layui-logo">layui 后台布局</div>
         <!-- 头部区域（可配合layui已有的水平导航） -->
         <ul class="layui-nav layui-layout-left">
             <li class="layui-nav-item layadmin-flexible" lay-unselect="">
-                <a href="javascript:;" class="seraph hideMenu icon-caidan" layadmin-event="flexible" title="侧边伸缩">
-                    <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible">ss</i>
+                <a href="javascript:;" layadmin-event="flexible" class="iconfont icon-caidan hideMenu" title="侧边伸缩">
+                    <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
                 </a>
             </li>
             <li class="layui-nav-item"><a href="">控制台</a></li>
@@ -35,21 +36,21 @@
             <li class="layui-nav-item">
                 <!-- 天气信息 -->
                 <div class="weather">
-                    <div id="tp-weather-widget"></div>
+                    <div id="tp-weather-widget" style="margin: -4px"></div>
                     <script>(function(T,h,i,n,k,P,a,g,e){g=function(){P=h.createElement(i);a=h.getElementsByTagName(i)[0];P.src=k;P.charset="utf-8";P.async=1;a.parentNode.insertBefore(P,a)};T["ThinkPageWeatherWidgetObject"]=n;T[n]||(T[n]=function(){(T[n].q=T[n].q||[]).push(arguments)});T[n].l=+new Date();if(T.attachEvent){T.attachEvent("onload",g)}else{T.addEventListener("load",g,false)}}(window,document,"script","tpwidget","//widget.seniverse.com/widget/chameleon.js"))</script>
                     <script>tpwidget("init", {
                         "flavor": "slim",
-                        "location": "WX4FBXXFKE4F",
+                        "location": "WT33C6J2C563",
                         "geolocation": "enabled",
                         "language": "zh-chs",
                         "unit": "c",
                         "theme": "chameleon",
                         "container": "tp-weather-widget",
-                        "bubble": "disabled",
+                        "bubble": "enabled",
                         "alarmType": "badge",
                         "color": "#FFFFFF",
-                        "uid": "U9EC08A15F",
-                        "hash": "039da28f5581f4bcb5c799fb4cdfb673"
+                        "uid": "U78371FB98",
+                        "hash": "cd55c15865ecbe0f16ba78ca60ad51eb"
                     });
                     tpwidget("show");</script>
                 </div>
@@ -92,8 +93,8 @@
                     <a class="" href="javascript:;" th:text="${menuList.name}"></a>
                     <dl class="layui-nav-child">
                         <dd th:each="menuChild:${menuList.children}">
-                            <a href="javascript:;" th:data="${menuChild.menuUrl}" th:text="${menuChild.name}"></a>
-                            <!--<a th:href="${menuChild.menuUrl}" th:text="${menuChild.name}" target="content"></a>-->
+                            <!--<a href="javascript:;" th:data="${menuChild.menuUrl}" th:text="${menuChild.name}"></a>-->
+                            <a th:href="${menuChild.menuUrl}" th:text="${menuChild.name}" target="content"></a>
                         </dd>
                     </dl>
                 </li>
@@ -103,10 +104,9 @@
 
     <div class="layui-body">
         <!-- 内容主体区域 -->
-        <div style="padding: 15px;" id="content">
-            欢迎
-            <!--<iframe name="content" id="content" src="/admin/list" frameborder="false" scrolling="auto" style="border:none;" width="100%" height="auto" allowtransparency="true"></iframe>-->
-        </div>
+        <!--<div style="padding: 15px;" id="content">-->
+            <iframe name="content" id="content" src="/admin/list"></iframe>
+        <!--</div>-->
     </div>
 
     <div class="layui-footer">
@@ -124,41 +124,32 @@
         var element = layui.element;
         $ = layui.jquery;
         //    利用ajax 将菜单内容加载到指定区域 避免使用iframe
-        $(".layui-nav-child a").click(function(){
-            var code = $(this).attr("data");
-            $("#content").load(code);
-            $.ajax({
-                url:code,
-                type:"get",
-                dataType:"html",
-                success:function(data){
-                    $("#content").html(data);
-                },
-                error : function(xhr) {
-                    if(xhr.status==404){
-                        $("#content").load('404');
-                    }else if(xhr.status=403){
-                        $("#content").load('403');
-                    }else{
-                        $("#content").load('500');
-                    }
-                }
-            })
-        });
-
-        $(".seraph a").click(function (){
-            var width = $(window).width();
-            if ($('.layui-layout').hasClass("showMenu")) {
-                $('.layui-layout').removeClass("showMenu");
-                $(".layui-body,.layui-footer").css("width", parseInt(width) - 200 + "px").animate({left: '200px'});
-                $(".layui-side").animate({left: '0px'}).fadeIn("slow");
-            } else {
-                $('.layui-layout').addClass("showMenu").animate({left: '0px'});
-                $(".layui-body,.layui-footer").css("width", parseInt(width) + "px").animate({left: '0px'});
-                $(".layui-side").animate({left: '-200px'});
-            }
+        //    缺点：不能很好第处理错误页面 比如断线情况
+        // $(".layui-nav-child a").click(function(){
+        //     var code = $(this).attr("data");
+        //     $("#content").load(code);
+        //     $.ajax({
+        //         url:code,
+        //         type:"get",
+        //         dataType:"html",
+        //         success:function(data){
+        //             $("#content").html(data);
+        //         },
+        //         error : function(xhr) {
+        //             if(xhr.status==404){
+        //                 $("#content").load('404');
+        //             }else if(xhr.status=403){
+        //                 $("#content").load('403');
+        //             }else{
+        //                 $("#content").load('500');
+        //             }
+        //         }
+        //     })
+        // });
+        //隐藏左侧导航
+        $(".hideMenu").click(function(){
+            $(".layui-layout-admin").toggleClass("showMenu");
         })
-
     });
 </script>
 </body>
