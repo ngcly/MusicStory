@@ -22,12 +22,15 @@ public class TreeDTO {
 
     private boolean checked;
 
+    private String icon;
+
     private List<TreeDTO> children;
-    public TreeDTO(long id, String name, long parentId, String url, boolean checked) {
+    public TreeDTO(long id, String name, long parentId, String url, boolean checked,String icon) {
         this.id = id;
         this.name = name;
         this.parentId = parentId;
         this.menuUrl = url;
         this.checked = checked;
+        this.icon = icon;
     }
 }
