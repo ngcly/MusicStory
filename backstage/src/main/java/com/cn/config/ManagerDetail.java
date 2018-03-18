@@ -26,6 +26,7 @@ public class ManagerDetail extends Manager implements UserDetails{
             this.setRealName(manager.getRealName());
             this.setPassword(manager.getPassword());
             this.setGender(manager.getGender());
+            this.setAvatar(manager.getAvatar());
             this.setRoleList(manager.getRoleList());
         }
     }
