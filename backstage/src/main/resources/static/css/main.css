@@ -187,6 +187,7 @@
 .showMenu.layui-layout-admin .layui-side{ left:-200px; }
 .showMenu .layui-body,.showMenu .layui-footer{ left:0; }
 .layui-layout-admin .layui-side{ left:0; overflow:hidden;}
+.hideMenu{ float:left; width:20px; height:20px; margin-top:20px; font-size:17px; line-height:20px; text-align:center;  color:#fff; background-color:#1AA094; }
 /*样式改变的过渡*/
 .layui-body,.layui-footer,.layui-layout-admin .layui-side{ transition: all 0.3s ease-in-out;-webkit-transition: all 0.3s ease-in-out;-o-transition: all 0.3s ease-in-out;-moz-transition: all 0.3s ease-in-out;-ms-transition: all 0.3s ease-in-out; }
 iframe{ position:absolute; height:100%; width:100%; border:none; padding-left: 15px}

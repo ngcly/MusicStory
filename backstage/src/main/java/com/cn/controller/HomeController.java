@@ -58,6 +58,7 @@ public class HomeController {
             //管理员拥有最高权限
             menuList.addAll(permissionRepository.findMenuList());
         }
+        model.addAttribute("manager",managerDetail);
         model.addAttribute("menuList", MenuUtil.makeTreeList(menuList));
         return "home";
     }

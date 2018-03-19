@@ -12,11 +12,12 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo">layui 后台布局</div>
+        <div class="layui-logo" style="position: unset;float: left">后台管理</div>
         <!-- 头部区域（可配合layui已有的水平导航） -->
-        <ul class="layui-nav layui-layout-left">
+        <a href="javascript:;" class="iconfont icon-caidan hideMenu" title="侧边伸缩"></a>
+        <ul class="layui-nav layui-layout-left" style="left: 220px">
             <li class="layui-nav-item layadmin-flexible" lay-unselect="">
-                <a href="javascript:;" layadmin-event="flexible" class="iconfont icon-caidan hideMenu" title="侧边伸缩">
+                <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
                     <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
                 </a>
             </li>
@@ -56,7 +57,7 @@
             </li>
             <li class="layui-nav-item">
                 <a href="javascript:;">
-                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                    <img th:src="${manager.avatar}" class="layui-nav-img">
                     <!--非 sec 标签获取当前用户名的写法-->
                     <!--<span th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}"></span>-->
                     <span sec:authentication="name"></span><!--&lt;!&ndash; 获得当前用户的用户名 &ndash;&gt;-->
