@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>首页</title>
+    <title>音书</title>
     <link rel="stylesheet" href="/layui/css/layui.css">
     <link rel="stylesheet" href="/css/main.css">
 </head>
@@ -14,10 +14,10 @@
     <div class="layui-header">
         <div class="layui-logo" style="position: unset;float: left">后台管理</div>
         <!-- 头部区域（可配合layui已有的水平导航） -->
-        <a href="javascript:;" class="iconfont icon-caidan hideMenu" title="侧边伸缩"></a>
-        <ul class="layui-nav layui-layout-left" style="left: 220px">
+        <!--<a href="javascript:;" class="iconfont icon-caidan hideMenu" title="侧边伸缩"></a>-->
+        <ul class="layui-nav layui-layout-left">
             <li class="layui-nav-item layadmin-flexible" lay-unselect="">
-                <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
+                <a href="javascript:;" layadmin-event="flexible" class="hideMenu" title="侧边伸缩">
                     <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
                 </a>
             </li>
@@ -110,7 +110,7 @@
 
     <div class="layui-footer">
         <!-- 底部固定区域 -->
-        © copy right cly00.top
+        © cly00.top
     </div>
 </div>
 <!--<script src="/js/jquery-3.2.1.min.js"></script>-->
@@ -123,7 +123,7 @@
         var element = layui.element;
         $ = layui.jquery;
         //    利用ajax 将菜单内容加载到指定区域 避免使用iframe
-        //    缺点：不能很好第处理错误页面 比如断线情况
+        //    缺点：对于错误页面 无法直接加载静态资源 需要改spring的拦截器 比较麻烦
         // $(".layui-nav-child a").click(function(){
         //     var code = $(this).attr("data");
         //     $("#content").load(code);
@@ -136,11 +136,11 @@
         //         },
         //         error : function(xhr) {
         //             if(xhr.status==404){
-        //                 $("#content").load('404');
+        //                 $("#content").load('/error/404.html');
         //             }else if(xhr.status=403){
-        //                 $("#content").load('403');
+        //                 $("#content").load('/error/403.html');
         //             }else{
-        //                 $("#content").load('500');
+        //                 $("#content").load('/error/500.html');
         //             }
         //         }
         //     })
