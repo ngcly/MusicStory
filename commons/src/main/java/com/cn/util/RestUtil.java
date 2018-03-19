@@ -34,6 +34,17 @@ public class RestUtil {
     }
 
     /**
+     * 自定义成功返回
+     */
+    public static ModelMap Success(int code,String msg,Object obj){
+        ModelMap map = new ModelMap();
+        map.put("code", code);
+        map.put("msg", msg);
+        map.put("data", obj);
+        return map;
+    }
+
+    /**
      * 一般错误 统一返回
      */
     public static ModelMap Error(int code) {

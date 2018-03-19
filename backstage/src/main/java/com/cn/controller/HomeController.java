@@ -60,7 +60,6 @@ public class HomeController {
         }
         model.addAttribute("manager",managerDetail);
         model.addAttribute("menuList", MenuUtil.makeTreeList(menuList));
-        model.addAttribute("manager",managerDetail);
         return "home";
     }
 

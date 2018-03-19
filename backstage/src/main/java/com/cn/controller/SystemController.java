@@ -2,6 +2,7 @@ package com.cn.controller;
 
 import com.cn.ManagerService;
 import com.cn.entity.Manager;
+import com.cn.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -42,11 +44,19 @@ public class SystemController {
      * 管理员列表页
      */
     @RequestMapping("/adminList")
-    public String managerList(@PageableDefault(value = 1, sort = { "createTime" }, direction = Sort.Direction.DESC)
+    public String managerList(@PageableDefault(value = 10, sort = { "createTime" }, direction = Sort.Direction.DESC)
                                           Pageable pageable,Model model){
         Page<Manager> managerList = managerService.getManagersList(pageable);
         model.addAttribute("managerList",managerList);
         return "manager/managerList";
+    }
+
+    @ResponseBody
+    @RequestMapping("/admins")
+    public ModelMap managers(@PageableDefault(value = 1, sort = { "createTime" }, direction = Sort.Direction.DESC)
+                                         Pageable pageable){
+        Page<Manager> managerList = managerService.getManagersList(pageable);
+        return RestUtil.Success(0,"",managerList);
     }
 
     /**

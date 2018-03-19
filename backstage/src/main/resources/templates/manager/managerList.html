@@ -4,24 +4,18 @@
     <meta charset="UTF-8">
     <title>管理员列表</title>
     <link rel="stylesheet" href="/layui/css/layui.css">
-    <link rel="stylesheet" href="/css/public.css">
 </head>
 <body class="childrenBody">
-<table class="layui-table">
-    <colgroup>
-        <col width="150">
-        <col width="200">
-        <col>
-    </colgroup>
+<table class="layui-table" lay-filter="managers">
     <thead>
     <tr>
-        <th>用户名</th>
-        <th>真实姓名</th>
-        <th>性别</th>
-        <th>生日</th>
-        <th>状态</th>
-        <th>创建时间</th>
-        <th>修改时间</th>
+        <th lay-data="{field:'username', sort:true}">用户名</th>
+        <th lay-data="{field:'realName'}">真实姓名</th>
+        <th lay-data="{field:'gender'}">性别</th>
+        <th lay-data="{field:'birthday'}">生日</th>
+        <th lay-data="{field:'state'}">状态</th>
+        <th lay-data="{field:'createTime', sort:true}">创建时间</th>
+        <th lay-data="{field:'updateTime', sort:true}">修改时间</th>
         <th>操作</th>
     </tr>
     </thead>
@@ -41,14 +35,20 @@
 <div id="pag"></div>
 <script src="/layui/layui.js"></script>
 <script type="text/javascript">
-    layui.use('laypage', function(){
-        var laypage = layui.laypage;
-        $ = layui.jquery;
-        //执行一个laypage实例
-        laypage.render({
-            elem: 'pag' //注意，这里的 test1 是 ID，不用加 # 号
-            ,count: 50 //数据总数，从服务端得到
+    layui.use(['laypage','table'], function(){
+        var table = layui.table;
+       //转换静态表格
+        table.init('managers', {
+            limit: 10, //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
+            page:{count:11}
         });
+        var tableObj = table.render({});
+        tableObj.reload({
+            url:'/sys/admins',
+            page:true,
+            limit: 10
+        }); //重载表格
+        $ = layui.jquery;
     });
 </script>
 </body>
