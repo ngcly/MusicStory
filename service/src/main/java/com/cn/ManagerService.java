@@ -4,6 +4,8 @@ import com.cn.dao.ManagerRepository;
 import com.cn.entity.Manager;
 import io.netty.util.internal.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +22,22 @@ public class ManagerService {
     @Autowired
     ManagerRepository managerRepository;
 
+    /**
+     * 根据用户名获取用户信息
+     * @param name
+     * @return
+     */
     public Optional<Manager> findUserByName(String name) {
         return Optional.ofNullable(managerRepository.findUserByName(name));
+    }
+
+    /**
+     * 获取管理员列表
+     * @param pageable
+     * @return
+     */
+    public Page<Manager> getManagersList(Pageable pageable){
+        return managerRepository.findAll(pageable);
     }
 
     /**

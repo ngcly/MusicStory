@@ -123,7 +123,7 @@
         var element = layui.element;
         $ = layui.jquery;
         //    利用ajax 将菜单内容加载到指定区域 避免使用iframe
-        //    缺点：不能很好第处理错误页面 比如断线情况
+        //    缺点：对于错误页面 无法直接加载静态资源 需要改spring的拦截器 比较麻烦
         // $(".layui-nav-child a").click(function(){
         //     var code = $(this).attr("data");
         //     $("#content").load(code);
@@ -136,11 +136,11 @@
         //         },
         //         error : function(xhr) {
         //             if(xhr.status==404){
-        //                 $("#content").load('404');
+        //                 $("#content").load('/error/404.html');
         //             }else if(xhr.status=403){
-        //                 $("#content").load('403');
+        //                 $("#content").load('/error/403.html');
         //             }else{
-        //                 $("#content").load('500');
+        //                 $("#content").load('/error/500.html');
         //             }
         //         }
         //     })

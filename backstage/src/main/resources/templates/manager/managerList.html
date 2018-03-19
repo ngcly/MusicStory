@@ -1,10 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>管理员列表</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" href="/css/public.css">
 </head>
-<body>
-
+<body class="childrenBody">
+<table class="layui-table">
+    <colgroup>
+        <col width="150">
+        <col width="200">
+        <col>
+    </colgroup>
+    <thead>
+    <tr>
+        <th>用户名</th>
+        <th>真实姓名</th>
+        <th>性别</th>
+        <th>生日</th>
+        <th>状态</th>
+        <th>创建时间</th>
+        <th>修改时间</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="manager:${managerList}" th:switch="${manager.state}">
+        <td th:text="${manager.username}"></td>
+        <td th:text="${manager.realName}"></td>
+        <td th:text="${#strings.equals(manager.gender,'1')?'男':'女'}"></td>
+        <td th:text="${#dates.format(manager.birthday, 'yyyy-MM-dd')}"></td>
+        <td th:case="'0'">初始化</td><td th:case="'1'">正常</td><td th:case="'2'">封禁</td><td th:case="*"></td>
+        <td th:text="${manager.createTime}"></td>
+        <td th:text="${manager.updateTime}"></td>
+        <td><a sec:authorize="hasAuthority('admin')" class="remove" th:attr="data-id=${manager.id}" href="javascript:void(0);">删除</a></td>
+    </tr>
+    </tbody>
+</table>
+<div id="pag"></div>
+<script src="/layui/layui.js"></script>
+<script type="text/javascript">
+    layui.use('laypage', function(){
+        var laypage = layui.laypage;
+        $ = layui.jquery;
+        //执行一个laypage实例
+        laypage.render({
+            elem: 'pag' //注意，这里的 test1 是 ID，不用加 # 号
+            ,count: 50 //数据总数，从服务端得到
+        });
+    });
+</script>
 </body>
 </html>
