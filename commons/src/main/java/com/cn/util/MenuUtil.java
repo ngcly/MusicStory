@@ -22,7 +22,7 @@ public class MenuUtil {
         TreeDTO tree1;
         for(Permission permission:originMenus){
             if("menu".equals(permission.getResourceType())){
-                tree1 = new TreeDTO(permission.getId(),permission.getName(),permission.getParentId(),permission.getUrl(),false);
+                tree1 = new TreeDTO(permission.getId(),permission.getName(),permission.getParentId(),permission.getUrl(),false,permission.getIcon());
                 trees.add(tree1);
             }
         }
@@ -42,9 +42,9 @@ public class MenuUtil {
                 }
             }
             if(contained){
-                tree1 = new TreeDTO(sysPermission.getId(),sysPermission.getName(),sysPermission.getParentId(),sysPermission.getUrl(),true);
+                tree1 = new TreeDTO(sysPermission.getId(),sysPermission.getName(),sysPermission.getParentId(),sysPermission.getUrl(),true,sysPermission.getIcon());
             }else {
-                tree1 = new TreeDTO(sysPermission.getId(),sysPermission.getName(),sysPermission.getParentId(),sysPermission.getUrl(),false);
+                tree1 = new TreeDTO(sysPermission.getId(),sysPermission.getName(),sysPermission.getParentId(),sysPermission.getUrl(),false,sysPermission.getIcon());
             }
             trees.add(tree1);
         }

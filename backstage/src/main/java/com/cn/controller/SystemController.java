@@ -3,6 +3,10 @@ package com.cn.controller;
 import com.cn.ManagerService;
 import com.cn.entity.Manager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,8 +23,8 @@ import javax.validation.Valid;
  * @date 2018-01-02 18:25
  */
 @Controller
-@RequestMapping("/admin")
-public class ManagerController {
+@RequestMapping("/sys")
+public class SystemController {
     @Autowired
     ManagerService managerService;
 
@@ -36,19 +40,20 @@ public class ManagerController {
 
     /**
      * 管理员列表页
-     * @return
      */
-    @RequestMapping("/list")
-    public String showList(){
-        return "user/userList";
+    @RequestMapping("/adminList")
+    public String managerList(@PageableDefault(value = 1, sort = { "createTime" }, direction = Sort.Direction.DESC)
+                                          Pageable pageable,Model model){
+        Page<Manager> managerList = managerService.getManagersList(pageable);
+        model.addAttribute("managerList",managerList);
+        return "manager/managerList";
     }
 
     /**
      * 管理员编辑页
-     * @return
      */
-    @PreAuthorize("hasRole('admin')")
-    @RequestMapping("/alt")
+    @PreAuthorize("hasAuthority('admin')")
+    @RequestMapping("/adminAlt")
     public String altManager(@RequestParam(required = false)String managerId,Model model){
 
         return "manager/managerAlt";
@@ -56,11 +61,10 @@ public class ManagerController {
 
     /**
      * 新增或修改管理员信息
-     * @param manager
-     * @return
      */
+    @PreAuthorize("hasAuthority('admin')")
     @ResponseBody
-    @RequestMapping("/save")
+    @RequestMapping("/adminSave")
     public String register(@Valid Manager manager){
         String msg;
         try {
@@ -69,5 +73,22 @@ public class ManagerController {
             msg = "保存失败";
         }
         return msg;
+    }
+
+    /**
+     * 角色列表页
+     */
+    @RequestMapping("/roleList")
+    public String roleList(@PageableDefault(value = 1, sort = { "createTime" }, direction = Sort.Direction.DESC)
+                                       Pageable pageable,Model model){
+        return "role/roleList";
+    }
+
+    /**
+     * 菜单列表页
+     */
+    @RequestMapping("/menuList")
+    public String menuList(Model model){
+        return "menu/menuList";
     }
 }
