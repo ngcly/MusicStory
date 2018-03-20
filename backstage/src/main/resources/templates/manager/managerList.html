@@ -4,8 +4,59 @@
     <meta charset="UTF-8">
     <title>管理员列表</title>
     <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" href="/css/public.css">
 </head>
-<body class="childrenBody">
+<body class="child-body">
+<form  class="layui-form" th:action="@{/sys/adminList}">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-inline">
+                <input type="text" name="username" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">创建时间</label>
+            <div class="layui-input-inline">
+                <input type="text" name="beginTime" id="bt" class="layui-input">
+            </div>
+            <div class="layui-form-mid">-</div>
+            <div class="layui-input-inline">
+                <input type="text" name="endTime" id="et" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">性别</label>
+            <div class="layui-input-block">
+                <select name="gender">
+                    <option value=""></option>
+                    <option value="1">男</option>
+                    <option value="2">女</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+                <select name="state">
+                    <option value=""></option>
+                    <option value="0">初始化</option>
+                    <option value="1">正常</option>
+                    <option value="2">封禁</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="page" id="pg">
+    <input type="hidden" name="size" id="se">
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">查询</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+
+</form>
 <table class="layui-table" lay-filter="managers">
     <thead>
     <tr>
@@ -16,7 +67,7 @@
         <th lay-data="{field:'state'}">状态</th>
         <th lay-data="{field:'createTime', sort:true}">创建时间</th>
         <th lay-data="{field:'updateTime', sort:true}">修改时间</th>
-        <th>操作</th>
+        <th lay-data="{field:'opt'}">操作</th>
     </tr>
     </thead>
     <tbody>
@@ -35,20 +86,49 @@
 <div id="pag"></div>
 <script src="/layui/layui.js"></script>
 <script type="text/javascript">
-    layui.use(['laypage','table'], function(){
-        var table = layui.table;
-       //转换静态表格
-        table.init('managers', {
-            limit: 10, //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
-            page:{count:11}
-        });
-        var tableObj = table.render({});
-        tableObj.reload({
-            url:'/sys/admins',
-            page:true,
-            limit: 10
-        }); //重载表格
+    layui.use(['laypage','table','laydate'], function(){
         $ = layui.jquery;
+
+        /*<![CDATA[*/
+        var ct = [[${managerList.totalElements}]];
+        var cn = [[${managerList.number+1}]];
+        var ns = [[${managerList.size}]];
+        /*]]>*/
+
+        var table = layui.table;
+        //转换静态表格
+        table.init('managers', {
+            limit: ns //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
+        });
+
+        var laypage = layui.laypage;
+        //执行一个laypage实例
+        laypage.render({
+            elem: 'pag', //注意，这里的 test1 是 ID，不用加 # 号
+            count:ct, //数据总数，从服务端得到
+            groups:10,
+            limit:ns,
+            // limits:[10, 20, 30, 40, 50],
+            curr:cn,
+            layout:['prev', 'page', 'next','skip','count','limit'],
+            jump: function(obj,first){
+                if(!first){
+                    $('#pg').val(obj.curr-1);
+                    $('#se').val(obj.limit);
+                    $('form').submit();
+                    // url+="?page="+(obj.curr-1)+"&size="+obj.limit;
+                    // window.location.href=url;
+                }
+            }
+        });
+
+        var laydate = layui.laydate;
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#bt,#et', //指定元素
+            type: 'datetime',
+            max:0
+        });
     });
 </script>
 </body>

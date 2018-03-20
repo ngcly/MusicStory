@@ -36,4 +36,8 @@ public class Manager implements Serializable {
     @JoinTable(name = "manager_role", joinColumns = { @JoinColumn(name = "manager_id") }, inverseJoinColumns ={@JoinColumn(name = "role_id") })
     private Set<Role> roleList;// 一个用户具有多个角色
 
+    @Transient
+    private String beginTime;
+    @Transient
+    private String endTime;
 }

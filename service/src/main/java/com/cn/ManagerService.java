@@ -2,13 +2,17 @@ package com.cn;
 
 import com.cn.dao.ManagerRepository;
 import com.cn.entity.Manager;
+import com.cn.util.DateUtil;
 import io.netty.util.internal.StringUtil;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -36,8 +40,18 @@ public class ManagerService {
      * @param pageable
      * @return
      */
-    public Page<Manager> getManagersList(Pageable pageable){
-        return managerRepository.findAll(pageable);
+    public Page<Manager> getManagersList(Pageable pageable, Manager manager){
+        Date beginTime,endTime;
+        try {
+            beginTime = DateUtils.parseDate(manager.getBeginTime(),"yyyy-MM-dd HH:mm:ss");
+            endTime = DateUtils.parseDate(manager.getEndTime(),"yyyy-MM-dd HH:mm:ss");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return managerRepository.findAll(ManagerRepository.getManagerList(manager.getUsername(),
+                    manager.getState(),manager.getGender(),null,null),pageable);
+        }
+        return managerRepository.findAll(ManagerRepository.getManagerList(manager.getUsername(),
+                manager.getState(),manager.getGender(),beginTime,endTime),pageable);
     }
 
     /**
