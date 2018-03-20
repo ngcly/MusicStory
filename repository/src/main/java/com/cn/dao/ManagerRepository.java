@@ -1,7 +1,6 @@
 package com.cn.dao;
 
 import com.cn.entity.Manager;
-import jdk.nashorn.internal.runtime.Specialization;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -36,7 +35,7 @@ public interface ManagerRepository extends JpaRepository<Manager,String>,JpaSpec
             public Predicate toPredicate(Root<Manager> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 List<Predicate> predicates = new ArrayList<Predicate>();
                 if(username!=null&&!"".equals(username)) {
-                    predicates.add(cb.equal(root.get("username"),username));
+                    predicates.add(cb.like(root.get("username"),"%"+username+"%"));
                 }
 
                 if(state!=null) {
@@ -55,7 +54,7 @@ public interface ManagerRepository extends JpaRepository<Manager,String>,JpaSpec
                     predicates.add(cb.lessThanOrEqualTo(root.get("createTime"), endTime));
                 }
 
-                return query.where(new Predicate[predicates.size()]).getRestriction();
+                return query.where(cb.and(predicates.toArray(new Predicate[predicates.size()]))).getRestriction();
             }
         };
     }

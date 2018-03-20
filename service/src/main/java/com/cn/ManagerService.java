@@ -41,14 +41,12 @@ public class ManagerService {
      * @return
      */
     public Page<Manager> getManagersList(Pageable pageable, Manager manager){
-        Date beginTime,endTime;
-        try {
-            beginTime = DateUtils.parseDate(manager.getBeginTime(),"yyyy-MM-dd HH:mm:ss");
-            endTime = DateUtils.parseDate(manager.getEndTime(),"yyyy-MM-dd HH:mm:ss");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return managerRepository.findAll(ManagerRepository.getManagerList(manager.getUsername(),
-                    manager.getState(),manager.getGender(),null,null),pageable);
+        Date beginTime=null,endTime=null;
+        if(manager.getBeginTime()!=null&&!"".equals(manager.getBeginTime())){
+            beginTime = DateUtil.parse(manager.getBeginTime());
+        }
+        if(manager.getEndTime()!=null&&!"".equals(manager.getEndTime())){
+            endTime = DateUtil.parse(manager.getEndTime());
         }
         return managerRepository.findAll(ManagerRepository.getManagerList(manager.getUsername(),
                 manager.getState(),manager.getGender(),beginTime,endTime),pageable);
