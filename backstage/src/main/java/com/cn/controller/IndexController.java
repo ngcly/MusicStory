@@ -34,7 +34,7 @@ import java.util.Set;
  * @date 2018-01-02 17:26
  */
 @Controller
-public class HomeController {
+public class IndexController {
     @Autowired
     PermissionRepository permissionRepository;
     @Autowired
@@ -60,7 +60,7 @@ public class HomeController {
         }
         model.addAttribute("manager",managerDetail);
         model.addAttribute("menuList", MenuUtil.makeTreeList(menuList));
-        return "home";
+        return "index";
     }
 
     /**
@@ -107,6 +107,14 @@ public class HomeController {
         responseOutputStream.write(captchaChallengeAsJpeg);
         responseOutputStream.flush();
         responseOutputStream.close();
+    }
+
+    /**
+     * 主页
+     */
+    @RequestMapping("/home")
+    public String home(){
+        return "home";
     }
 
 }

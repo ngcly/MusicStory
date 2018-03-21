@@ -5,150 +5,105 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>音书</title>
+    <title>红尘倒影</title>
     <link rel="stylesheet" href="/layui/css/layui.css">
-    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/public.css">
 </head>
-<body class="layui-layout-body">
-<div class="layui-layout layui-layout-admin">
-    <div class="layui-header">
-        <div class="layui-logo" style="position: unset;float: left">后台管理</div>
-        <!-- 头部区域（可配合layui已有的水平导航） -->
-        <!--<a href="javascript:;" class="iconfont icon-caidan hideMenu" title="侧边伸缩"></a>-->
-        <ul class="layui-nav layui-layout-left">
-            <li class="layui-nav-item layadmin-flexible" lay-unselect="">
-                <a href="javascript:;" layadmin-event="flexible" class="hideMenu" title="侧边伸缩">
-                    <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
-                </a>
-            </li>
-            <li class="layui-nav-item"><a href="">控制台</a></li>
-            <li class="layui-nav-item"><a href="">待开放</a></li>
-            <li class="layui-nav-item">
-                <a href="javascript:;">其它系统</a>
-                <dl class="layui-nav-child">
-                    <dd><a href="">邮件管理</a></dd>
-                    <dd><a href="">消息管理</a></dd>
-                    <dd><a href="">授权管理</a></dd>
-                </dl>
-            </li>
-        </ul>
-        <ul class="layui-nav layui-layout-right">
-            <li class="layui-nav-item">
-                <!-- 心知天气信息 -->
-                <div class="weather">
-                    <div id="tp-weather-widget" style="margin: -4px"></div>
-                    <script>(function(T,h,i,n,k,P,a,g,e){g=function(){P=h.createElement(i);a=h.getElementsByTagName(i)[0];P.src=k;P.charset="utf-8";P.async=1;a.parentNode.insertBefore(P,a)};T["ThinkPageWeatherWidgetObject"]=n;T[n]||(T[n]=function(){(T[n].q=T[n].q||[]).push(arguments)});T[n].l=+new Date();if(T.attachEvent){T.attachEvent("onload",g)}else{T.addEventListener("load",g,false)}}(window,document,"script","tpwidget","//widget.seniverse.com/widget/chameleon.js"))</script>
-                    <script>tpwidget("init", {
-                        "flavor": "slim",
-                        "location": "WT33C6J2C563",
-                        "geolocation": "enabled",
-                        "language": "zh-chs",
-                        "unit": "c",
-                        "theme": "chameleon",
-                        "container": "tp-weather-widget",
-                        "bubble": "enabled",
-                        "alarmType": "badge",
-                        "color": "#FFFFFF",
-                        "uid": "U78371FB98",
-                        "hash": "cd55c15865ecbe0f16ba78ca60ad51eb"
-                    });
-                    tpwidget("show");</script>
-                </div>
-            </li>
-            <li class="layui-nav-item">
-                <a href="javascript:;">
-                    <img th:src="${manager.avatar}" class="layui-nav-img">
-                    <!--非 sec 标签获取当前用户名的写法-->
-                    <!--<span th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}"></span>-->
-                    <span sec:authentication="name"></span><!--&lt;!&ndash; 获得当前用户的用户名 &ndash;&gt;-->
-                </a>
-                <dl class="layui-nav-child">
-                    <dd><a href="">基本资料</a></dd>
-                    <dd><a href="">安全设置</a></dd>
-                </dl>
-            </li>
-            <li class="layui-nav-item">
-                <form name="out" th:action="@{/logout}" method="post">
-                    <a href="javascript:document.out.submit();" >退出</a>
-               </form>
-            </li>
-        </ul>
-    </div>
+<body class="child-body">
+<blockquote class="layui-elem-quote">
+    <p>音乐故事 后台管理系统</p>
+</blockquote>
 
-    <div class="layui-side layui-bg-black">
-        <div class="layui-side-scroll">
-            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-                <!--<li class="layui-nav-item layui-nav-itemed">-->
-                    <!--<a class="" href="javascript:;">所有商品</a>-->
-                    <!--<dl class="layui-nav-child">-->
-                        <!--<dd><a href="javascript:;">列表一</a></dd>-->
-                        <!--<dd><a href="javascript:;">列表二</a></dd>-->
-                        <!--<dd><a href="admin/list" target="content">列表三</a></dd>-->
-                    <!--</dl>-->
-                <!--</li>-->
-                <li class="layui-nav-item layui-nav-itemed" th:each="menuList:${menuList}">
-                    <a class="" href="javascript:;"><i class="layui-icon" th:utext="${menuList.icon}"></i><cite th:text="${menuList.name}"></cite></a>
-                    <dl class="layui-nav-child">
-                        <dd th:each="menuChild:${menuList.children}">
-                            <!--<a href="javascript:;" th:data="${menuChild.menuUrl}" th:text="${menuChild.name}"></a>-->
-                            <a th:href="${menuChild.menuUrl}" target="content"><i class="layui-icon" th:utext="${menuChild.icon}"></i><cite th:text="${menuChild.name}"></cite></a>
-                        </dd>
-                    </dl>
-                </li>
-            </ul>
-
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>最近</legend>
+</fieldset>
+<ul class="layui-timeline">
+    <li class="layui-timeline-item">
+        <i class="layui-icon layui-timeline-axis"></i>
+        <div class="layui-timeline-content layui-text">
+            <h3 class="layui-timeline-title">8月18日</h3>
+            <p>
+                layui 2.0 的一切准备工作似乎都已到位。发布之弦，一触即发。
+                <br>不枉近百个日日夜夜与之为伴。因小而大，因弱而强。
+                <br>无论它能走多远，抑或如何支撑？至少我曾倾注全心，无怨无悔 <i class="layui-icon"></i>
+            </p>
         </div>
-    </div>
+    </li>
+    <li class="layui-timeline-item">
+        <i class="layui-icon layui-timeline-axis"></i>
+        <div class="layui-timeline-content layui-text">
+            <h3 class="layui-timeline-title">8月16日</h3>
+            <p>杜甫的思想核心是儒家的仁政思想，他有<em>“致君尧舜上，再使风俗淳”</em>的宏伟抱负。个人最爱的名篇有：</p>
+            <ul>
+                <li>《登高》</li>
+                <li>《茅屋为秋风所破歌》</li>
+            </ul>
+        </div>
+    </li>
+    <li class="layui-timeline-item">
+        <i class="layui-icon layui-timeline-axis"></i>
+        <div class="layui-timeline-content layui-text">
+            <h3 class="layui-timeline-title">8月15日</h3>
+            <p>
+                中国人民抗日战争胜利日
+                <br>常常在想，尽管对这个国家有这样那样的抱怨，但我们的确生在了最好的时代
+                <br>铭记、感恩
+                <br>所有为中华民族浴血奋战的英雄将士
+                <br>永垂不朽
+            </p>
+        </div>
+    </li>
+    <li class="layui-timeline-item">
+        <i class="layui-icon layui-timeline-axis"></i>
+        <div class="layui-timeline-content layui-text">
+            <div class="layui-timeline-title">过去</div>
+        </div>
+    </li>
+</ul>
 
-    <div class="layui-body">
-        <!-- 内容主体区域 -->
-        <!--<div style="padding: 15px;" id="content">-->
-            <iframe name="content" id="content" src="/sys/adminList"></iframe>
-        <!--</div>-->
-    </div>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>曾经</legend>
+</fieldset>
+<ul class="layui-timeline">
+    <li class="layui-timeline-item">
+        <i class="layui-icon layui-timeline-axis"></i>
+        <div class="layui-timeline-content layui-text">
+            <div class="layui-timeline-title">2018年，layui 5.0 发布。并发展成为中国最受欢迎的前端UI框架（期望）</div>
+        </div>
+    </li>
+    <li class="layui-timeline-item">
+        <i class="layui-icon layui-timeline-axis"></i>
+        <div class="layui-timeline-content layui-text">
+            <div class="layui-timeline-title">2017年，layui 里程碑版本 2.0 发布</div>
+        </div>
+    </li>
+    <li class="layui-timeline-item">
+        <i class="layui-icon layui-timeline-axis"></i>
+        <div class="layui-timeline-content layui-text">
+            <div class="layui-timeline-title">2016年，layui 首个版本发布</div>
+        </div>
+    </li>
+    <li class="layui-timeline-item">
+        <i class="layui-icon layui-timeline-axis"></i>
+        <div class="layui-timeline-content layui-text">
+            <div class="layui-timeline-title">2015年，layui 孵化</div>
+        </div>
+    </li>
+    <li class="layui-timeline-item">
+        <i class="layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-timeline-axis"></i>
+        <div class="layui-timeline-content layui-text">
+            <div class="layui-timeline-title">更久前，轮子时代。维护几个独立组件：layer等</div>
+        </div>
+    </li>
+</ul>
 
-    <div class="layui-footer">
-        <!-- 底部固定区域 -->
-        © cly00.top
-    </div>
-</div>
-<!--<script src="/js/jquery-3.2.1.min.js"></script>-->
+
 <script src="/layui/layui.js"></script>
-<!--让iframe正确高度-->
-<!--<script src="/js/index.js"></script>-->
 <script>
     //JavaScript代码区域
     layui.use('element', function(){
         var element = layui.element;
         $ = layui.jquery;
-        //    利用ajax 将菜单内容加载到指定区域 避免使用iframe
-        //    缺点：对于错误页面 无法直接加载静态资源 需要改spring的拦截器 比较麻烦 同时页面表单提交也很无语
-        // $(".layui-nav-child a").click(function(){
-        //     var code = $(this).attr("data");
-        //     $("#content").load(code);
-        //     $.ajax({
-        //         url:code,
-        //         type:"get",
-        //         dataType:"html",
-        //         success:function(data){
-        //             $("#content").html(data);
-        //         },
-        //         error : function(xhr) {
-        //             if(xhr.status==404){
-        //                 $("#content").load('/error/404.html');
-        //             }else if(xhr.status=403){
-        //                 $("#content").load('/error/403.html');
-        //             }else{
-        //                 $("#content").load('/error/500.html');
-        //             }
-        //         }
-        //     })
-        // });
-        //隐藏左侧导航
-        $(".hideMenu").click(function(){
-            $(".layui-layout-admin").toggleClass("showMenu");
-        })
     });
 </script>
 </body>

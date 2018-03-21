@@ -17,31 +17,31 @@
 </div>
 
 <div class="layui-row">
-    <form  class="layui-form" th:action="@{/sys/adminList}">
+    <form  class="layui-form" th:action="@{/sys/roleList}">
         <div class="layui-form-item search-row">
             <div class="layui-inline">
                 <label class="search-label">角色名</label>
                 <div class="search-input">
-                    <input type="text" name="username" class="layui-input">
+                    <input type="text" name="role" class="layui-input" th:value="${roleRt.role}">
                 </div>
             </div>
             <div class="layui-inline">
                 <label class="search-label">角色类型</label>
                 <div class="search-input">
-                    <select name="gender">
+                    <select name="roleType">
                         <option value=""></option>
-                        <option value="1">后台角色</option>
-                        <option value="2">前台角色</option>
+                        <option value="1" th:selected="${roleRt.roleType=='1'}">后台角色</option>
+                        <option value="2" th:selected="${roleRt.roleType=='2'}">前台角色</option>
                     </select>
                 </div>
             </div>
             <div class="layui-inline">
                 <label class="search-label">是否可用</label>
                 <div class="search-input">
-                    <select name="state">
+                    <select name="available">
                         <option value=""></option>
-                        <option value="0">停用</option>
-                        <option value="1">正常</option>
+                        <option value="0" th:selected="${#bools.isFalse(roleRt.available)}">停用</option>
+                        <option value="1" th:selected="${#bools.isTrue(roleRt.available)}">正常</option>
                     </select>
                 </div>
             </div>

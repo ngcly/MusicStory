@@ -36,11 +36,11 @@
             <div class="layui-inline">
                 <label class="search-label">创建时间</label>
                 <div class="search-input">
-                    <input type="text" name="beginTime" id="bt" class="layui-input" th:value="${manger.beginTime}">
+                    <input type="text" name="beginTime" class="layui-input time-item" th:value="${manger.beginTime}">
                 </div>
                 <div class="layui-form-mid">-</div>
                 <div class="search-input">
-                    <input type="text" name="endTime" id="et" class="layui-input" th:value="${manger.endTime}">
+                    <input type="text" name="endTime" class="layui-input time-item" th:value="${manger.endTime}">
                 </div>
             </div>
             <div class="layui-inline">
@@ -147,15 +147,13 @@
 
         var laydate = layui.laydate;
         //执行一个laydate实例
-        laydate.render({
-            elem: '#bt', //指定元素
-            type: 'datetime',
-            max:0
-        });
-        laydate.render({
-            elem: '#et', //指定元素
-            type: 'datetime',
-            max:0
+        //同时绑定多个
+        lay('.time-item').each(function(){
+            laydate.render({
+                elem: this,
+                max:0,
+                trigger: 'click'
+            });
         });
     });
 </script>

@@ -18,7 +18,10 @@ public class RoleService {
     @Autowired
     RoleRepository roleRepository;
 
+    /**
+     * 根据条件查询角色列表
+     */
     public Page<Role> getRoleList(Pageable pageable,Role role){
-        return roleRepository.findAll(pageable);
+        return roleRepository.findAll(RoleRepository.getRoleList(role.getRole(),role.getAvailable(),role.getRoleType()),pageable);
     }
 }
