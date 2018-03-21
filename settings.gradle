@@ -1,4 +1,4 @@
-rootProject.name = 'MusicBook'
+rootProject.name = 'MusicStory'
 include 'repository'
 include 'service'
 include 'interface'
