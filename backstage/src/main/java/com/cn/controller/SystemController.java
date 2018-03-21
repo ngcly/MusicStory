@@ -46,6 +46,7 @@ public class SystemController {
                                           Pageable pageable, Model model, Manager manager){
         Page<Manager> managerList = managerService.getManagersList(pageable,manager);
         model.addAttribute("managerList",managerList);
+        model.addAttribute("manger",manager);
         return "manager/managerList";
     }
 

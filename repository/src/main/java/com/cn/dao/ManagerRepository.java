@@ -29,11 +29,12 @@ public interface ManagerRepository extends JpaRepository<Manager,String>,JpaSpec
     @Query("select t from Manager t where t.state='1'")
     List<Manager> findNormalUsers();
 
-    static Specification<Manager> getManagerList(final String username,final Byte state,final Byte gender,final Date beginTime,final Date endTime){
-        return new Specification<Manager>() {
-            @Override
-            public Predicate toPredicate(Root<Manager> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                List<Predicate> predicates = new ArrayList<Predicate>();
+    /**
+     * 动态查询管理员数据
+     */
+    static Specification<Manager> getManagerList(String username,Byte state,Byte gender,Date beginTime,Date endTime){
+        return (Root<Manager> root, CriteriaQuery<?> query, CriteriaBuilder cb)->{
+                List<Predicate> predicates = new ArrayList<>();
                 if(username!=null&&!"".equals(username)) {
                     predicates.add(cb.like(root.get("username"),"%"+username+"%"));
                 }
@@ -53,9 +54,7 @@ public interface ManagerRepository extends JpaRepository<Manager,String>,JpaSpec
                 if(endTime!=null){
                     predicates.add(cb.lessThanOrEqualTo(root.get("createTime"), endTime));
                 }
-
                 return query.where(cb.and(predicates.toArray(new Predicate[predicates.size()]))).getRestriction();
-            }
         };
     }
 }

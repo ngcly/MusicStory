@@ -1,1 +1,2 @@
-.child-body{ padding: 15px }
+.child-body{ padding: 10px 15px 15px 15px }
+.child-nav{ position: relative;border-bottom: 1px solid #e5e5e5;overflow: hidden;height: 39px;line-height: 39px;margin-bottom: 15px}

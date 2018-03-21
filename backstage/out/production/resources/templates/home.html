@@ -87,7 +87,7 @@
                         <!--<dd><a href="admin/list" target="content">列表三</a></dd>-->
                     <!--</dl>-->
                 <!--</li>-->
-                <li class="layui-nav-item" th:each="menuList:${menuList}">
+                <li class="layui-nav-item layui-nav-itemed" th:each="menuList:${menuList}">
                     <a class="" href="javascript:;"><i class="layui-icon" th:utext="${menuList.icon}"></i><cite th:text="${menuList.name}"></cite></a>
                     <dl class="layui-nav-child">
                         <dd th:each="menuChild:${menuList.children}">
