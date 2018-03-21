@@ -4,14 +4,12 @@ import com.cn.dao.ManagerRepository;
 import com.cn.entity.Manager;
 import com.cn.util.DateUtil;
 import io.netty.util.internal.StringUtil;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
 import java.util.Date;
 import java.util.Optional;
 

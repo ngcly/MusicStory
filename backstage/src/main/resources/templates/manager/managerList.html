@@ -1,8 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:javascript="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no" />
     <title>管理员列表</title>
     <link rel="stylesheet" href="/layui/css/layui.css">
     <link rel="stylesheet" href="/css/public.css">
@@ -19,26 +26,26 @@
 
 <div class="layui-row">
     <form  class="layui-form" th:action="@{/sys/adminList}">
-        <div class="layui-form-item">
+        <div class="layui-form-item search-row">
             <div class="layui-inline">
-                <label class="layui-form-label">用户名</label>
-                <div class="layui-input-inline">
+                <label class="search-label">用户名</label>
+                <div class="search-input">
                     <input type="text" name="username" class="layui-input" th:value="${manger.username}">
                 </div>
             </div>
             <div class="layui-inline">
-                <label class="layui-form-label">创建时间</label>
-                <div class="layui-input-inline">
+                <label class="search-label">创建时间</label>
+                <div class="search-input">
                     <input type="text" name="beginTime" id="bt" class="layui-input" th:value="${manger.beginTime}">
                 </div>
                 <div class="layui-form-mid">-</div>
-                <div class="layui-input-inline">
+                <div class="search-input">
                     <input type="text" name="endTime" id="et" class="layui-input" th:value="${manger.endTime}">
                 </div>
             </div>
             <div class="layui-inline">
-                <label class="layui-form-label">性别</label>
-                <div class="layui-input-block">
+                <label class="search-label">性别</label>
+                <div class="search-input">
                     <select name="gender">
                         <option value=""></option>
                         <option value="1" th:selected="${manger.gender==1}">男</option>
@@ -47,20 +54,21 @@
                 </div>
             </div>
             <div class="layui-inline">
-                <label class="layui-form-label">状态</label>
-                <div class="layui-input-block">
+                <label class="search-label">状态</label>
+                <div class="search-input">
                     <select name="state">
                         <option value=""></option>
-                        <option value="0">初始化</option>
+                        <option value="0" th:selected="${manger.state==0}">初始化</option>
                         <option value="1" th:selected="${manger.state==1}">正常</option>
                         <option value="2" th:selected="${manger.state==2}">封禁</option>
                     </select>
                 </div>
             </div>
             <div class="layui-inline">
-                <div class="layui-input-block">
-                    <button class="layui-btn layui-btn-sm" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
-                </div>
+                <button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
+            </div>
+            <div class="layui-inline">
+                <a href="#" type="button" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
             </div>
         </div>
         <input type="hidden" name="page" id="pg">
@@ -90,7 +98,11 @@
         <td th:case="'0'">初始化</td><td th:case="'1'">正常</td><td th:case="'2'">封禁</td><td th:case="*"></td>
         <td th:text="${manager.createTime}"></td>
         <td th:text="${manager.updateTime}"></td>
-        <td><a sec:authorize="hasAuthority('admin')" class="remove" th:attr="data-id=${manager.id}" href="javascript:void(0);">删除</a></td>
+        <td>
+            <a class="layui-btn layui-btn-xs" th:attr="data-id=${manager.id}" href="javascript:void(0);"><i class="layui-icon iconfont icon-view"></i>详情</a>
+            <a class="layui-btn layui-btn-xs" th:attr="data-id=${manager.id}" href="javascript:void(0);"><i class="layui-icon">&#xe642;</i>编辑</a>
+            <a sec:authorize="hasAuthority('admin')" class="layui-btn layui-btn-danger layui-btn-xs" th:attr="data-id=${manager.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
+        </td>
     </tr>
     </tbody>
 </table>

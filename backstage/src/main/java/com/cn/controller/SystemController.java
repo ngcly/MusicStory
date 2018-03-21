@@ -1,7 +1,9 @@
 package com.cn.controller;
 
 import com.cn.ManagerService;
+import com.cn.RoleService;
 import com.cn.entity.Manager;
+import com.cn.entity.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +29,8 @@ import javax.validation.Valid;
 public class SystemController {
     @Autowired
     ManagerService managerService;
+    @Autowired
+    RoleService roleService;
 
     /***
      * 下面两个底层实现一样  唯一区别就是hasRole默认添加 ROLE_ 前缀
@@ -43,7 +47,7 @@ public class SystemController {
      */
     @RequestMapping("/adminList")
     public String managerList(@PageableDefault(sort = { "createTime" }, direction = Sort.Direction.DESC)
-                                          Pageable pageable, Model model, Manager manager){
+                                          Pageable pageable, Model model, @Valid Manager manager){
         Page<Manager> managerList = managerService.getManagersList(pageable,manager);
         model.addAttribute("managerList",managerList);
         model.addAttribute("manger",manager);
@@ -80,8 +84,11 @@ public class SystemController {
      * 角色列表页
      */
     @RequestMapping("/roleList")
-    public String roleList(@PageableDefault(value = 1, sort = { "createTime" }, direction = Sort.Direction.DESC)
-                                       Pageable pageable,Model model){
+    public String roleList(@PageableDefault(value = 1, sort = { "role" }, direction = Sort.Direction.DESC)
+                                       Pageable pageable,@Valid Role role,Model model){
+        Page<Role> roleList = roleService.getRoleList(pageable,role);
+        model.addAttribute("roleList",roleList);
+        model.addAttribute("roleRt",role);
         return "role/roleList";
     }
 
