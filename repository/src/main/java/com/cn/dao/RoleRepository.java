@@ -24,7 +24,7 @@ public interface RoleRepository extends JpaRepository<Role,Long>,JpaSpecificatio
         return (Root<Role> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (roleName != null && !"".equals(roleName)) {
-                predicates.add(cb.like(root.get("role"), "%" + roleName + "%"));
+                predicates.add(cb.like(root.get("roleName"), "%" + roleName + "%"));
             }
 
             if (available != null) {

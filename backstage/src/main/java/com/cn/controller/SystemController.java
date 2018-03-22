@@ -84,7 +84,7 @@ public class SystemController {
      * 角色列表页
      */
     @RequestMapping("/roleList")
-    public String roleList(@PageableDefault(value = 1, sort = { "role" }, direction = Sort.Direction.DESC)
+    public String roleList(@PageableDefault(sort = { "roleName" }, direction = Sort.Direction.DESC)
                                        Pageable pageable,@Valid Role role,Model model){
         Page<Role> roleList = roleService.getRoleList(pageable,role);
         model.addAttribute("roleList",roleList);

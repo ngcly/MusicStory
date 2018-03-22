@@ -24,10 +24,10 @@ public class Role implements Serializable {
     @GeneratedValue(strategy= GenerationType.AUTO)
     @Column(name="id")
     private Long id; // 编号
-    private String role; // 角色标识程序中判断使用,如"admin",这个是唯一的:
+    private String roleName; // 角色标识程序中判断使用,如"admin",这个是唯一的:
     private Byte roleType;     //角色类型  1-后台角色 2-前台角色
     private String description; // 角色描述,UI界面显示使用
-    private Boolean available = Boolean.FALSE; // 是否可用,如果不可用将不会添加给用户
+    private Boolean available; // 是否可用,如果不可用将不会添加给用户
 
     // 用户 - 角色关系定义;
     @ManyToMany

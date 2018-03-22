@@ -22,7 +22,7 @@
             <div class="layui-inline">
                 <label class="search-label">角色名</label>
                 <div class="search-input">
-                    <input type="text" name="role" class="layui-input" th:value="${roleRt.role}">
+                    <input type="text" name="roleName" class="layui-input" th:value="${roleRt.roleName}">
                 </div>
             </div>
             <div class="layui-inline">
@@ -40,7 +40,7 @@
                 <div class="search-input">
                     <select name="available">
                         <option value=""></option>
-                        <option value="0" th:selected="${#bools.isFalse(roleRt.available)}">停用</option>
+                        <option value="0" th:selected="${#strings.equals(roleRt.available,'false')}">停用</option>
                         <option value="1" th:selected="${#bools.isTrue(roleRt.available)}">正常</option>
                     </select>
                 </div>
@@ -60,7 +60,7 @@
 <table class="layui-table" lay-filter="roles">
     <thead>
     <tr>
-        <th lay-data="{field:'role', sort:true}">角色名</th>
+        <th lay-data="{field:'roleName', sort:true}">角色名</th>
         <th lay-data="{field:'description'}">角色描述</th>
         <th lay-data="{field:'roleType'}">角色类型</th>
         <th lay-data="{field:'available'}">是否可用</th>
@@ -69,12 +69,12 @@
     </thead>
     <tbody>
     <tr th:each="role:${roleList}">
-        <td th:text="${role.role}"></td>
+        <td th:text="${role.roleName}"></td>
         <td th:text="${role.description}"></td>
         <td th:text="${#strings.equals(role.roleType,'1')?'后台角色':'前台角色'}"></td>
-        <td th:text="${#bools.isTrue(role.available)?'可用':'停用'}"></td>
+        <td th:text="${#bools.isTrue(role.available)?'正常':'停用'}"></td>
         <td>
-            <a class="layui-btn layui-btn-xs" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon iconfont icon-view"></i>详情</a>
+            <a class="layui-btn layui-btn-xs" th:attr="data-id=${role.id}" href="javascript:void(0);" th:utext="'<i class=\'layui-icon iconfont icon-view\'></i>'+${#bools.isTrue(role.available)?'停用':'启用'}"></a>
             <a class="layui-btn layui-btn-xs" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe642;</i>编辑</a>
             <a sec:authorize="hasAuthority('admin')" class="layui-btn layui-btn-danger layui-btn-xs" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
         </td>

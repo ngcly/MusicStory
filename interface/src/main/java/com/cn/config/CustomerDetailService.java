@@ -34,7 +34,7 @@ public class CustomerDetailService implements UserDetailsService, SocialUserDeta
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userService.findUserByName(username).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
         Set<GrantedAuthority> authorities = new HashSet<>();
-        user.getRoleList().forEach(r -> authorities.add(new SimpleGrantedAuthority(r.getRole())));
+        user.getRoleList().forEach(r -> authorities.add(new SimpleGrantedAuthority(r.getRoleName())));
         CustomerDetail customer = new CustomerDetail(user);
         return customer;
     }

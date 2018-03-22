@@ -39,7 +39,7 @@ public class ManagerDetail extends Manager implements UserDetails{
         if(userRoles != null)
         {
             for (Role role : userRoles) {
-                SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getRole());
+                SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getRoleName());
                 authorities.add(authority);
             }
         }

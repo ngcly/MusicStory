@@ -22,6 +22,6 @@ public class RoleService {
      * 根据条件查询角色列表
      */
     public Page<Role> getRoleList(Pageable pageable,Role role){
-        return roleRepository.findAll(RoleRepository.getRoleList(role.getRole(),role.getAvailable(),role.getRoleType()),pageable);
+        return roleRepository.findAll(RoleRepository.getRoleList(role.getRoleName(),role.getAvailable(),role.getRoleType()),pageable);
     }
 }
