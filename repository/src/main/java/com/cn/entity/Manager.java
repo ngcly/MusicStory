@@ -2,6 +2,7 @@ package com.cn.entity;
 
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -37,7 +38,9 @@ public class Manager implements Serializable {
     private Set<Role> roleList;// 一个用户具有多个角色
 
     @Transient
-    private String beginTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date beginTime;
     @Transient
-    private String endTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date endTime;
 }

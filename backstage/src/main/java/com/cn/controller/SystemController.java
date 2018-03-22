@@ -1,8 +1,11 @@
 package com.cn.controller;
 
+import com.cn.LogService;
 import com.cn.ManagerService;
 import com.cn.RoleService;
+import com.cn.entity.LoginLog;
 import com.cn.entity.Manager;
+import com.cn.entity.Permission;
 import com.cn.entity.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 后台客服管理员 控制类
@@ -31,6 +35,8 @@ public class SystemController {
     ManagerService managerService;
     @Autowired
     RoleService roleService;
+    @Autowired
+    LogService logService;
 
     /***
      * 下面两个底层实现一样  唯一区别就是hasRole默认添加 ROLE_ 前缀
@@ -97,6 +103,20 @@ public class SystemController {
      */
     @RequestMapping("/menuList")
     public String menuList(Model model){
+        List<Permission> permissionList = roleService.getPermissionList();
+        model.addAttribute("menuList",permissionList);
         return "menu/menuList";
+    }
+
+    /**
+     * 登录日志列表页
+     */
+    @RequestMapping("/loginLogs")
+    public String loginLogList(@PageableDefault(sort = { "loginTime" }, direction = Sort.Direction.DESC)
+                                           Pageable pageable, @Valid LoginLog loginLog, Model model){
+        Page<LoginLog> logs = logService.getLoginLogList(pageable,loginLog);
+        model.addAttribute("logList",logs);
+        model.addAttribute("log",loginLog);
+        return "system/logList";
     }
 }

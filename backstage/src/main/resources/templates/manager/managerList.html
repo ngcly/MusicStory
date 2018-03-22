@@ -35,12 +35,12 @@
             </div>
             <div class="layui-inline">
                 <label class="search-label">创建时间</label>
-                <div class="search-input">
-                    <input type="text" name="beginTime" class="layui-input time-item" th:value="${manger.beginTime}">
+                <div class="date-input">
+                    <input type="text" name="beginTime" class="layui-input time-item" th:value="${#dates.format(manger.beginTime,'yyyy-MM-dd HH:mm:ss')}">
                 </div>
                 <div class="layui-form-mid">-</div>
-                <div class="search-input">
-                    <input type="text" name="endTime" class="layui-input time-item" th:value="${manger.endTime}">
+                <div class="date-input">
+                    <input type="text" name="endTime" class="layui-input time-item" th:value="${#dates.format(manger.endTime,'yyyy-MM-dd HH:mm:ss')}">
                 </div>
             </div>
             <div class="layui-inline">
@@ -81,9 +81,9 @@
     <tr>
         <th lay-data="{field:'username', sort:true}">用户名</th>
         <th lay-data="{field:'realName'}">真实姓名</th>
-        <th lay-data="{field:'gender'}">性别</th>
-        <th lay-data="{field:'birthday'}">生日</th>
-        <th lay-data="{field:'state'}">状态</th>
+        <th lay-data="{field:'gender',width:70}">性别</th>
+        <th lay-data="{field:'birthday',width:110}">生日</th>
+        <th lay-data="{field:'state',width:70}">状态</th>
         <th lay-data="{field:'createTime', sort:true}">创建时间</th>
         <th lay-data="{field:'updateTime', sort:true}">修改时间</th>
         <th lay-data="{field:'opt'}">操作</th>
@@ -96,8 +96,8 @@
         <td th:text="${#strings.equals(manager.gender,'1')?'男':'女'}"></td>
         <td th:text="${#dates.format(manager.birthday, 'yyyy-MM-dd')}"></td>
         <td th:case="'0'">初始化</td><td th:case="'1'">正常</td><td th:case="'2'">封禁</td><td th:case="*"></td>
-        <td th:text="${manager.createTime}"></td>
-        <td th:text="${manager.updateTime}"></td>
+        <td th:text="${#dates.format(manager.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+        <td th:text="${#dates.format(manager.updateTime,'yyyy-MM-dd HH:mm:ss')}"></td>
         <td>
             <a class="layui-btn layui-btn-xs" th:attr="data-id=${manager.id}" href="javascript:void(0);"><i class="layui-icon iconfont icon-detail"></i>详情</a>
             <a class="layui-btn layui-btn-xs" th:attr="data-id=${manager.id}" href="javascript:void(0);"><i class="layui-icon">&#xe642;</i>编辑</a>
@@ -151,6 +151,7 @@
         lay('.time-item').each(function(){
             laydate.render({
                 elem: this,
+                type: 'datetime',
                 max:0,
                 trigger: 'click'
             });

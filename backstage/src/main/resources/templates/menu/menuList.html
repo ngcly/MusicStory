@@ -1,12 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>菜单列表</title>
     <link rel="stylesheet" href="/layui/css/layui.css">
     <link rel="stylesheet" href="/css/public.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 </head>
 <body class="child-body">
-菜单列表
+<div class="child-nav">
+    <span class="layui-breadcrumb">
+         <a>系统设置</a>
+         <a><cite>菜单列表</cite></a>
+    </span>
+    <a class="layui-btn layui-btn-sm" href="javascript:location.replace(location.href);" title="刷新" style="float:right;margin-top: 3px"><i class="layui-icon" style="line-height:30px">&#x1002;</i></a>
+</div>
+
+<div class="layui-row">
+    <div class="layui-form">
+        <div class="layui-form-item search-row">
+            <div class="layui-inline">
+                <a href="#" type="button" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增菜单</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<table class="layui-table" id="menuTable">
+    <thead>
+    <tr>
+        <th>菜单名称</th>
+        <th>权限标识</th>
+        <th>链接地址</th>
+        <th>菜单类型</th>
+        <th>是否可用</th>
+        <th>排序</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="menu:${menuList}" th:class="${#strings.equals(menu.parentId,'0')?'treegrid-'+menu.id : 'treegrid-'+menu.id+' treegrid-parent-'+menu.parentId}">
+        <td th:text="${menu.name}"></td>
+        <td th:text="${menu.permission}"></td>
+        <td th:text="${menu.url}"></td>
+        <td th:text="${#strings.equals(menu.resourceType,'menu')?'菜单':'按钮'}"></td>
+        <td th:text="${#bools.isTrue(menu.available)?'正常':'停用'}"></td>
+        <td th:text="${menu.sort}"></td>
+        <td>
+            <a class="layui-btn layui-btn-xs" th:attr="data-id=${menu.id}" href="javascript:void(0);"><i class="layui-icon">&#xe61f;</i>添加子菜单</a>
+            <a class="layui-btn layui-btn-xs" th:attr="data-id=${menu.id}" href="javascript:void(0);" th:utext="'<i class=\'layui-icon iconfont icon-view\'></i>'+${#bools.isTrue(menu.available)?'停用':'启用'}"></a>
+            <a class="layui-btn layui-btn-xs" th:attr="data-id=${menu.id}" href="javascript:void(0);"><i class="layui-icon">&#xe642;</i>编辑</a>
+            <a sec:authorize="hasAuthority('admin')" class="layui-btn layui-btn-danger layui-btn-xs" th:attr="data-id=${menu.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<script src="/layui/layui.js"></script>
+<script src="/js/jquery-3.2.1.min.js"></script>
+<script src="/js/jquery.treegrid.min.js"></script>
+<script type="text/javascript">
+    layui.use(['element'], function(){
+        $ = layui.jquery;
+        $("#menuTable").treegrid({
+            expanderExpandedClass: 'glyphicon glyphicon-minus',
+            expanderCollapsedClass: 'glyphicon glyphicon-plus'
+        });
+    });
+</script>
 </body>
 </html>

@@ -2,6 +2,7 @@ package com.cn.entity;
 
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -22,9 +23,16 @@ public class LoginLog {
     @Column(name="id")
     private String id;
     private String userId;    //登录用户IP
+    private String userName;  //登录用户名
     private Byte userType;    //用户类型 1-后台管理员 2-前台会员
     private String loginIp;   //登录IP
     private String addressIp; //IP地址
     private Date loginTime;   //登录时间
 
+    @Transient
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date beginTime;
+    @Transient
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date endTime;
 }

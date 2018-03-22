@@ -34,6 +34,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
         Manager userDetails = (Manager) authentication.getPrincipal();
         LoginLog loginLog = new LoginLog();
         loginLog.setUserId(userDetails.getId());
+        loginLog.setUserName(userDetails.getUsername());
         loginLog.setUserType((byte)1);
         String ip = IpUtil.getIp(request);
         loginLog.setLoginIp(ip);
