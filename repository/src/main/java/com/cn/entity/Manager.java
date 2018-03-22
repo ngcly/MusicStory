@@ -17,13 +17,14 @@ import java.util.Set;
  */
 @Data
 @Entity
-@Table(name="manager",uniqueConstraints = {@UniqueConstraint(columnNames="username")})
+@Table(name="manager")
 public class Manager implements Serializable {
     @Id
     @GeneratedValue(generator = "id")
     @GenericGenerator(name = "id", strategy = "uuid")
     @Column(name="id")
     private String id;
+    @Column(unique = true)
     private String username;  //用户名
     private String password;  //密码
     private Byte gender;      //性别 1-男 2-女

@@ -34,16 +34,6 @@
                 </div>
             </div>
             <div class="layui-inline">
-                <label class="search-label">创建时间</label>
-                <div class="date-input">
-                    <input type="text" name="beginTime" class="layui-input time-item" th:value="${#dates.format(manger.beginTime,'yyyy-MM-dd HH:mm:ss')}">
-                </div>
-                <div class="layui-form-mid">-</div>
-                <div class="date-input">
-                    <input type="text" name="endTime" class="layui-input time-item" th:value="${#dates.format(manger.endTime,'yyyy-MM-dd HH:mm:ss')}">
-                </div>
-            </div>
-            <div class="layui-inline">
                 <label class="search-label">性别</label>
                 <div class="search-input">
                     <select name="gender">
@@ -65,10 +55,20 @@
                 </div>
             </div>
             <div class="layui-inline">
+                <label class="search-label">创建时间</label>
+                <div class="date-input">
+                    <input type="text" name="beginTime" class="layui-input time-item" th:value="${#dates.format(manger.beginTime,'yyyy-MM-dd HH:mm:ss')}" placeholder="开始时间">
+                </div>
+                <div class="layui-form-mid">-</div>
+                <div class="date-input">
+                    <input type="text" name="endTime" class="layui-input time-item" th:value="${#dates.format(manger.endTime,'yyyy-MM-dd HH:mm:ss')}" placeholder="截止时间">
+                </div>
+            </div>
+            <div class="layui-inline">
                 <button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
             </div>
             <div class="layui-inline">
-                <a href="#" type="button" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
+                <a href="" type="button" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
             </div>
         </div>
         <input type="hidden" name="page" id="pg">

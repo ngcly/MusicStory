@@ -46,11 +46,11 @@
             <div class="layui-inline">
                 <label class="search-label">登入时间</label>
                 <div class="date-input">
-                    <input type="text" name="beginTime" class="layui-input time-item" th:value="${#dates.format(log.beginTime,'yyyy-MM-dd HH:mm:ss')}">
+                    <input type="text" name="beginTime" class="layui-input time-item" th:value="${#dates.format(log.beginTime,'yyyy-MM-dd HH:mm:ss')}" placeholder="开始时间">
                 </div>
                 <div class="layui-form-mid">-</div>
                 <div class="date-input">
-                    <input type="text" name="endTime" class="layui-input time-item" th:value="${#dates.format(log.endTime,'yyyy-MM-dd HH:mm:ss')}">
+                    <input type="text" name="endTime" class="layui-input time-item" th:value="${#dates.format(log.endTime,'yyyy-MM-dd HH:mm:ss')}" placeholder="截止时间">
                 </div>
             </div>
             <div class="layui-inline">
