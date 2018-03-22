@@ -17,7 +17,7 @@ import java.util.Set;
  */
 @Data
 @Entity
-@Table(name="manager")
+@Table(name="manager",uniqueConstraints = {@UniqueConstraint(columnNames="username")})
 public class Manager implements Serializable {
     @Id
     @GeneratedValue(generator = "id")

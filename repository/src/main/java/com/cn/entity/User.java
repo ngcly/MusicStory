@@ -20,7 +20,7 @@ import java.util.Set;
  */
 @Data
 @Entity
-@Table(name="user")
+@Table(name="user",uniqueConstraints = {@UniqueConstraint(columnNames="username")})
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
