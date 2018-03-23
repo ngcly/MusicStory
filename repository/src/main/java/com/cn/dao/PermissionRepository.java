@@ -3,6 +3,7 @@ package com.cn.dao;
 import com.cn.entity.Permission;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -16,11 +17,16 @@ import java.util.List;
  */
 
 @Repository
-//@Table(name="permission")
-//@Qualifier("permissionRepository")
 public interface PermissionRepository extends JpaRepository<Permission,Long> {
 
-    @Query("select t from Permission t where t.available= true order by t.sort asc")
+    @Query("select t from Permission t order by t.sort asc")
     List<Permission> findMenuList();
+
+//    @Modifying
+//    @Query("delete from Permission t where t.parentIds like :parentId%")
+//    void deleteMenus(@Param("parentId") String parentId);
+
+    void deletePermissionByParentIdsStartingWith(String parentId);
+
 }
 

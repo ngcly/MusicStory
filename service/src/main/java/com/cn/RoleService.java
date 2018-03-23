@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 角色权限service
@@ -25,10 +27,57 @@ public class RoleService {
     PermissionRepository permissionRepository;
 
     /**
+     * 根据ID获取角色
+     */
+    public Role findRole(long roleId){
+        return roleRepository.getOne(roleId);
+    }
+
+    /**
      * 根据条件查询角色列表
      */
     public Page<Role> getRoleList(Pageable pageable,Role role){
         return roleRepository.findAll(RoleRepository.getRoleList(role.getRoleName(),role.getAvailable(),role.getRoleType()),pageable);
+    }
+
+    /**
+     * 保存授权
+     */
+    @Transactional
+    public void saveGrant(long roleId,String menuIds){
+        Role role = roleRepository.getOne(roleId);
+        List<Permission> permissions = permissionRepository.findMenuList();
+        List<Permission> permissionList = new ArrayList<>();
+        String[] permissionIds = menuIds.split(",");
+        for(String permissionId:permissionIds){
+            for(Permission permission:permissions){
+                if(permissionId.equals(permission.getId().toString())){
+                    permissionList.add(permission);
+                }
+            }
+        }
+        role.setPermissions(permissionList);
+    }
+
+    /**
+     * 修改角色是否可用
+     */
+    @Transactional
+    public void altAvailable(long roleId){
+        Role role = roleRepository.getOne(roleId);
+        if(role.getAvailable()){
+            role.setAvailable(false);
+        }else{
+            role.setAvailable(true);
+        }
+    }
+
+    /**
+     * 删除角色
+     */
+    @Transactional
+    public void delRole(long roleId){
+        roleRepository.deleteById(roleId);
     }
 
     /**
@@ -37,4 +86,15 @@ public class RoleService {
     public List<Permission> getPermissionList(){
         return permissionRepository.findAll();
     }
+
+    /**
+     * 删除菜单
+     */
+    @Transactional
+    public void delMenu(long menuId){
+        Permission permission = permissionRepository.getOne(menuId);
+        permissionRepository.deletePermissionByParentIdsStartingWith(permission.getParentIds()+"/"+permission.getId());
+        permissionRepository.delete(permission);
+    }
+
 }

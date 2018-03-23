@@ -66,4 +66,12 @@ public class ManagerService {
         managerRepository.save(manager);
         return "成功";
     }
+
+    /**
+     * 删除管理员
+     */
+    @Transactional
+    public void delManager(String managerId){
+        managerRepository.deleteById(managerId);
+    }
 }

@@ -28,7 +28,6 @@ public class Permission implements Serializable {
     private String icon;
     private Long parentId; //父编号
     private String parentIds; //父编号列表
-    private Boolean available;
     private Integer sort; //排序
 
     @ManyToMany

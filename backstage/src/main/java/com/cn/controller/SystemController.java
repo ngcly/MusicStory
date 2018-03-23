@@ -1,12 +1,17 @@
 package com.cn.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.cn.LogService;
 import com.cn.ManagerService;
 import com.cn.RoleService;
+import com.cn.dto.TreeDTO;
 import com.cn.entity.LoginLog;
 import com.cn.entity.Manager;
 import com.cn.entity.Permission;
 import com.cn.entity.Role;
+import com.cn.util.MenuUtil;
+import com.cn.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,12 +20,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 后台客服管理员 控制类
@@ -64,7 +69,7 @@ public class SystemController {
      * 管理员编辑页
      */
     @PreAuthorize("hasAuthority('admin')")
-    @RequestMapping("/adminAlt")
+    @RequestMapping("/adminEdit")
     public String altManager(@RequestParam(required = false)String managerId,Model model){
 
         return "manager/managerAlt";
@@ -87,6 +92,22 @@ public class SystemController {
     }
 
     /**
+     * 删除管理员
+     */
+    @PreAuthorize("hasAuthority('admin')")
+    @ResponseBody
+    @RequestMapping("/managerDel")
+    public ModelMap delManager(@RequestParam String managerId){
+        try {
+            managerService.delManager(managerId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return RestUtil.Error(500);
+        }
+        return RestUtil.Success();
+    }
+
+    /**
      * 角色列表页
      */
     @RequestMapping("/roleList")
@@ -99,6 +120,68 @@ public class SystemController {
     }
 
     /**
+     * 角色授权页面
+     */
+    @RequestMapping("/grant")
+    public String grantForm(@RequestParam long roleId, Model model) {
+        List<Permission> permissions = roleService.getPermissionList();
+        List<Permission> rolePermissions = roleService.findRole(roleId).getPermissions();
+        String menuList = JSON.toJSONString(MenuUtil.makeTreeList(permissions,rolePermissions));
+        model.addAttribute("roleId", roleId);
+        model.addAttribute("menuList",menuList);
+        return "role/grant";
+    }
+
+    /**
+     * 保存授权
+     * @param roleId
+     * @param menuIds
+     * @return
+     */
+    @RequestMapping("/saveGrant")
+    @ResponseBody
+    public ModelMap saveGrant(long roleId, String menuIds){
+        try {
+            roleService.saveGrant(roleId,menuIds);
+        }catch (Exception e){
+            e.printStackTrace();
+            return RestUtil.Error(500);
+        }
+        return RestUtil.Success();
+    }
+
+    /**
+     * 是否停用角色
+     */
+    @RequestMapping("/togAvailable")
+    @ResponseBody
+    public ModelMap altRole(@RequestParam long roleId){
+        try {
+            roleService.altAvailable(roleId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return RestUtil.Error(500,"服务异常");
+        }
+        return RestUtil.Success();
+    }
+
+    /**
+     * 删除角色
+     */
+    @PreAuthorize("hasAuthority('admin')")
+    @RequestMapping("/roleDel")
+    @ResponseBody
+    public ModelMap delRole(@RequestParam long roleId){
+        try {
+            roleService.delRole(roleId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return RestUtil.Error(500);
+        }
+        return RestUtil.Success();
+    }
+
+    /**
      * 菜单列表页
      */
     @RequestMapping("/menuList")
@@ -106,6 +189,22 @@ public class SystemController {
         List<Permission> permissionList = roleService.getPermissionList();
         model.addAttribute("menuList",permissionList);
         return "menu/menuList";
+    }
+
+    /**
+     * 删除菜单
+     */
+    @PreAuthorize("hasAuthority('admin')")
+    @RequestMapping("/menuDel")
+    @ResponseBody
+    public ModelMap delMenu(@RequestParam long menuId){
+        try {
+            roleService.delMenu(menuId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return RestUtil.Error(500);
+        }
+        return RestUtil.Success();
     }
 
     /**

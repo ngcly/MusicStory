@@ -27,8 +27,8 @@ public class ManagerDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Manager manager = managerService.findUserByName(username).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
-        Set<GrantedAuthority> authorities = new HashSet<>();
-        manager.getRoleList().stream().filter(role -> (role.getAvailable())).forEach(r -> authorities.add(new SimpleGrantedAuthority(r.getRoleName())));
+//        Set<GrantedAuthority> authorities = new HashSet<>();
+//        manager.getRoleList().stream().filter(role -> (role.getAvailable())).forEach(r -> authorities.add(new SimpleGrantedAuthority(r.getRoleName())));
         //这里使用securityManager 方便后面可以直接获取当前用户实体
         ManagerDetail user = new ManagerDetail(manager);
         return user;

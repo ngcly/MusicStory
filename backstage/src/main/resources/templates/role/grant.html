@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>授权窗口</title>
+    <link rel="stylesheet" href="/css/metroStyle/metroStyle.css">
+    <!--<link rel="stylesheet" href="/layui/css/layui.css">-->
+    <!--<link rel="stylesheet" href="/css/public.css">-->
+</head>
+<body>
+<div class="row">
+    <div class="row">
+        <div class="zTreeDemoBackground left">
+            <ul id="menuTree" class="ztree"></ul>
+        </div>
+    </div>
+    <div class="box-header with-border">
+        <input type="hidden" id="menus" th:value="${menuList}">
+        <button type="button" th:attr="data-id=${roleId}" class="btn btn-primary">保存</button>
+    </div>
+</div>
+<script src="/layui/layui.js"></script>
+<script src="/js/jquery-3.2.1.min.js"></script>
+<script src="/js/jquery.ztree.all.min.js"></script>
+<script type="text/javascript">
+    var zNodes =JSON.parse($('#menus').val());
+    var setting = {
+        view: {
+            selectedMulti: false
+        },
+        check: {
+            enable: true
+        },
+    };
+    $(document).ready(function () {
+        $.fn.zTree.init($("#menuTree"), setting, zNodes);
+
+        $("button.btn-primary").on('click', function () {
+            var roleId = $(this).data('id');
+            var treeObj=$.fn.zTree.getZTreeObj("menuTree");
+            var nodes = treeObj.getCheckedNodes(true);
+            var checkNodes="";
+            for(var i=0;i<nodes.length;i++){
+//                if(!nodes[i].getCheckStatus().half){
+                checkNodes += nodes[i].id+",";
+//                }
+            }
+            $.get('/sys/saveGrant',{roleId: roleId , menuIds: checkNodes},function (data) {
+                if(data.code == 200){
+                    layer.msg(data.msg, {icon: 1}, function () {
+                        var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                        parent.location.reload();
+                        parent.layer.close(index);
+                    });
+                }else{
+                    layer.msg(data.msg);
+                }
+            })
+        });
+    });
+</script>
+</body>
+</html>

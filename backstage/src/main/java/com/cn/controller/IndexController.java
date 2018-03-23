@@ -115,4 +115,12 @@ public class IndexController {
         return "home";
     }
 
+    /**
+     * 云中遨游
+     */
+    @RequestMapping("/clouds")
+    public String clouds(){
+        return "other/clouds";
+    }
+
 }

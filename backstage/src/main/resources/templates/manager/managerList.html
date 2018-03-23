@@ -111,6 +111,9 @@
 <script type="text/javascript">
     layui.use(['element','laypage','table','laydate'], function(){
         $ = layui.jquery;
+        var table = layui.table,
+            laypage = layui.laypage,
+            laydate = layui.laydate;
 
         /*<![CDATA[*/
         var ct = [[${managerList.totalElements}]];
@@ -118,13 +121,11 @@
         var ns = [[${managerList.size}]];
         /*]]>*/
 
-        var table = layui.table;
         //转换静态表格
         table.init('managers', {
             limit: ns //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
         });
 
-        var laypage = layui.laypage;
         //执行一个laypage实例
         laypage.render({
             elem: 'pag', //注意，这里的ID，不用加 # 号
@@ -145,7 +146,6 @@
             }
         });
 
-        var laydate = layui.laydate;
         //执行一个laydate实例
         //同时绑定多个
         lay('.time-item').each(function(){
@@ -160,19 +160,20 @@
         //删除处理
         $(".remove").on('click', function () {
             var _this = $(this);
-            layer.confirm('确定删除吗?', function(){
-                $.getJSON('/sys/managerDel', {ids:_this.data('id')}, function(ret){
-                    if (ret.status == 200){
-                        layer.msg(ret.msg, {icon: 1},function () {
+            layer.confirm('确定删除吗?',{title:'删除'}, function(){
+                $.getJSON('/sys/managerDel', {managerId:_this.data('id')}, function(ret){
+                    if (ret.code == 200){
+                        // $('#'+_this.data('id')).hide();
+                        layer.msg(ret.msg, {icon: 1,time:600},function () {
                             location.reload();
-                            $('#'+_this.data('id')).hide();
                         });
                     } else {
-                        layer.msg(ret.msg, {icon: 2});
+                        layer.msg(ret.msg, {icon: 2,time:600});
                     }
                 });
             });
         })
+
     });
 </script>
 </body>

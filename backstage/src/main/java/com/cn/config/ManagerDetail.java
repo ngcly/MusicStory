@@ -31,6 +31,9 @@ public class ManagerDetail extends Manager implements UserDetails{
         }
     }
 
+    /**
+     * 加载权限
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();

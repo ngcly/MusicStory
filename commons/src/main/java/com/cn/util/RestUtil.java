@@ -12,6 +12,18 @@ public class RestUtil {
 //TODO 统一错误编码
 
     /**
+     * 成功返回
+     * @return
+     */
+    public static ModelMap Success() {
+        ModelMap mp = new ModelMap();
+        mp.put("code", 200);
+        mp.put("msg", "操作成功");
+        mp.put("data", "");
+        return mp;
+    }
+
+    /**
      * 一般成功 统一返回
      */
     public static ModelMap Success(Object obj) {
