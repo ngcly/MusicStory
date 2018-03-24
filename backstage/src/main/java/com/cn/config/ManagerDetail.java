@@ -1,6 +1,7 @@
 package com.cn.config;
 
 import com.cn.entity.Manager;
+import com.cn.entity.Permission;
 import com.cn.entity.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -8,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -27,6 +29,7 @@ public class ManagerDetail extends Manager implements UserDetails{
             this.setPassword(manager.getPassword());
             this.setGender(manager.getGender());
             this.setAvatar(manager.getAvatar());
+            this.setState(manager.getState());
             this.setRoleList(manager.getRoleList());
         }
     }
@@ -36,13 +39,13 @@ public class ManagerDetail extends Manager implements UserDetails{
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        Set<Role> userRoles = this.getRoleList();
-
-        if(userRoles != null)
-        {
-            for (Role role : userRoles) {
-                SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getRoleName());
+        Collection<GrantedAuthority> authorities = new HashSet<>();
+        SimpleGrantedAuthority authority;
+        for (Role role : this.getRoleList()) {
+            authority = new SimpleGrantedAuthority(role.getRoleName());
+            authorities.add(authority);
+            for(Permission permission:role.getPermissions()){
+                authority = new SimpleGrantedAuthority(permission.getPermission());
                 authorities.add(authority);
             }
         }
@@ -76,6 +79,9 @@ public class ManagerDetail extends Manager implements UserDetails{
 
     @Override
     public boolean isEnabled() {
+        if(3==super.getState()){
+            return false;
+        }
         return true;
     }
 }

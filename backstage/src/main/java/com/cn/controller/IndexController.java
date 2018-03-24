@@ -8,6 +8,7 @@ import com.cn.entity.Role;
 import com.cn.util.MenuUtil;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,7 +48,8 @@ public class IndexController {
      */
     @RequestMapping("/")
     public String index(Principal principal, Model model) {
-        ManagerDetail managerDetail = (ManagerDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication authentication = (Authentication) principal;
+        ManagerDetail managerDetail = (ManagerDetail) authentication.getPrincipal();
         Set<Role> roleList = managerDetail.getRoleList();
         List<Permission> menuList = new ArrayList<>();
         if (!"admin".equals(principal.getName())) {

@@ -12,17 +12,17 @@ import java.util.List;
  */
 @Data
 public class TreeDTO {
-    private long id;
+    private Long id;
 
     private String name;
 
-    private long parentId;
+    private Long parentId;
 
     private String menuUrl;
 
-    private boolean checked;
+    private Boolean checked;
 
-    private String icon;
+    private String ico;
 
     private List<TreeDTO> children;
     public TreeDTO(long id, String name, long parentId, String url, boolean checked,String icon) {
@@ -31,6 +31,6 @@ public class TreeDTO {
         this.parentId = parentId;
         this.menuUrl = url;
         this.checked = checked;
-        this.icon = icon;
+        this.ico = icon;
     }
 }

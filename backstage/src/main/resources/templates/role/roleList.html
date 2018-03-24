@@ -129,7 +129,7 @@
                 } else {
                     _this.prop("checked",!_this.prop("checked"));
                     form.render("checkbox");
-                    layer.msg(ret.msg, {icon: 2,time:500});
+                    layer.msg(ret.msg, {icon: 2,time:600});
                 }
             });
         });
@@ -154,17 +154,15 @@
         //授权窗口
         $('.model').on('click',function () {
             var _this = $(this);
-            $.get('/sys/grant?roleId='+_this.data('id'), {}, function(str){
-                layer.open({
-                    type: 1 //Page层类型
-                    ,area: ['500px', '600px']
-                    ,title: '角色授权'
-                    ,shadeClose: true
-                    ,shade: false //遮罩透明度
-                    ,maxmin: true //允许全屏最小化
-                    ,content:str
-                });
-            })
+            layer.open({
+                type: 2 //Page层类型
+                ,area: ['400px', '450px']
+                ,title: ['角色授权','font-size:18px']
+                ,shadeClose: true
+                ,shade: 0 //遮罩透明度
+                ,maxmin: true //允许全屏最小化
+                ,content:'/sys/grant?roleId='+_this.data('id')
+            });
         });
 
     });

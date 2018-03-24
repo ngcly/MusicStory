@@ -88,11 +88,11 @@
                 <!--</dl>-->
                 <!--</li>-->
                 <li class="layui-nav-item layui-nav-itemed" th:each="menuList:${menuList}">
-                    <a class="" href="javascript:;"><i class="layui-icon" th:utext="${menuList.icon}"></i><cite th:text="${menuList.name}"></cite></a>
+                    <a class="" href="javascript:;"><i class="layui-icon" th:utext="${menuList.ico}"></i><cite th:text="${menuList.name}"></cite></a>
                     <dl class="layui-nav-child">
                         <dd th:each="menuChild:${menuList.children}">
                             <!--<a href="javascript:;" th:data="${menuChild.menuUrl}" th:text="${menuChild.name}"></a>-->
-                            <a th:href="${menuChild.menuUrl}" target="content"><i class="layui-icon" th:utext="${menuChild.icon}"></i><cite th:text="${menuChild.name}"></cite></a>
+                            <a th:href="${menuChild.menuUrl}" target="content"><i class="layui-icon" th:utext="${menuChild.ico}"></i><cite th:text="${menuChild.name}"></cite></a>
                         </dd>
                     </dl>
                 </li>
