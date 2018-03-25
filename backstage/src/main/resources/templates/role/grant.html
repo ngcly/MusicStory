@@ -49,7 +49,7 @@
                 checkNodes += nodes[i].id+",";
 //                }
             }
-            $.get('/sys/saveGrant',{roleId: roleId , menuIds: checkNodes},function (data) {
+            $.post('/sys/saveGrant',{'[[${_csrf.parameterName}]]':'[[${_csrf.token}]]',roleId: roleId , menuIds: checkNodes},function (data) {
                 if(data.code == 200){
                     layer.msg(data.msg, {icon: 1,time:600}, function () {
                         var index = parent.layer.getFrameIndex(window.name); //获取窗口索引

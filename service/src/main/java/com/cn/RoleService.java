@@ -41,9 +41,16 @@ public class RoleService {
     }
 
     /**
+     * 获取所有角色
+     */
+    public List<Role> getAllRole(){
+        return roleRepository.findAll();
+    }
+
+    /**
      * 保存授权
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void saveGrant(long roleId,String menuIds){
         Role role = roleRepository.getOne(roleId);
         List<Permission> permissions = permissionRepository.findMenuList();
@@ -62,7 +69,7 @@ public class RoleService {
     /**
      * 修改角色是否可用
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void altAvailable(long roleId){
         Role role = roleRepository.getOne(roleId);
         if(role.getAvailable()){
@@ -75,7 +82,7 @@ public class RoleService {
     /**
      * 删除角色
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void delRole(long roleId){
         roleRepository.deleteById(roleId);
     }
@@ -90,7 +97,7 @@ public class RoleService {
     /**
      * 删除菜单
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void delMenu(long menuId){
         Permission permission = permissionRepository.getOne(menuId);
         permissionRepository.deletePermissionByParentIdsStartingWith(permission.getParentIds()+"/"+permission.getId());

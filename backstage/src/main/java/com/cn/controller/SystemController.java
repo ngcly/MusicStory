@@ -138,7 +138,7 @@ public class SystemController {
      * @param menuIds
      * @return
      */
-    @RequestMapping("/saveGrant")
+    @PostMapping("/saveGrant")
     @ResponseBody
     public ModelMap saveGrant(long roleId, String menuIds){
         try {

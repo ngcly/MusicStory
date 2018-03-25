@@ -44,7 +44,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(loginSuccessHandler())
 //                .defaultSuccessUrl("/")
                 //登录失败跳转页面
-                .failureUrl("/login?error=true")
+//                .failureUrl("/login?error=true")
+                .failureHandler(loginFailureHandler())
                 .permitAll()
                 .and()
                 //开启cookie保存用户数据
@@ -87,5 +88,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public LoginSuccessHandler loginSuccessHandler(){
         return new LoginSuccessHandler();
+    }
+
+    @Bean
+    public LoginFailureHandler loginFailureHandler(){
+        return new LoginFailureHandler();
     }
 }
