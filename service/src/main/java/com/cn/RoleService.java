@@ -48,6 +48,13 @@ public class RoleService {
     }
 
     /**
+     * 保存角色
+     */
+    public void saveRole(Role role){
+        roleRepository.save(role);
+    }
+
+    /**
      * 保存授权
      */
     @Transactional(rollbackFor = Exception.class)
@@ -85,6 +92,13 @@ public class RoleService {
     @Transactional(rollbackFor = Exception.class)
     public void delRole(long roleId){
         roleRepository.deleteById(roleId);
+    }
+
+    /**
+     * 根据ID获取菜单
+     */
+    public Permission getPermissionById(long menuId){
+        return permissionRepository.getOne(menuId);
     }
 
     /**

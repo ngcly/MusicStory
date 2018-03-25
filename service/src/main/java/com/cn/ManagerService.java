@@ -30,9 +30,17 @@ public class ManagerService {
      * @param name
      * @return
      */
-    @Transactional
     public Optional<Manager> findUserByName(String name) {
         return Optional.ofNullable(managerRepository.findUserByName(name));
+    }
+
+    /**
+     * 根据Id获取管理员信息
+     * @param managerId
+     * @return
+     */
+    public Manager getManagerById(String managerId){
+        return managerRepository.getOne(managerId);
     }
 
     /**
@@ -50,6 +58,7 @@ public class ManagerService {
      * @param manager
      * @return
      */
+    @Transactional(rollbackFor = Exception.class)
     public String saveManager(Manager manager){
         Manager manager1 = managerRepository.findUserByName(manager.getUsername());
         if(StringUtil.isNullOrEmpty(manager.getId())){
@@ -70,8 +79,20 @@ public class ManagerService {
     /**
      * 删除管理员
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void delManager(String managerId){
         managerRepository.deleteById(managerId);
+    }
+
+    /**
+     * 修改管理员密码
+     * @param managerId
+     * @param password
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void updatePassword(String managerId,String password){
+        Manager manager = managerRepository.getOne(managerId);
+        BCryptPasswordEncoder bc=new BCryptPasswordEncoder(4);
+        manager.setPassword(bc.encode(password));
     }
 }

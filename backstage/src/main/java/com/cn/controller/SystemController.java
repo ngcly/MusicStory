@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.cn.LogService;
 import com.cn.ManagerService;
 import com.cn.RoleService;
+import com.cn.config.ManagerDetail;
 import com.cn.dto.TreeDTO;
 import com.cn.entity.LoginLog;
 import com.cn.entity.Manager;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -66,13 +68,27 @@ public class SystemController {
     }
 
     /**
+     * 管理员详情页
+     */
+    @RequestMapping("/adminView")
+    public String managerDetail(@RequestParam String mangerId, Model model){
+        Manager manager = managerService.getManagerById(mangerId);
+        model.addAttribute("manager",manager);
+        return "manager/managerDetail";
+    }
+
+    /**
      * 管理员编辑页
      */
     @PreAuthorize("hasAuthority('admin')")
     @RequestMapping("/adminEdit")
     public String altManager(@RequestParam(required = false)String managerId,Model model){
-
-        return "manager/managerAlt";
+        Manager manager = new Manager();
+        if(managerId!=null){
+            manager = managerService.getManagerById(managerId);
+        }
+        model.addAttribute("manager",manager);
+        return "manager/managerEdit";
     }
 
     /**
@@ -108,6 +124,45 @@ public class SystemController {
     }
 
     /**
+     * 修改密码
+     * @param managerId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/updatePwd")
+    public ModelMap resetPassword(@RequestParam String managerId,@RequestParam String password){
+        ManagerDetail managerDetail = (ManagerDetail) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
+        if(!managerDetail.getId().equals(managerId)){
+            return RestUtil.Error(4444,"禁止修改他人密码");
+        }
+        try {
+            managerService.updatePassword(managerId,password);
+        }catch (Exception e){
+            e.printStackTrace();
+            return RestUtil.Error(500);
+        }
+        return RestUtil.Success();
+    }
+
+    /**
+     * 重置管理员密码
+     * @param managerId
+     * @return
+     */
+    @PreAuthorize("hasAuthority('admin')")
+    @ResponseBody
+    @RequestMapping("/resetPwd")
+    public ModelMap resetPassword(@RequestParam String managerId){
+        try {
+            managerService.updatePassword(managerId,"123456");
+        }catch (Exception e){
+            e.printStackTrace();
+            return RestUtil.Error(500);
+        }
+        return RestUtil.Success();
+    }
+
+    /**
      * 角色列表页
      */
     @RequestMapping("/roleList")
@@ -117,6 +172,34 @@ public class SystemController {
         model.addAttribute("roleList",roleList);
         model.addAttribute("roleRt",role);
         return "role/roleList";
+    }
+
+    /**
+     * 新增或修改角色页面
+     */
+    @RequestMapping("/roleEdit")
+    public String roleEdit(@RequestParam(required = false) Long roleId,Model model){
+        Role role = new Role();
+        if(roleId!=null){
+            role = roleService.findRole(roleId);
+        }
+        model.addAttribute("role",role);
+        return "role/roleEdit";
+    }
+
+    /**
+     * 保存角色
+     */
+    @RequestMapping("roleSave")
+    @ResponseBody
+    public ModelMap saveRole(@Valid Role role){
+        try {
+            roleService.saveRole(role);
+        }catch (Exception e){
+            e.printStackTrace();
+            return RestUtil.Error(500,"服务异常");
+        }
+        return RestUtil.Success();
     }
 
     /**
@@ -189,6 +272,19 @@ public class SystemController {
         List<Permission> permissionList = roleService.getPermissionList();
         model.addAttribute("menuList",permissionList);
         return "menu/menuList";
+    }
+
+    /**
+     * 新增或修改菜单页
+     */
+    @RequestMapping("/menuEdit")
+    public String menuEdit(@RequestParam(required = false) Long menuId,Model model){
+        Permission permission = new Permission();
+        if(menuId!=null){
+            permission = roleService.getPermissionById(menuId);
+        }
+        model.addAttribute("permission",permission);
+        return "menu/menuEdit";
     }
 
     /**
