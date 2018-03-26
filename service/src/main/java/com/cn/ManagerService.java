@@ -3,6 +3,7 @@ package com.cn;
 import com.cn.dao.ManagerRepository;
 import com.cn.entity.Manager;
 import com.cn.util.DateUtil;
+import com.cn.util.RestUtil;
 import io.netty.util.internal.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 
 import java.util.Date;
 import java.util.Optional;
@@ -59,21 +62,21 @@ public class ManagerService {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public String saveManager(Manager manager){
+    public ModelMap saveManager(Manager manager){
         Manager manager1 = managerRepository.findUserByName(manager.getUsername());
         if(StringUtil.isNullOrEmpty(manager.getId())){
             if(manager1!=null){
-                return "该用户名已存在";
+                return RestUtil.Error(333,"该用户名已存在");
             }
             BCryptPasswordEncoder bc=new BCryptPasswordEncoder(4);
-            manager.setPassword(bc.encode(manager.getPassword()));
+            manager.setPassword(bc.encode("123456"));
         }else {
             if(manager1!=null&&!manager1.getId().equals(manager.getId())){
-                return "该用户名已存在";
+                return RestUtil.Error(333,"该用户名已存在");
             }
         }
         managerRepository.save(manager);
-        return "成功";
+        return RestUtil.Success();
     }
 
     /**

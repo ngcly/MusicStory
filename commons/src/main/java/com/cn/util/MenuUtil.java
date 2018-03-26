@@ -29,6 +29,12 @@ public class MenuUtil {
         return eachTree(trees);
     }
 
+    /**
+     * 判断菜单是否被勾选
+     * @param originMenus 原菜单
+     * @param roleMenus   角色对应菜单
+     * @return
+     */
     public static Set<TreeDTO> makeTreeList(List<Permission> originMenus,List<Permission> roleMenus){
         Set<TreeDTO> trees = new HashSet<>();
         TreeDTO tree1;

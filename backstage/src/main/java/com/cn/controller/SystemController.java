@@ -97,14 +97,12 @@ public class SystemController {
     @PreAuthorize("hasAuthority('admin')")
     @ResponseBody
     @RequestMapping("/adminSave")
-    public String register(@Valid Manager manager){
-        String msg;
+    public ModelMap register(@Valid Manager manager){
         try {
-            msg = managerService.saveManager(manager);
+            return managerService.saveManager(manager);
         }catch (Exception e){
-            msg = "保存失败";
+            return RestUtil.Error(500);
         }
-        return msg;
     }
 
     /**
@@ -128,12 +126,12 @@ public class SystemController {
      * @param managerId
      * @return
      */
-    @ResponseBody
     @RequestMapping("/updatePwd")
+    @ResponseBody
     public ModelMap resetPassword(@RequestParam String managerId,@RequestParam String password){
         ManagerDetail managerDetail = (ManagerDetail) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
         if(!managerDetail.getId().equals(managerId)){
-            return RestUtil.Error(4444,"禁止修改他人密码");
+            return RestUtil.Error(444,"禁止修改他人密码");
         }
         try {
             managerService.updatePassword(managerId,password);
