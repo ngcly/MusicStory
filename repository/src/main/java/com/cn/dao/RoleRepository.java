@@ -20,6 +20,14 @@ import java.util.List;
 @Repository
 public interface RoleRepository extends JpaRepository<Role,Long>,JpaSpecificationExecutor<Role> {
 
+    /**
+     * 获取所有可用角色
+     */
+    List<Role> getAllByAvailableIsTrue();
+
+    /**
+     * 自定义条件查询
+     */
     static Specification<Role> getRoleList(String roleName, Boolean available, Byte roleType) {
         return (Root<Role> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             List<Predicate> predicates = new ArrayList<>();

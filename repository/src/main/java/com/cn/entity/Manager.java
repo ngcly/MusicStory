@@ -30,6 +30,7 @@ public class Manager implements Serializable {
     private Byte gender;      //性别 1-男 2-女
     private String realName;  //真实姓名
     private String avatar;    //头像
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthday;    //生日
     private Byte state;       //状态,0:创建未认证 1:正常状态,2：用户被锁定.
     private Date createTime;  //创建时间
@@ -44,4 +45,6 @@ public class Manager implements Serializable {
     @Transient
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endTime;
+    @Transient
+    private String[] roleIds;
 }

@@ -1,7 +1,9 @@
 package com.cn;
 
 import com.cn.dao.ManagerRepository;
+import com.cn.dao.RoleRepository;
 import com.cn.entity.Manager;
+import com.cn.entity.Role;
 import com.cn.util.DateUtil;
 import com.cn.util.RestUtil;
 import io.netty.util.internal.StringUtil;
@@ -14,8 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 后台客服管理员 service类
@@ -27,6 +28,8 @@ import java.util.Optional;
 public class ManagerService {
     @Autowired
     ManagerRepository managerRepository;
+    @Autowired
+    RoleRepository roleRepository;
 
     /**
      * 根据用户名获取用户信息
@@ -63,6 +66,7 @@ public class ManagerService {
      */
     @Transactional(rollbackFor = Exception.class)
     public ModelMap saveManager(Manager manager){
+        List<Role> roleList = roleRepository.findAll();
         Manager manager1 = managerRepository.findUserByName(manager.getUsername());
         if(StringUtil.isNullOrEmpty(manager.getId())){
             if(manager1!=null){
@@ -70,10 +74,18 @@ public class ManagerService {
             }
             BCryptPasswordEncoder bc=new BCryptPasswordEncoder(4);
             manager.setPassword(bc.encode("123456"));
+            manager.setState((byte) 0);
         }else {
             if(manager1!=null&&!manager1.getId().equals(manager.getId())){
                 return RestUtil.Error(333,"该用户名已存在");
             }
+        }
+        if(manager.getRoleIds()!=null){
+            Set<Role> roles = new HashSet<>();
+            for(String roleId:manager.getRoleIds()){
+                roleList.stream().filter(role -> roleId.equals(role.getId().toString())).forEach(roles::add);
+            }
+            manager.setRoleList(roles);
         }
         managerRepository.save(manager);
         return RestUtil.Success();

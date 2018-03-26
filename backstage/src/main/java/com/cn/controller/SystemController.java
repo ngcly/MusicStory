@@ -26,6 +26,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -60,7 +61,7 @@ public class SystemController {
      */
     @RequestMapping("/adminList")
     public String managerList(@PageableDefault(sort = { "createTime" }, direction = Sort.Direction.DESC)
-                                          Pageable pageable, Model model, @Valid Manager manager){
+                                      Pageable pageable, Model model, @Valid Manager manager){
         Page<Manager> managerList = managerService.getManagersList(pageable,manager);
         model.addAttribute("managerList",managerList);
         model.addAttribute("manger",manager);
@@ -84,10 +85,18 @@ public class SystemController {
     @RequestMapping("/adminEdit")
     public String altManager(@RequestParam(required = false)String managerId,Model model){
         Manager manager = new Manager();
+        ArrayList<String> checkRoleIds = new ArrayList<>();
         if(managerId!=null){
             manager = managerService.getManagerById(managerId);
+            for(Role role:manager.getRoleList()){
+                checkRoleIds.add(role.getId().toString());
+            }
         }
+        String checkRoleId = String.join(",",checkRoleIds);
+        List<Role> roles = roleService.getAvailableRoles();
         model.addAttribute("manager",manager);
+        model.addAttribute("roles",roles);
+        model.addAttribute("checkRoleId",checkRoleId);
         return "manager/managerEdit";
     }
 
@@ -110,7 +119,7 @@ public class SystemController {
      */
     @PreAuthorize("hasAuthority('admin')")
     @ResponseBody
-    @RequestMapping("/managerDel")
+    @RequestMapping("/adminDel")
     public ModelMap delManager(@RequestParam String managerId){
         try {
             managerService.delManager(managerId);
@@ -165,7 +174,7 @@ public class SystemController {
      */
     @RequestMapping("/roleList")
     public String roleList(@PageableDefault(sort = { "roleName" }, direction = Sort.Direction.DESC)
-                                       Pageable pageable,@Valid Role role,Model model){
+                                   Pageable pageable,@Valid Role role,Model model){
         Page<Role> roleList = roleService.getRoleList(pageable,role);
         model.addAttribute("roleList",roleList);
         model.addAttribute("roleRt",role);
@@ -306,7 +315,7 @@ public class SystemController {
      */
     @RequestMapping("/loginLogs")
     public String loginLogList(@PageableDefault(sort = { "loginTime" }, direction = Sort.Direction.DESC)
-                                           Pageable pageable, @Valid LoginLog loginLog, Model model){
+                                       Pageable pageable, @Valid LoginLog loginLog, Model model){
         Page<LoginLog> logs = logService.getLoginLogList(pageable,loginLog);
         model.addAttribute("logList",logs);
         model.addAttribute("log",loginLog);

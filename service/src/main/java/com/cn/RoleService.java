@@ -48,6 +48,13 @@ public class RoleService {
     }
 
     /**
+     * 获取可用角色
+     */
+    public List<Role> getAvailableRoles(){
+        return roleRepository.getAllByAvailableIsTrue();
+    }
+
+    /**
      * 保存角色
      */
     public void saveRole(Role role){

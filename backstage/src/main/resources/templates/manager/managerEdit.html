@@ -1,10 +1,122 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>管理员编辑页</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" href="/css/public.css">
 </head>
-<body>
+<body class="child-body">
+<div class="child-nav">
+    <span class="layui-breadcrumb">
+         <a>系统设置</a>
+         <a href="/sys/adminList">管理员列表</a>
+        <a><cite th:text="${#strings.equals(manager.id,null)?'新增管理员':'修改管理员'}"></cite></a>
+    </span>
+    <a class="layui-btn layui-btn-sm" href="javascript:location.replace(location.href);" title="刷新" style="float:right;margin-top: 3px"><i class="layui-icon" style="line-height:30px">&#x1002;</i></a>
+</div>
+<div class="layui-col-md12">
+    <div class="layui-card">
+        <div class="layui-card-header" th:text="${#strings.equals(manager.id,null)?'新增管理员':'修改管理员'}"></div>
+        <div class="layui-card-body">
+            <form class="layui-form" action="/sys/adminSave" method="post">
+                <input type="hidden" name="id" th:value="${manager.id}">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="username" th:readonly="${manager.id!=null}" required  lay-verify="required" placeholder="请输入用户名" th:value="${manager.username}" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux" th:if="${manager.id==null}">新增用户默认密码为：123456</div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">真实姓名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="realName" required  lay-verify="required" placeholder="请输入真实姓名" th:value="${manager.realName}" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">性别</label>
+                    <div class="layui-input-inline">
+                        <input type="radio" name="gender" value="1" title="男" checked>
+                        <input type="radio" name="gender" value="2" title="女" th:checked="${manager.gender==2}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">生日</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="birthday" name="birthday" required  lay-verify="required" th:value="${#dates.format(manager.birthday,'yyyy-MM-dd')}" placeholder="出生年月" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item" th:if="${manager.state!=null}">
+                    <label class="layui-form-label">状态</label>
+                    <div class="layui-input-inline">
+                        <select name="state" lay-verify="required">
+                            <option value="0" th:disabled="${manager.state!=0}">初始化</option>
+                            <option value="1" th:disabled="${manager.state==0}" th:selected="${manager.state==1}">正常</option>
+                            <option value="2" th:selected="${manager.state==2}">封禁</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">头像</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="avatar" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">角色</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" th:each="role:${roles}" name="roleIds" th:checked="${#strings.contains(checkRoleId, role.id)}" th:value="${role.id}" th:title="${role.description}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="save" th:text="${#strings.equals(manager.id,null)?'保存':'修改'}"></button>
+                        <a href="javascript:history.back()" type="button" class="layui-btn layui-btn-primary">返回</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="/layui/layui.js"></script>
+<script type="text/javascript">
+    layui.use(['element','form','laydate'], function(){
+        $ = layui.jquery;
+        var form = layui.form,
+            laydate = layui.laydate;
 
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#birthday' //指定元素
+            ,theme: 'grid'
+            ,min: '1960-1-1'
+            ,max: 0
+        });
+
+        //监听提交
+        form.on('submit(save)', function(data){
+            var headers = {};
+            headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
+            $.ajax({
+                url:data.form.action,
+                type:data.form.method,
+                headers: headers,
+                data:data.field,
+                dataType:'json',
+                success:function(data){
+                    if(data.code == 200){
+                        layer.msg(data.msg, {icon: 1,time:600}, function () {
+                            location.href="/sys/adminList";
+                        });
+                    }else{
+                        layer.msg(data.msg,{time:1000});
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
 </body>
 </html>
