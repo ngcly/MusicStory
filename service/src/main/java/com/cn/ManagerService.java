@@ -65,8 +65,10 @@ public class ManagerService {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public ModelMap saveManager(Manager manager){
-        List<Role> roleList = roleRepository.findAll();
+    public ModelMap saveManager(Set<Role> roleList,Manager manager){
+        //获取被修改人之前的角色-当前人的角色=必存角色 最后结果为必存角色+回传角色
+        Set<Role> allRole = new HashSet<>();
+        allRole.addAll(roleList);
         Manager manager1 = managerRepository.findUserByName(manager.getUsername());
         if(StringUtil.isNullOrEmpty(manager.getId())){
             if(manager1!=null){
@@ -79,12 +81,17 @@ public class ManagerService {
             if(manager1!=null&&!manager1.getId().equals(manager.getId())){
                 return RestUtil.Error(333,"该用户名已存在");
             }
+            manager.setPassword(manager1.getPassword());
+            allRole.addAll(manager1.getRoleList());
+            manager1.getRoleList().removeAll(roleList);
         }
         if(manager.getRoleIds()!=null){
             Set<Role> roles = new HashSet<>();
             for(String roleId:manager.getRoleIds()){
-                roleList.stream().filter(role -> roleId.equals(role.getId().toString())).forEach(roles::add);
+                allRole.stream().filter(role -> roleId.equals(role.getId().toString())).forEach(roles::add);
             }
+            //加上必存角色
+            roles.addAll(manager1.getRoleList());
             manager.setRoleList(roles);
         }
         managerRepository.save(manager);

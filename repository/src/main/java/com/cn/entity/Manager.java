@@ -2,6 +2,8 @@ package com.cn.entity;
 
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Where;
+import org.hibernate.annotations.WhereJoinTable;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -37,6 +39,7 @@ public class Manager implements Serializable {
     private Date updateTime;  //最后修改时间
     @ManyToMany(fetch= FetchType.EAGER)//立即从数据库中进行加载数据;
     @JoinTable(name = "manager_role", joinColumns = { @JoinColumn(name = "manager_id") }, inverseJoinColumns ={@JoinColumn(name = "role_id") })
+    @Where(clause = "available=true")
     private Set<Role> roleList;// 一个用户具有多个角色
 
     @Transient

@@ -2,10 +2,14 @@
 @import "https://at.alicdn.com/t/font_594558_ajc56eo86iw45cdi.css";
 .showMenu.layui-layout-admin .layui-side{ left:-200px; }
 .showMenu .layui-body,.showMenu .layui-footer{ left:0; }
-.layui-layout-admin .layui-side{ left:0; overflow:hidden;}
 /*.hideMenu{ float:left; width:20px; height:20px; margin-top:20px; font-size:17px; line-height:20px; text-align:center;  color:#fff; background-color:#1AA094; }*/
+.mini .layui-side-scroll ul li cite { display: none; }
+.mini .layui-nav-tree .layui-nav-more { right: 3px;}
+.mini .layui-nav-tree {width: 50px;}
+/*下面是菜单使用了个人图标情况下的样式申明 否则mini状态不显示图标*/
+/*.mini .layui-nav-tree .layui-nav-item a {text-overflow: clip !important;}*/
 /*样式改变的过渡*/
-.layui-body,.layui-footer,.layui-layout-admin .layui-side{ transition: all 0.3s ease-in-out;-webkit-transition: all 0.3s ease-in-out;-o-transition: all 0.3s ease-in-out;-moz-transition: all 0.3s ease-in-out;-ms-transition: all 0.3s ease-in-out; }
+.layui-body,.layui-footer,.layui-layout-admin .layui-side{ -o-transition: all 0.3s ease-in-out;-moz-transition: all 0.3s ease-in-out;-ms-transition: all 0.3s ease-in-out; }
 iframe{ position:absolute; height:100%; width:100%; border:none;}
 /*iframe 其他属性 frameborder="false" scrolling="auto" style=allowtransparency="true"*/
 

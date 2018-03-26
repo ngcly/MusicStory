@@ -66,7 +66,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">角色</label>
                     <div class="layui-input-block">
-                        <input type="checkbox" th:each="role:${roles}" name="roleIds" th:checked="${#strings.contains(checkRoleId, role.id)}" th:value="${role.id}" th:title="${role.description}">
+                        <input type="checkbox" th:each="role:${roles}" name="roleIds" th:checked="${#strings.contains(checkRoleId, role.id)}" th:value="${role.id}" th:title="${role.description}" th:disabled="!${#strings.contains(optionRoles, role.id)}">
                     </div>
                 </div>
                 <div class="layui-form-item">

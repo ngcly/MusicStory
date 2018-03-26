@@ -2,18 +2,17 @@ package com.cn.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 角色表
  * Created by chen on 2017/6/23.
  */
 
-@Data
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class,property = "@id") //该注解是为了解决当前json序列化的bug 由于many to many会让json序列化产生无限循环 所以该注解能避免restful json产生的死循环
 @Table(name="role")
@@ -45,4 +44,83 @@ public class Role implements Serializable {
     @JoinTable(name="role_permission",joinColumns={@JoinColumn(name="role_id")},inverseJoinColumns={@JoinColumn(name="permission_id")})
     private List<Permission> permissions;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public Byte getRoleType() {
+        return roleType;
+    }
+
+    public void setRoleType(Byte roleType) {
+        this.roleType = roleType;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(Boolean available) {
+        this.available = available;
+    }
+
+    public List<User> getUserInfos() {
+        return userInfos;
+    }
+
+    public void setUserInfos(List<User> userInfos) {
+        this.userInfos = userInfos;
+    }
+
+    public List<Manager> getManagers() {
+        return managers;
+    }
+
+    public void setManagers(List<Manager> managers) {
+        this.managers = managers;
+    }
+
+    public List<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<Permission> permissions) {
+        this.permissions = permissions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Role role = (Role) o;
+        return Objects.equals(id, role.id) &&
+                Objects.equals(roleName, role.roleName) &&
+                Objects.equals(roleType, role.roleType);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, roleName, roleType);
+    }
 }

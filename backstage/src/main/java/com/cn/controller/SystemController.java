@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +27,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -83,20 +85,28 @@ public class SystemController {
      */
     @PreAuthorize("hasAuthority('admin')")
     @RequestMapping("/adminEdit")
-    public String altManager(@RequestParam(required = false)String managerId,Model model){
+    public String altManager(@RequestParam(required = false)String managerId, Principal principal,Model model){
+        Authentication authentication = (Authentication) principal;
+        ManagerDetail managerDetail = (ManagerDetail) authentication.getPrincipal();
+        Set<Role> roles = managerDetail.getRoleList();
+        List<String> optrole = new ArrayList<>();
+        roles.stream().forEach(role -> optrole.add(role.getId().toString()));
         Manager manager = new Manager();
         ArrayList<String> checkRoleIds = new ArrayList<>();
         if(managerId!=null){
             manager = managerService.getManagerById(managerId);
             for(Role role:manager.getRoleList()){
                 checkRoleIds.add(role.getId().toString());
+                roles.add(role);
             }
         }
-        String checkRoleId = String.join(",",checkRoleIds);
-        List<Role> roles = roleService.getAvailableRoles();
         model.addAttribute("manager",manager);
+        //待选角色列表
         model.addAttribute("roles",roles);
-        model.addAttribute("checkRoleId",checkRoleId);
+        //已勾选角色ID
+        model.addAttribute("checkRoleId",String.join(",",checkRoleIds));
+        //可授权角色ID
+        model.addAttribute("optionRoles",String.join(",",optrole));
         return "manager/managerEdit";
     }
 
@@ -107,8 +117,10 @@ public class SystemController {
     @ResponseBody
     @RequestMapping("/adminSave")
     public ModelMap register(@Valid Manager manager){
+        //TODO 回传角色有问题 页面js要改 还有如何禁止他人修改用户名
+        ManagerDetail managerDetail = (ManagerDetail) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
         try {
-            return managerService.saveManager(manager);
+            return managerService.saveManager(managerDetail.getRoleList(),manager);
         }catch (Exception e){
             return RestUtil.Error(500);
         }
@@ -156,7 +168,7 @@ public class SystemController {
      * @param managerId
      * @return
      */
-    @PreAuthorize("hasAuthority('admin')")
+//    @PreAuthorize("hasAuthority('admin')")
     @ResponseBody
     @RequestMapping("/resetPwd")
     public ModelMap resetPassword(@RequestParam String managerId){
