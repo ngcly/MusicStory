@@ -60,7 +60,14 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">头像</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="avatar" class="layui-input" th:value="${manager.avatar}">
+                        <input type="text" name="avatar" id="af" class="layui-input" th:value="${manager.avatar}">
+                    </div>
+                    <div class="layui-upload">
+                        <button type="button" class="layui-btn" id="avatar"><i class="layui-icon">&#xe681;</i>上传图片</button>
+                        <div class="layui-upload-list" style="padding-left: 110px">
+                            <img class="layui-upload-img" style="max-width: 120px;max-height: 120px" id="avatar-view">
+                            <p id="demoText"></p>
+                        </div>
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -81,10 +88,11 @@
 </div>
 <script src="/layui/layui.js"></script>
 <script type="text/javascript">
-    layui.use(['element','form','laydate'], function(){
+    layui.use(['element','form','laydate','upload'], function(){
         $ = layui.jquery;
         var form = layui.form,
-            laydate = layui.laydate;
+            laydate = layui.laydate,
+            upload = layui.upload;
 
         //执行一个laydate实例
         laydate.render({
@@ -92,6 +100,34 @@
             ,theme: 'grid'
             ,min: '1960-1-1'
             ,max: 0
+        });
+
+        //上传文件
+        var uploadInst = upload.render({
+            elem: '#avatar'
+            ,url: '/sys/uploadAvatar'
+            ,size: 600 //限制文件大小，单位 KB
+            // ,auto: false
+            // ,bindAction: '#testListAction' //指向一个按钮触发上传
+            ,accept: 'file' //普通文件
+            ,exts: 'jpg|jpeg|png' //只允许上传图片
+            ,before: function(obj){
+                //预读本地文件示例，不支持ie8
+                this.data={
+                    "[[${_csrf.parameterName}]]": "[[${_csrf.token}]]"
+                },
+                obj.preview(function(index, file, result){
+                    $('#avatar-view').attr('src', result); //图片链接（base64）
+                });
+            }
+            ,done: function(res){
+                //如果上传失败
+                if(res.code == 200){
+                    $('#af').val(res.data);
+                }else{
+                    return layer.msg('上传失败');
+                }
+            }
         });
 
         //监听提交

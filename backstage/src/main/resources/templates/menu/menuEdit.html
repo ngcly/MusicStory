@@ -20,7 +20,7 @@
         <div class="layui-card-header" th:text="${#strings.equals(menu.id,null)?'新增菜单':'修改菜单'}"></div>
         <div class="layui-card-body">
             <form class="layui-form" action="/sys/menuSave" method="post">
-                <input type="hidden" name="id" th:value="${menu.id}">
+                <input type="hidden" name="id" id="mid" th:value="${menu.id}">
                 <div class="layui-form-item">
                     <label class="layui-form-label">菜单名</label>
                     <div class="layui-input-inline">
@@ -30,7 +30,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">权限标识</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="permission" lay-verify="required" lay-vertype="tips" th:value="${menu.permission}" autocomplete="off" class="layui-input">
+                        <input type="text" name="purview" lay-verify="required" lay-vertype="tips" th:value="${menu.permission}" autocomplete="off" class="layui-input">
                     </div>
                     <div class="layui-form-mid layui-word-aux">规则：以 ROLE_ 开头+模块名+:功能名 例：ROLE_sys:add</div>
                 </div>
@@ -46,8 +46,8 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">父级菜单</label>
                     <div class="layui-input-inline">
-                        <select name="parentId" lay-verify="required" th:disabled="${menu.id!=null}">
-                            <option value="0">顶层菜单</option>
+                        <select name="parentId" lay-verify="required" id="pat">
+                            <option value="0" selected="selected">顶层菜单</option>
                             <option value="1" th:each="pm:${menus}" th:value="${pm.id}" th:selected="${pm.id==checkId}" th:text="${pm.name}"></option>
                         </select>
                     </div>
@@ -87,6 +87,10 @@
         $ = layui.jquery;
         var form = layui.form;
 
+        if($('#mid').val()){
+            $('#pat').attr("disabled","disabled");
+        }
+
         //表单校验
         form.verify({
             // 校验原始密码
@@ -99,7 +103,6 @@
         form.on('submit(save)', function(data){
             var headers = {};
             headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
-            console.log(data.field)
             $.ajax({
                 url:data.form.action,
                 type:data.form.method,

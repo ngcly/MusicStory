@@ -126,6 +126,7 @@ public class RoleService {
         }else{
             permission.setParentIds("0/"+permission.getId());
         }
+        permission.setPermission(permission.getPurview());
         permissionRepository.save(permission);
     }
 

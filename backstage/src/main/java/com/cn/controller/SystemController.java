@@ -25,8 +25,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.*;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -109,6 +111,33 @@ public class SystemController {
         //可授权角色ID
         model.addAttribute("optionRoles",String.join(",",optrole));
         return "manager/managerEdit";
+    }
+
+    /**
+     * 头像上传
+     * @param file
+     * @return
+     */
+    @RequestMapping("/uploadAvatar")
+    @ResponseBody
+    public ModelMap uploadAvatar(@RequestParam("file")MultipartFile file){
+        if(!file.isEmpty()){
+            try {
+                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(new File(file.getOriginalFilename())));
+                out.write(file.getBytes());
+                out.flush();
+                out.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return RestUtil.Error(222);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return RestUtil.Error(222);
+            }
+            return RestUtil.Success("/"+file.getOriginalFilename());
+        }else{
+            return RestUtil.Error(222,"文件为空");
+        }
     }
 
     /**

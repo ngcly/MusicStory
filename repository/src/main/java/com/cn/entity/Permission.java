@@ -34,4 +34,7 @@ public class Permission implements Serializable {
     @JoinTable(name="role_permission",joinColumns={@JoinColumn(name="permission_id")},inverseJoinColumns={@JoinColumn(name="role_id")})
     private List<Role> roles;
 
+    @Transient
+    private String purview;
+
 }
