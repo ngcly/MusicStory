@@ -86,6 +86,7 @@ public class SystemController {
     @PreAuthorize("hasAuthority('admin')")
     @RequestMapping("/adminEdit")
     public String altManager(@RequestParam(required = false)String managerId, Principal principal,Model model){
+        //最好是从当前授权信息里面提出角色列表来
         Authentication authentication = (Authentication) principal;
         ManagerDetail managerDetail = (ManagerDetail) authentication.getPrincipal();
         Set<Role> roles = managerDetail.getRoleList();
@@ -117,10 +118,9 @@ public class SystemController {
     @ResponseBody
     @RequestMapping("/adminSave")
     public ModelMap register(@Valid Manager manager){
-        //TODO 回传角色有问题 页面js要改 还有如何禁止他人修改用户名
         ManagerDetail managerDetail = (ManagerDetail) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
         try {
-            return managerService.saveManager(managerDetail.getRoleList(),manager);
+            return managerService.saveManager(managerDetail,manager);
         }catch (Exception e){
             return RestUtil.Error(500);
         }
@@ -143,24 +143,27 @@ public class SystemController {
     }
 
     /**
-     * 修改密码
-     * @param managerId
+     * 修改密码页面
      * @return
+     */
+    @RequestMapping("/altPwd")
+    public String altPwd(){
+        return "manager/updatePwd";
+    }
+
+    /**
+     * 修改密码
      */
     @RequestMapping("/updatePwd")
     @ResponseBody
-    public ModelMap resetPassword(@RequestParam String managerId,@RequestParam String password){
+    public ModelMap updatePassword(@RequestParam String oldPassword,@RequestParam String password){
         ManagerDetail managerDetail = (ManagerDetail) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
-        if(!managerDetail.getId().equals(managerId)){
-            return RestUtil.Error(444,"禁止修改他人密码");
-        }
         try {
-            managerService.updatePassword(managerId,password);
+            return managerService.updatePassword(managerDetail.getId(),oldPassword,password);
         }catch (Exception e){
             e.printStackTrace();
             return RestUtil.Error(500);
         }
-        return RestUtil.Success();
     }
 
     /**
@@ -209,7 +212,7 @@ public class SystemController {
     /**
      * 保存角色
      */
-    @RequestMapping("roleSave")
+    @RequestMapping("/roleSave")
     @ResponseBody
     public ModelMap saveRole(@Valid Role role){
         try {

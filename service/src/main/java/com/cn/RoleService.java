@@ -112,7 +112,7 @@ public class RoleService {
      * 获取菜单列表
      */
     public List<Permission> getPermissionList(){
-        return permissionRepository.findAll();
+        return permissionRepository.findMenuList();
     }
 
     /**

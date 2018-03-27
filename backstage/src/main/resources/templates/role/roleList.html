@@ -16,7 +16,7 @@
     <a class="layui-btn layui-btn-sm" href="javascript:location.replace(location.href);" title="刷新" style="float:right;margin-top: 3px"><i class="layui-icon" style="line-height:30px">&#x1002;</i></a>
 </div>
 
-<div class="layui-row">
+<div class="layui-row layui-col-md12">
     <form  class="layui-form" th:action="@{/sys/roleList}">
         <div class="layui-form-item search-row">
             <div class="layui-inline">
@@ -49,7 +49,7 @@
                 <button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
             </div>
             <div class="layui-inline">
-                <a href="" type="button" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
+                <a href="javascript:void(0)" type="button" id="add" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
             </div>
         </div>
         <input type="hidden" name="page" id="pg">
@@ -77,7 +77,7 @@
         </td>
         <td>
             <a class="layui-btn layui-btn-xs model" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe618;</i>授权</a>
-            <a class="layui-btn layui-btn-xs" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe642;</i>编辑</a>
+            <a class="layui-btn layui-btn-xs alt" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe642;</i>编辑</a>
             <a sec:authorize="hasAuthority('admin')" class="layui-btn layui-btn-danger layui-btn-xs remove" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
         </td>
     </tr>
@@ -156,12 +156,42 @@
             var _this = $(this);
             layer.open({
                 type: 2 //Page层类型
+                ,skin: 'layui-layer-molv'
                 ,area: ['400px', '450px']
                 ,title: ['角色授权','font-size:18px']
                 ,shadeClose: true
                 ,shade: 0 //遮罩透明度
                 ,maxmin: true //允许全屏最小化
                 ,content:'/sys/grant?roleId='+_this.data('id')
+            });
+        });
+
+        //修改角色窗口
+        $('.alt').on('click',function () {
+            var _this = $(this);
+            layer.open({
+                type: 2 //Page层类型
+                ,skin: 'layui-layer-molv'
+                ,area: ['520px', '409px']
+                ,title: ['角色信息','font-size:18px']
+                ,shadeClose: true
+                ,shade: 0 //遮罩透明度
+                ,maxmin: true //允许全屏最小化
+                ,content:'/sys/roleEdit?roleId='+_this.data('id')
+            });
+        });
+
+        //新增角色窗口
+        $('#add').on('click',function () {
+            layer.open({
+                type: 2 //Page层类型
+                ,skin: 'layui-layer-molv'
+                ,area: ['520px', '409px']
+                ,title: ['角色信息','font-size:18px']
+                ,shadeClose: true
+                ,shade: 0 //遮罩透明度
+                ,maxmin: true //允许全屏最小化
+                ,content:'/sys/roleEdit'
             });
         });
 

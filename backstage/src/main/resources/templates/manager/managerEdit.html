@@ -24,7 +24,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">用户名</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="username" th:readonly="${manager.id!=null}" required  lay-verify="required" placeholder="请输入用户名" th:value="${manager.username}" autocomplete="off" class="layui-input">
+                        <input type="text" name="username" th:readonly="${manager.id!=null&&manager.id!=session.SPRING_SECURITY_CONTEXT.authentication.principal.id}" required  lay-verify="required" placeholder="请输入用户名" th:value="${manager.username}" autocomplete="off" class="layui-input">
                     </div>
                     <div class="layui-form-mid layui-word-aux" th:if="${manager.id==null}">新增用户默认密码为：123456</div>
                 </div>
@@ -60,13 +60,13 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">头像</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="avatar" class="layui-input">
+                        <input type="text" name="avatar" class="layui-input" th:value="${manager.avatar}">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">角色</label>
                     <div class="layui-input-block">
-                        <input type="checkbox" th:each="role:${roles}" name="roleIds" th:checked="${#strings.contains(checkRoleId, role.id)}" th:value="${role.id}" th:title="${role.description}" th:disabled="!${#strings.contains(optionRoles, role.id)}">
+                        <input type="checkbox" th:each="role:${roles}" th:name="'roleIds['+${role.id}+']'" th:checked="${#strings.contains(checkRoleId, role.id)}" th:value="${role.id}" th:title="${role.description}" th:disabled="!${#strings.contains(optionRoles, role.id)}">
                     </div>
                 </div>
                 <div class="layui-form-item">

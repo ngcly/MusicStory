@@ -15,7 +15,7 @@ import java.util.Objects;
 
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class,property = "@id") //该注解是为了解决当前json序列化的bug 由于many to many会让json序列化产生无限循环 所以该注解能避免restful json产生的死循环
-@Table(name="role")
+@Table(name="role",uniqueConstraints=@UniqueConstraint(columnNames={"roleName","roleType"}))
 public class Role implements Serializable {
     private static final long serialVersionUID = 1L;
 

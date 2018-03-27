@@ -65,32 +65,40 @@ public class ManagerService {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public ModelMap saveManager(Set<Role> roleList,Manager manager){
-        //获取被修改人之前的角色-当前人的角色=必存角色 最后结果为必存角色+回传角色
+    public ModelMap saveManager(Manager curManager,Manager manager){
         Set<Role> allRole = new HashSet<>();
+        Set<Role> roleList = curManager.getRoleList();
+        //获取被修改人之前的角色-当前人的角色=必存角色 最后结果为必存角色+回传角色
         allRole.addAll(roleList);
-        Manager manager1 = managerRepository.findUserByName(manager.getUsername());
-        if(StringUtil.isNullOrEmpty(manager.getId())){
-            if(manager1!=null){
-                return RestUtil.Error(333,"该用户名已存在");
-            }
-            BCryptPasswordEncoder bc=new BCryptPasswordEncoder(4);
-            manager.setPassword(bc.encode("123456"));
-            manager.setState((byte) 0);
-        }else {
-            if(manager1!=null&&!manager1.getId().equals(manager.getId())){
-                return RestUtil.Error(333,"该用户名已存在");
+
+        Manager manager1 = new Manager();
+        if(!StringUtil.isNullOrEmpty(manager.getId())){
+            manager1 = managerRepository.getOne(manager.getId());
+            //判断是否当前人在改自己的信息
+            if(!curManager.getId().equals(manager.getId())){
+                manager.setUsername(manager1.getUsername());
             }
             manager.setPassword(manager1.getPassword());
             allRole.addAll(manager1.getRoleList());
             manager1.getRoleList().removeAll(roleList);
+        }else{
+            BCryptPasswordEncoder bc=new BCryptPasswordEncoder(4);
+            manager.setPassword(bc.encode("123456"));
+            manager.setState((byte) 0);
         }
+        if(StringUtil.isNullOrEmpty(manager.getUsername())){
+            return RestUtil.Error(333,"用户名不可为空");
+        }
+        if(managerRepository.existsByUsernameAndIdIsNot(manager.getUsername(),manager.getId())){
+            return RestUtil.Error(333,"该用户名已存在");
+        }
+
         if(manager.getRoleIds()!=null){
             Set<Role> roles = new HashSet<>();
             for(String roleId:manager.getRoleIds()){
-                allRole.stream().filter(role -> roleId.equals(role.getId().toString())).forEach(roles::add);
+                allRole.stream().filter(role -> String.valueOf(role.getId()).equals(roleId)).forEach(roles::add);
             }
-            //加上必存角色
+            //加上必存角色 防止越权篡改数据
             roles.addAll(manager1.getRoleList());
             manager.setRoleList(roles);
         }
@@ -108,6 +116,23 @@ public class ManagerService {
 
     /**
      * 修改管理员密码
+     * @param managerId
+     * @param password
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public ModelMap updatePassword(String managerId,String oldPassword,String password){
+        Manager manager = managerRepository.getOne(managerId);
+        BCryptPasswordEncoder bc=new BCryptPasswordEncoder(4);
+        if(bc.matches(oldPassword,manager.getPassword())){
+            manager.setPassword(bc.encode(password));
+            return RestUtil.Success();
+        }else{
+            return RestUtil.Error(333,"原密码错误");
+        }
+    }
+
+    /**
+     * 重置密码
      * @param managerId
      * @param password
      */

@@ -63,8 +63,8 @@
                     <span sec:authentication="name"></span><!--&lt;!&ndash; 获得当前用户的用户名 &ndash;&gt;-->
                 </a>
                 <dl class="layui-nav-child">
-                    <dd><a href="">基本资料</a></dd>
-                    <dd><a href="">安全设置</a></dd>
+                    <dd><a th:href="@{'/sys/adminEdit/?managerId='+${manager.id}}" target="content">基本资料</a></dd>
+                    <dd><a href="javascript:void(0);" id="model">安全设置</a></dd>
                 </dl>
             </li>
             <li class="layui-nav-item">
@@ -116,8 +116,9 @@
 <script src="/layui/layui.js"></script>
 <script>
     //JavaScript代码区域
-    layui.use('element', function(){
-        var element = layui.element;
+    layui.use(['element','layer'], function(){
+        var element = layui.element,
+             layer = layui.layer;
         $ = layui.jquery;
         //    利用ajax 将菜单内容加载到指定区域 避免使用iframe
         //    缺点：对于错误页面 无法直接加载静态资源 需要改spring的拦截器 比较麻烦 同时页面表单提交也很无语
@@ -176,6 +177,20 @@
                 }
                 $(".layui-side").toggleClass("mini");
 
+            });
+        });
+
+        //修改密码窗口
+        $('#model').on('click',function () {
+            layer.open({
+                type: 2 //Page层类型
+                ,skin: 'layui-layer-molv'
+                ,area: ['460px', '320px']
+                ,title: ['更新密码','font-size:18px']
+                ,shadeClose: true
+                ,shade: 0 //遮罩透明度
+                ,maxmin: true //允许全屏最小化
+                ,content:'/sys/altPwd'
             });
         });
 

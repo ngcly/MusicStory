@@ -26,8 +26,10 @@ public interface ManagerRepository extends JpaRepository<Manager,String>,JpaSpec
     @Query("select t from Manager t where t.username=:name")
     Manager findUserByName(@Param("name") String name);
 
-    @Query("select t from Manager t where t.state='1'")
-    List<Manager> findNormalUsers();
+    /**
+     * 判断用户名是否存在
+     */
+    boolean existsByUsernameAndIdIsNot(String username,String userId);
 
     /**
      * 动态查询管理员数据
