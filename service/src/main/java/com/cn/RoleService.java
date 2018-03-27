@@ -116,6 +116,20 @@ public class RoleService {
     }
 
     /**
+     * 保存菜单
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void saveMenu(Permission permission){
+        if(permission.getParentId()!=null&&permission.getParentId()!=0){
+            Permission parentPermission = permissionRepository.getOne(permission.getParentId());
+            permission.setParentIds(parentPermission.getParentIds()+"/"+permission.getId());
+        }else{
+            permission.setParentIds("0/"+permission.getId());
+        }
+        permissionRepository.save(permission);
+    }
+
+    /**
      * 删除菜单
      */
     @Transactional(rollbackFor = Exception.class)

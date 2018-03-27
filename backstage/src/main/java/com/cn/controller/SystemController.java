@@ -300,13 +300,31 @@ public class SystemController {
      * 新增或修改菜单页
      */
     @RequestMapping("/menuEdit")
-    public String menuEdit(@RequestParam(required = false) Long menuId,Model model){
+    public String menuEdit(@RequestParam(required = false)Long menuId,@RequestParam(required = false)Long parentId,Model model){
         Permission permission = new Permission();
         if(menuId!=null){
             permission = roleService.getPermissionById(menuId);
         }
-        model.addAttribute("permission",permission);
+        List<Permission> permissions = roleService.getPermissionList();
+        model.addAttribute("menu",permission);
+        model.addAttribute("menus",permissions);
+        model.addAttribute("checkId",parentId);
         return "menu/menuEdit";
+    }
+
+    /**
+     * 保存菜单
+     */
+    @RequestMapping("/menuSave")
+    @ResponseBody
+    public ModelMap saveMenu(@Valid Permission permission){
+        try {
+            roleService.saveMenu(permission);
+        }catch (Exception e){
+            e.printStackTrace();
+            return RestUtil.Error(500);
+        }
+        return RestUtil.Success();
     }
 
     /**

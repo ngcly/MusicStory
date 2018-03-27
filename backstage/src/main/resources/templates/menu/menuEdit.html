@@ -1,10 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>菜单编辑页</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" href="/css/public.css">
 </head>
-<body>
+<body class="child-body">
+<div class="child-nav">
+    <span class="layui-breadcrumb">
+         <a>系统设置</a>
+         <a href="/sys/adminList">菜单列表</a>
+        <a><cite th:text="${#strings.equals(menu.id,null)?'新增菜单':'修改菜单'}"></cite></a>
+    </span>
+    <a class="layui-btn layui-btn-sm" href="javascript:location.replace(location.href);" title="刷新" style="float:right;margin-top: 3px"><i class="layui-icon" style="line-height:30px">&#x1002;</i></a>
+</div>
+<div class="layui-col-md12">
+    <div class="layui-card">
+        <div class="layui-card-header" th:text="${#strings.equals(menu.id,null)?'新增菜单':'修改菜单'}"></div>
+        <div class="layui-card-body">
+            <form class="layui-form" action="/sys/menuSave" method="post">
+                <input type="hidden" name="id" th:value="${menu.id}">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">菜单名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="name" lay-verify="required" lay-vertype="tips" th:value="${menu.name}" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">权限标识</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="permission" lay-verify="required" lay-vertype="tips" th:value="${menu.permission}" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">规则：以 ROLE_ 开头+模块名+:功能名 例：ROLE_sys:add</div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">资源类型</label>
+                    <div class="layui-input-inline">
+                        <select name="resourceType" lay-verify="required">
+                            <option value="menu">菜单</option>
+                            <option value="button" th:selected="${#strings.equals(menu.resourceType,'button')}">按钮</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">父级菜单</label>
+                    <div class="layui-input-inline">
+                        <select name="parentId" lay-verify="required" th:disabled="${menu.id!=null}">
+                            <option value="0">顶层菜单</option>
+                            <option value="1" th:each="pm:${menus}" th:value="${pm.id}" th:selected="${pm.id==checkId}" th:text="${pm.name}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">跳转地址</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="url" class="layui-input" th:value="${menu.icon}" autocomplete="off">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">图标</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="icon" class="layui-input" th:value="${menu.icon}" autocomplete="off">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">排序</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="sort" lay-verify="sort" lay-vertype="tips"  class="layui-input" th:value="${menu.sort}" autocomplete="off">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="save" th:text="${#strings.equals(menu.id,null)?'保存':'修改'}"></button>
+                        <a href="/sys/menuList" type="button" class="layui-btn layui-btn-primary">返回</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
+<script src="/layui/layui.js"></script>
+<script type="text/javascript">
+    layui.use(['element','form'], function(){
+        $ = layui.jquery;
+        var form = layui.form;
+
+        //表单校验
+        form.verify({
+            // 校验原始密码
+            sort:[
+                /^\d+$/
+                ,'排序号必须是数字'
+            ],
+        });
+        //监听提交
+        form.on('submit(save)', function(data){
+            var headers = {};
+            headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
+            console.log(data.field)
+            $.ajax({
+                url:data.form.action,
+                type:data.form.method,
+                headers: headers,
+                data:data.field,
+                dataType:'json',
+                success:function(data){
+                    if(data.code == 200){
+                        layer.msg(data.msg, {icon: 1,time:600}, function () {
+                            location.href="/sys/menuList";
+                        });
+                    }else{
+                        layer.msg(data.msg,{time:1000});
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
 </body>
 </html>

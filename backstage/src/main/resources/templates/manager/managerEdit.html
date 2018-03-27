@@ -24,14 +24,14 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">用户名</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="username" th:readonly="${manager.id!=null&&manager.id!=session.SPRING_SECURITY_CONTEXT.authentication.principal.id}" required  lay-verify="required" placeholder="请输入用户名" th:value="${manager.username}" autocomplete="off" class="layui-input">
+                        <input type="text" name="username" th:readonly="${manager.id!=null&&manager.id!=session.SPRING_SECURITY_CONTEXT.authentication.principal.id}" lay-verify="required" lay-vertype="tips" placeholder="请输入用户名" th:value="${manager.username}" autocomplete="off" class="layui-input">
                     </div>
                     <div class="layui-form-mid layui-word-aux" th:if="${manager.id==null}">新增用户默认密码为：123456</div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">真实姓名</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="realName" required  lay-verify="required" placeholder="请输入真实姓名" th:value="${manager.realName}" autocomplete="off" class="layui-input">
+                        <input type="text" name="realName" placeholder="请输入真实姓名" th:value="${manager.realName}" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -44,7 +44,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">生日</label>
                     <div class="layui-input-inline">
-                        <input type="text" id="birthday" name="birthday" required  lay-verify="required" th:value="${#dates.format(manager.birthday,'yyyy-MM-dd')}" placeholder="出生年月" autocomplete="off" class="layui-input">
+                        <input type="text" id="birthday" name="birthday" th:value="${#dates.format(manager.birthday,'yyyy-MM-dd')}" placeholder="出生年月" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item" th:if="${manager.state!=null}">
