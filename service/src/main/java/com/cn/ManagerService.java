@@ -68,6 +68,9 @@ public class ManagerService {
     public ModelMap saveManager(Manager curManager,Manager manager){
         Set<Role> allRole = new HashSet<>();
         Set<Role> roleList = curManager.getRoleList();
+        if("admin".equals(curManager.getUsername())){
+            roleList = roleRepository.getAllByAvailableIsTrue();
+        }
         //获取被修改人之前的角色-当前人的角色=必存角色 最后结果为必存角色+回传角色
         allRole.addAll(roleList);
 
@@ -79,12 +82,14 @@ public class ManagerService {
                 manager.setUsername(manager1.getUsername());
             }
             manager.setPassword(manager1.getPassword());
+            manager.setCreateTime(manager1.getUpdateTime());
             allRole.addAll(manager1.getRoleList());
             manager1.getRoleList().removeAll(roleList);
         }else{
             BCryptPasswordEncoder bc=new BCryptPasswordEncoder(4);
             manager.setPassword(bc.encode("123456"));
             manager.setState((byte) 0);
+            manager.setCreateTime(new Date());
         }
         if(StringUtil.isNullOrEmpty(manager.getUsername())){
             return RestUtil.Error(333,"用户名不可为空");
@@ -102,6 +107,7 @@ public class ManagerService {
             roles.addAll(manager1.getRoleList());
             manager.setRoleList(roles);
         }
+        manager.setUpdateTime(new Date());
         managerRepository.save(manager);
         return RestUtil.Success();
     }

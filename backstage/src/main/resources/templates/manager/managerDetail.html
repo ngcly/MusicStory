@@ -1,10 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>管理员详情页</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
 </head>
 <body>
 
+<script src="/layui/layui.js"></script>
+<script type="text/javascript">
+    layui.use(['element'], function(){
+        $ = layui.jquery;
+
+        $("button.close").on('click', function () {
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            parent.layer.close(index);
+        });
+    });
+</script>
 </body>
 </html>
