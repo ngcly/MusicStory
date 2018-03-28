@@ -79,20 +79,17 @@
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-                <!--<li class="layui-nav-item layui-nav-itemed">-->
-                <!--<a class="" href="javascript:;">所有商品</a>-->
-                <!--<dl class="layui-nav-child">-->
-                <!--<dd><a href="javascript:;">列表一</a></dd>-->
-                <!--<dd><a href="javascript:;">列表二</a></dd>-->
-                <!--<dd><a href="admin/list" target="content">列表三</a></dd>-->
-                <!--</dl>-->
-                <!--</li>-->
                 <li class="layui-nav-item layui-nav-itemed" th:each="menuList:${menuList}">
                     <a class="" href="javascript:;"><i class="layui-icon" th:utext="${menuList.ico}"></i><cite th:text="${menuList.name}"></cite></a>
                     <dl class="layui-nav-child">
                         <dd th:each="menuChild:${menuList.children}">
                             <!--<a href="javascript:;" th:data="${menuChild.menuUrl}" th:text="${menuChild.name}"></a>-->
                             <a th:href="${menuChild.menuUrl}" target="content"><i class="layui-icon" th:utext="${menuChild.ico}"></i><cite th:text="${menuChild.name}"></cite></a>
+                            <dl class="layui-nav-child">
+                                <dd th:each="threeChild:${menuChild.children}">
+                                    <a th:href="${threeChild.menuUrl}" target="content"><i class="layui-icon" th:utext="${threeChild.ico}"></i><cite th:text="${threeChild.name}"></cite></a>
+                                </dd>
+                            </dl>
                         </dd>
                     </dl>
                 </li>

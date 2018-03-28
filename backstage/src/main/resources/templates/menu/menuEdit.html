@@ -21,6 +21,7 @@
         <div class="layui-card-body">
             <form class="layui-form" action="/sys/menuSave" method="post">
                 <input type="hidden" name="id" id="mid" th:value="${menu.id}">
+                <input type="hidden" name="parentId" th:value="${menu.parentId}" />
                 <div class="layui-form-item">
                     <label class="layui-form-label">菜单名</label>
                     <div class="layui-input-inline">
@@ -30,9 +31,9 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">权限标识</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="purview" lay-verify="required" lay-vertype="tips" th:value="${menu.permission}" autocomplete="off" class="layui-input">
+                        <input type="text" name="purview" lay-verify="required" lay-vertype="tips" th:value="${menu.purview}" autocomplete="off" class="layui-input">
                     </div>
-                    <div class="layui-form-mid layui-word-aux">规则：以 ROLE_ 开头+模块名+:功能名 例：ROLE_sys:add</div>
+                    <div class="layui-form-mid layui-word-aux">规则：模块名+:功能名 例：sys:add</div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">资源类型</label>
@@ -46,16 +47,13 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">父级菜单</label>
                     <div class="layui-input-inline">
-                        <select name="parentId" lay-verify="required" id="pat">
-                            <option value="0" selected="selected">顶层菜单</option>
-                            <option value="1" th:each="pm:${menus}" th:value="${pm.id}" th:selected="${pm.id==checkId}" th:text="${pm.name}"></option>
-                        </select>
+                        <input type="text" th:value="${#strings.equals(parentName,'')?'顶层菜单':parentName}" readonly="readonly" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">跳转地址</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="url" class="layui-input" th:value="${menu.icon}" autocomplete="off">
+                        <input type="text" name="url" class="layui-input" th:value="${menu.url}" autocomplete="off">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -86,10 +84,6 @@
     layui.use(['element','form'], function(){
         $ = layui.jquery;
         var form = layui.form;
-
-        if($('#mid').val()){
-            $('#pat').attr("disabled","disabled");
-        }
 
         //表单校验
         form.verify({

@@ -65,8 +65,8 @@ public class IndexController {
             //  生成当前的所有授权
             Collection<GrantedAuthority> updatedAuthorities = new HashSet<>(auth.getAuthorities());
             // 添加 授权
-            roles.forEach(role -> updatedAuthorities.add(new SimpleGrantedAuthority(role.getRoleName())));
-            permissions.forEach(permission -> updatedAuthorities.add(new SimpleGrantedAuthority(permission.getPermission())));
+            roles.forEach(role -> updatedAuthorities.add(new SimpleGrantedAuthority(role.getRoleCode())));
+            permissions.forEach(permission -> updatedAuthorities.add(new SimpleGrantedAuthority(permission.getPurview())));
             // 生成新的认证信息
             Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials(), updatedAuthorities);
             // 重置认证信息

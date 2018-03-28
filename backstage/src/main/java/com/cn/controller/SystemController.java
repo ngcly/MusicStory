@@ -1,12 +1,10 @@
 package com.cn.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.cn.LogService;
 import com.cn.ManagerService;
 import com.cn.RoleService;
 import com.cn.config.ManagerDetail;
-import com.cn.dto.TreeDTO;
 import com.cn.entity.LoginLog;
 import com.cn.entity.Manager;
 import com.cn.entity.Permission;
@@ -20,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,9 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.*;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 后台客服管理员 控制类
@@ -92,6 +89,9 @@ public class SystemController {
         Authentication authentication = (Authentication) principal;
         ManagerDetail managerDetail = (ManagerDetail) authentication.getPrincipal();
         Set<Role> roles = managerDetail.getRoleList();
+        if("admin".equals(managerDetail.getUsername())){
+            roles = roleService.getAvailableRoles();
+        }
         List<String> optrole = new ArrayList<>();
         roles.stream().forEach(role -> optrole.add(role.getId().toString()));
         Manager manager = new Manager();
@@ -111,33 +111,6 @@ public class SystemController {
         //可授权角色ID
         model.addAttribute("optionRoles",String.join(",",optrole));
         return "manager/managerEdit";
-    }
-
-    /**
-     * 头像上传
-     * @param file
-     * @return
-     */
-    @RequestMapping("/uploadAvatar")
-    @ResponseBody
-    public ModelMap uploadAvatar(@RequestParam("file")MultipartFile file){
-        if(!file.isEmpty()){
-            try {
-                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(new File(file.getOriginalFilename())));
-                out.write(file.getBytes());
-                out.flush();
-                out.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                return RestUtil.Error(222);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return RestUtil.Error(222);
-            }
-            return RestUtil.Success("/"+file.getOriginalFilename());
-        }else{
-            return RestUtil.Error(222,"文件为空");
-        }
     }
 
     /**
@@ -331,13 +304,16 @@ public class SystemController {
     @RequestMapping("/menuEdit")
     public String menuEdit(@RequestParam(required = false)Long menuId,@RequestParam(required = false)Long parentId,Model model){
         Permission permission = new Permission();
+        String parentName="";
+        if(parentId!=null){
+            parentName = roleService.getPermissionById(parentId).getName();
+            permission.setParentId(parentId);
+        }
         if(menuId!=null){
             permission = roleService.getPermissionById(menuId);
         }
-        List<Permission> permissions = roleService.getPermissionList();
         model.addAttribute("menu",permission);
-        model.addAttribute("menus",permissions);
-        model.addAttribute("checkId",parentId);
+        model.addAttribute("parentName",parentName);
         return "menu/menuEdit";
     }
 
@@ -382,5 +358,32 @@ public class SystemController {
         model.addAttribute("logList",logs);
         model.addAttribute("log",loginLog);
         return "system/logList";
+    }
+
+    /**
+     * 文件上传
+     * @param file
+     * @return
+     */
+    @RequestMapping("/upload")
+    @ResponseBody
+    public ModelMap uploadAvatar(@RequestParam("file")MultipartFile file){
+        if(!file.isEmpty()){
+            try {
+                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(new File(file.getOriginalFilename())));
+                out.write(file.getBytes());
+                out.flush();
+                out.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return RestUtil.Error(222);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return RestUtil.Error(222);
+            }
+            return RestUtil.Success("/"+file.getOriginalFilename());
+        }else{
+            return RestUtil.Error(222,"文件为空");
+        }
     }
 }

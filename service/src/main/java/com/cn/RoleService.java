@@ -50,7 +50,7 @@ public class RoleService {
     /**
      * 获取可用角色
      */
-    public List<Role> getAvailableRoles(){
+    public Set<Role> getAvailableRoles(){
         return roleRepository.getAllByAvailableIsTrue();
     }
 
@@ -124,9 +124,9 @@ public class RoleService {
             Permission parentPermission = permissionRepository.getOne(permission.getParentId());
             permission.setParentIds(parentPermission.getParentIds()+"/"+permission.getId());
         }else{
+            permission.setParentId((long) 0);
             permission.setParentIds("0/"+permission.getId());
         }
-        permission.setPermission(permission.getPurview());
         permissionRepository.save(permission);
     }
 

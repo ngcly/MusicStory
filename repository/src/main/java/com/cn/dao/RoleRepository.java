@@ -12,6 +12,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author chen
@@ -23,7 +24,7 @@ public interface RoleRepository extends JpaRepository<Role,Long>,JpaSpecificatio
     /**
      * 获取所有可用角色
      */
-    List<Role> getAllByAvailableIsTrue();
+    Set<Role> getAllByAvailableIsTrue();
 
     /**
      * 自定义条件查询

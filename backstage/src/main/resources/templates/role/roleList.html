@@ -61,6 +61,7 @@
     <thead>
     <tr>
         <th lay-data="{field:'roleName', sort:true}">角色名</th>
+        <th lay-data="{field:'roleCode'}">标识符</th>
         <th lay-data="{field:'description'}">角色描述</th>
         <th lay-data="{field:'roleType'}">角色类型</th>
         <th lay-data="{field:'available'}">是否可用</th>
@@ -70,6 +71,7 @@
     <tbody>
     <tr th:each="role:${roleList}">
         <td th:text="${role.roleName}"></td>
+        <td th:text="${role.roleCode}">
         <td th:text="${role.description}"></td>
         <td th:text="${#strings.equals(role.roleType,'1')?'后台角色':'前台角色'}"></td>
         <td>
@@ -172,7 +174,7 @@
             layer.open({
                 type: 2 //Page层类型
                 ,skin: 'layui-layer-molv'
-                ,area: ['520px', '409px']
+                ,area: ['571px', '455px']
                 ,title: ['角色信息','font-size:18px']
                 ,shadeClose: true
                 ,shade: 0 //遮罩透明度
@@ -186,7 +188,7 @@
             layer.open({
                 type: 2 //Page层类型
                 ,skin: 'layui-layer-molv'
-                ,area: ['520px', '409px']
+                ,area: ['571px', '455px']
                 ,title: ['角色信息','font-size:18px']
                 ,shadeClose: true
                 ,shade: 0 //遮罩透明度

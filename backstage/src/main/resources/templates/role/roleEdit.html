@@ -17,14 +17,19 @@
                     <div class="layui-input-inline">
                         <input type="text" name="roleName" th:value="${role.roleName}" lay-verify="required" lay-vertype="tips" class="layui-input">
                     </div>
-                    <div class="layui-form-mid layui-word-aux">角色唯一标识 例如：admin</div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">标识符</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="roleCode" th:value="${role.roleCode}" lay-verify="required" lay-vertype="tips" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">唯一标识 如：admin</div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">角色描述</label>
                     <div class="layui-input-inline">
                         <input type="text" id="np" name="description" th:value="${role.description}" lay-verify="pass" lay-vertype="tips" autocomplete="off" class="layui-input">
                     </div>
-                    <div class="layui-form-mid layui-word-aux">简要说明 例如：管理员</div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">角色类型</label>

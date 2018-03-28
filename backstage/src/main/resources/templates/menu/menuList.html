@@ -42,7 +42,7 @@
     <tbody>
     <tr th:each="menu:${menuList}" th:class="${#strings.equals(menu.parentId,'0')?'treegrid-'+menu.id : 'treegrid-'+menu.id+' treegrid-parent-'+menu.parentId}">
         <td th:text="${menu.name}"></td>
-        <td th:text="${menu.permission}"></td>
+        <td th:text="${menu.purview}"></td>
         <td th:text="${menu.url}"></td>
         <td th:text="${#strings.equals(menu.resourceType,'menu')?'菜单':'按钮'}"></td>
         <td th:text="${menu.sort}"></td>

@@ -42,10 +42,10 @@ public class ManagerDetail extends Manager implements UserDetails{
         Collection<GrantedAuthority> authorities = new HashSet<>();
         SimpleGrantedAuthority authority;
         for (Role role : this.getRoleList()) {
-            authority = new SimpleGrantedAuthority(role.getRoleName());
+            authority = new SimpleGrantedAuthority(role.getRoleCode());
             authorities.add(authority);
             for(Permission permission:role.getPermissions()){
-                authority = new SimpleGrantedAuthority(permission.getPermission());
+                authority = new SimpleGrantedAuthority(permission.getPurview());
                 authorities.add(authority);
             }
         }

@@ -73,7 +73,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">角色</label>
                     <div class="layui-input-block">
-                        <input type="checkbox" th:each="role:${roles}" th:name="'roleIds['+${role.id}+']'" th:checked="${#strings.contains(checkRoleId, role.id)}" th:value="${role.id}" th:title="${role.description}" th:disabled="!${#strings.contains(optionRoles, role.id)}">
+                        <input type="checkbox" th:each="role:${roles}" th:name="'roleIds['+${role.id}+']'" th:checked="${#strings.contains(checkRoleId, role.id)}" th:value="${role.id}" th:title="${role.roleName}" th:disabled="!${#strings.contains(optionRoles, role.id)}">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -105,7 +105,7 @@
         //上传文件
         var uploadInst = upload.render({
             elem: '#avatar'
-            ,url: '/sys/uploadAvatar'
+            ,url: '/sys/upload'
             ,size: 600 //限制文件大小，单位 KB
             // ,auto: false
             // ,bindAction: '#testListAction' //指向一个按钮触发上传
