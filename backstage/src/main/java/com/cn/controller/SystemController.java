@@ -294,7 +294,7 @@ public class SystemController {
     @RequestMapping("/menuList")
     public String menuList(Model model){
         List<Permission> permissionList = roleService.getPermissionList();
-        model.addAttribute("menuList",permissionList);
+        model.addAttribute("menuList",MenuUtil.treeOrderList(permissionList));
         return "menu/menuList";
     }
 
@@ -311,6 +311,7 @@ public class SystemController {
         }
         if(menuId!=null){
             permission = roleService.getPermissionById(menuId);
+            parentName = roleService.getPermissionById(permission.getParentId()).getName();
         }
         model.addAttribute("menu",permission);
         model.addAttribute("parentName",parentName);

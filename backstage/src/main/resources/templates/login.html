@@ -41,6 +41,7 @@
             layer = layui.layer;
 
         form.on('submit(login)', function (data) {
+            var index = layer.load(0);
             var headers = {};
             headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
             $.ajax({
@@ -51,10 +52,10 @@
                 dataType:'json',
                 success:function(data){
                     if(data.code == 200){
-                        layer.msg(data.msg, {icon: 1,time:600}, function () {
-                            location.href="/";
-                        });
+                        layer.close(index)
+                        location.href="/";
                     }else{
+                        layer.close(index)
                         layer.msg(data.msg,{time:1000});
                     }
                 }
