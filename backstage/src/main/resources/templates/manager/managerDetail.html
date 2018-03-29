@@ -6,7 +6,61 @@
     <link rel="stylesheet" href="/layui/css/layui.css">
 </head>
 <body>
-
+<div class="layui-col-md12">
+    <div class="layui-form">
+        <input type="hidden" name="id" th:value="${manager.id}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-inline">
+                <div th:text="${manager.username}"></div>
+            </div>
+            <label class="layui-form-label">真实姓名</label>
+            <div class="layui-input-inline">
+                <span th:text="${manager.realName}"></span>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">性别</label>
+            <div class="layui-input-inline">
+                <span th:text="${manager.gender==1}?'男':'女'"></span>
+            </div>
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-inline" th:switch="${manager.state}">
+                <span th:case="${manager.state==0}">初始化</span>
+                <span th:case="${manager.state==1}">正常</span>
+                <span th:case="${manager.state==2}">封禁</span>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">生日</label>
+            <div class="layui-input-inline">
+                <input type="text" id="birthday" name="birthday" th:value="${#dates.format(manager.birthday,'yyyy-MM-dd')}" placeholder="出生年月" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">头像</label>
+            <div class="layui-input-inline">
+                <img th:src="${manager.avatar}" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">创建时间</label>
+            <div class="layui-input-block">
+                <span></span>
+            </div>
+            <label class="layui-form-label">修改时间</label>
+            <div class="layui-input-block">
+                <span></span>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色</label>
+            <div class="layui-input-block">
+                <input type="checkbox" th:each="role:${roles}" th:name="'roleIds['+${role.id}+']'" th:checked="${#strings.contains(checkRoleId, role.id)}" th:value="${role.id}" th:title="${role.roleName}" th:disabled="!${#strings.contains(optionRoles, role.id)}">
+            </div>
+        </div>
+    </div>
+</div>
 <script src="/layui/layui.js"></script>
 <script type="text/javascript">
     layui.use(['element'], function(){
