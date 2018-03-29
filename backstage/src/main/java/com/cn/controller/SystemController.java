@@ -82,7 +82,6 @@ public class SystemController {
     /**
      * 管理员编辑页
      */
-    @PreAuthorize("hasAuthority('admin')")
     @RequestMapping("/adminEdit")
     public String altManager(@RequestParam(required = false)String managerId, Principal principal,Model model){
         //最好是从当前授权信息里面提出角色列表来
@@ -116,7 +115,6 @@ public class SystemController {
     /**
      * 新增或修改管理员信息
      */
-    @PreAuthorize("hasAuthority('admin')")
     @ResponseBody
     @RequestMapping("/adminSave")
     public ModelMap register(@Valid Manager manager){
@@ -131,7 +129,7 @@ public class SystemController {
     /**
      * 删除管理员
      */
-    @PreAuthorize("hasAuthority('admin')")
+    @PreAuthorize("hasAuthority('admin:del')")
     @ResponseBody
     @RequestMapping("/adminDel")
     public ModelMap delManager(@RequestParam String managerId){
@@ -173,7 +171,7 @@ public class SystemController {
      * @param managerId
      * @return
      */
-//    @PreAuthorize("hasAuthority('admin')")
+    @PreAuthorize("hasAuthority('admin:reset')")
     @ResponseBody
     @RequestMapping("/resetPwd")
     public ModelMap resetPassword(@RequestParam String managerId){
@@ -275,7 +273,7 @@ public class SystemController {
     /**
      * 删除角色
      */
-    @PreAuthorize("hasAuthority('admin')")
+    @PreAuthorize("hasAuthority('role:del')")
     @RequestMapping("/roleDel")
     @ResponseBody
     public ModelMap delRole(@RequestParam long roleId){
@@ -336,7 +334,7 @@ public class SystemController {
     /**
      * 删除菜单
      */
-    @PreAuthorize("hasAuthority('admin')")
+    @PreAuthorize("hasAuthority('menu:del')")
     @RequestMapping("/menuDel")
     @ResponseBody
     public ModelMap delMenu(@RequestParam long menuId){

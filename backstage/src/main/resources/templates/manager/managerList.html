@@ -99,9 +99,9 @@
         <td th:text="${#dates.format(manager.updateTime,'yyyy-MM-dd HH:mm:ss')}"></td>
         <td>
             <a class="layui-btn layui-btn-xs model" th:attr="data-id=${manager.id}" href="javascript:void(0);"><i class="layui-icon iconfont icon-detail"></i>详情</a>
-            <a class="layui-btn layui-btn-xs" th:attr="data-id=${manager.id}" th:href="@{'/sys/adminEdit/?managerId='+${manager.id}}"><i class="layui-icon">&#xe642;</i>编辑</a>
-            <a class="layui-btn layui-btn-xs pwd" th:attr="data-id=${manager.id}" href="javascript:void(0);" id="reset"><i class="layui-icon">&#x1002;</i>重置密码</a>
-            <a sec:authorize="hasAuthority('admin')" class="layui-btn layui-btn-danger layui-btn-xs remove" th:attr="data-id=${manager.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
+            <a sec:authorize="hasAuthority('admin:alt')" class="layui-btn layui-btn-xs" th:attr="data-id=${manager.id}" th:href="@{'/sys/adminEdit/?managerId='+${manager.id}}"><i class="layui-icon">&#xe642;</i>编辑</a>
+            <a sec:authorize="hasAuthority('admin:reset')" class="layui-btn layui-btn-xs pwd" th:attr="data-id=${manager.id}" href="javascript:void(0);" id="reset"><i class="layui-icon">&#x1002;</i>重置密码</a>
+            <a sec:authorize="hasAuthority('admin:del')" class="layui-btn layui-btn-danger layui-btn-xs remove" th:attr="data-id=${manager.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
         </td>
     </tr>
     </tbody>
