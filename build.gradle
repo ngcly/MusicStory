@@ -31,6 +31,11 @@ subprojects {  //子项目通配
         mavenCentral()
     }
 
+    //springboot2 这里一定得要。在多模块下，不然编译失败，因为不会把依赖模块给打包。
+    jar {
+        enabled = true
+    }
+
     dependencies {  //所有子项目通用依赖
 //        compile('org.springframework.boot:spring-boot-starter')
         compile('org.springframework.boot:spring-boot-starter-actuator')
