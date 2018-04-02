@@ -1,0 +1,10 @@
+@import "https://at.alicdn.com/t/font_594558_g140ya4hgdlpu8fr.css";
+.child-body{ padding: 10px 15px 15px 15px }
+.child-nav{ position: relative;border-bottom: 1px solid #e5e5e5;overflow: hidden;height: 39px;line-height: 39px;margin-bottom: 15px}
+.search-row{ padding: 7px 0px;background-color:#f2f2f2 }
+.search-label{ float:left;display: block;text-align: right;padding: 9px 5px;font-weight: 400;line-height: 20px}
+.search-input{ float:left;display: inline-block;vertical-align: middle;width: 110px;margin-right: 2px}
+.date-input{ float:left;display: inline-block;vertical-align: middle;width: 150px;margin-right: 2px}
+
+.treegrid-indent{width:16px;height:16px;display:inline-block;position:relative}.treegrid-expander{width:16px;height:16px;display:inline-block;position:relative;cursor:pointer}
+.treeview .list-group-item{cursor:pointer}.treeview span.indent{margin-left:10px;margin-right:10px}.treeview span.icon{width:12px;margin-right:5px}.treeview .node-disabled{color:silver;cursor:not-allowed}

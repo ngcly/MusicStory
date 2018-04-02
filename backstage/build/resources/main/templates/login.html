@@ -12,18 +12,18 @@
     <link rel="stylesheet" href="/css/login.css" media="all" />
 </head>
 <body>
-<video class="video-player" preload="auto" autoplay="autoplay" loop="loop" height="1080" width="1920">
+<video class="video-player" preload="auto" autoplay="autoplay" loop="loop" data-height="1080" data-width="1920" height="1080" width="1920">
     <source src="/media/login.mp4" type="video/mp4" />
 </video>
 <div class="video_mask"></div>
 <div class="login">
-    <h1>后台管理登录</h1>
+    <h1>后台管理登录 账户 VIP:123456</h1>
     <form class="layui-form" action="/login" method="post">
         <div class="layui-form-item">
-            <input class="layui-input" id="username" name="username" placeholder="用户名:vip" lay-verify="required" type="text" autocomplete="off" />
+            <input class="layui-input" id="username" name="username" placeholder="用户名" lay-verify="required" type="text" autocomplete="off" />
         </div>
         <div class="layui-form-item">
-            <input class="layui-input" id="password" name="password" placeholder="密码:123456" lay-verify="required" type="password" autocomplete="off" />
+            <input class="layui-input" id="password" name="password" placeholder="密码" lay-verify="required" type="password" autocomplete="off" />
         </div>
         <div class="layui-form-item form_code">
             <input class="layui-input" name="randomcode" placeholder="验证码" lay-verify="required" type="text" autocomplete="off" />
@@ -31,7 +31,7 @@
         </div>
         <button class="layui-btn login_btn" lay-submit="" lay-filter="login">登录</button>
         <input id="remember-me" name="remember-me" type="checkbox" value="true" title="记住我" />
-    </form>
+    </form>>
 </div>
 <script type="text/javascript" src="/layui/layui.js"></script>
 <script>
@@ -65,13 +65,13 @@
 
 
         //video背景
-        // $(window).resize(function(){
-        //     if($(".video-player").width() > $(window).width()){
-        //         $(".video-player").css({"height":$(window).height(),"width":"auto","left":-($(".video-player").width()-$(window).width())/2});
-        //     }else{
-        //         $(".video-player").css({"width":$(window).width(),"height":"auto","left":-($(".video-player").width()-$(window).width())/2});
-        //     }
-        // }).resize();
+        $(window).resize(function(){
+            if($(".video-player").width() > $(window).width()){
+                $(".video-player").css({"height":$(window).height(),"width":"auto","left":-($(".video-player").width()-$(window).width())/2});
+            }else{
+                $(".video-player").css({"width":$(window).width(),"height":"auto","left":-($(".video-player").width()-$(window).width())/2});
+            }
+        }).resize();
 
     });
 

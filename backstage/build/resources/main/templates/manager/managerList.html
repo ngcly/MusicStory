@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:javascript="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>管理员列表</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" href="/css/public.css">
+</head>
+<body class="child-body">
+
+<div class="child-nav">
+    <span class="layui-breadcrumb">
+         <a>系统设置</a>
+         <a><cite>管理员列表</cite></a>
+    </span>
+    <a class="layui-btn layui-btn-sm" href="javascript:location.replace(location.href);" title="刷新" style="float:right;margin-top: 3px"><i class="layui-icon" style="line-height:30px">&#x1002;</i></a>
+</div>
+
+<div class="layui-row">
+    <form  class="layui-form" th:action="@{/sys/adminList}">
+        <div class="layui-form-item search-row">
+            <div class="layui-inline">
+                <label class="search-label">用户名</label>
+                <div class="search-input">
+                    <input type="text" name="username" class="layui-input" th:value="${manger.username}">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="search-label">性别</label>
+                <div class="search-input">
+                    <select name="gender">
+                        <option value=""></option>
+                        <option value="1" th:selected="${manger.gender==1}">男</option>
+                        <option value="2" th:selected="${manger.gender==2}">女</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="search-label">状态</label>
+                <div class="search-input">
+                    <select name="state">
+                        <option value=""></option>
+                        <option value="0" th:selected="${manger.state==0}">初始化</option>
+                        <option value="1" th:selected="${manger.state==1}">正常</option>
+                        <option value="2" th:selected="${manger.state==2}">封禁</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="search-label">创建时间</label>
+                <div class="date-input">
+                    <input type="text" name="beginTime" class="layui-input time-item" th:value="${#dates.format(manger.beginTime,'yyyy-MM-dd HH:mm:ss')}" placeholder="开始时间">
+                </div>
+                <div class="layui-form-mid">-</div>
+                <div class="date-input">
+                    <input type="text" name="endTime" class="layui-input time-item" th:value="${#dates.format(manger.endTime,'yyyy-MM-dd HH:mm:ss')}" placeholder="截止时间">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
+            </div>
+            <div class="layui-inline">
+                <a href="/sys/adminEdit" type="button" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
+            </div>
+        </div>
+        <input type="hidden" name="page" id="pg">
+        <input type="hidden" name="size" id="se">
+    </form>
+</div>
+
+<table class="layui-table" lay-filter="managers">
+    <thead>
+    <tr>
+        <th lay-data="{field:'username', sort:true}">用户名</th>
+        <th lay-data="{field:'realName'}">真实姓名</th>
+        <th lay-data="{field:'gender',width:70}">性别</th>
+        <th lay-data="{field:'birthday',width:110}">生日</th>
+        <th lay-data="{field:'state',width:70}">状态</th>
+        <th lay-data="{field:'createTime', sort:true}">创建时间</th>
+        <th lay-data="{field:'updateTime', sort:true}">修改时间</th>
+        <th lay-data="{field:'opt',fixed: 'right',align:'center',width:215}">操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="manager:${managerList}" th:switch="${manager.state}">
+        <td th:text="${manager.username}"></td>
+        <td th:text="${manager.realName}"></td>
+        <td th:text="${#strings.equals(manager.gender,'1')?'男':'女'}"></td>
+        <td th:text="${#dates.format(manager.birthday, 'yyyy-MM-dd')}"></td>
+        <td th:case="'0'">初始化</td><td th:case="'1'">正常</td><td th:case="'2'">封禁</td><td th:case="*"></td>
+        <td th:text="${#dates.format(manager.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+        <td th:text="${#dates.format(manager.updateTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+        <td>
+            <a class="layui-btn layui-btn-xs model" th:attr="data-id=${manager.id}" href="javascript:void(0);"><i class="layui-icon iconfont icon-detail"></i>详情</a>
+            <a sec:authorize="hasAuthority('admin:alt')" class="layui-btn layui-btn-xs" th:attr="data-id=${manager.id}" th:href="@{'/sys/adminEdit/?managerId='+${manager.id}}"><i class="layui-icon">&#xe642;</i>编辑</a>
+            <a sec:authorize="hasAuthority('admin:reset')" class="layui-btn layui-btn-xs pwd" th:attr="data-id=${manager.id}" href="javascript:void(0);" id="reset"><i class="layui-icon">&#x1002;</i>重置密码</a>
+            <a sec:authorize="hasAuthority('admin:del')" class="layui-btn layui-btn-danger layui-btn-xs remove" th:attr="data-id=${manager.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<div id="pag"></div>
+<script src="/layui/layui.js"></script>
+<script type="text/javascript">
+    layui.use(['element','laypage','table','laydate'], function(){
+        $ = layui.jquery;
+        var table = layui.table,
+            laypage = layui.laypage,
+            laydate = layui.laydate;
+
+        /*<![CDATA[*/
+        var ct = [[${managerList.totalElements}]];
+        var cn = [[${managerList.number+1}]];
+        var ns = [[${managerList.size}]];
+        /*]]>*/
+
+        //转换静态表格
+        table.init('managers', {
+            limit: ns //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
+        });
+
+        //执行一个laypage实例
+        laypage.render({
+            elem: 'pag', //注意，这里的ID，不用加 # 号
+            count:ct, //数据总数，从服务端得到
+            groups:10,
+            limit:ns,
+            // limits:[10, 20, 30, 40, 50],
+            curr:cn,
+            layout:['prev', 'page', 'next','skip','count','limit'],
+            jump: function(obj,first){
+                if(!first){
+                    $('#pg').val(obj.curr-1);
+                    $('#se').val(obj.limit);
+                    $('form').submit();
+                    // url+="?page="+(obj.curr-1)+"&size="+obj.limit;
+                    // window.location.href=url;
+                }
+            }
+        });
+
+        //执行一个laydate实例
+        //同时绑定多个
+        lay('.time-item').each(function(){
+            laydate.render({
+                elem: this,
+                type: 'datetime',
+                max:0,
+                trigger: 'click'
+            });
+        });
+
+        //重置密码
+        $(".pwd").on('click', function () {
+            var _this = $(this);
+            layer.confirm('重置后密码为：123456',{title:'重置密码'}, function(){
+                $.getJSON('/sys/resetPwd', {managerId:_this.data('id')}, function(ret){
+                    if (ret.code == 200){
+                        layer.msg(ret.msg, {icon: 1,time:600});
+                    } else {
+                        layer.msg(ret.msg, {icon: 2,time:600});
+                    }
+                });
+            });
+        })
+
+        //删除处理
+        $(".remove").on('click', function () {
+            var _this = $(this);
+            layer.confirm('确定删除吗?',{title:'删除'}, function(){
+                $.getJSON('/sys/adminDel', {managerId:_this.data('id')}, function(ret){
+                    if (ret.code == 200){
+                        // $('#'+_this.data('id')).hide();
+                        layer.msg(ret.msg, {icon: 1,time:600},function () {
+                            location.reload();
+                        });
+                    } else {
+                        layer.msg(ret.msg, {icon: 2,time:600});
+                    }
+                });
+            });
+        })
+
+        //详情窗口
+        $('.model').on('click',function () {
+            var _this = $(this);
+            layer.open({
+                type: 2 //Page层类型
+                ,skin: 'layui-layer-molv'
+                ,area: ['600px', '450px']
+                ,title: ['管理员信息','font-size:18px']
+                ,shadeClose: true
+                ,shade: 0 //遮罩透明度
+                ,maxmin: true //允许全屏最小化
+                ,content:'/sys/adminView?mangerId='+_this.data('id')
+            });
+        });
+
+    });
+</script>
+</body>
+</html>

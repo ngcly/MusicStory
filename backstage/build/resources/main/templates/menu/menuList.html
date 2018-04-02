@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>菜单列表</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" href="/css/public.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <style>a:hover{text-decoration:none}</style>
+</head>
+<body class="child-body">
+<div class="child-nav">
+    <span class="layui-breadcrumb">
+         <a>系统设置</a>
+         <a><cite>菜单列表</cite></a>
+    </span>
+    <a class="layui-btn layui-btn-sm" href="javascript:location.replace(location.href);" title="刷新" style="float:right;margin-top: 3px"><i class="layui-icon" style="line-height:30px">&#x1002;</i></a>
+</div>
+
+<div class="layui-row">
+    <div class="layui-form">
+        <div class="layui-form-item search-row">
+            <div class="layui-inline">
+                <a th:href="@{/sys/menuEdit}" type="button" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增菜单</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<table class="layui-table" id="menuTable">
+    <thead>
+    <tr>
+        <th>菜单名称</th>
+        <th>权限标识</th>
+        <th>链接地址</th>
+        <th>菜单类型</th>
+        <th>排序</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="menu:${menuList}" th:class="${#strings.equals(menu.parentId,'0')?'treegrid-'+menu.id : 'treegrid-'+menu.id+' treegrid-parent-'+menu.parentId}">
+        <td th:text="${menu.name}"></td>
+        <td th:text="${menu.purview}"></td>
+        <td th:text="${menu.url}"></td>
+        <td th:text="${#strings.equals(menu.resourceType,'menu')?'菜单':'按钮'}"></td>
+        <td th:text="${menu.sort}"></td>
+        <td>
+            <a class="layui-btn layui-btn-xs" th:href="@{'/sys/menuEdit?parentId='+${menu.id}}" th:unless="${#strings.equals(menu.resourceType,'button')}"><i class="layui-icon">&#xe61f;</i>添加子菜单</a>
+            <a class="layui-btn layui-btn-xs" th:href="@{'/sys/menuEdit?menuId='+${menu.id}}"><i class="layui-icon">&#xe642;</i>编辑</a>
+            <a sec:authorize="hasAuthority('menu:del')" class="layui-btn layui-btn-danger layui-btn-xs remove" th:attr="data-id=${menu.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<script src="/layui/layui.js"></script>
+<script src="/js/jquery-3.2.1.min.js"></script>
+<script src="/js/jquery.treegrid.min.js"></script>
+<script type="text/javascript">
+    layui.use(['element','layer'], function(){
+        $ = layui.jquery;
+        var layer = layui.layer;
+
+        $("#menuTable").treegrid({
+            expanderExpandedClass: 'glyphicon glyphicon-minus',
+            expanderCollapsedClass: 'glyphicon glyphicon-plus'
+        });
+
+        //删除处理
+        $(".remove").on('click', function () {
+            var _this = $(this);
+            layer.confirm('确定删除吗?',{title:'若有下级菜单则也会被删除'}, function(){
+                $.getJSON('/sys/menuDel', {menuId:_this.data('id')}, function(ret){
+                    if (ret.code == 200){
+                        layer.msg(ret.msg, {icon: 1,time:600},function () {
+                            location.reload();
+                        });
+                    } else {
+                        layer.msg(ret.msg, {icon: 2,time:600});
+                    }
+                });
+            });
+        })
+
+    });
+</script>
+</body>
+</html>
