@@ -102,6 +102,7 @@ public class SystemController {
                 roles.add(role);
             }
         }
+        model.addAttribute("currentId",managerDetail.getId());
         model.addAttribute("manager",manager);
         //待选角色列表
         model.addAttribute("roles",roles);

@@ -73,7 +73,7 @@ public class IndexController {
             SecurityContextHolder.getContext().setAuthentication(newAuth);
             menuList.addAll(permissions);
         }
-        model.addAttribute("manager",managerDetail);
+        model.addAttribute("manager",managerService.getManagerById(managerDetail.getId()));
         model.addAttribute("menuList", MenuUtil.makeTreeList(menuList));
         return "index";
     }
