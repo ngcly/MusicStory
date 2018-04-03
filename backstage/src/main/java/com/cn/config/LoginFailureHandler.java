@@ -24,6 +24,8 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
             msg = "用户名或密码错误";
         }else if("User is disabled".equals(exception.getMessage())){
             msg = "该用户已被封禁";
+        }else if("验证码错误".equals(exception.getMessage())){
+            msg = exception.getMessage();
         }
         exception.getMessage();
         out.write("{\"code\":333,\"msg\":\""+msg+"\"}");

@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Spring Security 配置
@@ -32,20 +33,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        //设置验证码过滤器
+        LoginFilter loginFilter = new LoginFilter();
+        loginFilter.setAuthenticationManager(authenticationManager());
+        loginFilter.setAuthenticationSuccessHandler(loginSuccessHandler());
+        loginFilter.setAuthenticationFailureHandler(loginFailureHandler());
+
         http.authorizeRequests()
                 .antMatchers("/kaptcha","/login").permitAll()
 //                .antMatchers("/admin/**").hasRole("ADMIN")  //该URL只有ADMIN权限才可访问
 //                .antMatchers("/db/**").access("hasRole('ADMIN') and hasRole('DBA')") //该URL需具备设定的两个权限才可访问
                 .anyRequest().authenticated()
                 .and()
+                .addFilterBefore(loginFilter,UsernamePasswordAuthenticationFilter.class)
                 .formLogin()
                 //表单登录的 登录页
                 .loginPage("/login")
-                .successHandler(loginSuccessHandler())
+//                .successHandler(loginSuccessHandler())
 //                .defaultSuccessUrl("/")
                 //登录失败跳转页面
 //                .failureUrl("/login?error=true")
-                .failureHandler(loginFailureHandler())
+//                .failureHandler(loginFailureHandler())
                 .permitAll()
                 .and()
                 //开启cookie保存用户数据
@@ -94,4 +102,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public LoginFailureHandler loginFailureHandler(){
         return new LoginFailureHandler();
     }
+
 }

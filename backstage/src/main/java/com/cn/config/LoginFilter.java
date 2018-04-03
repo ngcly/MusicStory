@@ -4,6 +4,7 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +16,12 @@ import javax.servlet.http.HttpServletResponse;
  * @date 2018-01-02 17:28
  */
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
+    public LoginFilter(){
+        AntPathRequestMatcher requestMatcher = new AntPathRequestMatcher("/login", "POST");
+        this.setRequiresAuthenticationRequestMatcher(requestMatcher);
+        this.setAuthenticationManager(getAuthenticationManager());
+    }
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         // 在这里进行验证码的校验
