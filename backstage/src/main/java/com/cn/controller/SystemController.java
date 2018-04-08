@@ -28,6 +28,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.*;
 
@@ -370,13 +373,13 @@ public class SystemController {
     public ModelMap uploadAvatar(@RequestParam("file")MultipartFile file){
         if(!file.isEmpty()){
             try {
-                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(new File(file.getOriginalFilename())));
-                out.write(file.getBytes());
-                out.flush();
-                out.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                return RestUtil.Error(222);
+//                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(new File(file.getOriginalFilename())));
+//                out.write(file.getBytes());
+//                out.flush();
+//                out.close();
+                byte[] bytes = file.getBytes();
+                Path path = Paths.get("/" + file.getOriginalFilename());
+                Files.write(path, bytes);
             } catch (IOException e) {
                 e.printStackTrace();
                 return RestUtil.Error(222);

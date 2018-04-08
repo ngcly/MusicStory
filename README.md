@@ -7,5 +7,3 @@
 - 数据库：mysql
 - 数据连接池：阿里druid      
 目前存在一个问题，直接地址栏访问页面会没有iframe外层
-
-前台页面准备采用react加typescript（感觉好难）

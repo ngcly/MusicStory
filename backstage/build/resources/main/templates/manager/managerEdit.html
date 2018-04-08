@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/css/public.css">
 </head>
 <body class="child-body">
+<input type="hidden" id="ctm" th:value="${currentId}">
 <div class="child-nav">
     <span class="layui-breadcrumb">
          <a>系统设置</a>
@@ -20,7 +21,7 @@
         <div class="layui-card-header" th:text="${#strings.equals(manager.id,null)?'新增管理员':'修改管理员'}"></div>
         <div class="layui-card-body">
             <form class="layui-form" action="/sys/adminSave" method="post">
-                <input type="hidden" name="id" th:value="${manager.id}">
+                <input type="hidden" id="altId" name="id" th:value="${manager.id}">
                 <div class="layui-form-item">
                     <label class="layui-form-label">用户名</label>
                     <div class="layui-input-inline">
@@ -142,6 +143,9 @@
                 success:function(data){
                     if(data.code == 200){
                         layer.msg(data.msg, {icon: 1,time:600}, function () {
+                            if($('#ctm').val()==$('#altId').val()){
+                                parent.location.reload();
+                            }
                             location.href="/sys/adminList";
                         });
                     }else{

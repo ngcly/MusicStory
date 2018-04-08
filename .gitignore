@@ -22,7 +22,7 @@
 hs_err_pid*
 
 .gradle
-/build/
+build/
 !gradle/wrapper/gradle-wrapper.jar
 
 ### STS ###
