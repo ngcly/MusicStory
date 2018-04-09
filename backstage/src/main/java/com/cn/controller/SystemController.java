@@ -11,6 +11,14 @@ import com.cn.entity.Permission;
 import com.cn.entity.Role;
 import com.cn.util.MenuUtil;
 import com.cn.util.RestUtil;
+import com.google.gson.Gson;
+import com.qiniu.common.QiniuException;
+import com.qiniu.common.Zone;
+import com.qiniu.http.Response;
+import com.qiniu.storage.Configuration;
+import com.qiniu.storage.UploadManager;
+import com.qiniu.storage.model.DefaultPutRet;
+import com.qiniu.util.Auth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -371,22 +379,41 @@ public class SystemController {
     @RequestMapping("/upload")
     @ResponseBody
     public ModelMap uploadAvatar(@RequestParam("file")MultipartFile file){
-        if(!file.isEmpty()){
-            try {
-//                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(new File(file.getOriginalFilename())));
-//                out.write(file.getBytes());
-//                out.flush();
-//                out.close();
-                byte[] bytes = file.getBytes();
-                Path path = Paths.get("/" + file.getOriginalFilename());
-                Files.write(path, bytes);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return RestUtil.Error(222);
-            }
-            return RestUtil.Success("/"+file.getOriginalFilename());
-        }else{
+        if(file.isEmpty()){
             return RestUtil.Error(222,"文件为空");
         }
+
+        //构造一个带指定Zone对象的配置类 七牛上传
+        Configuration cfg = new Configuration(Zone.zone2());
+        UploadManager uploadManager = new UploadManager(cfg);
+        //...生成上传凭证，然后准备上传
+        String accessKey = "yAbBqIQ633g5U4BtZtEJtGkic8l6ALkngpfNeKX_";
+        String secretKey = "ry0PDc4GZk9Gd6sYpOYg0EGchKdo3S1aPhJJbAPP";
+        String bucket = "music-story";
+        String returnPath="http://p6wg9ob78.bkt.clouddn.com/";
+        //默认不指定key的情况下，以文件内容的hash值作为文件名
+        String key = null;
+        try {
+            byte[] uploadBytes = file.getBytes();
+            Auth auth = Auth.create(accessKey, secretKey);
+            String upToken = auth.uploadToken(bucket);
+            try {
+                Response response = uploadManager.put(uploadBytes, key, upToken);
+                //解析上传成功的结果
+                DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
+                returnPath+=putRet.hash;
+            } catch (QiniuException ex) {
+                Response r = ex.response;
+                System.err.println(r.toString());
+                try {
+                    System.err.println(r.bodyString());
+                } catch (QiniuException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return RestUtil.Success(returnPath);
     }
 }
