@@ -85,7 +85,7 @@
                         <dd th:each="menuChild:${menuList.children}">
                             <!--<a href="javascript:;" th:data="${menuChild.menuUrl}" th:text="${menuChild.name}"></a>-->
                             <a th:href="${menuChild.menuUrl}" target="content"><i class="layui-icon" th:utext="${menuChild.ico}"></i><cite th:text="${menuChild.name}"></cite></a>
-                            <dl class="layui-nav-child">
+                            <dl class="layui-nav-child" th:if="${not #lists.isEmpty(menuChild.children)}">
                                 <dd th:each="threeChild:${menuChild.children}">
                                     <a th:href="${threeChild.menuUrl}" target="content"><i class="layui-icon" th:utext="${threeChild.ico}"></i><cite th:text="${threeChild.name}"></cite></a>
                                 </dd>

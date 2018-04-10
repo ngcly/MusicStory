@@ -34,6 +34,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             // 如果校验失败，将验证码错误失败信息设置到request中
             throw new AuthenticationServiceException("验证码错误");
         }
+        request.getSession().removeAttribute("validateCode");
         return super.attemptAuthentication(request, response);
     }
 }

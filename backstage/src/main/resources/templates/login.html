@@ -27,7 +27,7 @@
         </div>
         <div class="layui-form-item form_code">
             <input class="layui-input" name="randomcode" placeholder="验证码" lay-verify="required" type="text" autocomplete="off" />
-            <div class="code"><img src="/kaptcha" onclick="random(this)" width="116" height="36" title="看不清,点击换一张" /></div>
+            <div class="code"><img src="/kaptcha" onclick="random(this)" width="116" height="36" id="vdc" title="看不清,点击换一张" /></div>
         </div>
         <button class="layui-btn login_btn" lay-submit="" lay-filter="login">登录</button>
         <input id="remember-me" name="remember-me" type="checkbox" value="true" title="记住我" />
@@ -52,10 +52,11 @@
                 dataType:'json',
                 success:function(data){
                     if(data.code == 200){
-                        layer.close(index)
+                        layer.close(index);
                         location.href="/";
                     }else{
-                        layer.close(index)
+                        random($('#vdc')[0]);
+                        layer.close(index);
                         layer.msg(data.msg,{time:1000});
                     }
                 }

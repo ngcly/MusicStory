@@ -110,8 +110,9 @@
             ,size: 600 //限制文件大小，单位 KB
             // ,auto: false
             // ,bindAction: '#testListAction' //指向一个按钮触发上传
-            ,accept: 'file' //普通文件
+            ,accept: 'images' //普通文件
             ,exts: 'jpg|jpeg|png' //只允许上传图片
+            ,acceptMime:'image/*'
             ,before: function(obj){
                 //预读本地文件示例，不支持ie8
                 this.data={
