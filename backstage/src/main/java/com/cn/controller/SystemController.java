@@ -321,7 +321,11 @@ public class SystemController {
         }
         if(menuId!=null){
             permission = roleService.getPermissionById(menuId);
-            parentName = roleService.getPermissionById(permission.getParentId()).getName();
+            if(permission.getParentId()!=0){
+                parentName = roleService.getPermissionById(permission.getParentId()).getName();
+            }else{
+                parentName = "顶层菜单";
+            }
         }
         model.addAttribute("menu",permission);
         model.addAttribute("parentName",parentName);
