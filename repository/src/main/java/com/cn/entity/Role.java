@@ -43,6 +43,7 @@ public class Role implements Serializable {
     //角色 -- 权限关系：多对多关系;
     @ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(name="role_permission",joinColumns={@JoinColumn(name="role_id")},inverseJoinColumns={@JoinColumn(name="permission_id")})
+    @OrderBy("sort asc")
     private List<Permission> permissions;
 
     public Long getId() {

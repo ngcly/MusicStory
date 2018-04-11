@@ -73,8 +73,11 @@
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">角色</label>
-                    <div class="layui-input-block">
-                        <input type="checkbox" th:each="role:${roles}" th:name="'roleIds['+${role.id}+']'" th:checked="${#strings.contains(checkRoleId, role.id)}" th:value="${role.id}" th:title="${role.roleName}" th:disabled="!${#strings.contains(optionRoles, role.id)}">
+                    <div class="layui-input-block" th:if="${not #strings.equals(manager.id,currentId)}">
+                        <input type="checkbox" th:each="role:${roles}" th:name="'roleIds['+${role.id}+']'" th:checked="${#strings.contains(checkRoleId, role.id)}" th:value="${role.id}" th:title="${role.roleName}" th:disabled="${not #strings.contains(optionRoles, role.id)}">
+                    </div>
+                    <div class="layui-input-block" th:if="${#strings.equals(manager.id,currentId)}">
+                        <input type="checkbox" th:name="'roleIds['+${role.id}+']'" th:each="role:${manager.roleList}" th:title="${role.getRoleName()}" th:value="${role.id}" checked="checked" disabled>
                     </div>
                 </div>
                 <div class="layui-form-item">

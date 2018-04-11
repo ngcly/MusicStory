@@ -49,7 +49,7 @@
                 <button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
             </div>
             <div class="layui-inline">
-                <a href="javascript:void(0)" type="button" id="add" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
+                <a sec:authorize="hasAuthority('role:add')" href="javascript:void(0)" type="button" id="add" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
             </div>
         </div>
         <input type="hidden" name="page" id="pg">
@@ -78,8 +78,8 @@
             <input type="checkbox" checked="" name="available" lay-skin="switch" lay-text="启用|停用" lay-filter="switchTest" th:checked="${#bools.isTrue(role.available)}" th:attr="data-id=${role.id}">
         </td>
         <td>
-            <a class="layui-btn layui-btn-xs model" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe618;</i>授权</a>
-            <a class="layui-btn layui-btn-xs alt" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe642;</i>编辑</a>
+            <a sec:authorize="hasAuthority('role:grant')" class="layui-btn layui-btn-xs model" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe618;</i>授权</a>
+            <a sec:authorize="hasAuthority('role:alt')" class="layui-btn layui-btn-xs alt" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe642;</i>编辑</a>
             <a sec:authorize="hasAuthority('role:del')" class="layui-btn layui-btn-danger layui-btn-xs remove" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
         </td>
     </tr>
@@ -132,6 +132,14 @@
                     _this.prop("checked",!_this.prop("checked"));
                     form.render("checkbox");
                     layer.msg(ret.msg, {icon: 2,time:600});
+                }
+            }).fail(function(jqXHR) {
+                _this.prop("checked",!_this.prop("checked"));
+                form.render("checkbox");
+                if (jqXHR.status == 403) {
+                    layer.msg('抱歉，您没有权限', {icon: 2,time:600});
+                } else {
+                    layer.msg('未知错误', {icon: 2,time:600});
                 }
             });
         });

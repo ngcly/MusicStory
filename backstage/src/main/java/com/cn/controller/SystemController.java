@@ -146,6 +146,10 @@ public class SystemController {
     @RequestMapping("/adminDel")
     public ModelMap delManager(@RequestParam String managerId){
         try {
+            ManagerDetail managerDetail = (ManagerDetail) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
+            if(managerDetail.getId().equals(managerId)||"1".equals(managerId)){
+                return RestUtil.Error(333,"禁止删除自己和admin");
+            }
             managerService.delManager(managerId);
         }catch (Exception e){
             e.printStackTrace();
@@ -211,6 +215,7 @@ public class SystemController {
     /**
      * 新增或修改角色页面
      */
+    @PreAuthorize("hasAnyAuthority('role:add','role:alt')")
     @RequestMapping("/roleEdit")
     public String roleEdit(@RequestParam(required = false) Long roleId,Model model){
         Role role = new Role();
@@ -224,6 +229,7 @@ public class SystemController {
     /**
      * 保存角色
      */
+    @PreAuthorize("hasAnyAuthority('role:add','role:alt')")
     @RequestMapping("/roleSave")
     @ResponseBody
     public ModelMap saveRole(@Valid Role role){
@@ -239,6 +245,7 @@ public class SystemController {
     /**
      * 角色授权页面
      */
+    @PreAuthorize("hasAnyAuthority('role:grant')")
     @RequestMapping("/grant")
     public String grantForm(@RequestParam long roleId, Model model) {
         List<Permission> permissions = roleService.getPermissionList();
@@ -255,6 +262,7 @@ public class SystemController {
      * @param menuIds
      * @return
      */
+    @PreAuthorize("hasAuthority('role:grant')")
     @PostMapping("/saveGrant")
     @ResponseBody
     public ModelMap saveGrant(long roleId, String menuIds){
@@ -270,6 +278,7 @@ public class SystemController {
     /**
      * 是否停用角色
      */
+    @PreAuthorize("hasAuthority('role:alt')")
     @RequestMapping("/togAvailable")
     @ResponseBody
     public ModelMap altRole(@RequestParam long roleId){
@@ -311,6 +320,7 @@ public class SystemController {
     /**
      * 新增或修改菜单页
      */
+    @PreAuthorize("hasAnyAuthority('menu:add','menu:alt')")
     @RequestMapping("/menuEdit")
     public String menuEdit(@RequestParam(required = false)Long menuId,@RequestParam(required = false)Long parentId,Model model){
         Permission permission = new Permission();
@@ -335,6 +345,7 @@ public class SystemController {
     /**
      * 保存菜单
      */
+    @PreAuthorize("hasAnyAuthority('menu:add','menu:alt')")
     @RequestMapping("/menuSave")
     @ResponseBody
     public ModelMap saveMenu(@Valid Permission permission){

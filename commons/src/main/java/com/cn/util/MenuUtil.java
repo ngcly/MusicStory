@@ -67,7 +67,7 @@ public class MenuUtil {
                 rootTrees.add(tree);
             }
             for (TreeDTO t : trees) {
-                if(t.getParentId() == tree.getId()){
+                if(t.getParentId().equals(tree.getId())){
                     if(tree.getChildren() == null){
                         List<TreeDTO> myChildrens = new ArrayList<>();
                         myChildrens.add(t);

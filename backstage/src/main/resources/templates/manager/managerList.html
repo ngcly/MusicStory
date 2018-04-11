@@ -67,7 +67,7 @@
                 <button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
             </div>
             <div class="layui-inline">
-                <a href="/sys/adminEdit" type="button" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
+                <a sec:authorize="hasAuthority('admin:add')" href="/sys/adminEdit" type="button" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
             </div>
         </div>
         <input type="hidden" name="page" id="pg">

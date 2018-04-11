@@ -22,7 +22,7 @@
     <div class="layui-form">
         <div class="layui-form-item search-row">
             <div class="layui-inline">
-                <a th:href="@{/sys/menuEdit}" type="button" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增菜单</a>
+                <a sec:authorize="hasAuthority('menu:add')" th:href="@{/sys/menuEdit}" type="button" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增菜单</a>
             </div>
         </div>
     </div>
@@ -47,8 +47,8 @@
         <td th:text="${#strings.equals(menu.resourceType,'menu')?'菜单':'按钮'}"></td>
         <td th:text="${menu.sort}"></td>
         <td>
-            <a class="layui-btn layui-btn-xs" th:href="@{'/sys/menuEdit?parentId='+${menu.id}}" th:unless="${#strings.equals(menu.resourceType,'button')}"><i class="layui-icon">&#xe61f;</i>添加子菜单</a>
-            <a class="layui-btn layui-btn-xs" th:href="@{'/sys/menuEdit?menuId='+${menu.id}}"><i class="layui-icon">&#xe642;</i>编辑</a>
+            <a sec:authorize="hasAuthority('menu:add')" class="layui-btn layui-btn-xs" th:href="@{'/sys/menuEdit?parentId='+${menu.id}}" th:unless="${#strings.equals(menu.resourceType,'button')}"><i class="layui-icon">&#xe61f;</i>添加子菜单</a>
+            <a sec:authorize="hasAuthority('menu:alt')" class="layui-btn layui-btn-xs" th:href="@{'/sys/menuEdit?menuId='+${menu.id}}"><i class="layui-icon">&#xe642;</i>编辑</a>
             <a sec:authorize="hasAuthority('menu:del')" class="layui-btn layui-btn-danger layui-btn-xs remove" th:attr="data-id=${menu.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
         </td>
     </tr>
