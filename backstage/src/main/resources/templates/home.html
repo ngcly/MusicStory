@@ -23,7 +23,7 @@
         <div class="layui-timeline-content layui-text">
             <h3 class="layui-timeline-title">4月10日</h3>
             <p>
-                测试玩玩的，请自己新增之后再删除，菜单功能新增之后需要授权才能显示，请不要停用管理员的角色OK。系统的基本功能请不要随便修改删除，否则没有菜单没有权限，这就只剩下个空壳了。由于目前权限还没有完善，所以随便动动手指头可能系统就没了，类似于linux的 rm/rf
+                测试玩玩的，请自己新增之后或者对测试数据进行修改删除，不要对基本的菜单角色管理员进行删除，目前权限不是很细致，基础内容一旦删除，后来登录的人就什么都看不到了
             </p>
         </div>
     </li>
@@ -100,9 +100,23 @@
 <script src="/layui/layui.js"></script>
 <script>
     //JavaScript代码区域
-    layui.use('element', function(){
-        var element = layui.element;
+    layui.use(['element','layer'], function(){
+        var layer = layui.layer;
         $ = layui.jquery;
+        //示范一个公告层
+        layer.open({
+            type: 1
+            ,title: false //不显示标题栏
+            ,closeBtn: false
+            ,area: '300px;'
+            ,shade: 0.8
+            ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
+            ,btn: ['知道了']
+            ,btnAlign: 'c'
+            ,moveType: 1 //拖拽模式，0或者1
+            ,content: '<div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">' +
+            '注意啦，各位亲！<br>当前项目部署在亚马逊的免费服务器上，而且是国外的所以速度有点蜗牛<br><br>当前VIP用户所属的是管理员角色，请不要对此角色进行停用修改删除，否则重新登录之后就看不到东西了<br><br>角色授权完毕需要重新登录才会起作用，因为没有弄动态授权<br><br>目前管理员角色是没有授予删除权限的，因为有许多人上来就把自己的角色给删了。。。<br></div>'
+        });
     });
 </script>
 </body>

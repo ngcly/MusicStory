@@ -51,10 +51,15 @@
                 <div class="layui-form-item" th:if="${manager.state!=null}">
                     <label class="layui-form-label">状态</label>
                     <div class="layui-input-inline">
-                        <select name="state" lay-verify="required">
+                        <select name="state" lay-verify="required" th:if="not ${#strings.equals(manager.id,currentId)}">
                             <option value="0" th:disabled="${manager.state!=0}">初始化</option>
                             <option value="1" th:disabled="${manager.state==0}" th:selected="${manager.state==1}">正常</option>
                             <option value="2" th:selected="${manager.state==2}">封禁</option>
+                        </select>
+                        <select name="state" lay-verify="required" th:if="${#strings.equals(manager.id,currentId)}">
+                            <option value="0" disabled="disabled">初始化</option>
+                            <option value="1" disabled="disabled" th:selected="${manager.state==1}">正常</option>
+                            <option value="2" disabled="disabled" th:selected="${manager.state==2}">封禁</option>
                         </select>
                     </div>
                 </div>
