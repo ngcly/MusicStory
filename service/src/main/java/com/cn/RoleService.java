@@ -58,7 +58,16 @@ public class RoleService {
      * 保存角色
      */
     public void saveRole(Role role){
-        roleRepository.save(role);
+        if(role.getId()!=null){
+            Role role1 = roleRepository.getOne(role.getId());
+            role1.setRoleName(role.getRoleName());
+            role1.setRoleCode(role.getRoleCode());
+            role1.setRoleType(role.getRoleType());
+            role1.setDescription(role.getDescription());
+            role1.setAvailable(role.getAvailable());
+        }else{
+            roleRepository.save(role);
+        }
     }
 
     /**
