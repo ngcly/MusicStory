@@ -57,6 +57,7 @@ public class RoleService {
     /**
      * 保存角色
      */
+    @Transactional(rollbackFor = Exception.class)
     public void saveRole(Role role){
         if(role.getId()!=null){
             Role role1 = roleRepository.getOne(role.getId());
