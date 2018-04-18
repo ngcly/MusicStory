@@ -113,6 +113,14 @@ public class ManagerService {
     }
 
     /**
+     * 更新管理员信息
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void updateManager(Manager manager){
+        managerRepository.save(manager);
+    }
+
+    /**
      * 删除管理员
      */
     @Transactional(rollbackFor = Exception.class)

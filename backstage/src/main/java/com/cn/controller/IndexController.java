@@ -4,6 +4,7 @@ import com.cn.ManagerService;
 import com.cn.RoleService;
 import com.cn.config.ManagerDetail;
 import com.cn.dao.PermissionRepository;
+import com.cn.entity.Manager;
 import com.cn.entity.Permission;
 import com.cn.entity.Role;
 import com.cn.util.MenuUtil;
@@ -53,6 +54,7 @@ public class IndexController {
         Authentication authentication = (Authentication) principal;
         ManagerDetail managerDetail = (ManagerDetail) authentication.getPrincipal();
         Set<Role> roleList = managerDetail.getRoleList();
+        boolean init = false;
         List<Permission> menuList = new ArrayList<>();
         if (!"admin".equals(principal.getName())) {
             roleList.forEach(role -> menuList.addAll(role.getPermissions()));
@@ -73,6 +75,14 @@ public class IndexController {
             SecurityContextHolder.getContext().setAuthentication(newAuth);
             menuList.addAll(permissions);
         }
+        if(managerDetail.getState()==0){
+            init = true;
+            Manager manager = managerService.getManagerById(managerDetail.getId());
+            manager.setUpdateTime(new Date());
+            manager.setState((byte) 1);
+            managerService.updateManager(manager);
+        }
+        model.addAttribute("init",init);
         model.addAttribute("manager",managerService.getManagerById(managerDetail.getId()));
         model.addAttribute("menuList", MenuUtil.makeTreeList(menuList));
         return "index";
