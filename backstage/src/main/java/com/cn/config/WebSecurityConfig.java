@@ -28,7 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         //忽略静态文件 也可以在下面忽略
-        web.ignoring().antMatchers("/layui/**", "/js/**", "/css/**", "/img/**", "/media/**", "/**/favicon.ico","/druid/**");
+        web.ignoring().antMatchers("/webjars/**","/layui/**", "/js/**", "/css/**", "/img/**", "/media/**", "/**/favicon.ico","/druid/**");
     }
 
     @Override

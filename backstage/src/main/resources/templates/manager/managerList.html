@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      xmlns:javascript="http://www.w3.org/1999/xhtml">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="renderer" content="webkit" />
@@ -10,7 +9,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>管理员列表</title>
-    <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" href="/webjars/layui/css/layui.css">
     <link rel="stylesheet" href="/css/public.css">
 </head>
 <body class="child-body">
@@ -107,7 +106,7 @@
     </tbody>
 </table>
 <div id="pag"></div>
-<script src="/layui/layui.js"></script>
+<script src="/webjars/layui/layui.js"></script>
 <script type="text/javascript">
     layui.use(['element','laypage','table','laydate'], function(){
         $ = layui.jquery;
