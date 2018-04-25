@@ -5,8 +5,6 @@ import com.cn.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.social.security.SocialUser;
-import org.springframework.social.security.SocialUserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +16,7 @@ import java.util.Set;
  * @author chen
  * @date 2018-02-28 16:57
  */
-public class CustomerDetail extends User implements SocialUserDetails{
+public class CustomerDetail extends User implements UserDetails{
     private static final long serialVersionUID = 1L;
     public CustomerDetail(User user) {
         if(user != null)
@@ -77,8 +75,4 @@ public class CustomerDetail extends User implements SocialUserDetails{
         return true;
     }
 
-    @Override
-    public String getUserId() {
-        return null;
-    }
 }

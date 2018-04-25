@@ -1,20 +1,25 @@
 package com.cn.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.encrypt.Encryptors;
-import org.springframework.security.crypto.encrypt.TextEncryptor;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.OAuth2ClientContext;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.client.filter.OAuth2ClientAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.social.UserIdSource;
-import org.springframework.social.security.AuthenticationNameUserIdSource;
-import org.springframework.social.security.SpringSocialConfigurer;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.filter.CompositeFilter;
+
+import javax.servlet.Filter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Spring Security 配置
@@ -27,7 +32,7 @@ import org.springframework.social.security.SpringSocialConfigurer;
 @EnableGlobalMethodSecurity(prePostEnabled = true)//开启security注解
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
-    SpringSocialConfigurer customSpringSocialConfig;
+    OAuth2ClientContext oauth2ClientContext;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -37,9 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 //对请求URL进行权限配置
                 .authorizeRequests()
-                //antMatchers 匹配完整URL mvcMatcher 匹配mapping中的value
-                //permitAll 允许所有情况，即相当于没做任何security限制
-                .antMatchers("/", "/login**", "/webjars/**", "/github").permitAll()
+                .antMatchers("/", "/login**", "/github").permitAll()
                 //authenticated 必须要进行身份验证
                 .antMatchers("/user/**").authenticated()
                 //anonymous 可以以匿名身份登录
@@ -50,8 +53,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(loginSuccessHandler())
                 //登陆失败后的处理
                 .failureHandler(new SimpleUrlAuthenticationFailureHandler())
-                .and()
-                .apply(customSpringSocialConfig)
                 .and()
                 //登出后的处理
                 .logout().logoutSuccessHandler(logoutSuccessHandler())
@@ -74,9 +75,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .rememberMe()
-                .tokenValiditySeconds(1209600);
-//        // 在 UsernamePasswordAuthenticationFilter 前添加 QQAuthenticationFilter
-//        http.addFilterAt(qqAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .tokenValiditySeconds(1209600)
+                .and()
+                .addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);
     }
 
 
@@ -96,28 +97,44 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public UserIdSource userIdSource() {
-        return new AuthenticationNameUserIdSource();
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(4);
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+    @ConfigurationProperties("github")
+    public ClientResources github() {
+        return new ClientResources();
     }
 
     @Bean
-    public TextEncryptor textEncryptor() {
-        return Encryptors.noOpText();
+    @ConfigurationProperties("facebook")
+    public ClientResources facebook() {
+        return new ClientResources();
     }
-
 
     /**
-     * 自定义 QQ登录 过滤器
+     * 第三方登录过滤
+     * @return
      */
-    private QQAuthenticationFilter qqAuthenticationFilter(){
-        QQAuthenticationFilter authenticationFilter = new QQAuthenticationFilter("/login/qq");
-        authenticationFilter.setAuthenticationManager(new QQAuthenticationManager());
-        return authenticationFilter;
+    private Filter ssoFilter() {
+        CompositeFilter filter = new CompositeFilter();
+        List<Filter> filters = new ArrayList<>();
+        filters.add(ssoFilter(facebook(), "/login/facebook"));
+        filters.add(ssoFilter(github(), "/login/github"));
+        filter.setFilters(filters);
+        return filter;
+    }
+
+    private Filter ssoFilter(ClientResources client, String path) {
+        OAuth2ClientAuthenticationProcessingFilter filter = new OAuth2ClientAuthenticationProcessingFilter(path);
+        OAuth2RestTemplate template = new OAuth2RestTemplate(client.getClient(), oauth2ClientContext);
+        filter.setRestTemplate(template);
+        UserInfoTokenServices tokenServices = new UserInfoTokenServices(
+                client.getResource().getUserInfoUri(), client.getClient().getClientId());
+        tokenServices.setRestTemplate(template);
+        filter.setTokenServices(tokenServices);
+        return filter;
     }
 
 }

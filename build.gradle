@@ -5,7 +5,7 @@ version '1.0-SNAPSHOT'
 
 buildscript { //构建脚本
     //定义版本号
-    ext { springBootVersion = '2.0.0.RELEASE' }
+    ext { springBootVersion = '2.0.1.RELEASE' }
     repositories { mavenCentral() } //jar包仓库   使用maven中心库
     dependencies { classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") }
 }

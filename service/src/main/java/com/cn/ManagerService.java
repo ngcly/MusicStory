@@ -82,7 +82,7 @@ public class ManagerService {
                 manager.setUsername(manager1.getUsername());
             }
             manager.setPassword(manager1.getPassword());
-            manager.setCreateTime(manager1.getUpdateTime());
+            manager.setCreateTime(manager1.getCreateTime());
             allRole.addAll(manager1.getRoleList());
             manager1.getRoleList().removeAll(roleList);
         }else{
