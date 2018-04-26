@@ -130,14 +130,27 @@ public class RoleService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void saveMenu(Permission permission){
-        if(permission.getParentId()!=null&&permission.getParentId()!=0){
-            Permission parentPermission = permissionRepository.getOne(permission.getParentId());
-            permission.setParentIds(parentPermission.getParentIds()+"/"+permission.getId());
+        Permission pms = new Permission();
+        if(permission.getId()!=null){
+            pms = permissionRepository.getOne(permission.getId());
         }else{
-            permission.setParentId((long) 0);
-            permission.setParentIds("0/"+permission.getId());
+            if(permission.getParentId()!=null&&permission.getParentId()!=0){
+                Permission parentPermission = permissionRepository.getOne(permission.getParentId());
+                permission.setParentIds(parentPermission.getParentIds()+"/"+permission.getId());
+            }else{
+                permission.setParentId((long) 0);
+                permission.setParentIds("0/"+permission.getId());
+            }
         }
-        permissionRepository.save(permission);
+        pms.setParentId(permission.getParentId());
+        pms.setParentIds(permission.getParentIds());
+        pms.setName(permission.getName());
+        pms.setUrl(permission.getUrl());
+        pms.setResourceType(permission.getResourceType());
+        pms.setSort(permission.getSort());
+        pms.setPurview(permission.getPurview());
+        pms.setIcon(permission.getIcon());
+        permissionRepository.save(pms);
     }
 
     /**
