@@ -245,12 +245,13 @@ public class SystemController {
     /**
      * 角色授权页面
      */
-    @PreAuthorize("hasAnyAuthority('role:grant')")
+    @PreAuthorize("hasAnyAuthority('role:grant','role:view')")
     @RequestMapping("/grant")
-    public String grantForm(@RequestParam long roleId, Model model) {
+    public String grantForm(@RequestParam long roleId,@RequestParam String type, Model model) {
         List<Permission> permissions = roleService.getPermissionList();
         List<Permission> rolePermissions = roleService.findRole(roleId).getPermissions();
         String menuList = JSON.toJSONString(MenuUtil.makeTreeList(permissions,rolePermissions));
+        model.addAttribute("type",type);
         model.addAttribute("roleId", roleId);
         model.addAttribute("menuList",menuList);
         return "role/grant";

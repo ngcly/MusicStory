@@ -65,7 +65,7 @@
         <th lay-data="{field:'description'}">角色描述</th>
         <th lay-data="{field:'roleType'}">角色类型</th>
         <th lay-data="{field:'available'}">是否可用</th>
-        <th lay-data="{field:'opt',fixed: 'right',align:'center',width:220}">操作</th>
+        <th lay-data="{field:'opt',fixed: 'right',align:'center',width:290}">操作</th>
     </tr>
     </thead>
     <tbody>
@@ -78,6 +78,7 @@
             <input type="checkbox" checked="" name="available" lay-skin="switch" lay-text="启用|停用" lay-filter="switchTest" th:checked="${#bools.isTrue(role.available)}" th:attr="data-id=${role.id}">
         </td>
         <td>
+            <a class="layui-btn layui-btn-xs view" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon iconfont icon-view"></i>查看</a>
             <a sec:authorize="hasAuthority('role:grant')" class="layui-btn layui-btn-xs model" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe618;</i>授权</a>
             <a sec:authorize="hasAuthority('role:alt')" class="layui-btn layui-btn-xs alt" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe642;</i>编辑</a>
             <a sec:authorize="hasAuthority('role:del')" class="layui-btn layui-btn-danger layui-btn-xs remove" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
@@ -161,18 +162,32 @@
             });
         })
 
+        $('.view').on('click',function () {
+            var _this = $(this);
+            layer.open({
+                type: 2 //Page层类型
+                ,skin: 'layui-layer-molv'
+                ,area: ['400px', '500px']
+                ,title: ['角色权限','font-size:18px']
+                ,shadeClose: true
+                ,shade: 0 //遮罩透明度
+                ,maxmin: true //允许全屏最小化
+                ,content:'/sys/grant?roleId='+_this.data('id')+'&type=1'
+            });
+        });
+
         //授权窗口
         $('.model').on('click',function () {
             var _this = $(this);
             layer.open({
                 type: 2 //Page层类型
                 ,skin: 'layui-layer-molv'
-                ,area: ['400px', '450px']
+                ,area: ['400px', '500px']
                 ,title: ['角色授权','font-size:18px']
                 ,shadeClose: true
                 ,shade: 0 //遮罩透明度
                 ,maxmin: true //允许全屏最小化
-                ,content:'/sys/grant?roleId='+_this.data('id')
+                ,content:'/sys/grant?roleId='+_this.data('id')+'&type=2'
             });
         });
 

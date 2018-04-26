@@ -9,8 +9,8 @@
 </head>
 <body>
 <div class="row">
-    <div class="search-row" style="text-align: center">
-        <input type="hidden" id="menus" th:value="${menuList}">
+    <input type="hidden" id="menus" th:value="${menuList}">
+    <div class="search-row" style="text-align: center" th:if="${#strings.equals(type,'2')}">
         <button type="button" th:attr="data-id=${roleId}" class="layui-btn save">保存</button>
         <button type="button" class="layui-btn cancel">取消</button>
     </div>

@@ -35,6 +35,7 @@
         <th>权限标识</th>
         <th>链接地址</th>
         <th>菜单类型</th>
+        <th>菜单图标</th>
         <th>排序</th>
         <th>操作</th>
     </tr>
@@ -45,6 +46,7 @@
         <td th:text="${menu.purview}"></td>
         <td th:text="${menu.url}"></td>
         <td th:text="${#strings.equals(menu.resourceType,'menu')?'菜单':'按钮'}"></td>
+        <td><i class="layui-icon" th:utext="${menu.icon}"></i></td>
         <td th:text="${menu.sort}"></td>
         <td>
             <a sec:authorize="hasAuthority('menu:add')" class="layui-btn layui-btn-xs" th:href="@{'/sys/menuEdit?parentId='+${menu.id}}" th:unless="${#strings.equals(menu.resourceType,'button')}"><i class="layui-icon">&#xe61f;</i>添加子菜单</a>

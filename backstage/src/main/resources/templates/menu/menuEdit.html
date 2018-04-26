@@ -59,12 +59,10 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">图标</label>
                     <div class="layui-input-inline">
-                        <select name="icon">
-                            <option value="&#xe68e;" th:selected="${#strings.equals(menu.icon,'&#xe68e;')}"><i class="layui-icon">&#xe68e;</i></option>
-                            <option value="&#xe735;" th:selected="${#strings.equals(menu.icon,'&#xe735;')}"><i class="layui-icon">&#xe735;</i></option>
-                            <option value="&#xe65e;" th:selected="${#strings.equals(menu.icon,'&#xe65e;')}"><i class="layui-icon">&#xe65e;</i></option>
-                        </select>
+                        <input type="text" name="icon" class="layui-input" th:value="${menu.icon}" autocomplete="off">
+                        <!--<i class="layui-icon" th:utext="${menu.icon}"></i>-->
                     </div>
+                    <div class="layui-form-mid layui-word-aux">图标只对菜单起作用，这块本想做成下拉框的效果 然后图标跟表格一样排列在下面任由选择，奈何，哎！流下了没有技术的泪水</div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">排序</label>
@@ -93,8 +91,8 @@
         form.verify({
             // 校验原始密码
             sort:[
-                /^\d+$/
-                ,'排序号必须是数字'
+                /^(?:0|[1-9][0-9]*)$/
+                ,'排序号必须是大于等于0的整数'
             ],
         });
         //监听提交
@@ -119,6 +117,7 @@
             });
             return false;
         });
+
     });
 </script>
 </body>
