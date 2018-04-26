@@ -324,6 +324,7 @@ public class SystemController {
     @RequestMapping("/menuEdit")
     public String menuEdit(@RequestParam(required = false)Long menuId,@RequestParam(required = false)Long parentId,Model model){
         Permission permission = new Permission();
+        permission.setSort(0);
         String parentName="";
         if(parentId!=null){
             parentName = roleService.getPermissionById(parentId).getName();

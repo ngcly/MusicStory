@@ -149,7 +149,6 @@
         $(function(){
             $(".hideMenu").on("click",function(){
                 var oClass=$(".layui-side").hasClass("mini");
-
                 if(!oClass){
                     $(".layui-side").animate({
                         width:"50px"
@@ -160,7 +159,6 @@
                     $(".layui-footer").animate({
                         left:"50"
                     })
-
                 }else{
                     $(".layui-side").animate({
                         width:"200px"
@@ -174,8 +172,17 @@
 
                 }
                 $(".layui-side").toggleClass("mini");
-
             });
+            //mini 模式下添加 tips
+            $('.layui-nav-tree a').hover(function(){
+                if($(".layui-side").hasClass('mini')){
+                    var tipText = $(this).find('cite').text();
+                    layer.tips(tipText, this);
+                }
+            },function(){
+                layer.closeAll('tips');
+            });
+
         });
 
         //修改密码窗口

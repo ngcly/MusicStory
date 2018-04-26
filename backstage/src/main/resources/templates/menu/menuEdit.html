@@ -10,7 +10,7 @@
 <div class="child-nav">
     <span class="layui-breadcrumb">
          <a>系统设置</a>
-         <a href="/sys/adminList">菜单列表</a>
+         <a href="/sys/menuList">菜单列表</a>
         <a><cite th:text="${#strings.equals(menu.id,null)?'新增菜单':'修改菜单'}"></cite></a>
     </span>
     <a class="layui-btn layui-btn-sm" href="javascript:location.replace(location.href);" title="刷新" style="float:right;margin-top: 3px"><i class="layui-icon" style="line-height:30px">&#x1002;</i></a>
@@ -59,13 +59,17 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">图标</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="icon" class="layui-input" th:value="${menu.icon}" autocomplete="off">
+                        <select name="icon">
+                            <option value="&#xe68e;" th:selected="${#strings.equals(menu.icon,'&#xe68e;')}"><i class="layui-icon">&#xe68e;</i></option>
+                            <option value="&#xe735;" th:selected="${#strings.equals(menu.icon,'&#xe735;')}"><i class="layui-icon">&#xe735;</i></option>
+                            <option value="&#xe65e;" th:selected="${#strings.equals(menu.icon,'&#xe65e;')}"><i class="layui-icon">&#xe65e;</i></option>
+                        </select>
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">排序</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="sort" lay-verify="sort" lay-vertype="tips"  class="layui-input" th:value="${menu.sort}" autocomplete="off">
+                        <input type="number" name="sort" lay-verify="sort" lay-vertype="tips"  class="layui-input" th:value="${menu.sort}" autocomplete="off">
                     </div>
                 </div>
                 <div class="layui-form-item">
