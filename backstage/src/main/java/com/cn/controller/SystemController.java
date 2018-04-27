@@ -20,6 +20,7 @@ import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -235,6 +236,8 @@ public class SystemController {
     public ModelMap saveRole(@Valid Role role){
         try {
             roleService.saveRole(role);
+        }catch (DataIntegrityViolationException e){
+            return RestUtil.Error(333,"唯一标识符重复");
         }catch (Exception e){
             e.printStackTrace();
             return RestUtil.Error(500,"服务异常");

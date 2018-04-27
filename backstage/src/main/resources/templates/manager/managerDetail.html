@@ -39,7 +39,7 @@
         </tr>
         <tr>
             <td>角色：</td>
-            <td colspan="3"><span th:each="role:${manager.roleList}" th:text="${role.getRoleName()}"></span></td>
+            <td colspan="3"><span th:each="role:${manager.roleList}" th:text="${roleStat.last}?${role.getRoleName()}:${role.getRoleName()}+'、'"></span></td>
         </tr>
         </tbody>
     </table>
