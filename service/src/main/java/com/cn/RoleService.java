@@ -136,14 +136,13 @@ public class RoleService {
         }else{
             if(permission.getParentId()!=null&&permission.getParentId()!=0){
                 Permission parentPermission = permissionRepository.getOne(permission.getParentId());
-                permission.setParentIds(parentPermission.getParentIds()+"/"+permission.getId());
+                pms.setParentId(parentPermission.getId());
+                pms.setParentIds(parentPermission.getParentIds()+"/"+parentPermission.getId());
             }else{
-                permission.setParentId((long) 0);
-                permission.setParentIds("0/"+permission.getId());
+                pms.setParentId((long) 0);
+                pms.setParentIds("0");
             }
         }
-        pms.setParentId(permission.getParentId());
-        pms.setParentIds(permission.getParentIds());
         pms.setName(permission.getName());
         pms.setUrl(permission.getUrl());
         pms.setResourceType(permission.getResourceType());
