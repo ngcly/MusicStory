@@ -23,7 +23,7 @@
                 </a>
             </li>
             <li class="layui-nav-item"><a href="">控制台</a></li>
-            <li class="layui-nav-item"><a href="">消息<span class="layui-badge-dot"></span></a></li>
+            <li class="layui-nav-item"><a href="">消息<span class="layui-badge-dot" id="my-todo"></span></a></li>
             <li class="layui-nav-item">
                 <a href="javascript:;">其它系统</a>
                 <dl class="layui-nav-child">
@@ -58,10 +58,10 @@
             </li>
             <li class="layui-nav-item">
                 <a href="javascript:;">
-                    <img th:src="${manager.avatar}" class="layui-nav-img">
+                    <img th:src="${manager.avatar}" class="layui-nav-img" id="my-avatar">
                     <!--非 sec 标签获取当前用户名的写法-->
                     <!--<span th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}"></span>-->
-                    <span sec:authentication="name"></span><!--&lt;!&ndash; 获得当前用户的用户名 &ndash;&gt;-->
+                    <span sec:authentication="name" id="my-name"></span><!--&lt;!&ndash; 获得当前用户的用户名 &ndash;&gt;-->
                 </a>
                 <dl class="layui-nav-child">
                     <dd><a th:href="@{'/sys/adminEdit/?managerId='+${manager.id}}" target="content">基本资料</a></dd>

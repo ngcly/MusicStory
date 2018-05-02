@@ -26,5 +26,6 @@ public class News {
     private Boolean sended;  //是否已发送
     private Date createTime; //创建时间
     private Date sendTime;   //发送时间
+    private String senderId; //发送人ID
 
 }

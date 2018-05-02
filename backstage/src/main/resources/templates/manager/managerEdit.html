@@ -149,16 +149,17 @@
                 headers: headers,
                 data:data.field,
                 dataType:'json',
-                success:function(data){
-                    if(data.code == 200){
-                        layer.msg(data.msg, {icon: 1,time:600}, function () {
+                success:function(result){
+                    if(result.code == 200){
+                        layer.msg(result.msg, {icon: 1,time:600}, function () {
                             if($('#ctm').val()==$('#altId').val()){
-                                parent.location.reload();
+                                parent.$('#my-avatar').attr('src',data.field.avatar);
+                                parent.$('#my-name').html(data.field.username);
                             }
                             location.href="/sys/adminList";
                         });
                     }else{
-                        layer.msg(data.msg,{time:1000});
+                        layer.msg(result.msg,{time:1000});
                     }
                 }
             });
