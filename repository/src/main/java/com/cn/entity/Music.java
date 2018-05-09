@@ -21,8 +21,10 @@ public class Music {
     @Column(name="id")
     private String id;
     private String name;   //歌名
-    private String singer; //歌手
+    private String artist; //歌手
     private String album;  //专辑
+    private String cover;  //封面
+    private String lrc;    //歌词
     private String essayId;//文章ID
     private String linkUrl;//链接地址
 
