@@ -71,10 +71,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/login")
                 .invalidateHttpSession(true)
                 .deleteCookies("token")
-                .permitAll()
-                .and()
-                .rememberMe()
-                .tokenValiditySeconds(1209600);
+                .permitAll();
         //设置可以iframe访问
         http.headers().frameOptions().sameOrigin();
     }
