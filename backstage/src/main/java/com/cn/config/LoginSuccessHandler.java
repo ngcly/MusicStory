@@ -8,6 +8,7 @@ import com.cn.util.IpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -42,9 +43,10 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         loginLog.setUserId(userDetails.getId());
         loginLog.setUserName(userDetails.getUsername());
         loginLog.setUserType((byte)1);
-        String ip = IpUtil.getIp(request);
-        loginLog.setLoginIp(ip);
-        loginLog.setAddressIp(IpUtil.getIpAddresses(ip));
+        WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
+//        String ip = IpUtil.getIp(request);
+        loginLog.setLoginIp(details.getRemoteAddress());
+        loginLog.setAddressIp(IpUtil.getIpAddresses(details.getRemoteAddress()));
         loginLog.setLoginTime(new Date());
         logService.saveLog(loginLog);
     }
