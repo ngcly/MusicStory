@@ -72,6 +72,7 @@ public class SystemController {
     /**
      * 管理员列表页
      */
+    @PreAuthorize("hasAuthority('sys:admin')")
     @RequestMapping("/adminList")
     public String managerList(@PageableDefault(sort = { "createTime" }, direction = Sort.Direction.DESC)
                                       Pageable pageable, Model model, @Valid Manager manager){
@@ -204,6 +205,7 @@ public class SystemController {
     /**
      * 角色列表页
      */
+    @PreAuthorize("hasAuthority('role:view')")
     @RequestMapping("/roleList")
     public String roleList(@PageableDefault(sort = { "roleName" }, direction = Sort.Direction.DESC)
                                    Pageable pageable,@Valid Role role,Model model){
@@ -314,6 +316,7 @@ public class SystemController {
     /**
      * 菜单列表页
      */
+    @PreAuthorize("hasAuthority('menu:view')")
     @RequestMapping("/menuList")
     public String menuList(Model model){
         List<Permission> permissionList = roleService.getPermissionList();
@@ -382,6 +385,7 @@ public class SystemController {
     /**
      * 登录日志列表页
      */
+    @PreAuthorize("hasAuthority('sys:log')")
     @RequestMapping("/loginLogs")
     public String loginLogList(@PageableDefault(sort = { "loginTime" }, direction = Sort.Direction.DESC)
                                        Pageable pageable, @Valid LoginLog loginLog, Model model){
