@@ -27,7 +27,6 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
         }else if("验证码错误".equals(exception.getMessage())){
             msg = exception.getMessage();
         }
-        exception.getMessage();
         out.write("{\"code\":333,\"msg\":\""+msg+"\"}");
         out.flush();
         out.close();
