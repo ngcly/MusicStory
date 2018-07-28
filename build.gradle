@@ -6,14 +6,13 @@ version '1.0-SNAPSHOT'
 buildscript { //构建脚本
     //定义版本号
     ext { springBootVersion = '2.0.1.RELEASE' }
-    repositories { mavenCentral() } //jar包仓库   使用maven中心库
+    repositories {//jar包仓库
+        maven {url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+        mavenCentral()
+    }
     dependencies { classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") }
 }
 
-//allprojects {  //所有项目通配
-//    group 'com.cn.cly'
-//    version '1.0-SNAPSHOT'
-//}
 
 subprojects {  //子项目通配
     apply plugin: 'java'
