@@ -1,5 +1,6 @@
 package com.cn.util;
 
+import com.cn.dto.RestCode;
 import org.springframework.ui.ModelMap;
 
 /**
@@ -9,7 +10,6 @@ import org.springframework.ui.ModelMap;
  * @date 2018-01-05 11:15
  */
 public class RestUtil {
-//TODO 统一错误编码
 
     /**
      * 成功返回
@@ -17,8 +17,8 @@ public class RestUtil {
      */
     public static ModelMap Success() {
         ModelMap mp = new ModelMap();
-        mp.put("code", 200);
-        mp.put("msg", "操作成功");
+        mp.put("code", RestCode.SUCCESS.code);
+        mp.put("msg", RestCode.SUCCESS.msg);
         mp.put("data", "");
         return mp;
     }
@@ -28,8 +28,8 @@ public class RestUtil {
      */
     public static ModelMap Success(Object obj) {
         ModelMap mp = new ModelMap();
-        mp.put("code", 200);
-        mp.put("msg", "操作成功");
+        mp.put("code", RestCode.SUCCESS.code);
+        mp.put("msg", RestCode.SUCCESS.msg);
         mp.put("data", obj);
         return mp;
     }
@@ -39,7 +39,7 @@ public class RestUtil {
      */
     public static ModelMap Success(String msg, Object obj) {
         ModelMap map = new ModelMap();
-        map.put("code", 200);
+        map.put("code", RestCode.SUCCESS.code);
         map.put("msg", msg);
         map.put("data", obj);
         return map;
@@ -59,10 +59,10 @@ public class RestUtil {
     /**
      * 一般错误 统一返回
      */
-    public static ModelMap Error(int code) {
+    public static ModelMap Error(RestCode restCode) {
         ModelMap map = new ModelMap();
-        map.put("code", code);
-        map.put("msg", "操作失败");
+        map.put("code", restCode.code);
+        map.put("msg", restCode.msg);
         return map;
     }
 

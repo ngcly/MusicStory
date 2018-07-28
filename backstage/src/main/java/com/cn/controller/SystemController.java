@@ -5,6 +5,7 @@ import com.cn.LogService;
 import com.cn.ManagerService;
 import com.cn.RoleService;
 import com.cn.config.ManagerDetail;
+import com.cn.dto.RestCode;
 import com.cn.entity.LoginLog;
 import com.cn.entity.Manager;
 import com.cn.entity.Permission;
@@ -136,7 +137,7 @@ public class SystemController {
         try {
             return managerService.saveManager(managerDetail,manager);
         }catch (Exception e){
-            return RestUtil.Error(500);
+            return RestUtil.Error(RestCode.SERVER_ERROR);
         }
     }
 
@@ -155,7 +156,7 @@ public class SystemController {
             managerService.delManager(managerId);
         }catch (Exception e){
             e.printStackTrace();
-            return RestUtil.Error(500);
+            return RestUtil.Error(RestCode.SERVER_ERROR);
         }
         return RestUtil.Success();
     }
@@ -180,7 +181,7 @@ public class SystemController {
             return managerService.updatePassword(managerDetail.getId(),oldPassword,password);
         }catch (Exception e){
             e.printStackTrace();
-            return RestUtil.Error(500);
+            return RestUtil.Error(RestCode.SERVER_ERROR);
         }
     }
 
@@ -197,7 +198,7 @@ public class SystemController {
             managerService.updatePassword(managerId,"123456");
         }catch (Exception e){
             e.printStackTrace();
-            return RestUtil.Error(500);
+            return RestUtil.Error(RestCode.SERVER_ERROR);
         }
         return RestUtil.Success();
     }
@@ -242,7 +243,7 @@ public class SystemController {
             return RestUtil.Error(333,"唯一标识符重复");
         }catch (Exception e){
             e.printStackTrace();
-            return RestUtil.Error(500,"服务异常");
+            return RestUtil.Error(RestCode.SERVER_ERROR);
         }
         return RestUtil.Success();
     }
@@ -276,7 +277,7 @@ public class SystemController {
             roleService.saveGrant(roleId,menuIds);
         }catch (Exception e){
             e.printStackTrace();
-            return RestUtil.Error(500);
+            return RestUtil.Error(RestCode.SERVER_ERROR);
         }
         return RestUtil.Success();
     }
@@ -308,7 +309,7 @@ public class SystemController {
             roleService.delRole(roleId);
         }catch (Exception e){
             e.printStackTrace();
-            return RestUtil.Error(500);
+            return RestUtil.Error(RestCode.SERVER_ERROR);
         }
         return RestUtil.Success();
     }
@@ -361,7 +362,7 @@ public class SystemController {
             roleService.saveMenu(permission);
         }catch (Exception e){
             e.printStackTrace();
-            return RestUtil.Error(500);
+            return RestUtil.Error(RestCode.SERVER_ERROR);
         }
         return RestUtil.Success();
     }
@@ -377,7 +378,7 @@ public class SystemController {
             roleService.delMenu(menuId);
         }catch (Exception e){
             e.printStackTrace();
-            return RestUtil.Error(500);
+            return RestUtil.Error(RestCode.SERVER_ERROR);
         }
         return RestUtil.Success();
     }
