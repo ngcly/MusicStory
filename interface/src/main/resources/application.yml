@@ -1,8 +1,30 @@
 server:
   port: 8070
-  session-timeout: 30
+  # 开启 gzip 压缩
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    # 超过 1KB 即开启压缩
+    min-response-size: 1024
+  # 开启 http2 支持 只在https下起作用
+  http2:
+    enabled: true
+
+## JWT 密钥 过期时间
+app:
+  jwtSecret: JWTSuperSecretKey
+  jwtExpirationInMs: 604800000
 
 spring:
+  jpa:
+    database: MYSQL
+    show-sql: false
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
   #数据源
   datasource:
     url: jdbc:mysql://localhost:3306/music_story
@@ -30,20 +52,19 @@ spring:
       poolPreparedStatements: true
       maxPoolPreparedStatementPerConnectionSize: 20
       # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
-      filters: stat,wall,log4j
-      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
-      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      filter:
+        stat:
+          merge-sql: true
+          db-type: mysql
+          slow-sql-millis: 1000
+          enabled: true
+          log-slow-sql: true
+        #配置 wall filter
+        wall:
+          db-type: mysql
+          enabled: true
       # 合并多个DruidDataSource的监控数据
       useGlobalDataSourceStat: true
-  jpa:
-    database: MYSQL
-    show-sql: false
-    generate-ddl: true
-    hibernate:
-      ddl-auto: update
-      naming:
-        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
 
 facebook:
   client:

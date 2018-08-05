@@ -8,9 +8,9 @@ sourceCompatibility = 1.8
 //bootRepackage.enabled = false
 
 dependencies {
-    compile group: 'com.alibaba', name: 'druid-spring-boot-starter', version: '1.1.9'
+    compile('com.alibaba:druid-spring-boot-starter:1.1.10')
     //解决java9不支持问题
-    compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
+//    compile('javax.xml.bind:jaxb-api:2.3.0')
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     runtime('mysql:mysql-connector-java')
 

@@ -5,15 +5,18 @@ import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoT
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.filter.OAuth2ClientAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.filter.CompositeFilter;
 
@@ -33,6 +36,16 @@ import java.util.List;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     OAuth2ClientContext oauth2ClientContext;
+    @Autowired
+    RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+    @Autowired
+    RestAccessDeniedHandler restAccessDeniedHandler;
+    @Autowired
+    LoginSuccessHandler loginSuccessHandler;
+    @Autowired
+    LogoutSuccessHandler logoutSuccessHandler;
+    @Autowired
+    CustomerDetailService customerDetailService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -50,50 +63,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 //登陆成功后的处理，因为是API的形式所以不用跳转页面
-                .successHandler(loginSuccessHandler())
+                .successHandler(loginSuccessHandler)
                 //登陆失败后的处理
                 .failureHandler(new SimpleUrlAuthenticationFailureHandler())
                 .and()
                 //登出后的处理
-                .logout().logoutSuccessHandler(logoutSuccessHandler())
+                .logout().logoutSuccessHandler(logoutSuccessHandler)
                 .and()
                 //认证不通过后的处理
                 .exceptionHandling()
-                .authenticationEntryPoint(restAuthenticationEntryPoint())
+                .authenticationEntryPoint(restAuthenticationEntryPoint)
+                .accessDeniedHandler(restAccessDeniedHandler)
                 .and()
-                //开启cookie保存用户数据
-                .rememberMe()
-                //设置cookie有效期
-                .tokenValiditySeconds(60 * 60 * 24 * 7)
-                //设置cookie的私钥
-                .key("ms_token")
-                .rememberMeCookieName("ms")
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .logout()
-                .invalidateHttpSession(true)
-                .deleteCookies("ms_token")
-                .permitAll()
-                .and()
-                .rememberMe()
-                .tokenValiditySeconds(1209600)
-                .and()
-                .addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);
+                .addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(ssoFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
-
-    @Bean
-    public LoginSuccessHandler loginSuccessHandler(){
-        return new LoginSuccessHandler();
-    }
-
-    @Bean
-    public LogoutSuccessHandler logoutSuccessHandler(){
-        return new LogoutSuccessHandler();
-    }
-
-    @Bean
-    public RestAuthenticationEntryPoint restAuthenticationEntryPoint(){
-        return new RestAuthenticationEntryPoint();
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        //指定密码加密所使用的加密器为passwordEncoder()
+        //需要将密码加密后写入数据库
+        auth.userDetailsService(customerDetailService).passwordEncoder(passwordEncoder());
+        auth.eraseCredentials(false);
     }
 
     @Bean

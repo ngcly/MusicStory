@@ -9,8 +9,7 @@ sourceCompatibility = 1.8
 
 dependencies {
     compile project(":repository")
-    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.4'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
-    compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.1'
-
+    compile('org.apache.httpcomponents:httpclient:4.5.4')
+    compile('org.apache.commons:commons-lang3:3.7')
+    compile('org.apache.commons:commons-collections4:4.1')
 }

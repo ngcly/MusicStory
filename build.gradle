@@ -5,7 +5,7 @@ version '1.0-SNAPSHOT'
 
 buildscript { //构建脚本
     //定义版本号
-    ext { springBootVersion = '2.0.1.RELEASE' }
+    ext { springBootVersion = '2.0.3.RELEASE' }
     repositories {//jar包仓库
         maven {url 'http://maven.aliyun.com/nexus/content/groups/public/'}
         mavenCentral()
@@ -46,9 +46,9 @@ subprojects {  //子项目通配
         compile('org.springframework.boot:spring-boot-starter-security')
         compile('org.springframework.boot:spring-boot-starter-json')
         compile('org.springframework.boot:spring-boot-starter-mail')
-        compile 'com.qiniu:qiniu-java-sdk:7.2.+'
-        compile group: 'com.github.penggle', name: 'kaptcha', version: '2.3.2'
-        compile group: 'com.alibaba', name: 'fastjson', version: '1.2.46'
+        compile('com.qiniu:qiniu-java-sdk:7.2.+')
+        compile('com.github.penggle:kaptcha:2.3.2')
+        compile('com.alibaba:fastjson:1.2.46')
 
         runtime('org.springframework.boot:spring-boot-devtools')
         compileOnly('org.projectlombok:lombok')
