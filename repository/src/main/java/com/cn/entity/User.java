@@ -1,5 +1,7 @@
 package com.cn.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -20,7 +22,14 @@ import java.util.Set;
  */
 @Data
 @Entity
-@Table(name="user")
+@Table(name="user", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {
+                "username"
+        }),
+        @UniqueConstraint(columnNames = {
+                "email"
+        })
+})
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -31,6 +40,7 @@ public class User implements Serializable {
     private String id ;
     @Column(name="username",unique = true)
     private String username;       //用户名
+    @JsonIgnore
     private String password;       //密码
     private String nickName;       //昵称
     private Date birthday;         //生日

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.Table;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by chen on 2017/6/23.
@@ -18,10 +19,17 @@ import java.util.List;
 //@Qualifier("userRepository")
 //@CacheConfig(cacheNames = "users")
 public interface UserRepository extends JpaRepository<User,String> {
-//    @Cacheable
-    @Query("select t from User t where t.username=:name")
-    User findUserByName(@Param("name") String name);
 
-    @Query("select t from User t where t.state='1'")
-    List<User> findNormalUsers();
+    Optional<User> findByEmail(String email);
+
+    Optional<User> findByUsernameOrEmail(String username, String email);
+
+    List<User> findByIdIn(List<Long> userIds);
+
+    Optional<User> findByUsername(String username);
+
+    Boolean existsByUsername(String username);
+
+    Boolean existsByEmail(String email);
+
 }
