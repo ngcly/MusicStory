@@ -14,7 +14,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -29,8 +28,7 @@ import java.util.Map;
  * @create 2018-08-05 14:48
  */
 @RestController
-@RequestMapping("/test")
-public class TestController {
+public class IndexController {
     @Autowired
     AuthenticationManager authenticationManager;
     @Autowired
