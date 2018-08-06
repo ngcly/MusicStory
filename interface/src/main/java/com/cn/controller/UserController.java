@@ -1,32 +1,10 @@
 package com.cn.controller;
 
-import com.cn.UserService;
 import com.cn.config.CurrentUser;
 import com.cn.config.CustomerDetail;
-import com.cn.config.JwtTokenProvider;
-import com.cn.dto.LogInDTO;
-import com.cn.dto.SignUpDTO;
-import com.cn.entity.Role;
-import com.cn.entity.User;
 import com.cn.util.RestUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.nio.file.attribute.UserPrincipal;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 会员控制层
