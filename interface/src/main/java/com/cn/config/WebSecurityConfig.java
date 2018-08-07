@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoT
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -58,6 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //对请求URL进行权限配置
                 .authorizeRequests()
                 .antMatchers("/", "/login**", "/github").permitAll()
+                .antMatchers(HttpMethod.OPTIONS).permitAll()
                 //authenticated 必须要进行身份验证
                 .antMatchers("/user/**").authenticated()
                 //anonymous 可以以匿名身份登录

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -28,6 +29,9 @@ import java.util.Set;
         }),
         @UniqueConstraint(columnNames = {
                 "email"
+        }),
+        @UniqueConstraint(columnNames = {
+                "unionId"
         })
 })
 public class User implements Serializable {
@@ -58,10 +62,13 @@ public class User implements Serializable {
     private Date createTime;       //创建时间
     private Date updateTime;       //最后更新时间
     private Date lastLogin;        //最后登录时间
+    @Column(columnDefinition="enum('0','1','2')")
     private Byte state;//用户状态,0:不可用 1:正常状态,2:异常.
+    private String unionId;        //第三方账号唯一ID
 
     @ManyToMany(fetch= FetchType.EAGER)//立即从数据库中进行加载数据;
     @JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns ={@JoinColumn(name = "role_id") })
+    @Where(clause = "available=true")
     private Set<Role> roleList;// 一个用户具有多个角色
 
 }
