@@ -3,6 +3,7 @@ package com.cn.controller;
 import com.cn.UserService;
 import com.cn.config.JwtTokenProvider;
 import com.cn.dto.LogInDTO;
+import com.cn.dto.RestCode;
 import com.cn.dto.SignUpDTO;
 import com.cn.entity.User;
 import com.cn.util.RestUtil;
@@ -14,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -67,7 +69,10 @@ public class IndexController {
      * @return
      */
     @PostMapping("/signup")
-    public ModelMap registerUser(@Valid @RequestBody SignUpDTO signUpDTO) {
+    public ModelMap registerUser(@Valid @RequestBody SignUpDTO signUpDTO, BindingResult result) {
+        if(result.hasErrors()){
+            return RestUtil.Error(RestCode.PARAM_ERROR);
+        }
         User user = new User();
         BeanUtils.copyProperties(user, signUpDTO);
         return userService.signUp(user);
