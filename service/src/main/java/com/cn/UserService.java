@@ -27,15 +27,6 @@ public class UserService {
     PasswordEncoder passwordEncoder;
 
     /**
-     * 根据用户或邮箱获取用户
-     * @param nameOrEmail
-     * @return
-     */
-    public Optional<User> findByUsernameOrEmail(String nameOrEmail) {
-        return userRepository.findByUsernameOrEmail(nameOrEmail,nameOrEmail);
-    }
-
-    /**
      * 注册账户
      * @param signUpUser
      * @return
@@ -61,5 +52,9 @@ public class UserService {
                 .buildAndExpand(result.getUsername()).toUri();
 
         return RestUtil.Success();
+    }
+
+    public void saveUser(User user){
+        userRepository.save(user);
     }
 }

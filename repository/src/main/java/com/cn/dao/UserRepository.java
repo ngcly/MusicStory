@@ -20,13 +20,13 @@ import java.util.Optional;
 //@CacheConfig(cacheNames = "users")
 public interface UserRepository extends JpaRepository<User,String> {
 
-    Optional<User> findByEmail(String email);
+    Optional<User> findById(String userId);
 
     Optional<User> findByUsernameOrEmail(String username, String email);
 
-    List<User> findByIdIn(List<Long> userIds);
+    Optional<User> findByUnionId(String unionId);
 
-    Optional<User> findByUsername(String username);
+    List<User> findByIdIn(List<Long> userIds);
 
     Boolean existsByUsername(String username);
 

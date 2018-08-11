@@ -42,7 +42,7 @@ public class JwtTokenProvider {
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
         return Jwts.builder()
-                .setSubject(customerDetail.getUsername())
+                .setSubject(customerDetail.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
@@ -50,7 +50,7 @@ public class JwtTokenProvider {
     }
 
     /**
-     * 从 token 中获取用户名
+     * 从 token 中获取用户Id
      */
     public String getUserNameFromJWT(String token) {
         Claims claims = Jwts.parser()
