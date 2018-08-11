@@ -4,7 +4,9 @@ import com.cn.UserService;
 import com.cn.config.JwtTokenProvider;
 import com.cn.dto.LogInDTO;
 import com.cn.dto.SignUpDTO;
+import com.cn.entity.User;
 import com.cn.util.RestUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -66,6 +68,8 @@ public class IndexController {
      */
     @PostMapping("/signup")
     public ModelMap registerUser(@Valid @RequestBody SignUpDTO signUpDTO) {
-        return userService.signUp(signUpDTO);
+        User user = new User();
+        BeanUtils.copyProperties(user, signUpDTO);
+        return userService.signUp(user);
     }
 }

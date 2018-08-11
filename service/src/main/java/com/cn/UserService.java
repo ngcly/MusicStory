@@ -1,20 +1,15 @@
 package com.cn;
 
 import com.cn.dao.UserRepository;
-import com.cn.dto.SignUpDTO;
-import com.cn.entity.Role;
 import com.cn.entity.User;
 import com.cn.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.Optional;
 
 /**
@@ -42,23 +37,23 @@ public class UserService {
 
     /**
      * 注册账户
-     * @param signUpDTO
+     * @param signUpUser
      * @return
      */
-    public ModelMap signUp(SignUpDTO signUpDTO){
-        if(userRepository.existsByUsername(signUpDTO.getUsername())) {
+    public ModelMap signUp(User signUpUser){
+        if(userRepository.existsByUsername(signUpUser.getUsername())) {
             return RestUtil.Error(300,"用户名已存在");
         }
 
-        if(userRepository.existsByEmail(signUpDTO.getEmail())) {
+        if(userRepository.existsByEmail(signUpUser.getEmail())) {
             return RestUtil.Error(300,"该邮箱已注册");
         }
 
         User user = new User();
-        user.setRealName(signUpDTO.getRealName());
-        user.setUsername(signUpDTO.getUsername());
-        user.setEmail(signUpDTO.getEmail());
-        user.setPassword(passwordEncoder.encode(signUpDTO.getPassword()));
+        user.setRealName(signUpUser.getRealName());
+        user.setUsername(signUpUser.getUsername());
+        user.setEmail(signUpUser.getEmail());
+        user.setPassword(passwordEncoder.encode(signUpUser.getPassword()));
         User result = userRepository.save(user);
         //设置前台注册成功跳转页面
         URI location = ServletUriComponentsBuilder
