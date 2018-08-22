@@ -39,6 +39,12 @@ public class IpUtil {
      * @throws UnsupportedEncodingException
      */
     public static String getIpAddresses(String ip) {
+        //阿里云接口
+        //String url = "https://dm-81.data.aliyun.com/rest/160601/ip/getIpInfo.json?ip="+ip;
+		//String appcode = "阿里云appCode";
+		//Map<String, String> headers = new HashMap<>();
+		//headers.put("Authorization", "APPCODE " + appcode);
+        //String returnStr = HttpUtil.sendHttpGet(url,headers);
         // 这里调用淘宝的接口
         String urlStr = "http://ip.taobao.com/service/getIpInfo.php?ip="+ip;
         String returnStr = HttpUtil.sendHttpGet(urlStr);
