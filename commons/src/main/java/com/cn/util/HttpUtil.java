@@ -304,6 +304,19 @@ public class HttpUtil {
         HttpGet httpGet = new HttpGet(httpUrl);
         return sendHttpRequest(httpGet);
     }
+    
+    /**
+	 * 发送get请求
+	 * @param url 地址
+	 * @param headers 头信息
+	 */
+	public static String sendHttpGet(String url,Map<String, String> headers){
+		HttpGet httpGet = new HttpGet(url);
+		for (Map.Entry<String, String> e : headers.entrySet()) {
+			httpGet.addHeader(e.getKey(), e.getValue());
+		}
+		return sendHttpRequest(httpGet);
+	}
 
     /**
      * 发送 post请求（带文件）
