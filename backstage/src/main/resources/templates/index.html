@@ -148,6 +148,8 @@
         // })
         $(function(){
             $(".hideMenu").on("click",function(){
+                $('#LAY_app_flexible').removeClass("layui-icon-shrink-right");
+                $('#LAY_app_flexible').addClass("layui-icon-spread-left");
                 var oClass=$(".layui-side").hasClass("mini");
                 if(!oClass){
                     $(".layui-side").animate({
@@ -160,6 +162,8 @@
                         left:"50"
                     })
                 }else{
+                    $('#LAY_app_flexible').removeClass("layui-icon-spread-left");
+                    $('#LAY_app_flexible').addClass("layui-icon-shrink-right");
                     $(".layui-side").animate({
                         width:"200px"
                     })

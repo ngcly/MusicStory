@@ -13,7 +13,7 @@
          <a>系统设置</a>
          <a><cite>角色列表</cite></a>
     </span>
-    <a class="layui-btn layui-btn-sm" href="javascript:location.replace(location.href);" title="刷新" style="float:right;margin-top: 3px"><i class="layui-icon" style="line-height:30px">&#x1002;</i></a>
+    <a class="layui-btn layui-btn-sm" href="javascript:location.replace(location.href);" title="刷新" style="float:right;margin-top: 3px"><i class="layui-icon layui-icon-refresh-3"></i></a>
 </div>
 
 <div class="layui-row layui-col-md12">
@@ -79,7 +79,7 @@
         </td>
         <td>
             <a class="layui-btn layui-btn-xs view" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon iconfont icon-view"></i>查看</a>
-            <a sec:authorize="hasAuthority('role:grant')" class="layui-btn layui-btn-xs model" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe618;</i>授权</a>
+            <a sec:authorize="hasAuthority('role:grant')" class="layui-btn layui-btn-xs model" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon layui-icon-auz"></i>授权</a>
             <a sec:authorize="hasAuthority('role:alt')" class="layui-btn layui-btn-xs alt" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe642;</i>编辑</a>
             <a sec:authorize="hasAuthority('role:del')" class="layui-btn layui-btn-danger layui-btn-xs remove" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
         </td>
