@@ -2,6 +2,8 @@ package com.cn.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -12,7 +14,8 @@ import java.util.Objects;
  * 角色表
  * Created by chen on 2017/6/23.
  */
-
+@Getter
+@Setter
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class,property = "@id") //该注解是为了解决当前json序列化的bug 由于many to many会让json序列化产生无限循环 所以该注解能避免restful json产生的死循环
 @Table(name="role",uniqueConstraints=@UniqueConstraint(columnNames={"roleCode","roleType"}))
@@ -32,7 +35,7 @@ public class Role implements Serializable {
     // 用户 - 角色关系定义;
     @ManyToMany
     @JoinTable(name="user_role",joinColumns={@JoinColumn(name="role_id")},inverseJoinColumns={@JoinColumn(name="user_id")})
-    private List<User> userInfos;// 一个角色对应多个用户
+    private List<User> userInfoList;// 一个角色对应多个用户
 
     // 管理员 - 角色关系定义;
     @ManyToMany
@@ -46,78 +49,6 @@ public class Role implements Serializable {
     @OrderBy("sort asc")
     private List<Permission> permissions;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-
-    public String getRoleCode() {
-        return roleCode;
-    }
-
-    public void setRoleCode(String roleCode) {
-        this.roleCode = roleCode;
-    }
-
-    public Byte getRoleType() {
-        return roleType;
-    }
-
-    public void setRoleType(Byte roleType) {
-        this.roleType = roleType;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Boolean getAvailable() {
-        return available;
-    }
-
-    public void setAvailable(Boolean available) {
-        this.available = available;
-    }
-
-    public List<User> getUserInfos() {
-        return userInfos;
-    }
-
-    public void setUserInfos(List<User> userInfos) {
-        this.userInfos = userInfos;
-    }
-
-    public List<Manager> getManagers() {
-        return managers;
-    }
-
-    public void setManagers(List<Manager> managers) {
-        this.managers = managers;
-    }
-
-    public List<Permission> getPermissions() {
-        return permissions;
-    }
-
-    public void setPermissions(List<Permission> permissions) {
-        this.permissions = permissions;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -130,7 +61,6 @@ public class Role implements Serializable {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(id, roleName, roleType);
     }
 }

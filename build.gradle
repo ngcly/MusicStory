@@ -5,7 +5,7 @@ version '1.0-SNAPSHOT'
 
 buildscript { //构建脚本
     //定义版本号
-    ext { springBootVersion = '2.0.3.RELEASE' }
+    ext { springBootVersion = '2.0.6.RELEASE' }
     repositories {//jar包仓库
         maven {url 'http://maven.aliyun.com/nexus/content/groups/public/'}
         mavenCentral()
@@ -51,7 +51,7 @@ subprojects {  //子项目通配
         compile('com.alibaba:fastjson:1.2.46')
 
         runtime('org.springframework.boot:spring-boot-devtools')
-        compileOnly('org.projectlombok:lombok')
+        compileOnly('org.projectlombok:lombok:1.18.2')
 
         testCompile('org.springframework.boot:spring-boot-starter-test')
         testCompile('io.projectreactor:reactor-test')
