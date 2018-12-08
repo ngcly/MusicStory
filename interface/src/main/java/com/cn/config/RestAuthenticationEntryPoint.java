@@ -22,8 +22,17 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
         response.setContentType("application/json;charset=utf-8");
+        System.out.println(authException.getMessage());
         PrintWriter out = response.getWriter();
-        out.write("{\"code\":401,\"msg\":\"抱歉，请先登录认证！\"}");
+        String msg="未知错误";
+        if("Full authentication is required to access this resource".equals(authException.getMessage())){
+            msg = "抱歉，请先登录认证！";
+        }else if("Bad credentials".equals(authException.getMessage())){
+            msg = "用户名或密码错误";
+        }else if("User is disabled".equals(authException.getMessage())){
+            msg = "该用户已被封禁";
+        }
+        out.write("{\"code\":401,\"msg\":\""+msg+"\"}");
         out.flush();
         out.close();
     }

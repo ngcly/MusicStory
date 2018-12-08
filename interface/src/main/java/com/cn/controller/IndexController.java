@@ -11,6 +11,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,20 +48,18 @@ public class IndexController {
      */
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LogInDTO loginDTO) {
-
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginDTO.getUsernameOrEmail(),
-                        loginDTO.getPassword()
-                )
-        );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = tokenProvider.generateToken(authentication);
-        Map<String,String> map = new HashMap<>();
-        map.put("tokenType","Bearer");
-        map.put("accessToken",jwt);
-        return ResponseEntity.ok(RestUtil.Success(map));
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginDTO.getUsernameOrEmail(),
+                            loginDTO.getPassword()
+                    )
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = tokenProvider.generateToken(authentication);
+            Map<String,String> map = new HashMap<>();
+            map.put("tokenType","Bearer");
+            map.put("accessToken",jwt);
+            return ResponseEntity.ok(RestUtil.Success(map));
     }
 
     /**
