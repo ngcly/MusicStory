@@ -1,5 +1,6 @@
 package com.cn.config;
 
+import com.cn.dto.RestCode;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -24,15 +25,14 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType("application/json;charset=utf-8");
         System.out.println(authException.getMessage());
         PrintWriter out = response.getWriter();
-        String msg="未知错误";
+        RestCode restCode = RestCode.UNAUTHEN;
         if("Full authentication is required to access this resource".equals(authException.getMessage())){
-            msg = "抱歉，请先登录认证！";
         }else if("Bad credentials".equals(authException.getMessage())){
-            msg = "用户名或密码错误";
+          restCode = RestCode.USER_ERR;
         }else if("User is disabled".equals(authException.getMessage())){
-            msg = "该用户已被封禁";
+            restCode = RestCode.USER_DISABLE;
         }
-        out.write("{\"code\":401,\"msg\":\""+msg+"\"}");
+        out.write("{\"code\":\""+restCode.code+",\"msg\":\""+restCode.msg+"\"}");
         out.flush();
         out.close();
     }
