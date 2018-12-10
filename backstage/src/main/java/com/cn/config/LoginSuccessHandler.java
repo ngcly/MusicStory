@@ -43,9 +43,9 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         loginLog.setUserId(userDetails.getId());
         loginLog.setUserName(userDetails.getUsername());
         loginLog.setUserType((byte)1);
-        WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
-        loginLog.setLoginIp(details.getRemoteAddress());
-        loginLog.setAddressIp(IpUtil.getIpAddresses(details.getRemoteAddress()));
+        String ip = IpUtil.getIp(request);
+        loginLog.setLoginIp(ip);
+        loginLog.setAddressIp(IpUtil.getIpAddresses(ip));
         loginLog.setLoginTime(new Date());
         logService.saveLog(loginLog);
     }
