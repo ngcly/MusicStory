@@ -23,7 +23,6 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
         response.setContentType("application/json;charset=utf-8");
-        System.out.println(authException.getMessage());
         PrintWriter out = response.getWriter();
         RestCode restCode = RestCode.UNAUTHEN;
         if("Full authentication is required to access this resource".equals(authException.getMessage())){
@@ -32,7 +31,7 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
         }else if("User is disabled".equals(authException.getMessage())){
             restCode = RestCode.USER_DISABLE;
         }
-        out.write("{\"code\":\""+restCode.code+",\"msg\":\""+restCode.msg+"\"}");
+        out.write("{\"code\":"+restCode.code+",\"msg\":\""+restCode.msg+"\"}");
         out.flush();
         out.close();
     }
