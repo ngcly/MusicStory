@@ -50,7 +50,7 @@ public class IndexController {
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LogInDTO loginDTO) {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            loginDTO.getUsernameOrEmail(),
+                            loginDTO.getUsername(),
                             loginDTO.getPassword()
                     )
             );

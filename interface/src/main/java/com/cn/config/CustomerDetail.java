@@ -2,6 +2,7 @@ package com.cn.config;
 
 import com.cn.entity.Role;
 import com.cn.entity.User;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,12 +22,7 @@ public class CustomerDetail extends User implements UserDetails{
     public CustomerDetail(User user) {
         if(user != null)
         {
-            this.setId(user.getId());
-            this.setUsername(user.getUsername());
-            this.setRealName(user.getRealName());
-            this.setPassword(user.getPassword());
-            this.setGender(user.getGender());
-            this.setRoleList(user.getRoleList());
+            BeanUtils.copyProperties(user,this);
         }
     }
 
