@@ -23,7 +23,7 @@ public class News {
     private String id;
     private String userId;   //用户ID
     private String content;  //消息内容
-    private Boolean sended;  //是否已发送
+    private Boolean sent;    //是否已发送
     private Date createTime; //创建时间
     private Date sendTime;   //发送时间
     private String senderId; //发送人ID

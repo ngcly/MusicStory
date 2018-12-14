@@ -12,6 +12,7 @@ import com.cn.entity.Permission;
 import com.cn.entity.Role;
 import com.cn.util.MenuUtil;
 import com.cn.util.RestUtil;
+import com.cn.util.UploadUtil;
 import com.google.gson.Gson;
 import com.qiniu.common.QiniuException;
 import com.qiniu.common.Zone;
@@ -407,38 +408,13 @@ public class SystemController {
         if(file.isEmpty()){
             return RestUtil.Error(222,"文件为空");
         }
-
-        //构造一个带指定Zone对象的配置类 七牛上传
-        Configuration cfg = new Configuration(Zone.zone2());
-        UploadManager uploadManager = new UploadManager(cfg);
-        //...生成上传凭证，然后准备上传
-        String accessKey = "yAbBqIQ633g5U4BtZtEJtGkic8l6ALkngpfNeKX_";
-        String secretKey = "ry0PDc4GZk9Gd6sYpOYg0EGchKdo3S1aPhJJbAPP";
-        String bucket = "music-story";
-        String returnPath="http://p6wg9ob78.bkt.clouddn.com/";
-        //默认不指定key的情况下，以文件内容的hash值作为文件名
-        String key = null;
+        String path;
         try {
-            byte[] uploadBytes = file.getBytes();
-            Auth auth = Auth.create(accessKey, secretKey);
-            String upToken = auth.uploadToken(bucket);
-            try {
-                Response response = uploadManager.put(uploadBytes, key, upToken);
-                //解析上传成功的结果
-                DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
-                returnPath+=putRet.hash;
-            } catch (QiniuException ex) {
-                Response r = ex.response;
-                System.err.println(r.toString());
-                try {
-                    System.err.println(r.bodyString());
-                } catch (QiniuException e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (IOException e) {
+            path = UploadUtil.uploadFile(file);
+        } catch (Exception e) {
             e.printStackTrace();
+            return RestUtil.Error(RestCode.FILE_UPLOAD_ERR);
         }
-        return RestUtil.Success(returnPath);
+        return RestUtil.Success(path);
     }
 }

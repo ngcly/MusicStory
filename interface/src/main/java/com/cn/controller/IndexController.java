@@ -76,4 +76,6 @@ public class IndexController {
         BeanUtils.copyProperties(user, signUpDTO);
         return userService.signUp(user);
     }
+
+    //TODO  获取文章列表  获取文章详情  获取轮播图  获取公告
 }

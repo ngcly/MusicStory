@@ -28,9 +28,20 @@ public class UserController {
         return RestUtil.Success(customerDetail);
     }
 
-    @GetMapping("/test")
-    public ModelMap test(){
-        return RestUtil.Success("测试成功");
+    /**
+     * 获取用户的文章
+     * @return
+     */
+    @GetMapping("/essay")
+    public ModelMap getUserEssay(@CurrentUser CustomerDetail customerDetail){
+        return RestUtil.Success("文字");
     }
 
+    //TODO 创建文章，删文章
+
+    //TODO 获取用户消息 发送消息
+
+    //TODO 获取用户的收藏 点赞文章  点赞 收藏 取消点赞/收藏
+
+    //TODO 获取用户关注的人 及关注用户的人  关注  取消关注
 }

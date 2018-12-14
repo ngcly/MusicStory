@@ -13,7 +13,8 @@ public enum RestCode {
     NOT_FOUND(404 ,"路径错误"),
     HEAD_ERROR(415, "头部不匹配"),
     METHOD_ERROR(405 ,"不支持该请求方式"),
-    SERVER_ERROR(500, "服务异常");
+    SERVER_ERROR(500, "服务异常"),
+    FILE_UPLOAD_ERR(611,"文件上传失败");
 
     public int code;
     public String msg;
