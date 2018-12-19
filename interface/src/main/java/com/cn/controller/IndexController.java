@@ -1,5 +1,6 @@
 package com.cn.controller;
 
+import com.cn.EssayService;
 import com.cn.UserService;
 import com.cn.config.JwtTokenProvider;
 import com.cn.dto.LogInDTO;
@@ -7,6 +8,7 @@ import com.cn.dto.RestCode;
 import com.cn.dto.SignUpDTO;
 import com.cn.entity.User;
 import com.cn.util.RestUtil;
+import io.swagger.annotations.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -32,6 +32,7 @@ import java.util.Map;
  * @author chen
  * @create 2018-08-05 14:48
  */
+@Api(value = "IndexController", description = "首页内容相关API")
 @RestController
 public class IndexController {
     @Autowired
@@ -40,14 +41,20 @@ public class IndexController {
     JwtTokenProvider tokenProvider;
     @Autowired
     UserService userService;
+    @Autowired
+    EssayService essayService;
 
     /**
      * 登陆
      * @param loginDTO
      * @return
      */
+    @ApiOperation(value = "登录", notes = "用户登录")
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LogInDTO loginDTO) {
+    public ModelMap authenticateUser(@Valid @RequestBody LogInDTO loginDTO, BindingResult result) {
+        if(result.hasErrors()){
+            return RestUtil.Error(RestCode.PARAM_ERROR);
+        }
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginDTO.getUsername(),
@@ -59,7 +66,7 @@ public class IndexController {
             Map<String,String> map = new HashMap<>();
             map.put("tokenType","Bearer");
             map.put("accessToken",jwt);
-            return ResponseEntity.ok(RestUtil.Success(map));
+            return RestUtil.Success(map);
     }
 
     /**
@@ -67,7 +74,12 @@ public class IndexController {
      * @param signUpDTO
      * @return
      */
+    @ApiOperation(value = "注册", notes = "用户注册")
     @PostMapping("/signup")
+    @ApiResponses(value={
+            @ApiResponse(code=400,message="参数不合法"),
+            @ApiResponse(code=500,message="服务器异常")
+    })
     public ModelMap registerUser(@Valid @RequestBody SignUpDTO signUpDTO, BindingResult result) {
         if(result.hasErrors()){
             return RestUtil.Error(RestCode.PARAM_ERROR);
@@ -77,5 +89,42 @@ public class IndexController {
         return userService.signUp(user);
     }
 
-    //TODO  获取文章列表  获取文章详情  获取轮播图  获取公告
+    /**
+     * 获取文章列表
+     */
+    @ApiOperation(value = "文章列表", notes = "获取首页文章简介列表")
+    @GetMapping("/essay")
+    public ModelMap getEssayList(){
+        return essayService.getEssayList();
+    }
+
+    /**
+     * 根据id获取文章详情
+     */
+    @ApiOperation(value = "文章详情", notes = "根据文章Id获取文章详情")
+    @GetMapping("/essay/{id}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id",value = "文章ID",paramType = "path",dataType = "string"),
+    })
+    public ModelMap getEssayDetail(@PathVariable String id){
+        return essayService.getEssayDetail(id);
+    }
+
+    /**
+     * 获取轮播图
+     */
+    @ApiOperation(value = "轮播图", notes = "获取轮播图列表")
+    @GetMapping("/carousel")
+    public ModelMap getCarousel(){
+        return null;
+    }
+
+    /**
+     * 获取公告
+     */
+    @ApiOperation(value = "公告", notes = "获取最新公告")
+    @GetMapping("/notice")
+    public ModelMap getNotice(){
+        return null;
+    }
 }

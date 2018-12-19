@@ -27,8 +27,8 @@ public class SwaggerConfig {
     private ApiInfo apiInfo(){
         return new ApiInfoBuilder()
                 .title("接口文档API")
-                .description("描述")
-                .termsOfServiceUrl("http://chen.com.cn")
+                .description("音书API文档说明")
+                .termsOfServiceUrl("http://ngcly.cn")
                 .version("1.0")
                 .build();
     }

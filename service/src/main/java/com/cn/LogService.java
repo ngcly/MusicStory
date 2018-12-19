@@ -32,7 +32,6 @@ public class LogService {
      * @param loginLog
      */
     @Async
-    @Transactional(rollbackFor = Exception.class)
     public void saveLog(LoginLog loginLog){
         loginLogRepository.save(loginLog);
     }
