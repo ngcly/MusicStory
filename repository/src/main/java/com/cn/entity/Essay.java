@@ -1,5 +1,6 @@
 package com.cn.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -13,19 +14,19 @@ import java.util.Date;
  * @date 2017-12-30 17:39
  */
 @Data
+@AllArgsConstructor
 @Entity
 @Table(name = "essay")
-public class Essay {
+public class Essay extends DateAudit{
     @Id
     @GeneratedValue(generator = "id")
     @GenericGenerator(name = "id", strategy = "uuid")
     @Column(name="id")
     private String id;
+    private String userId;     //作者
     private String title;      //文章标题
     private String content;    //文章内容
     private String classifyId; //分类ID
-    private Date createTime;   //创建时间
-    private Date updateTime;   //修改时间
     private Integer readNum;   //阅览数
 
 }

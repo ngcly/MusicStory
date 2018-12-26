@@ -74,22 +74,22 @@ public class ManagerService {
         //获取被修改人之前的角色-当前人的角色=必存角色 最后结果为必存角色+回传角色
         allRole.addAll(roleList);
 
-        Manager manager1 = new Manager();
+        Set<Role> roles = new HashSet<>();
         if(!StringUtil.isNullOrEmpty(manager.getId())){
-            manager1 = managerRepository.getOne(manager.getId());
+            Manager manager1 = managerRepository.getOne(manager.getId());
             //判断是否当前人在改自己的信息
             if(!curManager.getId().equals(manager.getId())){
                 manager.setUsername(manager1.getUsername());
             }
             manager.setPassword(manager1.getPassword());
-            manager.setCreateTime(manager1.getCreateTime());
             allRole.addAll(manager1.getRoleList());
             manager1.getRoleList().removeAll(roleList);
+            //加上必存角色 防止越权篡改数据
+            roles.addAll(manager1.getRoleList());
         }else{
             BCryptPasswordEncoder bc=new BCryptPasswordEncoder(4);
             manager.setPassword(bc.encode("123456"));
             manager.setState((byte) 0);
-            manager.setCreateTime(new Date());
         }
         if(StringUtil.isNullOrEmpty(manager.getUsername())){
             return RestUtil.Error(333,"用户名不可为空");
@@ -99,15 +99,11 @@ public class ManagerService {
         }
 
         if(manager.getRoleIds()!=null){
-            Set<Role> roles = new HashSet<>();
             for(String roleId:manager.getRoleIds()){
                 allRole.stream().filter(role -> String.valueOf(role.getId()).equals(roleId)).forEach(roles::add);
             }
-            //加上必存角色 防止越权篡改数据
-            roles.addAll(manager1.getRoleList());
             manager.setRoleList(roles);
         }
-        manager.setUpdateTime(new Date());
         managerRepository.save(manager);
         return RestUtil.Success();
     }

@@ -22,7 +22,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name="manager")
-public class Manager implements Serializable {
+public class Manager extends DateAudit implements Serializable {
     @Id
     @GeneratedValue(generator = "id")
     @GenericGenerator(name = "id", strategy = "uuid")
@@ -37,8 +37,6 @@ public class Manager implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthday;    //生日
     private Byte state;       //状态,0:创建未认证 1:正常状态,2：用户被锁定.
-    private Date createTime;  //创建时间
-    private Date updateTime;  //最后修改时间
     @ManyToMany(fetch= FetchType.EAGER)//立即从数据库中进行加载数据;
     @JoinTable(name = "manager_role", joinColumns = { @JoinColumn(name = "manager_id") }, inverseJoinColumns ={@JoinColumn(name = "role_id") })
     @Where(clause = "available=true")

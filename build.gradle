@@ -45,7 +45,6 @@ subprojects {  //子项目通配
         compile('org.springframework.boot:spring-boot-starter-security')
         compile('org.springframework.boot:spring-boot-starter-json')
         compile('org.springframework.boot:spring-boot-starter-mail')
-        compile('com.qiniu:qiniu-java-sdk:7.2.+')
         compile('com.github.penggle:kaptcha:2.3.2')
         compile('com.alibaba:fastjson:1.2.46')
 

@@ -15,8 +15,8 @@ public class EssayService {
      * 获取文章列表
      * @return
      */
-    public ModelMap getEssayList(){
-        return null;
+    public ModelMap getEssayList(int page,int pageSize){
+        return RestUtil.Success(essayRepository.getEssayList(page,pageSize));
     }
 
     /**

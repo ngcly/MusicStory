@@ -15,7 +15,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "user_follow")
-public class UserFollow {
+public class UserFollow extends DateAudit {
     @Id
     @GeneratedValue(generator = "id")
     @GenericGenerator(name = "id", strategy = "uuid")
@@ -23,6 +23,5 @@ public class UserFollow {
     private String id;
     private String userId;    //关注者ID
     private String followId;  //被关注的人ID
-    private Date createTime;  //关注时间
 
 }

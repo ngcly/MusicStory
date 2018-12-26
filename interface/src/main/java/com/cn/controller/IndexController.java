@@ -1,6 +1,7 @@
 package com.cn.controller;
 
 import com.cn.EssayService;
+import com.cn.NoticeService;
 import com.cn.UserService;
 import com.cn.config.JwtTokenProvider;
 import com.cn.dto.LogInDTO;
@@ -43,6 +44,8 @@ public class IndexController {
     UserService userService;
     @Autowired
     EssayService essayService;
+    @Autowired
+    NoticeService noticeService;
 
     /**
      * 登陆
@@ -93,9 +96,9 @@ public class IndexController {
      * 获取文章列表
      */
     @ApiOperation(value = "文章列表", notes = "获取首页文章简介列表")
-    @GetMapping("/essay")
-    public ModelMap getEssayList(){
-        return essayService.getEssayList();
+    @GetMapping("/essay/{pageSize}/{page}")
+    public ModelMap getEssayList(@PathVariable int pageSize,@PathVariable int page){
+        return essayService.getEssayList(page,pageSize);
     }
 
     /**
@@ -125,6 +128,6 @@ public class IndexController {
     @ApiOperation(value = "公告", notes = "获取最新公告")
     @GetMapping("/notice")
     public ModelMap getNotice(){
-        return null;
+        return noticeService.getNotice();
     }
 }

@@ -50,11 +50,11 @@ public interface ManagerRepository extends JpaRepository<Manager,String>,JpaSpec
                 }
 
                 if(beginTime!=null){
-                    predicates.add(cb.greaterThanOrEqualTo(root.get("createTime"), beginTime));
+                    predicates.add(cb.greaterThanOrEqualTo(root.get("createdTime"), beginTime));
                 }
 
                 if(endTime!=null){
-                    predicates.add(cb.lessThanOrEqualTo(root.get("createTime"), endTime));
+                    predicates.add(cb.lessThanOrEqualTo(root.get("createdTime"), endTime));
                 }
                 return query.where(cb.and(predicates.toArray(new Predicate[predicates.size()]))).getRestriction();
         };

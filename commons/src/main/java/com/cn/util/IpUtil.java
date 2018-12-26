@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * IP 获取工具类
@@ -40,14 +42,14 @@ public class IpUtil {
      */
     public static String getIpAddresses(String ip) {
         //阿里云接口
-        //String url = "https://dm-81.data.aliyun.com/rest/160601/ip/getIpInfo.json?ip="+ip;
-		//String appcode = "阿里云appCode";
-		//Map<String, String> headers = new HashMap<>();
-		//headers.put("Authorization", "APPCODE " + appcode);
-        //String returnStr = HttpUtil.sendHttpGet(url,headers);
+        String url = "https://dm-81.data.aliyun.com/rest/160601/ip/getIpInfo.json?ip="+ip;
+		String appcode = "4bf399ed20194960aa55e569c9d8af06";
+		Map<String, String> headers = new HashMap<>();
+		headers.put("Authorization", "APPCODE " + appcode);
+        String returnStr = HttpUtil.sendHttpGet(url,headers);
         // 这里调用淘宝的接口
-        String urlStr = "http://ip.taobao.com/service/getIpInfo.php?ip="+ip;
-        String returnStr = HttpUtil.sendHttpGet(urlStr);
+//        String urlStr = "http://ip.taobao.com/service/getIpInfo.php?ip="+ip;
+//        String returnStr = HttpUtil.sendHttpGet(urlStr);
         JSONObject json = JSONObject.parseObject(returnStr);
         if("0".equals(json.getString("code"))){
             JSONObject data = json.getJSONObject("data");

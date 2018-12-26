@@ -15,7 +15,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "user_faves")
-public class UserFaves {
+public class UserFaves extends DateAudit {
     private final static byte 点赞 = '1';
     private final static byte 收藏 = '2';
 
@@ -26,7 +26,6 @@ public class UserFaves {
     private String id;
     private String userId;   //会员ID
     private String essayId;  //文章ID
-    private Date createTime; //创建时间
     private Byte faveType;   //类型 1-点赞 2-收藏
 
 }

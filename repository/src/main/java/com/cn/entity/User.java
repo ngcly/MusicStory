@@ -34,7 +34,7 @@ import java.util.Set;
                 "unionId"
         })
 })
-public class User implements Serializable {
+public class User extends DateAudit implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -59,9 +59,6 @@ public class User implements Serializable {
     private BigDecimal balance;    //账户余额
     private Integer level;         //等级
     private Integer credit;        //积分
-    private Date createTime;       //创建时间
-    private Date updateTime;       //最后更新时间
-    private Date lastLogin;        //最后登录时间
     @Column(columnDefinition="enum('0','1','2')")
     private Byte state;//用户状态,0:不可用 1:正常状态,2:异常.
     @JsonIgnore

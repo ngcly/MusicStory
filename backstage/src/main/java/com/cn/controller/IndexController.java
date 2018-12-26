@@ -78,7 +78,6 @@ public class IndexController {
         if(managerDetail.getState()==0){
             init = true;
             Manager manager = managerService.getManagerById(managerDetail.getId());
-            manager.setUpdateTime(new Date());
             manager.setState((byte) 1);
             managerService.updateManager(manager);
         }

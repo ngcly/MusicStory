@@ -15,7 +15,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "classify")
-public class Classify implements Serializable{
+public class Classify extends UserDateAudit implements Serializable{
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -24,7 +24,5 @@ public class Classify implements Serializable{
     private Long id;
     private String name;     //分类名称
     private String introduction; //分类说明
-    private Date createTime; //创建时间
-    private Date updateTime; //修改时间
 
 }

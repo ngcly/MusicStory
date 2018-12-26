@@ -14,7 +14,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "notice")
-public class Notice {
+public class Notice extends UserDateAudit{
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     @Column(name="id")
@@ -22,7 +22,5 @@ public class Notice {
     private String title;     //公告标题
     private String content;   //公告内容
     private String noticeType;//公告类型 暂不用
-    private String managerId; //创建人ID
-    private Date createTime;  //创建时间
 
 }
