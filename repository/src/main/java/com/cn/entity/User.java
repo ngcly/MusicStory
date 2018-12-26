@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -69,5 +70,13 @@ public class User extends DateAudit implements Serializable {
     @Where(clause = "available=true")
     private Set<Role> roleList;// 一个用户具有多个角色
 
+    @Transient
+    @JsonIgnore
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date beginTime;
+    @Transient
+    @JsonIgnore
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date endTime;
 }
 

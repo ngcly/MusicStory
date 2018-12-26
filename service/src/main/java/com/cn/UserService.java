@@ -4,6 +4,8 @@ import com.cn.dao.UserRepository;
 import com.cn.entity.User;
 import com.cn.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
@@ -53,7 +55,22 @@ public class UserService {
         return RestUtil.Success();
     }
 
+    /**
+     * 保存用户
+     * @param user
+     */
     public void saveUser(User user){
         userRepository.save(user);
+    }
+
+    /**
+     * 根据条件动态查询用户列表
+     * @param pageable
+     * @param user
+     * @return
+     */
+    public Page<User> getUserList(Pageable pageable, User user){
+        return userRepository.findAll(UserRepository.getUserList(user.getUsername(),user.getState(),
+                user.getGender(),user.getBeginTime(),user.getEndTime()),pageable);
     }
 }

@@ -4,7 +4,6 @@ import com.cn.dao.ManagerRepository;
 import com.cn.dao.RoleRepository;
 import com.cn.entity.Manager;
 import com.cn.entity.Role;
-import com.cn.util.DateUtil;
 import com.cn.util.RestUtil;
 import io.netty.util.internal.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 
 import java.util.*;

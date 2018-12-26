@@ -15,7 +15,7 @@ dependencies {
     compile group: 'nz.net.ultraq.thymeleaf', name: 'thymeleaf-layout-dialect', version: '2.3.0'
     //js包
     compile group: 'org.webjars', name: 'webjars-locator', version: '0.34'
-    compile 'org.webjars:layui:2.3.0'
+    compile 'org.webjars:layui:2.4.5'
     compile 'org.webjars:jquery:3.3.1-1'
     compile 'org.webjars.bower:jquery-treegrid:0.3.0'
     testCompile('io.projectreactor:reactor-test')
