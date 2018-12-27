@@ -14,4 +14,5 @@ dependencies {
     compile('org.apache.commons:commons-collections4:4.1')
     compile('com.qiniu:qiniu-java-sdk:7.2.+')
     compile('com.aliyun.oss:aliyun-sdk-oss:2.8.3')
+    compile('org.springframework.boot:spring-boot-starter-mail')
 }

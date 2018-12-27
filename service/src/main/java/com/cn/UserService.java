@@ -70,7 +70,7 @@ public class UserService {
      * @return
      */
     public Page<User> getUserList(Pageable pageable, User user){
-        return userRepository.findAll(UserRepository.getUserList(user.getUsername(),user.getState(),
-                user.getGender(),user.getBeginTime(),user.getEndTime()),pageable);
+        return userRepository.findAll(UserRepository.getUserList(user.getUsername(),user.getNickName(),
+                user.getPhone(),user.getEmail(),user.getState()),pageable);
     }
 }

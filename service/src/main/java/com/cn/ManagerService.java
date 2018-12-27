@@ -5,7 +5,7 @@ import com.cn.dao.RoleRepository;
 import com.cn.entity.Manager;
 import com.cn.entity.Role;
 import com.cn.util.RestUtil;
-import io.netty.util.internal.StringUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -73,7 +74,7 @@ public class ManagerService {
         allRole.addAll(roleList);
 
         Set<Role> roles = new HashSet<>();
-        if(!StringUtil.isNullOrEmpty(manager.getId())){
+        if(!StringUtils.isEmpty(manager.getId())){
             Manager manager1 = managerRepository.getOne(manager.getId());
             //判断是否当前人在改自己的信息
             if(!curManager.getId().equals(manager.getId())){
@@ -89,7 +90,7 @@ public class ManagerService {
             manager.setPassword(bc.encode("123456"));
             manager.setState((byte) 0);
         }
-        if(StringUtil.isNullOrEmpty(manager.getUsername())){
+        if(StringUtils.isEmpty(manager.getUsername())){
             return RestUtil.Error(333,"用户名不可为空");
         }
         if(managerRepository.existsByUsernameAndIdIsNot(manager.getUsername(),manager.getId())){

@@ -40,11 +40,9 @@ subprojects {  //子项目通配
         compile('org.springframework.boot:spring-boot-starter-actuator')
 //        compile('org.springframework.boot:spring-boot-starter-data-rest')
         compile('org.springframework.boot:spring-boot-starter-web')
-        compile('org.springframework.boot:spring-boot-starter-webflux')
         compile('org.springframework.boot:spring-boot-starter-jersey')
         compile('org.springframework.boot:spring-boot-starter-security')
         compile('org.springframework.boot:spring-boot-starter-json')
-        compile('org.springframework.boot:spring-boot-starter-mail')
         compile('com.github.penggle:kaptcha:2.3.2')
         compile('com.alibaba:fastjson:1.2.46')
 
@@ -52,7 +50,6 @@ subprojects {  //子项目通配
         compileOnly('org.projectlombok:lombok:1.18.2')
 
         testCompile('org.springframework.boot:spring-boot-starter-test')
-        testCompile('io.projectreactor:reactor-test')
         testCompile('org.springframework.security:spring-security-test')
     }
 }
