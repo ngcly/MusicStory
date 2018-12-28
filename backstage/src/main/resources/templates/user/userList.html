@@ -54,7 +54,7 @@
                 <div class="search-input">
                     <select name="state">
                         <option value=""></option>
-                        <option value="0">不可用</option>
+                        <option value="0">禁用</option>
                         <option value="1">正常</option>
                         <option value="2">异常</option>
                     </select>
@@ -93,7 +93,7 @@
                     ,{field: 'email', title: '邮箱'}
                     ,{field: 'state', title: '状态',templet:'#stateTpl'}
                     ,{field: 'createdTime', title: '注册时间'}
-                    ,{fixed: 'right', align:'center', toolbar: '#bar'}]
+                    ,{fixed: 'right', align:'center',width:'220', toolbar: '#bar'}]
             ]
         });
 
@@ -116,44 +116,46 @@
             var tr = obj.tr; //获得当前行 tr 的DOM对象
 
             if(layEvent === 'detail'){ //查看
-                var _this = $(this);
                 layer.open({
                     type: 2 //Page层类型
                     ,skin: 'layui-layer-molv'
-                    ,area: ['600px', '450px']
+                    ,area: ['600px', '500px']
                     ,title: ['用户信息','font-size:18px']
                     ,shadeClose: true
                     ,shade: 0 //遮罩透明度
                     ,maxmin: true //允许全屏最小化
-                    ,content:'/ms/user?userId='+_this.data('id')
+                    ,content:'/ms/userDetail?userId='+data.id
                 });
             } else if(layEvent === 'del'){ //删除
-                layer.confirm('真的删除行么', function(index){
-                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                    layer.close(index);
+                var $ = layui.$;
+                layer.confirm('确定删除吗？',{title:'删除'}, function(index){
                     //向服务端发送删除指令
+                    $.getJSON('/ms/userDel', {userId:data.id}, function(ret){
+                        if (ret.code == 200){
+                            layer.msg(ret.msg, {icon: 1,time:600},function () {
+                                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                            });
+                        } else {
+                            layer.msg(ret.msg, {icon: 2,time:600});
+                        }
+                    });
+                    layer.close(index);
                 });
             } else if(layEvent === 'edit'){ //编辑
-                //do something
-
-                //同步更新缓存对应的值
-                obj.update({
-                    username: '123'
-                    ,title: 'xxx'
-                });
+                window.location.href='/ms/userEdit?userId='+data.id;
             }
         });
     });
 </script>
 <script type="text/html" id="bar">
     <a class="layui-btn layui-btn-xs" lay-event="detail"><i class="layui-icon iconfont icon-detail"></i>查看</a>
-    <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
+    <a sec:authorize="hasAuthority('user:alt')" class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
+    <a sec:authorize="hasAuthority('user:del')" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
 </script>
 
 <script type="text/html" id="stateTpl">
     {{#  if(d.state == '0'){ }}
-    不可用
+    禁用
     {{#  } else if(d.state ==  '1') {}}
     正常
     {{#  } else { }}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>用户详情页</title>
+    <link rel="stylesheet" href="/webjars/layui/css/layui.css">
+</head>
+<body>
+<div class="layui-col-md12">
+    <table class="layui-table" lay-skin="line">
+        <tbody>
+        <tr>
+            <td>用户名：</td>
+            <td th:text="${user.username}"></td>
+            <td>昵称：</td>
+            <td th:text="${user.nickName}"></td>
+        </tr>
+        <tr>
+            <td>真实姓名：</td>
+            <td th:text="${user.realName}"></td>
+            <td>个性签名：</td>
+            <td th:text="${user.signature}"></td>
+        </tr>
+        <tr>
+            <td>性别：</td>
+            <td th:text="${user.gender==1}?'男':'女'"></td>
+            <td>状态：</td>
+            <td th:switch="${user.state}">
+                <span th:case="0">禁用</span>
+                <span th:case="1">正常</span>
+                <span th:case="2">异常</span>
+            </td>
+        </tr>
+        <tr>
+            <td>手机：</td>
+            <td th:text="${user.phone}"></td>
+            <td>邮箱：</td>
+            <td th:text="${user.email}"></td>
+        </tr>
+        <tr>
+            <td>生日：</td>
+            <td th:text="${#dates.format(user.birthday,'yyyy-MM-dd')}"></td>
+            <td>头像：</td>
+            <td><img th:src="${user.avatar}" /></td>
+        </tr>
+        <tr>
+            <td>等级：</td>
+            <td th:text="${user.level}"></td>
+            <td>积分：</td>
+            <td th:text="${user.credit}"></td>
+        </tr>
+        <tr>
+            <td>创建时间：</td>
+            <td th:text="${#dates.format(user.createdTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td>修改时间：</td>
+            <td th:text="${#dates.format(user.updatedTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+        </tr>
+        <tr>
+            <td>地址：</td>
+            <td th:text="${user.address}"></td>
+            <td>简介：</td>
+            <td th:text="${user.personDesc}"></td>
+        </tr>
+        <tr>
+            <td>余额：</td>
+            <td th:text="${user.balance}"></td>
+            <td>角色：</td>
+            <td><span th:each="role:${user.roleList}" th:text="${roleStat.last}?${role.getRoleName()}:${role.getRoleName()}+'、'"></span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script src="/webjars/layui/layui.js"></script>
+<script type="text/javascript">
+    layui.use(['element'], function(){
+        $ = layui.jquery;
+
+        $("button.close").on('click', function () {
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            parent.layer.close(index);
+        });
+    });
+</script>
+</body>
+</html>

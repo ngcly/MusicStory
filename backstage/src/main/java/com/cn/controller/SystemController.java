@@ -91,10 +91,10 @@ public class SystemController {
         ManagerDetail managerDetail = (ManagerDetail) authentication.getPrincipal();
         Set<Role> roles = managerDetail.getRoleList();
         if("admin".equals(managerDetail.getUsername())){
-            roles = roleService.getAvailableRoles();
+            roles = roleService.getAvailableRoles((byte) 1);
         }
-        List<String> optrole = new ArrayList<>();
-        roles.stream().forEach(role -> optrole.add(role.getId().toString()));
+        List<String> optRole = new ArrayList<>();
+        roles.stream().forEach(role -> optRole.add(role.getId().toString()));
         Manager manager = new Manager();
         ArrayList<String> checkRoleIds = new ArrayList<>();
         if(managerId!=null){
@@ -111,7 +111,7 @@ public class SystemController {
         //已勾选角色ID
         model.addAttribute("checkRoleId",String.join(",",checkRoleIds));
         //可授权角色ID
-        model.addAttribute("optionRoles",String.join(",",optrole));
+        model.addAttribute("optionRoles",String.join(",",optRole));
         return "manager/managerEdit";
     }
 

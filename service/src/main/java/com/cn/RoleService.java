@@ -50,8 +50,8 @@ public class RoleService {
     /**
      * 获取可用角色
      */
-    public Set<Role> getAvailableRoles(){
-        return roleRepository.getAllByAvailableIsTrue();
+    public Set<Role> getAvailableRoles(byte type){
+        return roleRepository.getAllByAvailableIsTrueAndRoleType(type);
     }
 
     /**

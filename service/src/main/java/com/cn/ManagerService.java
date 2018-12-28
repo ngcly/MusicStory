@@ -68,7 +68,7 @@ public class ManagerService {
         Set<Role> allRole = new HashSet<>();
         Set<Role> roleList = curManager.getRoleList();
         if("admin".equals(curManager.getUsername())){
-            roleList = roleRepository.getAllByAvailableIsTrue();
+            roleList = roleRepository.getAllByAvailableIsTrueAndRoleType((byte) 1);
         }
         //获取被修改人之前的角色-当前人的角色=必存角色 最后结果为必存角色+回传角色
         allRole.addAll(roleList);

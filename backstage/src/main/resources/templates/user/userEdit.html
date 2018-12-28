@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>用户编辑页</title>
+    <link rel="stylesheet" href="/webjars/layui/css/layui.css">
+    <link rel="stylesheet" href="/css/public.css">
+</head>
+<body class="child-body">
+<div class="child-nav">
+    <span class="layui-breadcrumb">
+         <a>音书管理</a>
+         <a href="/ms/user">用户列表</a>
+        <a><cite th:text="修改用户"></cite></a>
+    </span>
+    <a class="layui-btn layui-btn-sm" href="javascript:location.replace(location.href);" title="刷新" style="float:right;margin-top: 3px"><i class="layui-icon layui-icon-refresh-3"></i></a>
+</div>
+<div class="layui-col-md12">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <form class="layui-form" action="/ms/userSave" method="post">
+                <input type="hidden" id="altId" name="id" th:value="${user.id}">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="username" readonly th:value="${user.username}" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户昵称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="nickName" readonly th:value="${user.nickName}" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">真实姓名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="realName" readonly th:value="${user.realName}" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">手机</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="phone" readonly th:value="${user.phone}" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">邮箱</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="email" readonly th:value="${user.email}" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">头像</label>
+                    <div class="layui-input-block">
+                        <img class="layui-upload-img" style="max-width: 120px;max-height: 120px" id="avatar-view" th:src="${user.avatar}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">个性签名</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="signature" readonly th:value="${user.signature}" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">个人简介</label>
+                    <div class="layui-input-block">
+                        <textarea name="personDesc" readonly th:text="${user.personDesc}" class="layui-textarea"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item" th:if="${user.state!=null}">
+                    <label class="layui-form-label">状态</label>
+                    <div class="layui-input-inline">
+                        <select name="state" lay-verify="required">
+                            <option value="0" >禁用</option>
+                            <option value="1" th:selected="${user.state==1}">正常</option>
+                            <option value="2" th:selected="${user.state==2}">异常</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">角色</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" th:each="role:${roles}" th:name="'roleIds['+${role.id}+']'" th:checked="${#strings.contains(checkRoleId, role.id)}" th:value="${role.id}" th:title="${role.roleName}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="save" th:text="保存"></button>
+                        <a href="javascript:history.back()" type="button" class="layui-btn layui-btn-primary">返回</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="/webjars/layui/layui.js"></script>
+<script type="text/javascript">
+    layui.use(['element','form'], function(){
+        $ = layui.jquery;
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(save)', function(data){
+            var headers = {};
+            headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
+            $.ajax({
+                url:data.form.action,
+                type:data.form.method,
+                headers: headers,
+                data:data.field,
+                dataType:'json',
+                success:function(result){
+                    if(result.code == 200){
+                        layer.msg(result.msg, {icon: 1,time:600}, function () {
+                            location.href="/ms/user";
+                        });
+                    }else{
+                        layer.msg(result.msg,{time:1000});
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

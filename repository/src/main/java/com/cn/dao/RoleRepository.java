@@ -22,9 +22,9 @@ import java.util.Set;
 public interface RoleRepository extends JpaRepository<Role,Long>,JpaSpecificationExecutor<Role> {
 
     /**
-     * 获取所有可用角色
+     * 根据角色类型获取所有可用角色
      */
-    Set<Role> getAllByAvailableIsTrue();
+    Set<Role> getAllByAvailableIsTrueAndRoleType(byte type);
 
     /**
      * 自定义条件查询

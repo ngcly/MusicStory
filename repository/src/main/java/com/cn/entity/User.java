@@ -68,5 +68,7 @@ public class User extends DateAudit implements Serializable {
     @Where(clause = "available=true")
     private Set<Role> roleList;// 一个用户具有多个角色
 
+    @Transient
+    private String[] roleIds;
 }
 
