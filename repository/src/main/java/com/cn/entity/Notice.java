@@ -22,5 +22,7 @@ public class Notice extends UserDateAudit{
     private String title;     //公告标题
     private String content;   //公告内容
     private String noticeType;//公告类型 暂不用
+    private Date beginTime;   //展示开始时间
+    private Date endTime;     //展示结束时间
 
 }
