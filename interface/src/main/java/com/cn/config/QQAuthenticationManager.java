@@ -83,7 +83,7 @@ public class QQAuthenticationManager implements AuthenticationManager {
             user.setAvatar(json.getString("figureurl_qq_2"));
             user.setUnionId(openId);
             userDetails = new CustomerDetail(user);
-            userService.saveUser(user);
+            userService.altUser(user);
         }
 
         return userDetails;

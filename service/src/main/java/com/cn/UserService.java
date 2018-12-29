@@ -61,10 +61,10 @@ public class UserService {
     }
 
     /**
-     * 保存用户
+     * 修改用户
      * @param user 用户信息
      */
-    public void saveUser(User user){
+    public void altUser(User user){
         User user1 = userRepository.getOne(user.getId());
         user1.setState(user.getState());
         Set<Role> allRole = roleRepository.getAllByAvailableIsTrueAndRoleType((byte) 2);

@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface EssayRepository extends JpaRepository<Essay,String>, JpaSpecificationExecutor<Essay> {
 
-    @Query(value = "select new com.cn.entity.Essay(t.id,t.title,substring(t.content,0,300),t2.name,t.create_time,t.update_time,t.readNum) " +
+    @Query(value = "select new com.cn.entity.Essay(t.id,t.title,substring(t.content,0,300),t2.name,t.created_time,t.updated_time,t.readNum) " +
             "from essay t,classify t2 where t.classify_id=t2.id limit :page,:pageSize",nativeQuery = true)
     List<Essay> getEssayList(@Param("page")int page,@Param("pageSize")int pageSize);
 

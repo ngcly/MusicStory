@@ -1,8 +1,10 @@
 package com.cn.controller;
 
+import com.cn.ClassifyService;
 import com.cn.RoleService;
 import com.cn.UserService;
 import com.cn.dto.RestCode;
+import com.cn.entity.Classify;
 import com.cn.entity.Role;
 import com.cn.entity.User;
 import com.cn.util.RestUtil;
@@ -12,13 +14,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -32,13 +31,15 @@ public class MsController {
     UserService userService;
     @Autowired
     RoleService roleService;
+    @Autowired
+    ClassifyService classifyService;
 
     /**
      * 用户列表页
      */
     @PreAuthorize("hasAuthority('user:view')")
     @RequestMapping("/user")
-    public String managerList(){
+    public String userList(){
         return "user/userList";
     }
 
@@ -48,7 +49,7 @@ public class MsController {
     @ResponseBody
     @RequestMapping("/userList")
     public ModelMap getUserList(@RequestParam(value="page",defaultValue="1") Integer page,
-                                @RequestParam(value="limit",defaultValue="10") Integer size, User user){
+                                @RequestParam(value="size",defaultValue="10") Integer size, User user){
         Page<User> userList = userService.getUserList(PageRequest.of(page - 1, size), user);
         return RestUtil.Success(userList.getTotalElements(),userList.getContent());
     }
@@ -84,14 +85,14 @@ public class MsController {
     }
 
     /**
-     * 保存用户
+     * 修改用户
      */
     @PreAuthorize("hasAuthority('user:alt')")
     @ResponseBody
     @RequestMapping("/userSave")
     public ModelMap saveUser(@Valid User user){
         try {
-            userService.saveUser(user);
+            userService.altUser(user);
             return RestUtil.Success();
         }catch (Exception e){
             e.printStackTrace();
@@ -108,6 +109,71 @@ public class MsController {
     public ModelMap delUser(@RequestParam String userId){
         try {
             userService.delUser(userId);
+            return RestUtil.Success();
+        }catch (Exception e){
+            e.printStackTrace();
+            return RestUtil.Error(RestCode.SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 分类列表页
+     */
+    @PreAuthorize("hasAuthority('clazz:view')")
+    @RequestMapping("/classify")
+    public String classifyList(){
+        return "classify/classifyList";
+    }
+
+    /**
+     * 获取分类列表
+     */
+    @ResponseBody
+    @RequestMapping("/classifyList")
+    public ModelMap getClassifyList(@RequestParam(value="page",defaultValue="1") Integer page,
+                                    @RequestParam(value="size",defaultValue="10") Integer size, Classify classify){
+        Page<Classify> classifyList = classifyService.getClassifyList(PageRequest.of(page - 1, size), classify);
+        return RestUtil.Success(classifyList.getTotalElements(),classifyList.getContent());
+    }
+
+    /**
+     * 修改分类页
+     */
+    @RequestMapping("/classifyAlt")
+    public String altClassify(@RequestParam(required = false)Long id,Model model){
+        Classify classify = new Classify();
+        if(id!=null){
+            classify = classifyService.getClassifyDetail(id);
+        }
+        model.addAttribute(classify);
+        return "classify/classifyEdit";
+    }
+
+    /**
+     * 保存分类
+     */
+    @PreAuthorize("hasAnyAuthority('clazz:add','clazz:alt')")
+    @ResponseBody
+    @PostMapping("/saveClassify")
+    public ModelMap saveClassify(@Valid Classify classify){
+        try {
+            classifyService.saveClassify(classify);
+            return RestUtil.Success();
+        }catch (Exception e){
+            e.printStackTrace();
+            return RestUtil.Error(RestCode.SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 删除分类
+     */
+    @PreAuthorize("hasAuthority('clazz:del')")
+    @ResponseBody
+    @GetMapping("/classifyDel/{id}")
+    public ModelMap delClassify(@PathVariable("id")Long id){
+        try {
+            classifyService.deleteClassify(id);
             return RestUtil.Success();
         }catch (Exception e){
             e.printStackTrace();
