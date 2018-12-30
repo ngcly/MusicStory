@@ -10,7 +10,7 @@
 <body>
 <div class="row">
     <input type="hidden" id="menus" th:value="${menuList}">
-    <div class="row" style="height:406px;overflow-y: auto;overflow-x: hidden;padding-left: 60px">
+    <div class="row" th:style="${#strings.equals(type,'2')?'height:406px;overflow-y: auto;overflow-x: hidden;':''}+'padding-left: 60px'">
         <div class="zTreeDemoBackground left">
             <ul id="menuTree" class="ztree"></ul>
         </div>
