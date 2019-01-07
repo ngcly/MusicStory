@@ -26,7 +26,7 @@
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-block">
-                        <button class="layui-btn" lay-submit lay-filter="save" th:text="${#strings.equals(classify.id,null)?'保存':'修改'}"></button>
+                        <button class="layui-btn" id="save" lay-submit lay-filter="save" th:text="${#strings.equals(classify.id,null)?'保存':'修改'}"></button>
                         <button type="button" class="layui-btn layui-btn-primary close">关闭</button>
                     </div>
                 </div>
@@ -50,6 +50,9 @@
                 headers: headers,
                 data:data.field,
                 dataType:'json',
+                beforeSend:function() { //触发ajax请求开始时执行 防止重复提交
+                    $("#save").attr("disabled","true"); //改变提交按钮上的文字并将按钮设置为不可点击
+                },
                 success:function(data){
                     if(data.code == 200){
                         layer.msg(data.msg, {icon: 1,time:600}, function () {

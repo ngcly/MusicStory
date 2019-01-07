@@ -1,6 +1,7 @@
 package com.cn.entity;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -25,4 +26,7 @@ public class Notice extends UserDateAudit{
     private Date beginTime;   //展示开始时间
     private Date endTime;     //展示结束时间
 
+    @Transient
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date showTime;
 }

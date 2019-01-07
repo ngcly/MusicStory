@@ -4,6 +4,8 @@ import com.cn.dao.NoticeRepository;
 import com.cn.entity.Notice;
 import com.cn.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,16 @@ public class NoticeService {
     }
 
     /**
+     * 根据条件获取公告
+     * @param pageable
+     * @param notice
+     * @return
+     */
+    public Page<Notice> getNoticeList(Pageable pageable, Notice notice){
+        return noticeRepository.findAll(NoticeRepository.getNoticeList(notice.getTitle(),notice.getShowTime()),pageable);
+    }
+
+    /**
      * 新增公告
      * @param notice
      */
@@ -46,5 +58,14 @@ public class NoticeService {
     @Transactional
     public void updateNotice(Notice notice){
         noticeRepository.save(notice);
+    }
+
+    /**
+     * 删除公告
+     * @param id 主键
+     */
+    @Transactional
+    public void deleteNotice(Long id){
+        noticeRepository.deleteById(id);
     }
 }

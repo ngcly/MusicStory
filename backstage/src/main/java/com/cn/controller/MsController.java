@@ -1,10 +1,12 @@
 package com.cn.controller;
 
 import com.cn.ClassifyService;
+import com.cn.NoticeService;
 import com.cn.RoleService;
 import com.cn.UserService;
 import com.cn.dto.RestCode;
 import com.cn.entity.Classify;
+import com.cn.entity.Notice;
 import com.cn.entity.Role;
 import com.cn.entity.User;
 import com.cn.util.RestUtil;
@@ -33,6 +35,8 @@ public class MsController {
     RoleService roleService;
     @Autowired
     ClassifyService classifyService;
+    @Autowired
+    NoticeService noticeService;
 
     /**
      * 用户列表页
@@ -180,4 +184,59 @@ public class MsController {
             return RestUtil.Error(RestCode.SERVER_ERROR);
         }
     }
+
+    /**
+     * 文章列表页
+     */
+    @PreAuthorize("hasAuthority('story:view')")
+    @RequestMapping("/essay")
+    public String essayList(){
+        return "essay/essayList";
+    }
+
+    /**
+     * 公告列表页
+     */
+    @PreAuthorize("hasAuthority('not:view')")
+    @RequestMapping("/notice")
+    public String noticeList(){
+        return "notice/noticeList";
+    }
+
+    /**
+     * 获取公告列表
+     */
+    @ResponseBody
+    @GetMapping("/noticeList")
+    public ModelMap getNoticeList(@RequestParam(value="page",defaultValue="1") Integer page,
+                                    @RequestParam(value="size",defaultValue="10") Integer size, Notice notice){
+        Page<Notice> notices =noticeService.getNoticeList(PageRequest.of(page - 1, size), notice);
+        return RestUtil.Success(notices.getTotalElements(),notices.getContent());
+    }
+
+    /**
+     * 删除公告
+     */
+    @PreAuthorize("hasAuthority('not:del')")
+    @ResponseBody
+    @GetMapping("/noticeDel/{id}")
+    public ModelMap delNotice(@PathVariable("id")Long id){
+        try {
+            noticeService.deleteNotice(id);
+            return RestUtil.Success();
+        }catch (Exception e){
+            e.printStackTrace();
+            return RestUtil.Error(RestCode.SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 轮播图页
+     */
+    @PreAuthorize("hasAuthority('sel:view')")
+    @RequestMapping("/carousel")
+    public String carouselList(){
+        return "carousel/carouselList";
+    }
+
 }
