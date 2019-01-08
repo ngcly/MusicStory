@@ -23,7 +23,9 @@ public class Notice extends UserDateAudit{
     private String title;     //公告标题
     private String content;   //公告内容
     private String noticeType;//公告类型 暂不用
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date beginTime;   //展示开始时间
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endTime;     //展示结束时间
 
     @Transient

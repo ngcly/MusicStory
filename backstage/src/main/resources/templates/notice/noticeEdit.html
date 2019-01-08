@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>公告修改页</title>
+    <link rel="stylesheet" href="/webjars/layui/css/layui.css">
+</head>
+<body>
+<div class="layui-col-md12">
+    <div class="layui-card">
+        <div class="layui-card-header" th:text="${#strings.equals(notice.id,null)?'新增公告':'修改公告'}"></div>
+        <div class="layui-card-body">
+            <form class="layui-form" action="/ms/saveNotice" method="post">
+                <input type="hidden" name="id" th:value="${notice.id}">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">开始时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input time-item" name="beginTime" th:value="${#dates.format(notice.beginTime,'yyyy-MM-dd HH:mm:ss')}" autocomplete="off" lay-verify="required" lay-vertype="tips">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">结束时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input time-item" name="endTime" th:value="${#dates.format(notice.endTime,'yyyy-MM-dd HH:mm:ss')}" autocomplete="off" lay-verify="required" lay-vertype="tips">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">标题</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="title" th:value="${notice.title}" lay-verify="required" lay-vertype="tips" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">内容</label>
+                    <div class="layui-input-inline">
+                        <textarea name="content" class="layui-textarea" th:text="${notice.content}" lay-verify="required" lay-vertype="tips"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" id="save" lay-submit lay-filter="save" th:text="${#strings.equals(notice.id,null)?'保存':'修改'}"></button>
+                        <button type="button" class="layui-btn layui-btn-primary close">关闭</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="/webjars/layui/layui.js"></script>
+<script type="text/javascript">
+    layui.use(['element','form','laydate'], function(){
+        $ = layui.jquery;
+        var form = layui.form,
+            laydate = layui.laydate;
+
+        //监听提交
+        form.on('submit(save)', function(data){
+            var headers = {};
+            headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
+            $.ajax({
+                url:data.form.action,
+                type:data.form.method,
+                headers: headers,
+                data:data.field,
+                dataType:'json',
+                beforeSend:function() { //触发ajax请求开始时执行 防止重复提交
+                    $("#save").attr("disabled","true"); //改变提交按钮上的文字并将按钮设置为不可点击
+                },
+                success:function(data){
+                    if(data.code == 200){
+                        layer.msg(data.msg, {icon: 1,time:600}, function () {
+                            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                            parent.location.reload();
+                            parent.layer.close(index);
+                        });
+                    }else{
+                        layer.msg(data.msg,{time:1000});
+                    }
+                }
+            });
+            return false;
+        });
+
+        //执行一个laydate实例
+        //同时绑定多个
+        lay('.time-item').each(function(){
+            laydate.render({
+                elem: this,
+                type: 'datetime',
+                trigger: 'click'
+            });
+        });
+
+        $("button.close").on('click', function () {
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            parent.layer.close(index);
+        });
+    });
+</script>
+</body>
+</html>

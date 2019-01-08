@@ -215,6 +215,35 @@ public class MsController {
     }
 
     /**
+     * 修改公告页
+     */
+    @RequestMapping("/noticeAlt")
+    public String altNotice(@RequestParam(required = false)Long id,Model model){
+        Notice notice = new Notice();
+        if(id!=null){
+            notice = noticeService.getNoticeDetail(id);
+        }
+        model.addAttribute(notice);
+        return "notice/noticeEdit";
+    }
+
+    /**
+     * 保存公告
+     */
+    @PreAuthorize("hasAnyAuthority('not:add','not:alt')")
+    @ResponseBody
+    @PostMapping("/saveNotice")
+    public ModelMap saveNotice(@Valid Notice notice){
+        try {
+            noticeService.addOrUpdateNotice(notice);
+            return RestUtil.Success();
+        }catch (Exception e){
+            e.printStackTrace();
+            return RestUtil.Error(RestCode.SERVER_ERROR);
+        }
+    }
+
+    /**
      * 删除公告
      */
     @PreAuthorize("hasAuthority('not:del')")

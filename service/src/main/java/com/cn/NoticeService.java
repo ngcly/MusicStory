@@ -33,6 +33,15 @@ public class NoticeService {
     }
 
     /**
+     * 获取公告详情
+     * @param id 主键
+     * @return
+     */
+    public Notice getNoticeDetail(long id){
+        return noticeRepository.getOne(id);
+    }
+
+    /**
      * 根据条件获取公告
      * @param pageable
      * @param notice
@@ -43,20 +52,11 @@ public class NoticeService {
     }
 
     /**
-     * 新增公告
+     * 新增修改公告
      * @param notice
      */
     @Transactional
-    public void addNotice(Notice notice){
-        noticeRepository.save(notice);
-    }
-
-    /**
-     * 修改公告
-     * @param notice
-     */
-    @Transactional
-    public void updateNotice(Notice notice){
+    public void addOrUpdateNotice(Notice notice){
         noticeRepository.save(notice);
     }
 

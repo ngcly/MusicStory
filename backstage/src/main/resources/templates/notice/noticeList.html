@@ -40,7 +40,7 @@
                 <button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
             </div>
             <div class="layui-inline">
-                <a sec:authorize="hasAuthority('not:add')" href="/ms/noticeEdit" type="button" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
+                <a sec:authorize="hasAuthority('not:add')" href="javascript:void(0)" type="button" id="add" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
             </div>
         </div>
     </form>
@@ -53,7 +53,8 @@
     layui.use(['element','table','form','laydate'], function(){
         var table = layui.table,
             laydate = layui.laydate,
-            form = layui.form;
+            form = layui.form,
+            $ = layui.$;
 
         //执行渲染
         table.render({
@@ -66,11 +67,12 @@
             ,loading:true
             ,page: true //开启分页
             ,cols: [
-                [{field: 'title', title: '标题'}
-                    ,{field: 'content', title: '内容'}
-                    ,{field: 'beginTime', title: '展示开始时间'}
-                    ,{field: 'endTime', title: '展示结束时间'}
-                    ,{field: 'updatedTime', title: '修改时间'}
+                [{field: 'title', title: '标题',width:202}
+                    ,{field: 'content', title: '内容',width:700}
+                    ,{field: 'beginTime', title: '展示开始时间',width:160}
+                    ,{field: 'endTime', title: '展示结束时间',width:160}
+                    ,{field: 'updatedBy',title: '修改人',width:80}
+                    ,{field: 'updatedTime', title: '修改时间',width:160}
                     ,{fixed: 'right',title:'操作', align:'center',width:'220', toolbar: '#bar'}]
             ]
         });
@@ -101,18 +103,7 @@
             var data = obj.data; //获得当前行数据
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
 
-            if(layEvent === 'detail'){ //查看
-                layer.open({
-                    type: 2 //Page层类型
-                    ,skin: 'layui-layer-molv'
-                    ,area: ['600px', '500px']
-                    ,title: ['用户信息','font-size:18px']
-                    ,shadeClose: true
-                    ,shade: 0 //遮罩透明度
-                    ,maxmin: true //允许全屏最小化
-                    ,content:'/ms/noticeDetail?noticeId='+data.id
-                });
-            } else if(layEvent === 'del'){ //删除
+            if(layEvent === 'del'){ //删除
                 var $ = layui.$;
                 layer.confirm('确定删除吗？',{title:'删除'}, function(index){
                     //向服务端发送删除指令
@@ -128,13 +119,34 @@
                     layer.close(index);
                 });
             } else if(layEvent === 'edit'){ //编辑
-                window.location.href='/ms/noticeEdit?noticeId='+data.id;
+                layer.open({
+                    type: 2 //Page层类型
+                    ,skin: 'layui-layer-molv'
+                    ,area: ['430px', '432px']
+                    ,title: ['公告信息','font-size:18px']
+                    ,shadeClose: true
+                    ,shade: 0 //遮罩透明度
+                    ,maxmin: true //允许全屏最小化
+                    ,content:'/ms/noticeAlt?id='+data.id
+                });
             }
+        });
+        //新增角色窗口
+        $('#add').on('click',function () {
+            layer.open({
+                type: 2 //Page层类型
+                ,skin: 'layui-layer-molv'
+                ,area: ['430px', '432px']
+                ,title: ['公告信息','font-size:18px']
+                ,shadeClose: true
+                ,shade: 0 //遮罩透明度
+                ,maxmin: true //允许全屏最小化
+                ,content:'/ms/noticeAlt'
+            });
         });
     });
 </script>
 <script type="text/html" id="bar">
-    <a class="layui-btn layui-btn-xs" lay-event="detail"><i class="layui-icon iconfont icon-detail"></i>查看</a>
     <a sec:authorize="hasAuthority('not:alt')" class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
     <a sec:authorize="hasAuthority('not:del')" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
 </script>
