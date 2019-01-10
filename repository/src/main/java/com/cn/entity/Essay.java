@@ -28,5 +28,6 @@ public class Essay extends DateAudit{
     private String content;    //文章内容
     private String classifyId; //分类ID
     private Integer readNum;   //阅览数
+    private Byte state;        //状态 0-正常 1-推荐 2-审核不通过
 
 }

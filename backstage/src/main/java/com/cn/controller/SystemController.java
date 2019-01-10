@@ -385,7 +385,7 @@ public class SystemController {
     }
 
     /**
-     * 文件上传
+     * 头像上传
      * @param file
      * @return
      */
@@ -397,7 +397,7 @@ public class SystemController {
         }
         String path;
         try {
-            path = UploadUtil.uploadFile(file);
+            path = UploadUtil.uploadFileByAli(file,"avatar");
         } catch (Exception e) {
             e.printStackTrace();
             return RestUtil.Error(RestCode.FILE_UPLOAD_ERR);

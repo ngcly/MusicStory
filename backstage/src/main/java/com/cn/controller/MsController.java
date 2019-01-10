@@ -1,14 +1,8 @@
 package com.cn.controller;
 
-import com.cn.ClassifyService;
-import com.cn.NoticeService;
-import com.cn.RoleService;
-import com.cn.UserService;
+import com.cn.*;
 import com.cn.dto.RestCode;
-import com.cn.entity.Classify;
-import com.cn.entity.Notice;
-import com.cn.entity.Role;
-import com.cn.entity.User;
+import com.cn.entity.*;
 import com.cn.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -37,6 +31,9 @@ public class MsController {
     ClassifyService classifyService;
     @Autowired
     NoticeService noticeService;
+    @Autowired
+    CarouselService carouselService;
+
 
     /**
      * 用户列表页
@@ -266,6 +263,55 @@ public class MsController {
     @RequestMapping("/carousel")
     public String carouselList(){
         return "carousel/carouselList";
+    }
+
+    /**
+     * 获取轮播图列表
+     */
+
+    /**
+     * 修改轮播图页
+     */
+    @RequestMapping("/carouselAlt")
+    public String altCarousel(@RequestParam(required = false)String id,Model model){
+        Carousel carousel = new Carousel();
+        if(id!=null){
+            carousel = carouselService.getCarouselDetail(id);
+        }
+        model.addAttribute(carousel);
+        return "carousel/carouselEdit";
+    }
+
+    /**
+     * 保存轮播图
+     */
+    @PreAuthorize("hasAnyAuthority('sel:add','sel:alt')")
+    @ResponseBody
+    @PostMapping("/saveCarousel")
+    public ModelMap saveCarousel(@Valid Carousel carousel){
+        try {
+            carouselService.addOrUpdateCarousel(carousel);
+            return RestUtil.Success();
+        }catch (Exception e){
+            e.printStackTrace();
+            return RestUtil.Error(RestCode.SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 删除轮播图
+     */
+    @PreAuthorize("hasAuthority('sel:del')")
+    @ResponseBody
+    @GetMapping("/carouselDel/{id}/{url}")
+    public ModelMap delCarousel(@PathVariable("id")String id,@PathVariable("url")String url){
+        try {
+            carouselService.deleteCarousel(id,url);
+            return RestUtil.Success();
+        }catch (Exception e){
+            e.printStackTrace();
+            return RestUtil.Error(RestCode.SERVER_ERROR);
+        }
     }
 
 }

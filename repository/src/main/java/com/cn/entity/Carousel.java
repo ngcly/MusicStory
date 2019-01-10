@@ -25,5 +25,6 @@ public class Carousel extends UserDateAudit{
     private String imageUrl;     //图片地址
     private String imageDesc;    //图片描述
     private String imageTip;     //图片提示
+    private String forwardUrl;   //跳转地址
 
 }
