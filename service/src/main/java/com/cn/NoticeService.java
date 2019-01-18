@@ -11,17 +11,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 
+import java.util.Date;
+
 @Service
 public class NoticeService {
     @Autowired
     NoticeRepository noticeRepository;
 
     /**
-     * 获取最新公告
-     * @return
+     * 获取展示公告
      */
     public ModelMap getNotice(){
-        return RestUtil.Success(noticeRepository.findTopByOrderByCreatedTimeDesc());
+        Date now = new Date();
+        return RestUtil.Success(noticeRepository.getNoticesByBeginTimeBeforeAndEndTimeAfterOrderByCreatedTimeDesc(now,now));
     }
 
     /**

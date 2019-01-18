@@ -16,8 +16,8 @@ import java.util.Date;
 @Entity
 @Table(name = "user_faves")
 public class UserFaves extends DateAudit {
-    private final static byte 点赞 = '1';
-    private final static byte 收藏 = '2';
+    public final static byte 点赞 = '1';
+    public final static byte 收藏 = '2';
 
     @Id
     @GeneratedValue(generator = "id")

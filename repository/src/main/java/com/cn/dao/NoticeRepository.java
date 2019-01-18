@@ -17,8 +17,10 @@ import java.util.List;
 
 @Repository
 public interface NoticeRepository extends JpaRepository<Notice,Long>, JpaSpecificationExecutor<Notice> {
-    //获取最新公告
-    Notice findTopByOrderByCreatedTimeDesc();
+    /**
+     * 获取展示公告
+     */
+    List<Notice> getNoticesByBeginTimeBeforeAndEndTimeAfterOrderByCreatedTimeDesc(Date time1,Date time2);
 
     /**
      * 动态查询管理员数据

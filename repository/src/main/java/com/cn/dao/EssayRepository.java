@@ -17,4 +17,6 @@ public interface EssayRepository extends JpaRepository<Essay,String>, JpaSpecifi
     List<Essay> getEssayList(@Param("page")int page,@Param("pageSize")int pageSize);
 
     Essay getById(String id);
+
+    void deleteEssayByIdAndUserId(String id,String userId);
 }

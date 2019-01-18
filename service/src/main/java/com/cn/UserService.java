@@ -1,15 +1,20 @@
 package com.cn;
 
 import com.cn.dao.RoleRepository;
+import com.cn.dao.UserFavesRepository;
+import com.cn.dao.UserFollowRepository;
 import com.cn.dao.UserRepository;
 import com.cn.entity.Role;
 import com.cn.entity.User;
+import com.cn.entity.UserFaves;
+import com.cn.entity.UserFollow;
 import com.cn.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -31,6 +36,10 @@ public class UserService {
     RoleRepository roleRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    UserFavesRepository userFavesRepository;
+    @Autowired
+    UserFollowRepository userFollowRepository;
 
     /**
      * 注册账户
@@ -105,4 +114,54 @@ public class UserService {
     public void delUser(String userId){
         userRepository.deleteById(userId);
     }
+
+    /**
+     * 点赞/收藏
+     * @param userId   用户ID
+     * @param essayId  文章ID
+     * @param type     类型
+     */
+    @Transactional
+    public void addUserFaves(String userId,String essayId,byte type){
+        UserFaves userFaves = new UserFaves();
+        userFaves.setUserId(userId);
+        userFaves.setEssayId(essayId);
+        userFaves.setFaveType(type);
+        userFavesRepository.save(userFaves);
+    }
+
+    /**
+     * 取消点赞/收藏
+     * @param userId   用户ID
+     * @param essayId  文章ID
+     * @param type     类型
+     */
+    @Transactional
+    public void delUserFaves(String userId,String essayId,byte type){
+        userFavesRepository.deleteUserFavesByUserIdAndAndEssayIdAndFaveType(userId,essayId,type);
+    }
+
+    /**
+     * 关注
+     * @param userId   用户ID
+     * @param followId 被关注ID
+     */
+    @Transactional
+    public void addUserFollow(String userId,String followId){
+        UserFollow userFollow = new UserFollow();
+        userFollow.setUserId(userId);
+        userFollow.setFollowId(followId);
+        userFollowRepository.save(userFollow);
+    }
+
+    /**
+     * 取消关注
+     * @param userId    用户ID
+     * @param followId  被关注ID
+     */
+    @Transactional
+    public void delUserFollow(String userId,String followId){
+        userFollowRepository.deleteUserFollowByUserIdAndAndFollowId(userId,followId);
+    }
+
 }

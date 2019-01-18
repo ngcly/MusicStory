@@ -107,10 +107,25 @@ public class IndexController {
     @ApiOperation(value = "文章详情", notes = "根据文章Id获取文章详情")
     @GetMapping("/essay/{id}")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id",value = "文章ID",paramType = "path",dataType = "string"),
+            @ApiImplicitParam(name = "id",value = "文章ID",paramType = "path",dataType = "string")
     })
-    public ModelMap getEssayDetail(@PathVariable String id){
+    public ModelMap getEssayDetail(@PathVariable String id,@PathVariable Integer page){
         return essayService.getEssayDetail(id);
+    }
+
+    /**
+     * 获取文章评论
+     * @param id
+     * @return
+     */
+    @GetMapping("/comments/{id}/{page}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id",value = "文章ID",paramType = "path",dataType = "string"),
+            @ApiImplicitParam(name = "page",value = "页数",paramType = "path",dataType = "int")
+    })
+    public ModelMap getEssayComment(@PathVariable String id,@PathVariable Integer page){
+        //TODO
+        return null;
     }
 
     /**
@@ -119,13 +134,14 @@ public class IndexController {
     @ApiOperation(value = "轮播图", notes = "获取轮播图列表")
     @GetMapping("/carousel")
     public ModelMap getCarousel(){
+        //TODO
         return null;
     }
 
     /**
      * 获取公告
      */
-    @ApiOperation(value = "公告", notes = "获取最新公告")
+    @ApiOperation(value = "公告", notes = "获取展示公告")
     @GetMapping("/notice")
     public ModelMap getNotice(){
         return noticeService.getNotice();
