@@ -268,17 +268,24 @@ public class MsController {
     /**
      * 获取轮播图列表
      */
+    @ResponseBody
+    @GetMapping("/carouselList")
+    public ModelMap carouselList(@RequestParam(value="page",defaultValue="1") Integer page,
+                              @RequestParam(value="size",defaultValue="10") Integer size,String name){
+        Page<CarouselCategory> carouselCategory = carouselService.getCarouselList(name,PageRequest.of(page - 1, size));
+        return RestUtil.Success(carouselCategory.getTotalElements(),carouselCategory.getContent());
+    }
 
     /**
      * 修改轮播图页
      */
     @RequestMapping("/carouselAlt")
     public String altCarousel(@RequestParam(required = false)String id,Model model){
-        Carousel carousel = new Carousel();
+        CarouselCategory carouselCategory = new CarouselCategory();
         if(id!=null){
-            carousel = carouselService.getCarouselDetail(id);
+            carouselCategory = carouselService.getCarouselDetail(id);
         }
-        model.addAttribute(carousel);
+        model.addAttribute(carouselCategory);
         return "carousel/carouselEdit";
     }
 
@@ -288,9 +295,25 @@ public class MsController {
     @PreAuthorize("hasAnyAuthority('sel:add','sel:alt')")
     @ResponseBody
     @PostMapping("/saveCarousel")
-    public ModelMap saveCarousel(@Valid Carousel carousel){
+    public ModelMap saveCarousel(@Valid CarouselCategory carouselCategory){
         try {
-            carouselService.addOrUpdateCarousel(carousel);
+            carouselService.addOrUpdateCarousel(carouselCategory);
+            return RestUtil.Success();
+        }catch (Exception e){
+            e.printStackTrace();
+            return RestUtil.Error(RestCode.SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 删除轮播分类
+     */
+    @PreAuthorize("hasAuthority('sel:del')")
+    @ResponseBody
+    @GetMapping("/carouselDel/{id}")
+    public ModelMap delCarouselCategory(@PathVariable("id")String id){
+        try {
+            carouselService.deleteCarouselCategory(id);
             return RestUtil.Success();
         }catch (Exception e){
             e.printStackTrace();

@@ -23,5 +23,6 @@ public class Carousel {
     private String imageUrl;     //图片地址
     private String imageTip;     //图片提示
     private String forwardUrl;   //跳转地址
+    private Integer sort;        //排序
 
 }

@@ -23,7 +23,7 @@ public interface NoticeRepository extends JpaRepository<Notice,Long>, JpaSpecifi
     List<Notice> getNoticesByBeginTimeBeforeAndEndTimeAfterOrderByCreatedTimeDesc(Date time1,Date time2);
 
     /**
-     * 动态查询管理员数据
+     * 动态查询公告
      */
     static Specification<Notice> getNoticeList(String title, Date showTime){
         return (Root<Notice> root, CriteriaQuery<?> query, CriteriaBuilder cb)->{

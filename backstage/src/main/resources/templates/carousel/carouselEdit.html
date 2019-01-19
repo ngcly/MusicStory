@@ -1,10 +1,134 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>轮播图修改页面</title>
+    <title>轮播图编辑页</title>
+    <link rel="stylesheet" href="/webjars/layui/css/layui.css">
+    <link rel="stylesheet" href="/css/public.css">
 </head>
-<body>
+<body class="child-body">
+<div class="child-nav">
+    <span class="layui-breadcrumb">
+         <a>音书管理</a>
+         <a href="/ms/carousel">轮播图</a>
+        <a><cite th:text="${#strings.equals(carouselCategory.id,null)?'新增轮播图':'修改轮播图'}"></cite></a>
+    </span>
+    <a class="layui-btn layui-btn-sm" href="javascript:location.replace(location.href);" title="刷新" style="float:right;margin-top: 3px"><i class="layui-icon layui-icon-refresh-3"></i></a>
+</div>
 
+<div class="layui-row">
+    <form class="layui-form" action="/ms/saveCarousel" method="post">
+        <div class="layui-form-item">
+            <label class="layui-form-label">标题</label>
+            <div class="layui-input-inline">
+                <input type="text" name="title" th:value="${carouselCategory.title}" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">标识符</label>
+            <div class="layui-input-inline">
+                <input type="text" name="id" th:value="${carouselCategory.id}" th:readonly="${carouselCategory.id!=null}" required lay-verify="required" placeholder="请输入唯一标识符" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">描述</label>
+            <div class="layui-input-block">
+                <input type="text" name="remark" th:value="${carouselCategory.remark}" placeholder="描述内容" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <table class="layui-table" lay-skin="line">
+            <thead>
+            <tr>
+                <th>排序</th>
+                <th>图片</th>
+                <th>图片提示</th>
+                <th>跳转地址</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="carousel:${carouselCategory.getCarousels()}">
+                <td th:text="${carousel.sort}"></td>
+                <td><img th:src="${carousel.imageUrl}" th:alt="${carousel.imageTip}"></td>
+                <td th:text="${carousel.imageTip}"></td>
+                <td th:text="${carousel.forwardUrl}"></td>
+                <td>
+                    <a sec:authorize="hasAuthority('sel:del')" class="layui-btn layui-btn-danger layui-btn-xs remove" th:attr="data-id=${carousel.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="save" th:text="${#strings.equals(carouselCategory.id,null)?'保存':'修改'}"></button>
+                <a href="javascript:history.back()" type="button" class="layui-btn layui-btn-primary">返回</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="/webjars/layui/layui.js"></script>
+<script type="text/javascript">
+    layui.use(['element','form','upload'], function(){
+        $ = layui.jquery;
+        var form = layui.form,
+            upload = layui.upload;
+
+        //上传文件
+        var uploadInst = upload.render({
+            elem: '#avatar'
+            ,url: '/sys/upload'
+            ,size: 600 //限制文件大小，单位 KB
+            // ,auto: false
+            // ,bindAction: '#testListAction' //指向一个按钮触发上传
+            ,accept: 'images' //普通文件
+            ,exts: 'jpg|jpeg|png' //只允许上传图片
+            ,acceptMime:'image/*'
+            ,before: function(obj){
+                //预读本地文件示例，不支持ie8
+                this.data={
+                    "[[${_csrf.parameterName}]]": "[[${_csrf.token}]]"
+                },
+                    obj.preview(function(index, file, result){
+                        $('#avatar-view').attr('src', result); //图片链接（base64）
+                    });
+            }
+            ,done: function(res){
+                if(res.code == 200){
+                    $('#af').val(res.data);
+                }else{
+                    return layer.msg('上传失败');
+                }
+            }
+        });
+
+        //监听提交
+        form.on('submit(save)', function(data){
+            var headers = {};
+            headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
+            $.ajax({
+                url:data.form.action,
+                type:data.form.method,
+                headers: headers,
+                data:data.field,
+                dataType:'json',
+                beforeSend:function() {
+                    $("#save").attr("disabled","true");
+                },
+                success:function(result){
+                    if(result.code == 200){
+                        layer.msg(result.msg, {icon: 1,time:600}, function () {
+                            location.href="/ms/carouselList";
+                        });
+                    }else{
+                        layer.msg(result.msg,{time:1000});
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
 </body>
 </html>
