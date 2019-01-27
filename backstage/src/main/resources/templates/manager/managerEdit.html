@@ -122,10 +122,10 @@
             ,exts: 'jpg|jpeg|png' //只允许上传图片
             ,acceptMime:'image/*'
             ,before: function(obj){
-                //预读本地文件示例，不支持ie8
                 this.data={
                     "[[${_csrf.parameterName}]]": "[[${_csrf.token}]]"
                 },
+                    //预读本地文件示例，不支持ie8
                 obj.preview(function(index, file, result){
                     $('#avatar-view').attr('src', result); //图片链接（base64）
                 });

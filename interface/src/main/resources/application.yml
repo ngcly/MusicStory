@@ -68,3 +68,6 @@ spring:
           enabled: true
       # 合并多个DruidDataSource的监控数据
       useGlobalDataSourceStat: true
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss

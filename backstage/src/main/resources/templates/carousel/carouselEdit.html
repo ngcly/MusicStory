@@ -37,7 +37,8 @@
                 <input type="text" name="remark" th:value="${carouselCategory.remark}" placeholder="描述内容" autocomplete="off" class="layui-input">
             </div>
         </div>
-        <table class="layui-table" lay-skin="line">
+        <button type="button" class="layui-btn" id="clg"><i class="layui-icon">&#xe681;</i>上传图片</button>
+        <table class="layui-table" id="ig" lay-skin="line">
             <thead>
             <tr>
                 <th>排序</th>
@@ -48,11 +49,11 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="carousel:${carouselCategory.getCarousels()}">
-                <td th:text="${carousel.sort}"></td>
-                <td><img th:src="${carousel.imageUrl}" th:alt="${carousel.imageTip}"></td>
-                <td th:text="${carousel.imageTip}"></td>
-                <td th:text="${carousel.forwardUrl}"></td>
+            <tr th:each="carousel,carouselStat:${carouselCategory.getCarousels()}">
+                <td width="75"><input type="number" class="layui-input" lay-verify="sort" lay-vertype="tips"  name="carousels[carouselStat.index].sort" th:value="${carousel.sort}"></td>
+                <td><img th:src="${carousel.imageUrl}" th:alt="${carousel.imageTip}"><input type="hidden" name="carousels[carouselStat.index].imageUrl" th:value="${carousel.imageUrl}"></td>
+                <td><input type="text" class="layui-input" name="carousels[carouselStat.index].imageTip" th:value="${carousel.imageTip}"></td>
+                <td><input type="text" class="layui-input" name="carousels[carouselStat.index].forwardUrl" th:value="${carousel.forwardUrl}"></td>
                 <td>
                     <a sec:authorize="hasAuthority('sel:del')" class="layui-btn layui-btn-danger layui-btn-xs remove" th:attr="data-id=${carousel.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
                 </td>
@@ -77,7 +78,7 @@
 
         //上传文件
         var uploadInst = upload.render({
-            elem: '#avatar'
+            elem: '#clg'
             ,url: '/sys/upload'
             ,size: 600 //限制文件大小，单位 KB
             // ,auto: false
@@ -128,6 +129,7 @@
             });
             return false;
         });
+
     });
 </script>
 </body>

@@ -43,6 +43,7 @@
 <table class="layui-table" id="table" lay-filter="carousel"></table>
 <script type="text/html" id="bar">
     <a sec:authorize="hasAuthority('clazz:alt')" class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
+    <a sec:authorize="hasAuthority('clazz:alt')" class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>管理轮播图</a>
     <a sec:authorize="hasAuthority('clazz:del')" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
 </script>
 <script src="/webjars/layui/layui.js"></script>
@@ -65,7 +66,7 @@
             ,cols: [
                 [{field: 'id', title: '标识', width:'150'}
                     ,{field: 'title', title: '标题', width:'250'}
-                    ,{field: 'remark', title: '描述', width:'350'}
+                    ,{field: 'remark', title: '备注', width:'350'}
                     ,{field: 'carousels', title: '图片',align:'center',width:'714',templet:'#carouselsTpl'}
                     ,{fixed: 'right', title:'操作', align:'center',width:'220', toolbar: '#bar'}]
             ]
@@ -102,7 +103,16 @@
                     layer.close(index);
                 });
             } else if(layEvent === 'edit'){ //编辑
-                window.location.href="/ms/carouselAlt?id="+data.id;
+                layer.open({
+                    type: 2 //Page层类型
+                    ,skin: 'layui-layer-molv'
+                    ,area: ['600px', '500px']
+                    ,title: ['用户信息','font-size:18px']
+                    ,shadeClose: true
+                    ,shade: 0 //遮罩透明度
+                    ,maxmin: true //允许全屏最小化
+                    ,content:'/ms/carouselAlt?id='+data.id
+                })
             }
         });
 
