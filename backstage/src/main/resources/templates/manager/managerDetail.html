@@ -29,7 +29,7 @@
             <td>生日：</td>
             <td th:text="${#dates.format(manager.birthday,'yyyy-MM-dd')}"></td>
             <td>头像：</td>
-            <td><img th:src="${manager.avatar}" /></td>
+            <td><img class="layui-circle" th:src="${manager.avatar}" /></td>
         </tr>
         <tr>
             <td>创建时间：</td>

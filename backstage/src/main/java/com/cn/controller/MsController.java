@@ -277,14 +277,24 @@ public class MsController {
     }
 
     /**
-     * 修改轮播图页
+     * 修改轮播分类页
      */
-    @RequestMapping("/carouselAlt")
-    public String altCarousel(@RequestParam(required = false)String id,Model model){
+    @RequestMapping("/carouselCategoryAlt")
+    public String altCarouselCategory(@RequestParam(required = false)String id,Model model){
         CarouselCategory carouselCategory = new CarouselCategory();
         if(id!=null){
             carouselCategory = carouselService.getCarouselDetail(id);
         }
+        model.addAttribute(carouselCategory);
+        return "carousel/carouselCategoryEdit";
+    }
+
+    /**
+     * 修改轮播图页
+     */
+    @RequestMapping("/carouselAlt")
+    public String altCarousel(@RequestParam String id,Model model){
+        CarouselCategory carouselCategory = carouselService.getCarouselDetail(id);
         model.addAttribute(carouselCategory);
         return "carousel/carouselEdit";
     }

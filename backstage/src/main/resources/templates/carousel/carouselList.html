@@ -35,7 +35,7 @@
                 <button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
             </div>
             <div class="layui-inline">
-                <a sec:authorize="hasAuthority('sel:add')" href="/ms/carouselAlt" type="button" id="add" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
+                <a sec:authorize="hasAuthority('sel:add')" href="javascript:void(0)" type="button" id="add" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
             </div>
         </div>
     </form>
@@ -43,7 +43,7 @@
 <table class="layui-table" id="table" lay-filter="carousel"></table>
 <script type="text/html" id="bar">
     <a sec:authorize="hasAuthority('clazz:alt')" class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
-    <a sec:authorize="hasAuthority('clazz:alt')" class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>管理轮播图</a>
+    <a sec:authorize="hasAuthority('clazz:alt')" class="layui-btn layui-btn-xs" lay-event="editImg"><i class="layui-icon">&#xe642;</i>管理轮播图</a>
     <a sec:authorize="hasAuthority('clazz:del')" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
 </script>
 <script src="/webjars/layui/layui.js"></script>
@@ -67,8 +67,8 @@
                 [{field: 'id', title: '标识', width:'150'}
                     ,{field: 'title', title: '标题', width:'250'}
                     ,{field: 'remark', title: '备注', width:'350'}
-                    ,{field: 'carousels', title: '图片',align:'center',width:'714',templet:'#carouselsTpl'}
-                    ,{fixed: 'right', title:'操作', align:'center',width:'220', toolbar: '#bar'}]
+                    ,{field: 'carousels', title: '图片',align:'center',width:'680',templet:'#carouselsTpl'}
+                    ,{fixed: 'right', title:'操作', align:'center',width:'254', toolbar: '#bar'}]
             ]
         });
 
@@ -106,14 +106,30 @@
                 layer.open({
                     type: 2 //Page层类型
                     ,skin: 'layui-layer-molv'
-                    ,area: ['600px', '500px']
-                    ,title: ['用户信息','font-size:18px']
+                    ,area: ['420px', '280px']
+                    ,title: ['轮播分类','font-size:18px']
                     ,shadeClose: true
                     ,shade: 0 //遮罩透明度
                     ,maxmin: true //允许全屏最小化
-                    ,content:'/ms/carouselAlt?id='+data.id
+                    ,content:'/ms/carouselCategoryAlt?id='+data.id
                 })
+            } else if(layEvent === 'editImg'){ //管理图片
+                window.location.href='/ms/carouselAlt?id='+data.id;
             }
+        });
+
+        //新增窗口
+        $('#add').on('click',function () {
+            layer.open({
+                type: 2 //Page层类型
+                ,skin: 'layui-layer-molv'
+                ,area: ['430px', '280px']
+                ,title: ['轮播分类','font-size:18px']
+                ,shadeClose: true
+                ,shade: 0 //遮罩透明度
+                ,maxmin: true //允许全屏最小化
+                ,content:'/ms/carouselCategoryAlt'
+            });
         });
 
     });

@@ -1,7 +1,6 @@
 package com.cn.entity;
 
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.List;
@@ -14,8 +13,6 @@ import java.util.List;
 @Table(name = "carousel_category")
 public class CarouselCategory extends UserDateAudit {
     @Id
-    @GeneratedValue(generator = "id")
-    @GenericGenerator(name = "id", strategy = "uuid")
     @Column(name="id")
     private String id;
     private String title;  //标题名称
