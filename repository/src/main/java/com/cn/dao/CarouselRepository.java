@@ -4,7 +4,9 @@ import com.cn.entity.CarouselCategory;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -28,6 +30,7 @@ public interface CarouselRepository extends JpaRepository<CarouselCategory,Strin
         };
     }
 
+    @Modifying
     @Query(value = "delete from carousel where id=:id",nativeQuery = true)
-    void deleteCarousel(String id);
+    void deleteCarousel(@Param("id") String id);
 }

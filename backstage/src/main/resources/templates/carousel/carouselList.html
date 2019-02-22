@@ -42,8 +42,7 @@
 </div>
 <table class="layui-table" id="table" lay-filter="carousel"></table>
 <script type="text/html" id="bar">
-    <a sec:authorize="hasAuthority('clazz:alt')" class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
-    <a sec:authorize="hasAuthority('clazz:alt')" class="layui-btn layui-btn-xs" lay-event="editImg"><i class="layui-icon">&#xe642;</i>管理轮播图</a>
+    <a sec:authorize="hasAuthority('clazz:alt')" class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑图片</a>
     <a sec:authorize="hasAuthority('clazz:del')" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
 </script>
 <script src="/webjars/layui/layui.js"></script>
@@ -64,11 +63,11 @@
             ,loading:true
             ,page: true //开启分页
             ,cols: [
-                [{field: 'id', title: '标识', width:'150'}
-                    ,{field: 'title', title: '标题', width:'250'}
-                    ,{field: 'remark', title: '备注', width:'350'}
-                    ,{field: 'carousels', title: '图片',align:'center',width:'680',templet:'#carouselsTpl'}
-                    ,{fixed: 'right', title:'操作', align:'center',width:'254', toolbar: '#bar'}]
+                [{field: 'id', title: '标识', width:'160'}
+                    ,{field: 'title', title: '标题', width:'260'}
+                    ,{field: 'remark', title: '备注', width:'360'}
+                    ,{field: 'carousels', title: '图片',align:'center',width:'684',templet:'#carouselsTpl'}
+                    ,{fixed: 'right', title:'操作', align:'center',width:'220', toolbar: '#bar'}]
             ]
         });
 
@@ -103,17 +102,6 @@
                     layer.close(index);
                 });
             } else if(layEvent === 'edit'){ //编辑
-                layer.open({
-                    type: 2 //Page层类型
-                    ,skin: 'layui-layer-molv'
-                    ,area: ['420px', '280px']
-                    ,title: ['轮播分类','font-size:18px']
-                    ,shadeClose: true
-                    ,shade: 0 //遮罩透明度
-                    ,maxmin: true //允许全屏最小化
-                    ,content:'/ms/carouselCategoryAlt?id='+data.id
-                })
-            } else if(layEvent === 'editImg'){ //管理图片
                 window.location.href='/ms/carouselAlt?id='+data.id;
             }
         });

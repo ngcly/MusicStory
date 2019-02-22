@@ -4,6 +4,7 @@ import com.cn.*;
 import com.cn.dto.RestCode;
 import com.cn.entity.*;
 import com.cn.util.RestUtil;
+import com.cn.util.UploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -316,6 +318,27 @@ public class MsController {
     }
 
     /**
+     * 添加轮播图
+     */
+    @PreAuthorize("hasAnyAuthority('sel:add','sel:alt')")
+    @ResponseBody
+    @RequestMapping("/addCarousel")
+    public ModelMap addCarousel(@RequestParam("file") MultipartFile file,@RequestParam("id")String id){
+        if(file.isEmpty()){
+            return RestUtil.Error(222,"文件为空");
+        }
+        String path;
+        try {
+            path = UploadUtil.uploadFileByAli(file,"img");
+            carouselService.addCarousel(id,path);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return RestUtil.Error(RestCode.FILE_UPLOAD_ERR);
+        }
+        return RestUtil.Success();
+    }
+
+    /**
      * 删除轮播分类
      */
     @PreAuthorize("hasAuthority('sel:del')")
@@ -336,8 +359,8 @@ public class MsController {
      */
     @PreAuthorize("hasAuthority('sel:del')")
     @ResponseBody
-    @GetMapping("/carouselDel/{id}/{url}")
-    public ModelMap delCarousel(@PathVariable("id")String id,@PathVariable("url")String url){
+    @GetMapping("/carouselDel")
+    public ModelMap delCarousel(@RequestParam("id")String id,@RequestParam("url")String url){
         try {
             carouselService.deleteCarousel(id,url);
             return RestUtil.Success();

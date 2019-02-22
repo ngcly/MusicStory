@@ -17,7 +17,7 @@ public class CarouselCategory extends UserDateAudit {
     private String id;
     private String title;  //标题名称
     private String remark; //描述
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "categoryId",nullable = false)
     private List<Carousel> carousels;
 }

@@ -20,15 +20,15 @@
 <div class="layui-row">
     <form class="layui-form" action="/ms/saveCarousel" method="post">
         <div class="layui-form-item">
-            <label class="layui-form-label">标题</label>
+            <label class="layui-form-label">标识符</label>
             <div class="layui-input-inline">
-                <input type="text" name="title" th:value="${carouselCategory.title}" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+                <input type="text" id="cid" name="id" th:value="${carouselCategory.id}" readonly="readonly" required lay-verify="required" placeholder="请输入唯一标识符" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">标识符</label>
+            <label class="layui-form-label">标题</label>
             <div class="layui-input-inline">
-                <input type="text" name="id" th:value="${carouselCategory.id}" th:readonly="${carouselCategory.id!=null}" required lay-verify="required" placeholder="请输入唯一标识符" autocomplete="off" class="layui-input">
+                <input type="text" name="title" th:value="${carouselCategory.title}" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
@@ -37,7 +37,7 @@
                 <input type="text" name="remark" th:value="${carouselCategory.remark}" placeholder="描述内容" autocomplete="off" class="layui-input">
             </div>
         </div>
-        <button type="button" class="layui-btn" id="clg"><i class="layui-icon">&#xe681;</i>上传图片</button>
+        <button type="button" class="layui-btn" id="clg"><i class="layui-icon">&#xe681;</i>添加图片</button>
         <table class="layui-table" id="ig" lay-skin="line">
             <thead>
             <tr>
@@ -45,17 +45,18 @@
                 <th>图片</th>
                 <th>图片提示</th>
                 <th>跳转地址</th>
-                <th></th>
+                <th>操作</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="carousel,carouselStat:${carouselCategory.getCarousels()}">
-                <td width="75"><input type="number" class="layui-input" lay-verify="sort" lay-vertype="tips"  name="carousels[carouselStat.index].sort" th:value="${carousel.sort}"></td>
-                <td><img th:src="${carousel.imageUrl}" th:alt="${carousel.imageTip}"><input type="hidden" name="carousels[carouselStat.index].imageUrl" th:value="${carousel.imageUrl}"></td>
-                <td><input type="text" class="layui-input" name="carousels[carouselStat.index].imageTip" th:value="${carousel.imageTip}"></td>
-                <td><input type="text" class="layui-input" name="carousels[carouselStat.index].forwardUrl" th:value="${carousel.forwardUrl}"></td>
+            <tr th:data-row="${carouselStat.index}" th:each="carousel,carouselStat:${carouselCategory.carousels}">
+                <input type="hidden" th:name="'carousels['+${carouselStat.index}+'].id'" th:value="${carousel.id}">
+                <td width="75"><input type="number" class="layui-input" lay-verify="sort" lay-vertype="tips" th:name="'carousels['+${carouselStat.index}+'].sort'" th:value="${carousel.sort}"></td>
+                <td><img th:src="${carousel.imageUrl}" th:alt="${carousel.imageTip}"><input type="hidden" th:name="'carousels['+${carouselStat.index}+'].imageUrl'" th:value="${carousel.imageUrl}"></td>
+                <td><input type="text" class="layui-input" th:name="'carousels['+${carouselStat.index}+'].imageTip'" th:value="${carousel.imageTip}"></td>
+                <td><input type="text" class="layui-input" th:name="'carousels['+${carouselStat.index}+'].forwardUrl'" th:value="${carousel.forwardUrl}"></td>
                 <td>
-                    <a sec:authorize="hasAuthority('sel:del')" class="layui-btn layui-btn-danger layui-btn-xs remove" th:attr="data-id=${carousel.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
+                    <a sec:authorize="hasAuthority('sel:del')" class="layui-btn layui-btn-danger layui-btn-xs remove" th:attr="data-id=${carousel.id},data-url=${carousel.imageUrl}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
                 </td>
             </tr>
             </tbody>
@@ -77,27 +78,17 @@
             upload = layui.upload;
 
         //上传文件
-        var uploadInst = upload.render({
+        upload.render({
             elem: '#clg'
-            ,url: '/sys/upload'
+            ,url: '/ms/addCarousel'
             ,size: 600 //限制文件大小，单位 KB
-            // ,auto: false
-            // ,bindAction: '#testListAction' //指向一个按钮触发上传
             ,accept: 'images' //普通文件
             ,exts: 'jpg|jpeg|png' //只允许上传图片
             ,acceptMime:'image/*'
-            ,before: function(obj){
-                //预读本地文件示例，不支持ie8
-                this.data={
-                    "[[${_csrf.parameterName}]]": "[[${_csrf.token}]]"
-                },
-                    obj.preview(function(index, file, result){
-                        $('#avatar-view').attr('src', result); //图片链接（base64）
-                    });
-            }
+            ,data:{"[[${_csrf.parameterName}]]": "[[${_csrf.token}]]","id":$('#cid').val()}
             ,done: function(res){
                 if(res.code == 200){
-                    $('#af').val(res.data);
+                    location.reload();
                 }else{
                     return layer.msg('上传失败');
                 }
@@ -120,7 +111,7 @@
                 success:function(result){
                     if(result.code == 200){
                         layer.msg(result.msg, {icon: 1,time:600}, function () {
-                            location.href="/ms/carouselList";
+                            location.href="/ms/carousel";
                         });
                     }else{
                         layer.msg(result.msg,{time:1000});
@@ -129,6 +120,22 @@
             });
             return false;
         });
+
+        //删除处理
+        $(".remove").on('click', function () {
+            var _this = $(this);
+            layer.confirm('确定删除吗?',{title:'删除'}, function(){
+                $.getJSON('/ms/carouselDel', {id:_this.data('id'),url:_this.data('url')}, function(ret){
+                    if (ret.code == 200){
+                        layer.msg(ret.msg, {icon: 1,time:600},function () {
+                            location.reload();
+                        });
+                    } else {
+                        layer.msg(ret.msg, {icon: 2,time:600});
+                    }
+                });
+            });
+        })
 
     });
 </script>

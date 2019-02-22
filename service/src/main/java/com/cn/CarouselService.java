@@ -40,16 +40,34 @@ public class CarouselService {
     }
 
     /**
+     * 添加轮播图
+     * @param id  分类ID
+     * @param url 图片路径
+     */
+    public void addCarousel(String id,String url){
+        CarouselCategory carouselCategory = carouselRepository.getOne(id);
+        Carousel carousel = new Carousel();
+        carousel.setImageUrl(url);
+        carousel.setSort(carouselCategory.getCarousels().size()+1);
+        carouselCategory.getCarousels().add(carousel);
+        carouselRepository.save(carouselCategory);
+    }
+
+    /**
      * 删除轮播分类
      * @param id 唯一标识
      */
     @Transactional
     public void deleteCarouselCategory(String id){
         CarouselCategory carouselCategory = carouselRepository.getOne(id);
-        for(Carousel carousel:carouselCategory.getCarousels()){
-            UploadUtil.deleteFileByAli(carousel.getImageUrl());
+        try {
+            for(Carousel carousel:carouselCategory.getCarousels()){
+                UploadUtil.deleteFileByAli(carousel.getImageUrl());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        carouselRepository.deleteById(id);
+        carouselRepository.delete(carouselCategory);
     }
 
     /**
@@ -59,7 +77,11 @@ public class CarouselService {
      */
     @Transactional
     public void deleteCarousel(String id,String url){
-        UploadUtil.deleteFileByAli(url);
+        try {
+            UploadUtil.deleteFileByAli(url);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         carouselRepository.deleteCarousel(id);
     }
 }
