@@ -151,7 +151,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "取消收藏", notes = "用户取消收藏文章")
-    @DeleteMapping("/star")
+    @DeleteMapping("/collect")
     public ModelMap cancelCollect(@CurrentUser User user,@RequestBody String essayId){
         try {
             userService.delUserFaves(user.getId(),essayId, UserFaves.收藏);
