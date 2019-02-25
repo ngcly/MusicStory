@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="renderer" content="webkit" />
@@ -20,14 +20,111 @@
     </span>
     <a class="layui-btn layui-btn-sm" href="javascript:location.replace(location.href);" title="刷新" style="float:right;margin-top: 3px"><i class="layui-icon layui-icon-refresh-3"></i></a>
 </div>
-<div>还没想好这个页面怎么弄</div>
-
+<div class="layui-row">
+    <form  class="layui-form">
+        <div class="layui-form-item search-row">
+            <div class="layui-inline">
+                <label class="search-label">分类</label>
+                <div class="search-input">
+                    <select name="classify.id">
+                        <option value="">全部</option>
+                        <option th:each="classify,classifyStat:${classifyList}" th:value="${classify.id}" th:text="${classify.name}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="search-label">标题</label>
+                <div class="search-input">
+                    <input type="text" name="title" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="search-label">作者</label>
+                <div class="search-input">
+                    <input type="text" name="user.username" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="search-label">状态</label>
+                <div class="search-input">
+                    <select name="state">
+                        <option value=""></option>
+                        <option value="0">正常</option>
+                        <option value="1">推荐</option>
+                        <option value="2">查封</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
+            </div>
+        </div>
+    </form>
+</div>
+<table class="layui-table" id="table" lay-filter="essay"></table>
+<script type="text/html" id="bar">
+    <a sec:authorize="hasAuthority('story:alt')" class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>审核</a>
+</script>
 <script src="/webjars/layui/layui.js"></script>
 <script type="text/javascript">
-    layui.use(['element','table','form'], function() {
+    layui.use(['element','table','form'], function(){
+        var table = layui.table,
+            form = layui.form,
+            $ = layui.$;
 
-    })
+        //执行渲染
+        table.render({
+            elem: '#table' //指定原始表格元素选择器（推荐id选择器）
+            ,url: '/ms/essayList'
+            ,id: 'cs'
+            ,request: {
+                limitName: 'size' //每页数据量的参数名，默认：limit
+            }
+            ,loading:true
+            ,page: true //开启分页
+            ,cols: [
+                [{field: 'd.user.username', title: '作者',templet:'<div>{{d.user.username}}</div>'}
+                    ,{field: 'title', title: '文章标题'}
+                    ,{field: 'content', title: '文章内容'}
+                    ,{field: 'd.classify.name', title: '分类名',templet:'<div>{{d.classify.name}}</div>'}
+                    ,{field: 'readNum', title: '阅览数'}
+                    ,{field: 'createdTime', title: '创建时间'}
+                    ,{field: 'state', title: '状态',templet:'<div>{{#  if(d.state == 0){ }}正常{{#  }else if(d.state == 1) {}}推荐{{#  } else { }}查封{{#  } }}</div>'}
+                    ,{fixed: 'right', title:'操作', align:'center',width:'100', toolbar: '#bar'}]
+            ]
+        });
+
+        //条件搜索
+        form.on('submit(search)', function(data){
+            var values = data.field;
+            table.reload('cs', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+                , where: values
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool(essay)', function(obj){
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            if(layEvent === 'edit'){ //编辑
+                layer.open({
+                    type: 2
+                    ,skin: 'layui-layer-molv'
+                    ,area: ['400px', '300px']
+                    ,title: ['审核','font-size:18px']
+                    ,shadeClose: true
+                    ,shade: 0 //遮罩透明度
+                    ,maxmin: true //允许全屏最小化
+                    ,content:'/ms/essayAlt?id='+data.id
+                });
+            }
+        });
+
+    });
 </script>
-
 </body>
 </html>

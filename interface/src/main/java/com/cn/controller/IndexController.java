@@ -7,6 +7,7 @@ import com.cn.config.JwtTokenProvider;
 import com.cn.dto.LogInDTO;
 import com.cn.dto.RestCode;
 import com.cn.dto.SignUpDTO;
+import com.cn.entity.Essay;
 import com.cn.entity.User;
 import com.cn.util.RestUtil;
 import io.swagger.annotations.*;
@@ -109,8 +110,9 @@ public class IndexController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id",value = "文章ID",paramType = "path",dataType = "string")
     })
-    public ModelMap getEssayDetail(@PathVariable String id,@PathVariable Integer page){
-        return essayService.getEssayDetail(id);
+    public ModelMap getEssayDetail(@PathVariable String id){
+        Essay essay = essayService.getEssayDetail(id);
+        return RestUtil.Success(essay);
     }
 
     /**

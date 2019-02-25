@@ -18,7 +18,7 @@ import java.util.List;
 public interface ClassifyRepository extends JpaRepository<Classify,Long>, JpaSpecificationExecutor<Classify> {
 
     /**
-     * 动态查询管理员数据
+     * 动态查询分类数据
      */
     static Specification<Classify> getClassifyList(String name){
         return (Root<Classify> root, CriteriaQuery<?> query, CriteriaBuilder cb)->{

@@ -35,6 +35,8 @@ public class MsController {
     NoticeService noticeService;
     @Autowired
     CarouselService carouselService;
+    @Autowired
+    EssayService essayService;
 
 
     /**
@@ -189,8 +191,46 @@ public class MsController {
      */
     @PreAuthorize("hasAuthority('story:view')")
     @RequestMapping("/essay")
-    public String essayList(){
+    public String essayList(Model model){
+        model.addAttribute("classifyList",classifyService.getClassifyList());
         return "essay/essayList";
+    }
+
+    /**
+     * 获取文章列表
+     */
+    @ResponseBody
+    @RequestMapping("/essayList")
+    public ModelMap getEssayList(@RequestParam(value="page",defaultValue="1") Integer page,
+                                    @RequestParam(value="size",defaultValue="10") Integer size, Essay essay){
+        Page<Essay> essayList = essayService.getEssayList(PageRequest.of(page - 1, size),essay);
+        return RestUtil.Success(essayList.getTotalElements(),essayList.getContent());
+    }
+
+    /**
+     * 文章审查页
+     */
+    @RequestMapping("/essayAlt")
+    public String essayAlt(@RequestParam String id, Model model){
+        Essay essay = essayService.getEssayDetail(id);
+        model.addAttribute(essay);
+        return "essay/essayEdit";
+    }
+
+    /**
+     * 文章审查
+     */
+    @PreAuthorize("hasAuthority('story:alt')")
+    @ResponseBody
+    @PostMapping("/essaySave")
+    public ModelMap essaySave(@Valid Essay essay){
+        try {
+            essayService.altEssayState(essay);
+            return RestUtil.Success();
+        }catch (Exception e){
+            e.printStackTrace();
+            return RestUtil.Error(RestCode.SERVER_ERROR);
+        }
     }
 
     /**

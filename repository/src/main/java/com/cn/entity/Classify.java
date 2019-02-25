@@ -1,5 +1,6 @@
 package com.cn.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import java.util.Date;
  */
 @Data
 @Entity
+@JsonIgnoreProperties(value = {"handler","hibernateLazyInitializer","fieldHandler"})
 @Table(name = "classify")
 public class Classify extends UserDateAudit implements Serializable{
     private static final long serialVersionUID = 1L;
