@@ -7,15 +7,13 @@ import com.cn.config.CustomerDetail;
 import com.cn.dto.RestCode;
 import com.cn.entity.*;
 import com.cn.util.RestUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * 会员控制层
@@ -55,9 +53,10 @@ public class UserController {
 
     @ApiOperation(value = "写文章", notes = "用户发表文章")
     @PostMapping("/essay")
-    public ModelMap createEssay(@RequestBody Essay essay){
-        //TODO
-        return null;
+    public ModelMap createEssay(@ApiIgnore @CurrentUser User user, @RequestBody Essay essay){
+        essay.setUser(user);
+        essayService.createEssay(essay);
+        return RestUtil.Success();
     }
 
     @ApiOperation(value = "修改文章", notes = "用户修改文章")

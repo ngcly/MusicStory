@@ -1,22 +1,28 @@
 package com.cn;
 
+import com.cn.dao.CommentRepository;
 import com.cn.dao.EssayRepository;
+import com.cn.entity.Comment;
 import com.cn.entity.Essay;
 import com.cn.entity.News;
 import com.cn.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class EssayService {
     @Autowired
     EssayRepository essayRepository;
+    @Autowired
+    CommentRepository commentRepository;
 
     /**
      * 获取文章列表
@@ -44,6 +50,15 @@ public class EssayService {
      */
     public Essay getEssayDetail(String id){
         return essayRepository.getById(id);
+    }
+
+    /**
+     * 用户写文章
+     * @param essay 文章内容
+     */
+    @Transactional
+    public void createEssay(Essay essay){
+        essayRepository.save(essay);
     }
 
     /**
@@ -83,5 +98,17 @@ public class EssayService {
             news.setSendTime(new Date());
             //TODO 通知作者
         }
+    }
+
+    /**
+     * 获取文章评论
+     * @param id     文章Id
+     * @param page   页数
+     * @return
+     */
+    public List<Comment> getComments(String id,int page){
+        Page<Comment> comments = commentRepository.findByEssayIdOrderByCreatedTimeDesc(id, PageRequest.of(page-1,20));
+        List<Comment> commentList = comments.getContent();
+        return commentList;
     }
 }

@@ -1,5 +1,6 @@
 package com.cn.controller;
 
+import com.cn.CarouselService;
 import com.cn.EssayService;
 import com.cn.NoticeService;
 import com.cn.UserService;
@@ -7,15 +8,15 @@ import com.cn.config.JwtTokenProvider;
 import com.cn.dto.LogInDTO;
 import com.cn.dto.RestCode;
 import com.cn.dto.SignUpDTO;
+import com.cn.entity.Carousel;
+import com.cn.entity.CarouselCategory;
 import com.cn.entity.Essay;
 import com.cn.entity.User;
 import com.cn.util.RestUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,6 +49,8 @@ public class IndexController {
     EssayService essayService;
     @Autowired
     NoticeService noticeService;
+    @Autowired
+    CarouselService carouselService;
 
     /**
      * 登陆
@@ -126,8 +130,7 @@ public class IndexController {
             @ApiImplicitParam(name = "page",value = "页数",paramType = "path",dataType = "int")
     })
     public ModelMap getEssayComment(@PathVariable String id,@PathVariable Integer page){
-        //TODO
-        return null;
+        return RestUtil.Success(essayService.getComments(id,page));
     }
 
     /**
@@ -136,8 +139,12 @@ public class IndexController {
     @ApiOperation(value = "轮播图", notes = "获取轮播图列表")
     @GetMapping("/carousel")
     public ModelMap getCarousel(){
-        //TODO
-        return null;
+        CarouselCategory carouselCategory = carouselService.getCarouselDetail("index");
+        List<Carousel> carousels = null;
+        if(carouselCategory!=null){
+            carousels = carouselCategory.getCarousels();
+        }
+        return RestUtil.Success(carousels);
     }
 
     /**

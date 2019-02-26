@@ -8,8 +8,11 @@ import javax.persistence.Query;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 自定义sql
+ */
 @Repository
-public class OtherDAO {
+public class CustomDAO {
     @PersistenceContext  //注入实体管理器
     private EntityManager entityManager;
 
