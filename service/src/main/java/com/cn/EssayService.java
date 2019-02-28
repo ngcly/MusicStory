@@ -1,6 +1,7 @@
 package com.cn;
 
 import com.cn.dao.CommentRepository;
+import com.cn.dao.CustomDAO;
 import com.cn.dao.EssayRepository;
 import com.cn.entity.Comment;
 import com.cn.entity.Essay;
@@ -16,6 +17,7 @@ import org.springframework.ui.ModelMap;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class EssayService {
@@ -23,13 +25,18 @@ public class EssayService {
     EssayRepository essayRepository;
     @Autowired
     CommentRepository commentRepository;
+    @Autowired
+    CustomDAO customDAO;
 
     /**
      * 获取文章列表
      * @return
      */
     public ModelMap getEssayList(int page,int pageSize){
-        return RestUtil.Success(essayRepository.getEssayList(page,pageSize));
+        String sql = "SELECT t.id,t.title,SUBSTRING(t.content,1,300)content,t3.username,t2.name,t.created_time,t.updated_time,t.read_num " +
+                "FROM essay t,classify t2,USER t3 WHERE t.classify_id=t2.id AND t.user_id=t3.id LIMIT ?,?";
+        List<Map<String,Object>> essays = customDAO.nativeQueryListMap(sql,page-1,pageSize);
+        return RestUtil.Success(essays);
     }
 
     /**

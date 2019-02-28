@@ -3,7 +3,6 @@ package com.cn.controller;
 import com.cn.ManagerService;
 import com.cn.RoleService;
 import com.cn.config.ManagerDetail;
-import com.cn.dao.PermissionRepository;
 import com.cn.entity.Manager;
 import com.cn.entity.Permission;
 import com.cn.entity.Role;
