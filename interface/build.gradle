@@ -1,13 +1,23 @@
-group 'com.cn.cly'
-version '1.0-SNAPSHOT'
-
 apply plugin: 'java'
+apply plugin: 'com.palantir.docker'
 
 sourceCompatibility = 1.8
 
 bootJar {
-    baseName = 'MusicBook'
-    version =  '0.1.0'
+    archiveBaseName = "desk"
+    version =  '1.0'
+}
+
+task unpack(type: Copy) {
+    dependsOn bootJar
+    from(zipTree(tasks.bootJar.outputs.files.singleFile))
+    into("build/dependency")
+}
+
+docker {
+    name "${project.group}/${bootJar.archiveBaseName}"
+    copySpec.from(tasks.unpack.outputs).into("dependency")
+    buildArgs(['DEPENDENCY': "dependency"])
 }
 
 repositories {
