@@ -34,8 +34,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     @Autowired
-    RestAccessDeniedHandler restAccessDeniedHandler;
-    @Autowired
     CustomerDetailService customerDetailService;
 
     @Override
@@ -56,7 +54,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //认证不通过后的处理
                 .exceptionHandling()
                 .authenticationEntryPoint(restAuthenticationEntryPoint)
-                .accessDeniedHandler(restAccessDeniedHandler)
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

@@ -109,25 +109,15 @@ public class UserController {
     @ApiOperation(value = "点赞", notes = "用户点赞文章")
     @PostMapping("/star")
     public ModelMap star(@CurrentUser User user,@RequestBody String essayId){
-        try {
-            userService.addUserFaves(user.getId(),essayId, UserFaves.点赞);
-            return RestUtil.Success();
-        }catch (Exception e){
-            e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
-        }
+        userService.addUserFaves(user.getId(),essayId, UserFaves.点赞);
+        return RestUtil.Success();
     }
 
     @ApiOperation(value = "取消点赞", notes = "用户取消点赞文章")
     @DeleteMapping("/star")
     public ModelMap cancelStar(@CurrentUser User user,@RequestBody String essayId){
-        try {
-            userService.delUserFaves(user.getId(),essayId, UserFaves.点赞);
-            return RestUtil.Success();
-        }catch (Exception e){
-            e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
-        }
+        userService.delUserFaves(user.getId(),essayId, UserFaves.点赞);
+        return RestUtil.Success();
     }
 
     @ApiOperation(value = "获取用户收藏的文章", notes = "获取当前用户收藏的所有文章")
@@ -140,25 +130,16 @@ public class UserController {
     @ApiOperation(value = "收藏", notes = "用户收藏文章")
     @PostMapping("/collect")
     public ModelMap collect(@CurrentUser User user,@RequestBody String essayId){
-        try {
-            userService.addUserFaves(user.getId(),essayId, UserFaves.收藏);
-            return RestUtil.Success();
-        }catch (Exception e){
-            e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
-        }
+        userService.addUserFaves(user.getId(),essayId, UserFaves.收藏);
+        return RestUtil.Success();
     }
 
     @ApiOperation(value = "取消收藏", notes = "用户取消收藏文章")
     @DeleteMapping("/collect")
     public ModelMap cancelCollect(@CurrentUser User user,@RequestBody String essayId){
-        try {
-            userService.delUserFaves(user.getId(),essayId, UserFaves.收藏);
-            return RestUtil.Success();
-        }catch (Exception e){
-            e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
-        }
+        userService.delUserFaves(user.getId(),essayId, UserFaves.收藏);
+        return RestUtil.Success();
+
     }
 
     @ApiOperation(value = "获取关注我的用户", notes = "获取关注当前用户的所有人")
@@ -178,24 +159,14 @@ public class UserController {
     @ApiOperation(value = "关注", notes = "关注某个用户")
     @PostMapping("/watch")
     public ModelMap watch(@CurrentUser User user,@RequestBody String userId){
-        try {
-            userService.addUserFollow(user.getId(),userId);
-            return RestUtil.Success();
-        }catch (Exception e){
-            e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
-        }
+        userService.addUserFollow(user.getId(),userId);
+        return RestUtil.Success();
     }
 
     @ApiOperation(value = "取消关注", notes = "取消关注某个用户")
     @DeleteMapping("/watch")
     public ModelMap cancelWatch(@CurrentUser User user,@RequestBody String userId){
-        try {
-            userService.delUserFollow(user.getId(),userId);
-            return RestUtil.Success();
-        }catch (Exception e){
-            e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
-        }
+        userService.delUserFollow(user.getId(),userId);
+        return RestUtil.Success();
     }
 }

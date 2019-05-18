@@ -5,9 +5,13 @@ package com.cn.dto;
  */
 public enum RestCode {
     SUCCESS(200, "操作成功"),
+    VERIFYCODE_ERR(332,"验证码错误"),
     USER_ERR(333,"用户名或密码错误"),
     USER_DISABLE(334,"用户被禁用"),
-    UNAUTHZ(301 ,"未授权，拒绝访问"),
+    USER_LOCKED(335,"用户被锁定"),
+    USER_EXPIRE(336,"账号过期"),
+    PASSWORD_EXPIRE(337,"密码过期"),
+    UNAUTHZ(301 ,"权限不足"),
     PARAM_ERROR(400, "参数不合法"),
     UNAUTHEN(401, "未登录"),
     NOT_FOUND(404 ,"路径错误"),

@@ -1,6 +1,7 @@
 package com.cn.controller;
 
 import com.cn.*;
+import com.cn.config.GlobalException;
 import com.cn.dto.RestCode;
 import com.cn.entity.*;
 import com.cn.util.RestUtil;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -96,13 +98,9 @@ public class MsController {
     @ResponseBody
     @RequestMapping("/userSave")
     public ModelMap saveUser(@Valid User user){
-        try {
-            userService.altUser(user);
-            return RestUtil.Success();
-        }catch (Exception e){
-            e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
-        }
+        userService.altUser(user);
+        return RestUtil.Success();
+
     }
 
     /**
@@ -112,13 +110,9 @@ public class MsController {
     @ResponseBody
     @RequestMapping("/userDel")
     public ModelMap delUser(@RequestParam String userId){
-        try {
-            userService.delUser(userId);
-            return RestUtil.Success();
-        }catch (Exception e){
-            e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
-        }
+        userService.delUser(userId);
+        return RestUtil.Success();
+
     }
 
     /**
@@ -161,13 +155,9 @@ public class MsController {
     @ResponseBody
     @PostMapping("/saveClassify")
     public ModelMap saveClassify(@Valid Classify classify){
-        try {
-            classifyService.saveClassify(classify);
-            return RestUtil.Success();
-        }catch (Exception e){
-            e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
-        }
+        classifyService.saveClassify(classify);
+        return RestUtil.Success();
+
     }
 
     /**
@@ -177,13 +167,8 @@ public class MsController {
     @ResponseBody
     @GetMapping("/classifyDel/{id}")
     public ModelMap delClassify(@PathVariable("id")Long id){
-        try {
-            classifyService.deleteClassify(id);
-            return RestUtil.Success();
-        }catch (Exception e){
-            e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
-        }
+        classifyService.deleteClassify(id);
+        return RestUtil.Success();
     }
 
     /**
@@ -202,7 +187,7 @@ public class MsController {
     @ResponseBody
     @RequestMapping("/essayList")
     public ModelMap getEssayList(@RequestParam(value="page",defaultValue="1") Integer page,
-                                    @RequestParam(value="size",defaultValue="10") Integer size, Essay essay){
+                                 @RequestParam(value="size",defaultValue="10") Integer size, Essay essay){
         Page<Essay> essayList = essayService.getEssayList(PageRequest.of(page - 1, size),essay);
         return RestUtil.Success(essayList.getTotalElements(),essayList.getContent());
     }
@@ -224,13 +209,8 @@ public class MsController {
     @ResponseBody
     @PostMapping("/essaySave")
     public ModelMap essaySave(@Valid Essay essay){
-        try {
-            essayService.altEssayState(essay);
-            return RestUtil.Success();
-        }catch (Exception e){
-            e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
-        }
+        essayService.altEssayState(essay);
+        return RestUtil.Success();
     }
 
     /**
@@ -248,7 +228,7 @@ public class MsController {
     @ResponseBody
     @GetMapping("/noticeList")
     public ModelMap getNoticeList(@RequestParam(value="page",defaultValue="1") Integer page,
-                                    @RequestParam(value="size",defaultValue="10") Integer size, Notice notice){
+                                  @RequestParam(value="size",defaultValue="10") Integer size, Notice notice){
         Page<Notice> notices =noticeService.getNoticeList(PageRequest.of(page - 1, size), notice);
         return RestUtil.Success(notices.getTotalElements(),notices.getContent());
     }
@@ -273,13 +253,8 @@ public class MsController {
     @ResponseBody
     @PostMapping("/saveNotice")
     public ModelMap saveNotice(@Valid Notice notice){
-        try {
-            noticeService.addOrUpdateNotice(notice);
-            return RestUtil.Success();
-        }catch (Exception e){
-            e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
-        }
+        noticeService.addOrUpdateNotice(notice);
+        return RestUtil.Success();
     }
 
     /**
@@ -289,13 +264,8 @@ public class MsController {
     @ResponseBody
     @GetMapping("/noticeDel/{id}")
     public ModelMap delNotice(@PathVariable("id")Long id){
-        try {
-            noticeService.deleteNotice(id);
-            return RestUtil.Success();
-        }catch (Exception e){
-            e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
-        }
+        noticeService.deleteNotice(id);
+        return RestUtil.Success();
     }
 
     /**
@@ -313,7 +283,7 @@ public class MsController {
     @ResponseBody
     @GetMapping("/carouselList")
     public ModelMap carouselList(@RequestParam(value="page",defaultValue="1") Integer page,
-                              @RequestParam(value="size",defaultValue="10") Integer size,String name){
+                                 @RequestParam(value="size",defaultValue="10") Integer size,String name){
         Page<CarouselCategory> carouselCategory = carouselService.getCarouselList(name,PageRequest.of(page - 1, size));
         return RestUtil.Success(carouselCategory.getTotalElements(),carouselCategory.getContent());
     }
@@ -348,13 +318,8 @@ public class MsController {
     @ResponseBody
     @PostMapping("/saveCarousel")
     public ModelMap saveCarousel(@Valid CarouselCategory carouselCategory){
-        try {
-            carouselService.addOrUpdateCarousel(carouselCategory);
-            return RestUtil.Success();
-        }catch (Exception e){
-            e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
-        }
+        carouselService.addOrUpdateCarousel(carouselCategory);
+        return RestUtil.Success();
     }
 
     /**
@@ -363,7 +328,7 @@ public class MsController {
     @PreAuthorize("hasAnyAuthority('sel:add','sel:alt')")
     @ResponseBody
     @RequestMapping("/addCarousel")
-    public ModelMap addCarousel(@RequestParam("file") MultipartFile file,@RequestParam("id")String id){
+    public ModelMap addCarousel(@RequestParam("file") MultipartFile file,@RequestParam("id")String id) {
         if(file.isEmpty()){
             return RestUtil.Error(222,"文件为空");
         }
@@ -371,11 +336,10 @@ public class MsController {
         try {
             path = UploadUtil.uploadFileByAli(file,"img");
             carouselService.addCarousel(id,path);
+            return RestUtil.Success();
         } catch (Exception e) {
-            e.printStackTrace();
-            return RestUtil.Error(RestCode.FILE_UPLOAD_ERR);
+           throw new GlobalException(RestCode.FILE_UPLOAD_ERR);
         }
-        return RestUtil.Success();
     }
 
     /**
@@ -385,13 +349,8 @@ public class MsController {
     @ResponseBody
     @GetMapping("/carouselDel/{id}")
     public ModelMap delCarouselCategory(@PathVariable("id")String id){
-        try {
-            carouselService.deleteCarouselCategory(id);
-            return RestUtil.Success();
-        }catch (Exception e){
-            e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
-        }
+        carouselService.deleteCarouselCategory(id);
+        return RestUtil.Success();
     }
 
     /**
@@ -401,13 +360,8 @@ public class MsController {
     @ResponseBody
     @GetMapping("/carouselDel")
     public ModelMap delCarousel(@RequestParam("id")String id,@RequestParam("url")String url){
-        try {
-            carouselService.deleteCarousel(id,url);
-            return RestUtil.Success();
-        }catch (Exception e){
-            e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
-        }
+        carouselService.deleteCarousel(id,url);
+        return RestUtil.Success();
     }
 
 }

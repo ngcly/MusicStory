@@ -79,9 +79,9 @@
         </td>
         <td>
             <a class="layui-btn layui-btn-xs view" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon iconfont icon-view"></i>查看</a>
-            <a sec:authorize="hasAuthority('role:grant')" class="layui-btn layui-btn-xs model" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon layui-icon-auz"></i>授权</a>
-            <a sec:authorize="hasAuthority('role:alt')" class="layui-btn layui-btn-xs alt" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe642;</i>编辑</a>
-            <a sec:authorize="hasAuthority('role:del')" class="layui-btn layui-btn-danger layui-btn-xs remove" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
+            <a class="layui-btn layui-btn-xs model" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon layui-icon-auz"></i>授权</a>
+            <a class="layui-btn layui-btn-xs alt" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe642;</i>编辑</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs remove" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
         </td>
     </tr>
     </tbody>

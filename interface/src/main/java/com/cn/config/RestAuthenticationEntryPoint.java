@@ -1,7 +1,11 @@
 package com.cn.config;
 
+import com.alibaba.fastjson.JSON;
 import com.cn.dto.RestCode;
+import com.cn.util.RestUtil;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
@@ -24,14 +28,24 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          AuthenticationException authException) throws IOException, ServletException {
         response.setContentType("application/json;charset=utf-8");
         PrintWriter out = response.getWriter();
-        RestCode restCode = RestCode.UNAUTHEN;
-        if("Full authentication is required to access this resource".equals(authException.getMessage())){
-        }else if("Bad credentials".equals(authException.getMessage())){
-          restCode = RestCode.USER_ERR;
-        }else if("User is disabled".equals(authException.getMessage())){
+        RestCode restCode;
+        if (authException instanceof BadCredentialsException ||
+                authException instanceof UsernameNotFoundException) {
+            restCode = RestCode.USER_ERR;
+        } else if(authException instanceof AuthenticationServiceException){
+            restCode = RestCode.VERIFYCODE_ERR;
+        } else if (authException instanceof LockedException) {
+            restCode = RestCode.USER_LOCKED;
+        } else if (authException instanceof AccountExpiredException) {
+            restCode = RestCode.USER_EXPIRE;
+        } else if (authException instanceof CredentialsExpiredException) {
+            restCode = RestCode.PASSWORD_EXPIRE;
+        } else if (authException instanceof DisabledException) {
             restCode = RestCode.USER_DISABLE;
+        } else {
+            restCode = RestCode.UNAUTHEN;
         }
-        out.write("{\"code\":"+restCode.code+",\"msg\":\""+restCode.msg+"\"}");
+        out.write(JSON.toJSON(RestUtil.Error(restCode)).toString());
         out.flush();
         out.close();
     }

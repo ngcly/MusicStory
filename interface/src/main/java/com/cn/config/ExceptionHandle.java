@@ -2,18 +2,21 @@ package com.cn.config;
 
 import com.cn.dto.RestCode;
 import com.cn.util.RestUtil;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
- * Controller Rest风格统一异常处理
+ * 全局统一异常处理
+ * @author ngcly
  */
 @ControllerAdvice
-public class RestResponseExceptionHandler
+public class ExceptionHandle
         extends ResponseEntityExceptionHandler {
 
 //    @ExceptionHandler(value
@@ -26,14 +29,17 @@ public class RestResponseExceptionHandler
 //    }
 
     /**
-     * 方法级访问拒绝处理 @PreAuthorize，@ PostAuthorize和@Secure Access Denied
-     * @param ex
-     * @param request
-     * @return
+     * 全局异常处理
      */
-    @ExceptionHandler({ AccessDeniedException.class })
-    public ResponseEntity<Object> handleAccessDeniedException(
-            Exception ex, WebRequest request) {
-        return ResponseEntity.ok(RestUtil.Error(RestCode.UNAUTHZ));
+    @ResponseBody
+    @ExceptionHandler(value = Exception.class)
+    public ModelMap handlerException(HttpServletRequest request, Exception e){
+        if (e instanceof AccessDeniedException) {
+            return RestUtil.Error(RestCode.UNAUTHZ);
+        } else if (e instanceof GlobalException){
+            return RestUtil.Error(((GlobalException) e).getCode(),e.getMessage());
+        } else {
+            return RestUtil.Error(RestCode.SERVER_ERROR);
+        }
     }
 }

@@ -21,6 +21,7 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -407,5 +408,15 @@ public class HttpUtil {
         return parameterBuffer.toString();
     }
 
+    /**
+     * 判断是否为 Ajax 请求
+     */
+    public static boolean isAjaxRequest(HttpServletRequest request){
+        if (request.getHeader("accept").indexOf("application/json") > -1
+                ||  "XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+            return true;
+        }
+        return false;
+    }
 }
 
