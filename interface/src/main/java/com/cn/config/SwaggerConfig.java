@@ -1,5 +1,6 @@
 package com.cn.config;
 
+import com.cn.entity.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -21,7 +22,9 @@ public class SwaggerConfig {
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.cn.controller"))   //指定包
                 .paths(PathSelectors.any()) //所有路径
-                .build();
+                .build()
+                .ignoredParameterTypes(CustomerDetail.class)
+                .ignoredParameterTypes(User.class);
     }
 
     private ApiInfo apiInfo(){

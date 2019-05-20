@@ -53,7 +53,7 @@ public class UserController {
 
     @ApiOperation(value = "写文章", notes = "用户发表文章")
     @PostMapping("/essay")
-    public ModelMap createEssay(@ApiIgnore @CurrentUser User user, @RequestBody Essay essay){
+    public ModelMap createEssay(@CurrentUser User user, @RequestBody Essay essay){
         essay.setUser(user);
         essayService.createEssay(essay);
         return RestUtil.Success();

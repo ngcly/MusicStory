@@ -1,6 +1,7 @@
 package com.cn.util;
 
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -10,10 +11,12 @@ import java.util.Map;
 /**
  * IP 获取工具类
  *
- * @author chen
+ * @author ngcly
  * @date 2018-01-05 10:38
  */
 public class IpUtil {
+    @Value("${appcode}")
+    public static String appcode;
 
     public static String getIp(HttpServletRequest request){
         String ip = request.getHeader("x-forwarded-for");
@@ -43,8 +46,7 @@ public class IpUtil {
     public static String getIpAddresses(String ip) {
         //阿里云接口
         String url = "https://dm-81.data.aliyun.com/rest/160601/ip/getIpInfo.json?ip="+ip;
-		String appcode = "4bf399ed20194960aa55e569c9d8af06";
-		Map<String, String> headers = new HashMap<>();
+		Map<String, String> headers = new HashMap<>(1);
 		headers.put("Authorization", "APPCODE " + appcode);
         String returnStr = HttpUtil.sendHttpGet(url,headers);
         // 这里调用淘宝的接口

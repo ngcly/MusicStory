@@ -30,7 +30,7 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
   #数据源
   datasource:
-    url: jdbc:mysql://localhost:3306/music_story
+    url: jdbc:mysql://localhost:3306/music_story?serverTimezone=UTC&characterEncoding=utf-8&useSSL=false
     username: root
     password: 123456
     driverClassName: com.mysql.jdbc.Driver
@@ -71,3 +71,20 @@ spring:
 
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
+
+  #邮件配置
+  mail:
+    host: smtp.qq.com
+    username: 531237716@qq.com
+    password: ENC(tU3XEcH8VDNaNRNkGkKu5fvCRZK9Fv3Kf4Ii8+fC81s=)
+    default-encoding: UTF-8
+
+
+jasypt:
+  encryptor:
+    password: ngCly
+#私人密钥配置
+upload:
+  accessKey: ENC(ormo2Qg4s+fXW8qyJcwWdkH/MopGFUBTxsbVeJoOkuQ=)
+  secretKey: ENC(aHUGIXAeXajFvMtPdmI2RZAnwIFU+7umvjk/ea+eJCThNdZKmmHFnQ==)
+appcode: ENC(HaqiZpNoRrldOYjmhSw1mjtjOVV9Vrfh0bid7Ksz5c5rvgWBs33JEW95khhTgloc)

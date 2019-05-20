@@ -50,6 +50,7 @@ subprojects {  //子项目通配
         compile('org.springframework.boot:spring-boot-starter-json')
         compile('com.github.penggle:kaptcha:2.3.2')
         compile('com.alibaba:fastjson:1.2.46')
+        compile('com.github.ulisesbocchio:jasypt-spring-boot-starter:2.1.1')
 
         runtime('org.springframework.boot:spring-boot-devtools')
         annotationProcessor 'org.projectlombok:lombok:1.18.2'
