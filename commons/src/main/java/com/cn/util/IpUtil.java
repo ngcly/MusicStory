@@ -15,8 +15,13 @@ import java.util.Map;
  * @date 2018-01-05 10:38
  */
 public class IpUtil {
+
+    public static String appCode;
+
     @Value("${appcode}")
-    public static String appcode;
+    public static void setAppCode(String appCode) {
+        IpUtil.appCode = appCode;
+    }
 
     public static String getIp(HttpServletRequest request){
         String ip = request.getHeader("x-forwarded-for");
@@ -47,7 +52,7 @@ public class IpUtil {
         //阿里云接口
         String url = "https://dm-81.data.aliyun.com/rest/160601/ip/getIpInfo.json?ip="+ip;
 		Map<String, String> headers = new HashMap<>(1);
-		headers.put("Authorization", "APPCODE " + appcode);
+		headers.put("Authorization", "APPCODE " + appCode);
         String returnStr = HttpUtil.sendHttpGet(url,headers);
         // 这里调用淘宝的接口
 //        String urlStr = "http://ip.taobao.com/service/getIpInfo.php?ip="+ip;
