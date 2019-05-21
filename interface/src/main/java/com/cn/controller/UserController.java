@@ -21,7 +21,7 @@ import springfox.documentation.annotations.ApiIgnore;
  * @author chen
  * @date 2018-01-05 12:08
  */
-@Api(value = "UserController", description = "用户相关API")
+@Api(value = "UserController", tags = "用户相关API",authorizations = @Authorization(value = "user"))
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -61,7 +61,7 @@ public class UserController {
 
     @ApiOperation(value = "修改文章", notes = "用户修改文章")
     @PutMapping("/essay")
-    public ModelMap updateEssay(@RequestBody Essay essay){
+    public ModelMap updateEssay(@CurrentUser User user,@RequestBody Essay essay){
         //TODO
         return null;
     }
@@ -80,7 +80,7 @@ public class UserController {
 
     @ApiOperation(value = "评论文章", notes = "用户评论文章")
     @PostMapping("/comment")
-    public ModelMap commentEssay(@RequestBody Comment comment){
+    public ModelMap commentEssay(@CurrentUser User user,@RequestBody Comment comment){
         //TODO
         return null;
     }

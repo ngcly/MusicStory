@@ -121,7 +121,7 @@ public class UserService {
      * @param essayId  文章ID
      * @param type     类型
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void addUserFaves(String userId,String essayId,byte type){
         UserFaves userFaves = new UserFaves();
         userFaves.setUserId(userId);
@@ -136,7 +136,7 @@ public class UserService {
      * @param essayId  文章ID
      * @param type     类型
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void delUserFaves(String userId,String essayId,byte type){
         userFavesRepository.deleteUserFavesByUserIdAndAndEssayIdAndFaveType(userId,essayId,type);
     }
@@ -146,7 +146,7 @@ public class UserService {
      * @param userId   用户ID
      * @param followId 被关注ID
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void addUserFollow(String userId,String followId){
         UserFollow userFollow = new UserFollow();
         userFollow.setUserId(userId);
@@ -159,7 +159,7 @@ public class UserService {
      * @param userId    用户ID
      * @param followId  被关注ID
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void delUserFollow(String userId,String followId){
         userFollowRepository.deleteUserFollowByUserIdAndAndFollowId(userId,followId);
     }

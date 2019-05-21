@@ -36,7 +36,7 @@ import java.util.Map;
  * @author chen
  * @create 2018-08-05 14:48
  */
-@Api(value = "IndexController", description = "首页内容相关API")
+@Api(value = "IndexController", tags = "首页内容相关API")
 @RestController
 public class IndexController {
     @Autowired
