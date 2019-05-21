@@ -19,7 +19,7 @@ public class IpUtil {
     public static String appCode;
 
     @Value("${appcode}")
-    public static void setAppCode(String appCode) {
+    public void setAppCode(String appCode) {
         IpUtil.appCode = appCode;
     }
 
