@@ -2,6 +2,7 @@ package com.cn.util;
 
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -14,6 +15,7 @@ import java.util.Map;
  * @author ngcly
  * @date 2018-01-05 10:38
  */
+@Component
 public class IpUtil {
 
     public static String appCode;
