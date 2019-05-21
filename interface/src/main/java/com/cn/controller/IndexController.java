@@ -121,9 +121,8 @@ public class IndexController {
 
     /**
      * 获取文章评论
-     * @param id
-     * @return
      */
+    @ApiOperation(value = "获取文章评论", notes = "根据文章Id和页数获取评论")
     @GetMapping("/comments/{id}/{page}")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id",value = "文章ID",paramType = "path",dataType = "string"),
