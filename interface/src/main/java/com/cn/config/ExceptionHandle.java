@@ -34,6 +34,7 @@ public class ExceptionHandle
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
     public ModelMap handlerException(HttpServletRequest request, Exception e){
+        e.printStackTrace();
         if (e instanceof AccessDeniedException) {
             return RestUtil.Error(RestCode.UNAUTHZ);
         } else if (e instanceof GlobalException){

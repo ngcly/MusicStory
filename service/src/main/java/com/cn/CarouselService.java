@@ -27,7 +27,7 @@ public class CarouselService {
      * @param id 主键
      */
     public CarouselCategory getCarouselDetail(String id){
-        return carouselRepository.getOne(id);
+        return carouselRepository.findById(id).orElse(null);
     }
 
     /**
