@@ -79,7 +79,7 @@ public class QQAuthenticationManager implements AuthenticationManager {
             user.setNickName(json.getString("nickname"));
             user.setGender(Byte.decode(json.getString("gender")));
             user.setAddress(json.getString("province"));
-            user.setBirthday(DateUtil.parse(json.getString("year"),DateUtil.FORMAT_SHORT));
+            user.setBirthday(DateUtil.parse(json.getString("year"),DateUtil.DATE_FORMAT_SHORT));
             user.setAvatar(json.getString("figureurl_qq_2"));
             user.setUnionId(openId);
             userDetails = new CustomerDetail(user);
