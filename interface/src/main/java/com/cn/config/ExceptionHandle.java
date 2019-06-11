@@ -4,6 +4,10 @@ import com.cn.dto.RestCode;
 import com.cn.util.RestUtil;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingPathVariableException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -37,10 +41,21 @@ public class ExceptionHandle
         e.printStackTrace();
         if (e instanceof AccessDeniedException) {
             return RestUtil.Error(RestCode.UNAUTHZ);
-        } else if (e instanceof GlobalException){
+        } else if (e instanceof HttpRequestMethodNotSupportedException) {
+            return RestUtil.Error(RestCode.METHOD_ERROR);
+        } else if (e instanceof MissingPathVariableException) {
+            // 缺少路径参数
+            return RestUtil.Error(RestCode.NOT_FOUND);
+        } else if (e instanceof MissingServletRequestParameterException) {
+            // 缺少必须的请求参数
+            return RestUtil.Error(RestCode.PARAM_ERROR);
+        } else if (e instanceof HttpMediaTypeNotAcceptableException){
+            return RestUtil.Error(RestCode.HEAD_ERROR);
+        }else if (e instanceof GlobalException){
             return RestUtil.Error(((GlobalException) e).getCode(),e.getMessage());
         } else {
             return RestUtil.Error(RestCode.SERVER_ERROR);
         }
+
     }
 }
