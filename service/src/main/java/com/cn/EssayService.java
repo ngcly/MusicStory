@@ -34,7 +34,7 @@ public class EssayService {
      */
     public ModelMap getEssayList(int page,int pageSize){
         String sql = "SELECT t.id,t.title,SUBSTRING(t.content,1,300)content,t3.username,t2.name,t.created_time,t.updated_time,t.read_num " +
-                "FROM essay t,classify t2,USER t3 WHERE t.classify_id=t2.id AND t.user_id=t3.id LIMIT ?,?";
+                "FROM essay t,classify t2,`user` t3 WHERE t.classify_id=t2.id AND t.user_id=t3.id LIMIT ?,?";
         List<Map<String,Object>> essays = customDAO.nativeQueryListMap(sql,page-1,pageSize);
         return RestUtil.Success(essays);
     }
