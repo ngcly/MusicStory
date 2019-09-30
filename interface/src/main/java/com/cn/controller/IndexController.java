@@ -61,7 +61,7 @@ public class IndexController {
     @PostMapping("/signin")
     public ModelMap authenticateUser(@Valid @RequestBody LogInDTO loginDTO, BindingResult result) {
         if(result.hasErrors()){
-            return RestUtil.Error(RestCode.PARAM_ERROR);
+            return RestUtil.Error(400,result.getFieldError().getField()+":"+result.getFieldError().getDefaultMessage());
         }
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -90,7 +90,7 @@ public class IndexController {
     })
     public ModelMap registerUser(@Valid @RequestBody SignUpDTO signUpDTO, BindingResult result) {
         if(result.hasErrors()){
-            return RestUtil.Error(RestCode.PARAM_ERROR);
+            return RestUtil.Error(400,result.getFieldError().getField()+":"+result.getFieldError().getDefaultMessage());
         }
         User user = new User();
         BeanUtils.copyProperties(user, signUpDTO);
