@@ -78,7 +78,7 @@
         <td th:text="${#strings.equals(log.userType,'1')?'后台管理员':'前台会员'}"></td>
         <td th:text="${log.loginIp}"></td>
         <td th:text="${log.addressIp}"></td>
-        <td th:text="${#dates.format(log.loginTime)}"></td>
+        <td th:text="${#dates.format(log.loginTime,'yyyy-MM-dd HH:mm:ss')}"></td>
     </tr>
     </tbody>
 </table>

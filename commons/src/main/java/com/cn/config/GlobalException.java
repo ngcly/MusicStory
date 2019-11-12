@@ -1,6 +1,6 @@
 package com.cn.config;
 
-import com.cn.dto.RestCode;
+import com.cn.pojo.RestCode;
 
 /**
  * @author chenning

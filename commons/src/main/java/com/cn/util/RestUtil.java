@@ -1,6 +1,6 @@
 package com.cn.util;
 
-import com.cn.dto.RestCode;
+import com.cn.pojo.RestCode;
 import org.springframework.ui.ModelMap;
 
 /**

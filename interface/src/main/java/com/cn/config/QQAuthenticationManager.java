@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cn.UserService;
 import com.cn.dao.UserRepository;
 import com.cn.entity.User;
+import com.cn.pojo.CustomerDetail;
 import com.cn.util.DateUtil;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,6 @@ import static com.cn.config.QQAuthenticationFilter.clientId;
  * @date 2018-03-01 11:23
  */
 public class QQAuthenticationManager implements AuthenticationManager {
-    @Autowired
-    CustomerDetailService customerDetailService;
     @Autowired
     UserService userService;
 
@@ -72,7 +71,7 @@ public class QQAuthenticationManager implements AuthenticationManager {
 
         UserDetails userDetails;
         try {
-            userDetails = customerDetailService.loadUserByUnionId(openId);
+            userDetails = userService.loadUserByUnionId(openId);
         }catch (UsernameNotFoundException e){
             User user = new User();
             user.setUsername(json.getString("nickname"));

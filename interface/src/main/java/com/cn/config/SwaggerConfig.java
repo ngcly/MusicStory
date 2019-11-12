@@ -1,6 +1,7 @@
 package com.cn.config;
 
 import com.cn.entity.User;
+import com.cn.pojo.CustomerDetail;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;

@@ -3,17 +3,15 @@ package com.cn.controller;
 import com.cn.EssayService;
 import com.cn.UserService;
 import com.cn.config.CurrentUser;
-import com.cn.config.CustomerDetail;
-import com.cn.dto.RestCode;
+import com.cn.pojo.CustomerDetail;
+import com.cn.pojo.RestCode;
 import com.cn.entity.*;
 import com.cn.util.RestUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * 会员控制层

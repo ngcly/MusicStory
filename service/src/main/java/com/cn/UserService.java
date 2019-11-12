@@ -8,10 +8,16 @@ import com.cn.entity.Role;
 import com.cn.entity.User;
 import com.cn.entity.UserFaves;
 import com.cn.entity.UserFollow;
+import com.cn.pojo.CustomerDetail;
 import com.cn.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +25,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -29,7 +36,7 @@ import java.util.Set;
  */
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -40,6 +47,31 @@ public class UserService {
     UserFavesRepository userFavesRepository;
     @Autowired
     UserFollowRepository userFollowRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsernameOrEmail(username,username).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        user.getRoleList().forEach(r -> authorities.add(new SimpleGrantedAuthority(r.getRoleName())));
+        CustomerDetail customer = new CustomerDetail(user);
+        return customer;
+    }
+
+    public UserDetails loadUserByUserId(String userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        user.getRoleList().forEach(r -> authorities.add(new SimpleGrantedAuthority(r.getRoleName())));
+        CustomerDetail customer = new CustomerDetail(user);
+        return customer;
+    }
+
+    public UserDetails loadUserByUnionId(String unionId) {
+        User user = userRepository.findByUnionId(unionId).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        user.getRoleList().forEach(r -> authorities.add(new SimpleGrantedAuthority(r.getRoleName())));
+        CustomerDetail customer = new CustomerDetail(user);
+        return customer;
+    }
 
     /**
      * 注册账户

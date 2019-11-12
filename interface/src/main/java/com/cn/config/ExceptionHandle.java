@@ -1,6 +1,6 @@
 package com.cn.config;
 
-import com.cn.dto.RestCode;
+import com.cn.pojo.RestCode;
 import com.cn.util.RestUtil;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.ui.ModelMap;

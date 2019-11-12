@@ -2,10 +2,10 @@ package com.cn.controller;
 
 import com.cn.ManagerService;
 import com.cn.RoleService;
-import com.cn.config.ManagerDetail;
 import com.cn.entity.Manager;
 import com.cn.entity.Permission;
 import com.cn.entity.Role;
+import com.cn.pojo.ManagerDetail;
 import com.cn.util.MenuUtil;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import org.springframework.beans.factory.annotation.Autowired;

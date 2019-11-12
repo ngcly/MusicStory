@@ -2,7 +2,7 @@ package com.cn.controller;
 
 import com.cn.*;
 import com.cn.config.GlobalException;
-import com.cn.dto.RestCode;
+import com.cn.pojo.RestCode;
 import com.cn.entity.*;
 import com.cn.util.RestUtil;
 import com.cn.util.UploadUtil;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 

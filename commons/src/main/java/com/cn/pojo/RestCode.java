@@ -1,4 +1,4 @@
-package com.cn.dto;
+package com.cn.pojo;
 
 /**
  * restful 风格 错误编码

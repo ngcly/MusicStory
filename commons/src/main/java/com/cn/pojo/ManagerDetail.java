@@ -1,4 +1,4 @@
-package com.cn.config;
+package com.cn.pojo;
 
 import com.cn.entity.Manager;
 import com.cn.entity.Permission;
@@ -7,10 +7,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * security用户与数据库用户 合体信息封装类

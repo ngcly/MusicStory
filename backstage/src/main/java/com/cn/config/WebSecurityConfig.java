@@ -1,5 +1,6 @@
 package com.cn.config;
 
+import com.cn.ManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)//开启security注解
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
-    private ManagerDetailService managerDetailService;
+    private ManagerService managerService;
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -81,7 +82,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         //指定密码加密所使用的加密器为passwordEncoder()
         //需要将密码加密后写入数据库
-        auth.userDetailsService(managerDetailService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(managerService).passwordEncoder(passwordEncoder());
         auth.eraseCredentials(false);
     }
 

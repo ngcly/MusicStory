@@ -1,7 +1,7 @@
 package com.cn.config;
 
 import com.alibaba.fastjson.JSON;
-import com.cn.dto.RestCode;
+import com.cn.pojo.RestCode;
 import com.cn.util.RestUtil;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.AuthenticationException;

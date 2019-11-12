@@ -2,12 +2,15 @@ package com.cn;
 
 import com.cn.dao.LoginLogRepository;
 import com.cn.entity.LoginLog;
+import com.cn.util.IpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 /**
  * 系统日志 service
@@ -29,10 +32,17 @@ public class LogService {
 
     /**
      * 保存日志
-     * @param loginLog
      */
     @Async
-    public void saveLog(LoginLog loginLog){
+    public void saveLog(String userId, String username, HttpServletRequest request){
+        LoginLog loginLog = new LoginLog();
+        loginLog.setUserId(userId);
+        loginLog.setUserName(username);
+        loginLog.setUserType((byte)1);
+        String ip = IpUtil.getIp(request);
+        loginLog.setLoginIp(ip);
+        loginLog.setAddressIp(IpUtil.getIpAddresses(ip));
+        loginLog.setLoginTime(new Date());
         loginLogRepository.save(loginLog);
     }
 }

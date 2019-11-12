@@ -1,5 +1,6 @@
 package com.cn.config;
 
+import com.cn.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     @Autowired
-    CustomerDetailService customerDetailService;
+    UserService userService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -66,7 +67,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         //指定密码加密所使用的加密器为passwordEncoder()
         //需要将密码加密后写入数据库
-        auth.userDetailsService(customerDetailService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
         auth.eraseCredentials(false);
     }
 

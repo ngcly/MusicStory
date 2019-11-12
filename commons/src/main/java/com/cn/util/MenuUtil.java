@@ -1,6 +1,6 @@
 package com.cn.util;
 
-import com.cn.dto.TreeDTO;
+import com.cn.pojo.TreeVO;
 import com.cn.entity.Permission;
 
 import java.util.*;
@@ -17,12 +17,12 @@ public class MenuUtil {
     /**
      * 根据条件将菜单转成Tree对象
      */
-    public static Set<TreeDTO> makeTreeList(List<Permission> originMenus){
-        Set<TreeDTO> trees = new LinkedHashSet<>();
-        TreeDTO tree1;
+    public static Set<TreeVO> makeTreeList(List<Permission> originMenus){
+        Set<TreeVO> trees = new LinkedHashSet<>();
+        TreeVO tree1;
         for(Permission permission:originMenus){
             if("menu".equals(permission.getResourceType())){
-                tree1 = new TreeDTO(permission.getId(),permission.getName(),permission.getParentId(),permission.getUrl(),false,permission.getIcon());
+                tree1 = new TreeVO(permission.getId(),permission.getName(),permission.getParentId(),permission.getUrl(),false,permission.getIcon());
                 trees.add(tree1);
             }
         }
@@ -35,9 +35,9 @@ public class MenuUtil {
      * @param roleMenus   角色对应菜单
      * @return
      */
-    public static Set<TreeDTO> makeTreeList(List<Permission> originMenus,List<Permission> roleMenus){
-        Set<TreeDTO> trees = new HashSet<>();
-        TreeDTO tree1;
+    public static Set<TreeVO> makeTreeList(List<Permission> originMenus, List<Permission> roleMenus){
+        Set<TreeVO> trees = new HashSet<>();
+        TreeVO tree1;
         boolean contained;
         for(Permission sysPermission:originMenus){
             contained=false;
@@ -48,9 +48,9 @@ public class MenuUtil {
                 }
             }
             if(contained){
-                tree1 = new TreeDTO(sysPermission.getId(),sysPermission.getName(),sysPermission.getParentId(),sysPermission.getUrl(),true,sysPermission.getIcon());
+                tree1 = new TreeVO(sysPermission.getId(),sysPermission.getName(),sysPermission.getParentId(),sysPermission.getUrl(),true,sysPermission.getIcon());
             }else {
-                tree1 = new TreeDTO(sysPermission.getId(),sysPermission.getName(),sysPermission.getParentId(),sysPermission.getUrl(),false,sysPermission.getIcon());
+                tree1 = new TreeVO(sysPermission.getId(),sysPermission.getName(),sysPermission.getParentId(),sysPermission.getUrl(),false,sysPermission.getIcon());
             }
             trees.add(tree1);
         }
@@ -60,16 +60,16 @@ public class MenuUtil {
     /**
      * 将已转成Tree对象的list进行转换成树状
      */
-    public static Set<TreeDTO> eachTree(Set<TreeDTO> trees){
-        Set<TreeDTO> rootTrees = new HashSet<>();
-        for (TreeDTO tree : trees) {
+    public static Set<TreeVO> eachTree(Set<TreeVO> trees){
+        Set<TreeVO> rootTrees = new HashSet<>();
+        for (TreeVO tree : trees) {
             if(tree.getParentId() == 0){
                 rootTrees.add(tree);
             }
-            for (TreeDTO t : trees) {
+            for (TreeVO t : trees) {
                 if(t.getParentId().equals(tree.getId())){
                     if(tree.getChildren() == null){
-                        List<TreeDTO> myChildrens = new ArrayList<>();
+                        List<TreeVO> myChildrens = new ArrayList<>();
                         myChildrens.add(t);
                         tree.setChildren(myChildrens);
                     }else{

@@ -15,6 +15,7 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author chen
@@ -24,7 +25,7 @@ import java.util.List;
 public interface ManagerRepository extends JpaRepository<Manager,String>,JpaSpecificationExecutor<Manager> {
 
     @Query("select t from Manager t where t.username=:name")
-    Manager findUserByName(@Param("name") String name);
+    Optional<Manager> findUserByName(@Param("name") String name);
 
     /**
      * 判断用户名是否存在

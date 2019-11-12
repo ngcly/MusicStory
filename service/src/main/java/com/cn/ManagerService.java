@@ -4,11 +4,15 @@ import com.cn.dao.ManagerRepository;
 import com.cn.dao.RoleRepository;
 import com.cn.entity.Manager;
 import com.cn.entity.Role;
+import com.cn.pojo.ManagerDetail;
 import com.cn.util.RestUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,19 +28,17 @@ import java.util.*;
  * @date 2018-01-02 17:50
  */
 @Service
-public class ManagerService {
+public class ManagerService implements UserDetailsService {
     @Autowired
     ManagerRepository managerRepository;
     @Autowired
     RoleRepository roleRepository;
 
-    /**
-     * 根据用户名获取用户信息
-     * @param name
-     * @return
-     */
-    public Optional<Manager> findUserByName(String name) {
-        return Optional.ofNullable(managerRepository.findUserByName(name));
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Manager manager = managerRepository.findUserByName(username).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
+        ManagerDetail manage = new ManagerDetail(manager);
+        return manage;
     }
 
     /**
@@ -151,4 +153,5 @@ public class ManagerService {
         BCryptPasswordEncoder bc=new BCryptPasswordEncoder(4);
         manager.setPassword(bc.encode(password));
     }
+
 }

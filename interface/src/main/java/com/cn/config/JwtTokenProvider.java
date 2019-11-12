@@ -1,5 +1,6 @@
 package com.cn.config;
 
+import com.cn.pojo.CustomerDetail;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

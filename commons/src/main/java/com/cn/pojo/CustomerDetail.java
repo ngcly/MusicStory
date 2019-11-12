@@ -1,4 +1,4 @@
-package com.cn.config;
+package com.cn.pojo;
 
 import com.cn.entity.Role;
 import com.cn.entity.User;

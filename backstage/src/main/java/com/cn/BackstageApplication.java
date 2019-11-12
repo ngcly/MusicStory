@@ -2,6 +2,7 @@ package com.cn;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * 后台主启动类
@@ -14,6 +15,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 //要解决这个可以使用：basePackageClasses={},basePackages={}
 //@ComponentScan(basePackages={"com.cn"})
 @SpringBootApplication
+@EnableAsync
 public class BackstageApplication {
     public static void main(String[] args) {
         SpringApplication.run(BackstageApplication.class, args);

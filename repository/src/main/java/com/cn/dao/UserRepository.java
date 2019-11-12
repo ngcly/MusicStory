@@ -24,6 +24,7 @@ import java.util.Optional;
 //@CacheConfig(cacheNames = "users")
 public interface UserRepository extends JpaRepository<User,String>, JpaSpecificationExecutor<User> {
 
+    @Override
     Optional<User> findById(String userId);
 
     Optional<User> findByUsernameOrEmail(String username, String email);
