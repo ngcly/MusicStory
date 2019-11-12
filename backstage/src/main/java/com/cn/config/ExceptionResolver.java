@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * @author chenning
+ * @author ngcly
  * @Classname ExceptionResolver
  * @Description 全局异常处理
  * @Date 2019/5/18 14:53

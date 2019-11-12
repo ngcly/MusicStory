@@ -25,7 +25,7 @@ import java.util.Arrays;
 /**
  * Spring Security 配置
  *
- * @author chen
+ * @author ngcly
  * @date 2018-02-28 16:23
  */
 @Configuration
