@@ -33,7 +33,7 @@ spring:
     url: jdbc:mysql://localhost:3306/music_story?serverTimezone=UTC&characterEncoding=utf-8&useSSL=false
     username: root
     password: 123456
-    driverClassName: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     # 下面为连接池的补充设置，应用到上面所有数据源中
     druid:
