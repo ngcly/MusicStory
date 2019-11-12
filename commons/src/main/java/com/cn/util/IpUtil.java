@@ -52,17 +52,20 @@ public class IpUtil {
      */
     public static String getIpAddresses(String ip) {
         String returnStr;
+        String url;
         //阿里云接口
-//        String url = "https://dm-81.data.aliyun.com/rest/160601/ip/getIpInfo.json?ip="+ip;
+//        url = "https://dm-81.data.aliyun.com/rest/160601/ip/getIpInfo.json?ip="+ip;
 //		Map<String, String> headers = new HashMap<>(1);
 //		headers.put("Authorization", "APPCODE " + appCode);
 //        returnStr = HttpUtil.sendHttpGet(url,headers);
         // 淘宝接口
-//        String urlStr = "http://ip.taobao.com/service/getIpInfo.php?ip="+ip;
-//        returnStr = HttpUtil.sendHttpGet(urlStr);
-        //搜狐接口
-        returnStr = HttpUtil.sendHttpGet("http://pv.sohu.com/cityjson");
-        JSONObject json = JSONObject.parseObject(returnStr.replace("var returnCitySN = ","").replace(";",""));
-        return json.getString("cname");
+        url = "http://ip.taobao.com/service/getIpInfo.php?ip="+ip;
+        returnStr = HttpUtil.sendHttpGet(url);
+        JSONObject json = JSONObject.parseObject(returnStr);
+        if("0".equals(json.getString("code"))){
+            JSONObject data = json.getJSONObject("data");
+            return data.getString("country")+data.getString("area")+data.getString("region")+data.getString("city");
+        }
+        return null;
     }
 }
