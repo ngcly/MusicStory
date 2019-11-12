@@ -3,18 +3,10 @@ version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 
-sourceCompatibility = 1.8
-
 //bootRepackage.enabled = false
 
 dependencies {
-    compile('com.alibaba:druid-spring-boot-starter:1.1.10')
-    //解决java9不支持问题
-//    compile('javax.xml.bind:jaxb-api:2.3.0')
-    //解决 jdk11 jpa报错问题
-    compile('org.javassist:javassist:3.23.1-GA')
+    compile('com.alibaba:druid-spring-boot-starter:1.1.17')
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     runtime('mysql:mysql-connector-java')
-
-    testCompile('io.projectreactor:reactor-test')
 }

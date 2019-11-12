@@ -1,8 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'com.palantir.docker'
 
-sourceCompatibility = 1.8
-
 bootJar {
     archiveBaseName = "backstage"
     version =  '1.0'
@@ -26,12 +24,11 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
     //弱化 thymeleaf 校验
     compile('net.sourceforge.nekohtml:nekohtml:1.9.22')
-    compile group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity4', version: '3.0.2.RELEASE'
-    compile group: 'nz.net.ultraq.thymeleaf', name: 'thymeleaf-layout-dialect', version: '2.3.0'
+    compile 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.0.4.RELEASE'
+    compile 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.4.1'
     //js包
-    compile group: 'org.webjars', name: 'webjars-locator', version: '0.34'
-    compile 'org.webjars:layui:2.4.5'
-    compile 'org.webjars:jquery:3.3.1-1'
+    compile 'org.webjars:webjars-locator:0.37'
+    compile 'org.webjars:layui:2.5.5'
+    compile 'org.webjars:jquery:3.4.1'
     compile 'org.webjars.bower:jquery-treegrid:0.3.0'
-    testCompile('io.projectreactor:reactor-test')
 }

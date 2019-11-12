@@ -22,6 +22,8 @@ public interface PermissionRepository extends JpaRepository<Permission,Long> {
     @Query("select t from Permission t order by t.sort asc")
     List<Permission> findMenuList();
 
+    List<Permission> findAllByResourceType(String resourceType);
+
 //    @Modifying
 //    @Query("delete from Permission t where t.parentIds like :parentId%")
 //    void deleteMenus(@Param("parentId") String parentId);

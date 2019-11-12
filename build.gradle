@@ -5,7 +5,7 @@ version '1.0-SNAPSHOT'
 
 buildscript { //构建脚本
     //定义版本号
-    ext { springBootVersion = '2.1.4.RELEASE' }
+    ext { springBootVersion = '2.2.1.RELEASE' }
     repositories {//jar包仓库
         maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
         maven { url "https://plugins.gradle.org/m2/" }
@@ -41,22 +41,20 @@ subprojects {  //子项目通配
     }
 
     dependencies {  //所有子项目通用依赖
-//        compile('org.springframework.boot:spring-boot-starter')
-        compile('org.springframework.boot:spring-boot-starter-actuator')
-//        compile('org.springframework.boot:spring-boot-starter-data-rest')
-        compile('org.springframework.boot:spring-boot-starter-web')
-        compile('org.springframework.boot:spring-boot-starter-jersey')
-        compile('org.springframework.boot:spring-boot-starter-security')
-        compile('org.springframework.boot:spring-boot-starter-json')
-        compile('com.github.penggle:kaptcha:2.3.2')
-        compile('com.alibaba:fastjson:1.2.46')
-        compile('com.github.ulisesbocchio:jasypt-spring-boot-starter:2.1.1')
+        implementation 'org.springframework.boot:spring-boot-starter'
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-jersey'
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation 'org.springframework.boot:spring-boot-starter-json'
+        implementation 'com.github.penggle:kaptcha:2.3.2'
+        implementation 'com.alibaba:fastjson:1.2.62'
+        implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:2.1.2'
 
         runtime('org.springframework.boot:spring-boot-devtools')
-        annotationProcessor 'org.projectlombok:lombok:1.18.2'
-        compileOnly 'org.projectlombok:lombok:1.18.8'
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
 
         testCompile('org.springframework.boot:spring-boot-starter-test')
-        testCompile('org.springframework.security:spring-security-test')
     }
 }

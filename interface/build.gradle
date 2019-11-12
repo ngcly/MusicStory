@@ -1,11 +1,8 @@
 apply plugin: 'java'
 apply plugin: 'com.palantir.docker'
 
-sourceCompatibility = 1.8
-
 bootJar {
     archiveBaseName = "desk"
-    version =  '1.0'
 }
 
 task unpack(type: Copy) {
@@ -29,13 +26,11 @@ dependencies {
 
     compile('io.springfox:springfox-swagger2:2.9.2')
     compile('io.springfox:springfox-swagger-ui:2.9.2')
-    compile('org.jsoup:jsoup:1.11.2')
+    compile('org.jsoup:jsoup:1.12.1')
     compile('io.jsonwebtoken:jjwt:0.9.1')
 
 //    compile 'org.springframework.social:spring-social-config:1.1.5.RELEASE'
 //    compile 'org.springframework.social:spring-social-core:1.1.5.RELEASE'
 //    compile 'org.springframework.social:spring-social-security:1.1.5.RELEASE'
 //    compile 'org.springframework.social:spring-social-web:1.1.5.RELEASE'
-
-    testCompile('io.projectreactor:reactor-test')
 }

@@ -62,7 +62,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .tokenValiditySeconds(60 * 60 * 24 * 7)
                 //设置cookie的私钥
                 .key("token")
-                .rememberMeCookieName("cly")
+                .rememberMeParameter("cly")
                 .and()
                 .logout()
                 //默认注销行为为logout，可以通过下面的方式来修改
