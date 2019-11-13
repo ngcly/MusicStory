@@ -5,7 +5,7 @@ package com.cn.pojo;
  */
 public enum RestCode {
     SUCCESS(200, "操作成功"),
-    VERIFYCODE_ERR(332,"验证码错误"),
+    VERIFYCODE_ERR(332,"验证码错误或过期"),
     USER_ERR(333,"用户名或密码错误"),
     USER_DISABLE(334,"用户被禁用"),
     USER_LOCKED(335,"用户被锁定"),

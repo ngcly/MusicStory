@@ -36,7 +36,7 @@ public class EssayService {
         String sql = "SELECT t.id,t.title,SUBSTRING(t.content,1,300)content,t3.username,t2.name,t.created_time,t.updated_time,t.read_num " +
                 "FROM essay t,classify t2,`user` t3 WHERE t.classify_id=t2.id AND t.user_id=t3.id LIMIT ?,?";
         List<Map<String,Object>> essays = customDAO.nativeQueryListMap(sql,page-1,pageSize);
-        return RestUtil.Success(essays);
+        return RestUtil.success(essays);
     }
 
     /**
@@ -47,7 +47,7 @@ public class EssayService {
      */
     public ModelMap getUserEssayList(Pageable pageable,String userId){
         Page<Essay> essayList = essayRepository.findAll(pageable);
-        return RestUtil.Success(essayList.getContent());
+        return RestUtil.success(essayList.getContent());
     }
 
     /**

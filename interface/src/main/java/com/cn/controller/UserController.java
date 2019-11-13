@@ -31,7 +31,7 @@ public class UserController {
     @ApiOperation(value = "用户信息", notes = "获取用户详情信息")
     @GetMapping("/info")
     public ModelMap userInfo(@CurrentUser CustomerDetail customerDetail) {
-        return RestUtil.Success(customerDetail);
+        return RestUtil.success(customerDetail);
     }
 
     /**
@@ -54,7 +54,7 @@ public class UserController {
     public ModelMap createEssay(@CurrentUser User user, @RequestBody Essay essay){
         essay.setUser(user);
         essayService.createEssay(essay);
-        return RestUtil.Success();
+        return RestUtil.success();
     }
 
     @ApiOperation(value = "修改文章", notes = "用户修改文章")
@@ -69,10 +69,10 @@ public class UserController {
     public ModelMap deleteEssay(@CurrentUser User user,@PathVariable("id")String id){
         try {
             essayService.delUserEssay(user.getId(),id);
-            return RestUtil.Success();
+            return RestUtil.success();
         }catch (Exception e){
             e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
+            return RestUtil.failure(RestCode.SERVER_ERROR);
         }
     }
 
@@ -108,14 +108,14 @@ public class UserController {
     @PostMapping("/star")
     public ModelMap star(@CurrentUser User user,@RequestBody String essayId){
         userService.addUserFaves(user.getId(),essayId, UserFaves.点赞);
-        return RestUtil.Success();
+        return RestUtil.success();
     }
 
     @ApiOperation(value = "取消点赞", notes = "用户取消点赞文章")
     @DeleteMapping("/star")
     public ModelMap cancelStar(@CurrentUser User user,@RequestBody String essayId){
         userService.delUserFaves(user.getId(),essayId, UserFaves.点赞);
-        return RestUtil.Success();
+        return RestUtil.success();
     }
 
     @ApiOperation(value = "获取用户收藏的文章", notes = "获取当前用户收藏的所有文章")
@@ -129,14 +129,14 @@ public class UserController {
     @PostMapping("/collect")
     public ModelMap collect(@CurrentUser User user,@RequestBody String essayId){
         userService.addUserFaves(user.getId(),essayId, UserFaves.收藏);
-        return RestUtil.Success();
+        return RestUtil.success();
     }
 
     @ApiOperation(value = "取消收藏", notes = "用户取消收藏文章")
     @DeleteMapping("/collect")
     public ModelMap cancelCollect(@CurrentUser User user,@RequestBody String essayId){
         userService.delUserFaves(user.getId(),essayId, UserFaves.收藏);
-        return RestUtil.Success();
+        return RestUtil.success();
 
     }
 
@@ -158,13 +158,13 @@ public class UserController {
     @PostMapping("/watch")
     public ModelMap watch(@CurrentUser User user,@RequestBody String userId){
         userService.addUserFollow(user.getId(),userId);
-        return RestUtil.Success();
+        return RestUtil.success();
     }
 
     @ApiOperation(value = "取消关注", notes = "取消关注某个用户")
     @DeleteMapping("/watch")
     public ModelMap cancelWatch(@CurrentUser User user,@RequestBody String userId){
         userService.delUserFollow(user.getId(),userId);
-        return RestUtil.Success();
+        return RestUtil.success();
     }
 }

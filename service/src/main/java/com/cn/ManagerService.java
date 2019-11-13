@@ -93,10 +93,10 @@ public class ManagerService implements UserDetailsService {
             manager.setState((byte) 0);
         }
         if(StringUtils.isEmpty(manager.getUsername())){
-            return RestUtil.Error(333,"用户名不可为空");
+            return RestUtil.failure(333,"用户名不可为空");
         }
         if(managerRepository.existsByUsernameAndIdIsNot(manager.getUsername(),manager.getId())){
-            return RestUtil.Error(333,"该用户名已存在");
+            return RestUtil.failure(333,"该用户名已存在");
         }
 
         if(manager.getRoleIds()!=null){
@@ -106,7 +106,7 @@ public class ManagerService implements UserDetailsService {
             manager.setRoleList(roles);
         }
         managerRepository.save(manager);
-        return RestUtil.Success();
+        return RestUtil.success();
     }
 
     /**
@@ -136,9 +136,9 @@ public class ManagerService implements UserDetailsService {
         BCryptPasswordEncoder bc=new BCryptPasswordEncoder(4);
         if(bc.matches(oldPassword,manager.getPassword())){
             manager.setPassword(bc.encode(password));
-            return RestUtil.Success();
+            return RestUtil.success();
         }else{
-            return RestUtil.Error(333,"原密码错误");
+            return RestUtil.failure(333,"原密码错误");
         }
     }
 

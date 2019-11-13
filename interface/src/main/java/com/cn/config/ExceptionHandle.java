@@ -40,21 +40,21 @@ public class ExceptionHandle
     public ModelMap handlerException(HttpServletRequest request, Exception e){
         e.printStackTrace();
         if (e instanceof AccessDeniedException) {
-            return RestUtil.Error(RestCode.UNAUTHZ);
+            return RestUtil.failure(RestCode.UNAUTHZ);
         } else if (e instanceof HttpRequestMethodNotSupportedException) {
-            return RestUtil.Error(RestCode.METHOD_ERROR);
+            return RestUtil.failure(RestCode.METHOD_ERROR);
         } else if (e instanceof MissingPathVariableException) {
             // 缺少路径参数
-            return RestUtil.Error(RestCode.NOT_FOUND);
+            return RestUtil.failure(RestCode.NOT_FOUND);
         } else if (e instanceof MissingServletRequestParameterException) {
             // 缺少必须的请求参数
-            return RestUtil.Error(RestCode.PARAM_ERROR);
+            return RestUtil.failure(RestCode.PARAM_ERROR);
         } else if (e instanceof HttpMediaTypeNotAcceptableException){
-            return RestUtil.Error(RestCode.HEAD_ERROR);
+            return RestUtil.failure(RestCode.HEAD_ERROR);
         }else if (e instanceof GlobalException){
-            return RestUtil.Error(((GlobalException) e).getCode(),e.getMessage());
+            return RestUtil.failure(((GlobalException) e).getCode(),e.getMessage());
         } else {
-            return RestUtil.Error(RestCode.SERVER_ERROR);
+            return RestUtil.failure(RestCode.SERVER_ERROR);
         }
 
     }

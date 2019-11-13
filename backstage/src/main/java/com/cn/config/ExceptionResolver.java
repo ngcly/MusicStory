@@ -30,11 +30,11 @@ public class ExceptionResolver implements HandlerExceptionResolver {
             ModelAndView mv = new ModelAndView(new MappingJackson2JsonView());
             ModelMap modelMap;
             if(ex instanceof AccessDeniedException){
-                modelMap = RestUtil.Error(RestCode.UNAUTHZ);
+                modelMap = RestUtil.failure(RestCode.UNAUTHZ);
             } else if(ex instanceof GlobalException){
-                modelMap = RestUtil.Error(((GlobalException) ex).getCode(),ex.getMessage());
+                modelMap = RestUtil.failure(((GlobalException) ex).getCode(),ex.getMessage());
             } else {
-                modelMap = RestUtil.Error(RestCode.SERVER_ERROR);
+                modelMap = RestUtil.failure(RestCode.SERVER_ERROR);
             }
             mv.addAllObjects(modelMap);
             return mv;

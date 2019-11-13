@@ -12,6 +12,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+
+import javax.sql.DataSource;
 
 /**
  * Spring Security 配置
@@ -25,6 +29,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private ManagerService managerService;
+    @Autowired
+    private DataSource dataSource;
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -34,25 +40,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        //设置验证码过滤器
-        LoginFilter loginFilter = new LoginFilter();
-        loginFilter.setAuthenticationManager(authenticationManager());
-        loginFilter.setAuthenticationSuccessHandler(loginSuccessHandler());
-        loginFilter.setAuthenticationFailureHandler(loginFailureHandler());
+        //验证码过滤器
+        ValidateCodeFilter validateCodeFilter = new ValidateCodeFilter();
+        validateCodeFilter.setLoginFailureHandler(loginFailureHandler());
 
-        http.addFilterBefore(loginFilter,UsernamePasswordAuthenticationFilter.class)
+        http
+                .addFilterBefore(validateCodeFilter,UsernamePasswordAuthenticationFilter.class)
                 .formLogin()
                 //表单登录的 登录页
                 .loginPage("/login")
-//                .successHandler(loginSuccessHandler())
-//                .defaultSuccessUrl("/")
-                //登录失败跳转页面
-//                .failureUrl("/login?error=true")
-//                .failureHandler(loginFailureHandler())
+                .successHandler(loginSuccessHandler())
+                .failureHandler(loginFailureHandler())
                 .and()
                 //开启cookie保存用户数据
                 .rememberMe()
                 //设置cookie有效期
+                .userDetailsService(managerService)
+                .tokenRepository(persistentTokenRepository())
                 .tokenValiditySeconds(60 * 60 * 24 * 7)
                 //设置cookie的私钥
                 .key("token")
@@ -82,6 +86,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //需要将密码加密后写入数据库
         auth.userDetailsService(managerService).passwordEncoder(passwordEncoder());
         auth.eraseCredentials(false);
+    }
+
+    @Bean
+    public PersistentTokenRepository persistentTokenRepository() {
+        JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
+        tokenRepository.setDataSource(dataSource);
+        tokenRepository.setCreateTableOnStartup(true);
+        return tokenRepository;
     }
 
     @Bean

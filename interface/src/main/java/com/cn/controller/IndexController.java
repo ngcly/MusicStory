@@ -60,7 +60,7 @@ public class IndexController {
     @PostMapping("/signin")
     public ModelMap authenticateUser(@Valid @RequestBody LogInDTO loginDTO, BindingResult result) {
         if(result.hasErrors()){
-            return RestUtil.Error(400,result.getFieldError().getField()+":"+result.getFieldError().getDefaultMessage());
+            return RestUtil.failure(400,result.getFieldError().getField()+":"+result.getFieldError().getDefaultMessage());
         }
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -73,7 +73,7 @@ public class IndexController {
             Map<String,String> map = new HashMap<>();
             map.put("tokenType","Bearer");
             map.put("accessToken",jwt);
-            return RestUtil.Success(map);
+            return RestUtil.success(map);
     }
 
     /**
@@ -89,7 +89,7 @@ public class IndexController {
     })
     public ModelMap registerUser(@Valid @RequestBody SignUpDTO signUpDTO, BindingResult result) {
         if(result.hasErrors()){
-            return RestUtil.Error(400,result.getFieldError().getField()+":"+result.getFieldError().getDefaultMessage());
+            return RestUtil.failure(400,result.getFieldError().getField()+":"+result.getFieldError().getDefaultMessage());
         }
         User user = new User();
         BeanUtils.copyProperties(user, signUpDTO);
@@ -115,7 +115,7 @@ public class IndexController {
     })
     public ModelMap getEssayDetail(@PathVariable String id){
         Essay essay = essayService.getEssayDetail(id);
-        return RestUtil.Success(essay);
+        return RestUtil.success(essay);
     }
 
     /**
@@ -128,7 +128,7 @@ public class IndexController {
             @ApiImplicitParam(name = "page",value = "页数",paramType = "path",dataType = "int")
     })
     public ModelMap getEssayComment(@PathVariable String id,@PathVariable Integer page){
-        return RestUtil.Success(essayService.getComments(id,page));
+        return RestUtil.success(essayService.getComments(id,page));
     }
 
     /**
@@ -142,7 +142,7 @@ public class IndexController {
         if(carouselCategory!=null){
             carousels = carouselCategory.getCarousels();
         }
-        return RestUtil.Success(carousels);
+        return RestUtil.success(carousels);
     }
 
     /**

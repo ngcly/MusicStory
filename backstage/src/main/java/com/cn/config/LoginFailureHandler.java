@@ -41,7 +41,7 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
         } else {
             restCode = RestCode.UNAUTHEN;
         }
-        out.write(JSON.toJSON(RestUtil.Error(restCode)).toString());
+        out.write(JSON.toJSON(RestUtil.failure(restCode)).toString());
         out.flush();
         out.close();
     }

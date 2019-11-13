@@ -80,11 +80,11 @@ public class UserService implements UserDetailsService {
      */
     public ModelMap signUp(User signUpUser){
         if(userRepository.existsByUsername(signUpUser.getUsername())) {
-            return RestUtil.Error(300,"用户名已存在");
+            return RestUtil.failure(300,"用户名已存在");
         }
 
         if(userRepository.existsByEmail(signUpUser.getEmail())) {
-            return RestUtil.Error(300,"该邮箱已注册");
+            return RestUtil.failure(300,"该邮箱已注册");
         }
 
         User user = new User();
@@ -98,7 +98,7 @@ public class UserService implements UserDetailsService {
                 .fromCurrentContextPath().path("/api/users/{username}")
                 .buildAndExpand(result.getUsername()).toUri();
 
-        return RestUtil.Success();
+        return RestUtil.success();
     }
 
     /**

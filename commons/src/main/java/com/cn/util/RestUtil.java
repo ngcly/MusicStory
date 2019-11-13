@@ -15,40 +15,28 @@ public class RestUtil {
      * 成功返回
      * @return
      */
-    public static ModelMap Success() {
-        ModelMap mp = new ModelMap();
-        mp.put("code", RestCode.SUCCESS.code);
-        mp.put("msg", RestCode.SUCCESS.msg);
-        mp.put("data", "");
-        return mp;
+    public static ModelMap success() {
+        return success("");
     }
 
     /**
      * 一般成功 统一返回
      */
-    public static ModelMap Success(Object obj) {
-        ModelMap mp = new ModelMap();
-        mp.put("code", RestCode.SUCCESS.code);
-        mp.put("msg", RestCode.SUCCESS.msg);
-        mp.put("data", obj);
-        return mp;
+    public static ModelMap success(Object obj) {
+        return success(RestCode.SUCCESS.msg,obj);
     }
 
     /**
      * 自定义成功消息
      */
-    public static ModelMap Success(String msg, Object obj) {
-        ModelMap map = new ModelMap();
-        map.put("code", RestCode.SUCCESS.code);
-        map.put("msg", msg);
-        map.put("data", obj);
-        return map;
+    public static ModelMap success(String msg, Object obj) {
+        return success(RestCode.SUCCESS.code,msg,obj);
     }
 
     /**
      * 自定义成功返回
      */
-    public static ModelMap Success(int code,String msg,Object obj){
+    public static ModelMap success(int code,String msg,Object obj){
         ModelMap map = new ModelMap();
         map.put("code", code);
         map.put("msg", msg);
@@ -62,7 +50,7 @@ public class RestUtil {
      * @param obj
      * @return
      */
-    public static ModelMap Success(Long count,Object obj){
+    public static ModelMap success(Long count,Object obj){
         ModelMap map = new ModelMap();
         map.put("code", 0);
         map.put("msg", RestCode.SUCCESS.msg);
@@ -72,9 +60,9 @@ public class RestUtil {
     }
 
     /**
-     * 一般错误 统一返回
+     * 一般失败 统一返回
      */
-    public static ModelMap Error(RestCode restCode) {
+    public static ModelMap failure(RestCode restCode) {
         ModelMap map = new ModelMap();
         map.put("code", restCode.code);
         map.put("msg", restCode.msg);
@@ -82,9 +70,9 @@ public class RestUtil {
     }
 
     /**
-     * 自定义错误信息
+     * 自定义失败信息
      */
-    public static ModelMap Error(int code,String msg) {
+    public static ModelMap failure(int code,String msg) {
         ModelMap mp = new ModelMap();
         mp.put("code", code);
         mp.put("msg", msg);

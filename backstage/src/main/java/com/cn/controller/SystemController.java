@@ -125,7 +125,7 @@ public class SystemController {
         try {
             return managerService.saveManager(managerDetail,manager);
         }catch (Exception e){
-            return RestUtil.Error(RestCode.SERVER_ERROR);
+            return RestUtil.failure(RestCode.SERVER_ERROR);
         }
     }
 
@@ -139,14 +139,14 @@ public class SystemController {
         try {
             ManagerDetail managerDetail = (ManagerDetail) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
             if(managerDetail.getId().equals(managerId)||"1".equals(managerId)){
-                return RestUtil.Error(333,"禁止删除自己和admin");
+                return RestUtil.failure(333,"禁止删除自己和admin");
             }
             managerService.delManager(managerId);
         }catch (Exception e){
             e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
+            return RestUtil.failure(RestCode.SERVER_ERROR);
         }
-        return RestUtil.Success();
+        return RestUtil.success();
     }
 
     /**
@@ -169,7 +169,7 @@ public class SystemController {
             return managerService.updatePassword(managerDetail.getId(),oldPassword,password);
         }catch (Exception e){
             e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
+            return RestUtil.failure(RestCode.SERVER_ERROR);
         }
     }
 
@@ -186,9 +186,9 @@ public class SystemController {
             managerService.updatePassword(managerId,"123456");
         }catch (Exception e){
             e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
+            return RestUtil.failure(RestCode.SERVER_ERROR);
         }
-        return RestUtil.Success();
+        return RestUtil.success();
     }
 
     /**
@@ -228,12 +228,12 @@ public class SystemController {
         try {
             roleService.saveRole(role);
         }catch (DataIntegrityViolationException e){
-            return RestUtil.Error(333,"唯一标识符重复");
+            return RestUtil.failure(333,"唯一标识符重复");
         }catch (Exception e){
             e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
+            return RestUtil.failure(RestCode.SERVER_ERROR);
         }
-        return RestUtil.Success();
+        return RestUtil.success();
     }
 
     /**
@@ -265,9 +265,9 @@ public class SystemController {
             roleService.saveGrant(roleId,menuIds);
         }catch (Exception e){
             e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
+            return RestUtil.failure(RestCode.SERVER_ERROR);
         }
-        return RestUtil.Success();
+        return RestUtil.success();
     }
 
     /**
@@ -281,9 +281,9 @@ public class SystemController {
             roleService.altAvailable(roleId);
         }catch (Exception e){
             e.printStackTrace();
-            return RestUtil.Error(500,"服务异常");
+            return RestUtil.failure(500,"服务异常");
         }
-        return RestUtil.Success();
+        return RestUtil.success();
     }
 
     /**
@@ -297,9 +297,9 @@ public class SystemController {
             roleService.delRole(roleId);
         }catch (Exception e){
             e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
+            return RestUtil.failure(RestCode.SERVER_ERROR);
         }
-        return RestUtil.Success();
+        return RestUtil.success();
     }
 
     /**
@@ -350,9 +350,9 @@ public class SystemController {
             roleService.saveMenu(permission);
         }catch (Exception e){
             e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
+            return RestUtil.failure(RestCode.SERVER_ERROR);
         }
-        return RestUtil.Success();
+        return RestUtil.success();
     }
 
     /**
@@ -366,9 +366,9 @@ public class SystemController {
             roleService.delMenu(menuId);
         }catch (Exception e){
             e.printStackTrace();
-            return RestUtil.Error(RestCode.SERVER_ERROR);
+            return RestUtil.failure(RestCode.SERVER_ERROR);
         }
-        return RestUtil.Success();
+        return RestUtil.success();
     }
 
     /**
@@ -393,15 +393,15 @@ public class SystemController {
     @ResponseBody
     public ModelMap uploadAvatar(@RequestParam("file")MultipartFile file){
         if(file.isEmpty()){
-            return RestUtil.Error(222,"文件为空");
+            return RestUtil.failure(222,"文件为空");
         }
         String path;
         try {
             path = UploadUtil.uploadFileByAli(file,"avatar");
         } catch (Exception e) {
             e.printStackTrace();
-            return RestUtil.Error(RestCode.FILE_UPLOAD_ERR);
+            return RestUtil.failure(RestCode.FILE_UPLOAD_ERR);
         }
-        return RestUtil.Success(path);
+        return RestUtil.success(path);
     }
 }

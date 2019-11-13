@@ -23,7 +23,7 @@ public class NoticeService {
      */
     public ModelMap getNotice(){
         Date now = new Date();
-        return RestUtil.Success(noticeRepository.getNoticesByBeginTimeBeforeAndEndTimeAfterOrderByCreatedTimeDesc(now,now));
+        return RestUtil.success(noticeRepository.getNoticesByBeginTimeBeforeAndEndTimeAfterOrderByCreatedTimeDesc(now,now));
     }
 
     /**
@@ -31,7 +31,7 @@ public class NoticeService {
      * @return
      */
     public ModelMap getNoticeList(){
-        return RestUtil.Success(noticeRepository.findAll(Sort.by("createdTime")));
+        return RestUtil.success(noticeRepository.findAll(Sort.by("createdTime")));
     }
 
     /**
