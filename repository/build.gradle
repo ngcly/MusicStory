@@ -6,7 +6,7 @@ apply plugin: 'java'
 //bootRepackage.enabled = false
 
 dependencies {
-    compile('com.alibaba:druid-spring-boot-starter:1.1.17')
-    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    implementation 'com.alibaba:druid-spring-boot-starter:1.1.17'
+    api 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtime('mysql:mysql-connector-java')
 }

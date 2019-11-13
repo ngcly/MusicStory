@@ -6,11 +6,12 @@ apply plugin: 'java'
 //bootRepackage.enabled = false
 
 dependencies {
-    compile project(":repository")
-    compile('org.apache.httpcomponents:httpclient:4.5.4')
-    compile('org.apache.commons:commons-lang3:3.7')
-    compile('org.apache.commons:commons-collections4:4.1')
-    compile('com.qiniu:qiniu-java-sdk:7.2.+')
-    compile('com.aliyun.oss:aliyun-sdk-oss:2.8.3')
-    compile('org.springframework.boot:spring-boot-starter-mail')
+    api project(":repository")
+    implementation 'org.apache.httpcomponents:httpclient:4.5.4'
+    implementation 'org.apache.commons:commons-lang3:3.7'
+    implementation 'org.apache.commons:commons-collections4:4.1'
+    implementation 'com.qiniu:qiniu-java-sdk:7.2.+'
+    implementation 'com.aliyun.oss:aliyun-sdk-oss:2.8.3'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    api 'com.github.penggle:kaptcha:2.3.2'
 }

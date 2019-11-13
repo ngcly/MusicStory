@@ -40,13 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         loginFilter.setAuthenticationSuccessHandler(loginSuccessHandler());
         loginFilter.setAuthenticationFailureHandler(loginFailureHandler());
 
-        http.authorizeRequests()
-                .antMatchers("/kaptcha","/login").permitAll()
-//                .antMatchers("/admin/**").hasRole("ADMIN")  //该URL只有ADMIN权限才可访问
-//                .antMatchers("/db/**").access("hasRole('ADMIN') and hasRole('DBA')") //该URL需具备设定的两个权限才可访问
-                .anyRequest().authenticated()
-                .and()
-                .addFilterBefore(loginFilter,UsernamePasswordAuthenticationFilter.class)
+        http.addFilterBefore(loginFilter,UsernamePasswordAuthenticationFilter.class)
                 .formLogin()
                 //表单登录的 登录页
                 .loginPage("/login")
@@ -55,7 +49,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //登录失败跳转页面
 //                .failureUrl("/login?error=true")
 //                .failureHandler(loginFailureHandler())
-                .permitAll()
                 .and()
                 //开启cookie保存用户数据
                 .rememberMe()
@@ -63,7 +56,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .tokenValiditySeconds(60 * 60 * 24 * 7)
                 //设置cookie的私钥
                 .key("token")
-                .rememberMeParameter("cly")
                 .and()
                 .logout()
                 //默认注销行为为logout，可以通过下面的方式来修改
@@ -72,9 +64,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/login")
                 .invalidateHttpSession(true)
                 .deleteCookies("token")
-                .permitAll();
-        //设置可以iframe访问
-        http.headers().frameOptions().sameOrigin();
+                .and()
+                .authorizeRequests()
+                .antMatchers("/kaptcha","/login").permitAll()
+//                .antMatchers("/admin/**").hasRole("ADMIN")  //该URL只有ADMIN权限才可访问
+//                .antMatchers("/db/**").access("hasRole('ADMIN') and hasRole('DBA')") //该URL需具备设定的两个权限才可访问
+                .anyRequest().authenticated()
+                .and()
+                //设置可以iframe访问
+                .headers().frameOptions().sameOrigin();
     }
 
 

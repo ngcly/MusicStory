@@ -22,6 +22,7 @@ group = 'musicstory'
 subprojects {  //子项目通配
     apply plugin: 'java'
     apply plugin: 'idea'
+    apply plugin: 'java-library'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
 
@@ -47,7 +48,6 @@ subprojects {  //子项目通配
         implementation 'org.springframework.boot:spring-boot-starter-jersey'
         implementation 'org.springframework.boot:spring-boot-starter-security'
         implementation 'org.springframework.boot:spring-boot-starter-json'
-        implementation 'com.github.penggle:kaptcha:2.3.2'
         implementation 'com.alibaba:fastjson:1.2.62'
         implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:2.1.2'
 
