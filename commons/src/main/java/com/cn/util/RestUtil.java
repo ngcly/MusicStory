@@ -46,27 +46,16 @@ public class RestUtil {
 
     /**
      * layui 表格返回
-     * @param count
-     * @param obj
-     * @return
      */
     public static ModelMap success(Long count,Object obj){
-        ModelMap map = new ModelMap();
-        map.put("code", 0);
-        map.put("msg", RestCode.SUCCESS.msg);
-        map.put("count",count);
-        map.put("data", obj);
-        return map;
+        return success(obj).addAttribute("count",count);
     }
 
     /**
      * 一般失败 统一返回
      */
     public static ModelMap failure(RestCode restCode) {
-        ModelMap map = new ModelMap();
-        map.put("code", restCode.code);
-        map.put("msg", restCode.msg);
-        return map;
+        return failure(restCode.code,restCode.msg);
     }
 
     /**
