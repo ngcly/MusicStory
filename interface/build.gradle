@@ -24,6 +24,7 @@ repositories {
 dependencies {
     implementation project(":service")
 
+    implementation 'org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.2.1.RELEASE'
     implementation 'io.springfox:springfox-swagger2:2.9.2'
     implementation 'io.springfox:springfox-swagger-ui:2.9.2'
     implementation 'org.jsoup:jsoup:1.12.1'

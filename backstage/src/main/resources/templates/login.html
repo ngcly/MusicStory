@@ -52,7 +52,7 @@
                 data:data.field,//这是是要提交的参数
                 dataType:'json',
                 success:function(data){
-                    if(data.code == 200){
+                    if(data.code == 0){
                         layer.close(index);
                         location.href="/";
                     }else{

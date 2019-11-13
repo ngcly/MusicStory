@@ -87,7 +87,7 @@
             ,acceptMime:'image/*'
             ,data:{"[[${_csrf.parameterName}]]": "[[${_csrf.token}]]","id":$('#cid').val()}
             ,done: function(res){
-                if(res.code == 200){
+                if(res.code == 0){
                     location.reload();
                 }else{
                     return layer.msg('上传失败');
@@ -109,7 +109,7 @@
                     $("#save").attr("disabled","true");
                 },
                 success:function(result){
-                    if(result.code == 200){
+                    if(result.code == 0){
                         layer.msg(result.msg, {icon: 1,time:600}, function () {
                             location.href="/ms/carousel";
                         });
@@ -126,7 +126,7 @@
             var _this = $(this);
             layer.confirm('确定删除吗?',{title:'删除'}, function(){
                 $.getJSON('/ms/carouselDel', {id:_this.data('id'),url:_this.data('url')}, function(ret){
-                    if (ret.code == 200){
+                    if (ret.code == 0){
                         layer.msg(ret.msg, {icon: 1,time:600},function () {
                             location.reload();
                         });

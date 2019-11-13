@@ -127,7 +127,7 @@
         form.on('switch(switchTest)', function(data){
             var _this = $(this);
             $.getJSON('/sys/togAvailable', {roleId:_this.data('id')}, function(ret){
-                if (ret.code == 200){
+                if (ret.code == 0){
                     layer.msg(ret.msg, {icon: 1,time:600});
                 } else {
                     _this.prop("checked",!_this.prop("checked"));
@@ -150,7 +150,7 @@
             var _this = $(this);
             layer.confirm('确定删除吗?',{title:'删除'}, function(){
                 $.getJSON('/sys/roleDel', {roleId:_this.data('id')}, function(ret){
-                    if (ret.code == 200){
+                    if (ret.code == 0){
                         $('#'+_this.data('id')).hide();
                         layer.msg(ret.msg, {icon: 1,time:600},function () {
                             location.reload();

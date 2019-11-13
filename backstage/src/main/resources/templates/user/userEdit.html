@@ -111,7 +111,7 @@
                 data:data.field,
                 dataType:'json',
                 success:function(result){
-                    if(result.code == 200){
+                    if(result.code == 0){
                         layer.msg(result.msg, {icon: 1,time:600}, function () {
                             location.href="/ms/user";
                         });

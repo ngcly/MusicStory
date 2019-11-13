@@ -83,10 +83,6 @@ public class IndexController {
      */
     @ApiOperation(value = "注册", notes = "用户注册")
     @PostMapping("/signup")
-    @ApiResponses(value={
-            @ApiResponse(code=400,message="参数不合法"),
-            @ApiResponse(code=500,message="服务器异常")
-    })
     public ModelMap registerUser(@Valid @RequestBody SignUpDTO signUpDTO, BindingResult result) {
         if(result.hasErrors()){
             return RestUtil.failure(400,result.getFieldError().getField()+":"+result.getFieldError().getDefaultMessage());

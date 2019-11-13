@@ -72,7 +72,7 @@
                 data:data.field,
                 dataType:'json',
                 success:function(data){
-                    if(data.code == 200){
+                    if(data.code == 0){
                         layer.msg(data.msg, {icon: 1,time:600}, function () {
                             var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
                             parent.location.reload();

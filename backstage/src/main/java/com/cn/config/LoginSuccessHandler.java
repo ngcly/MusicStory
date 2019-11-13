@@ -30,7 +30,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         response.setContentType("application/json;charset=utf-8");
         PrintWriter out = response.getWriter();
-        out.write("{\"code\":200,\"msg\":\"登录成功\"}");
+        out.write("{\"code\":0,\"msg\":\"登录成功\"}");
         out.flush();
         out.close();
 

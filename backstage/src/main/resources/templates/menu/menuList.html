@@ -74,7 +74,7 @@
             var _this = $(this);
             layer.confirm('确定删除吗?',{title:'若有下级菜单则也会被删除'}, function(){
                 $.getJSON('/sys/menuDel', {menuId:_this.data('id')}, function(ret){
-                    if (ret.code == 200){
+                    if (ret.code == 0){
                         layer.msg(ret.msg, {icon: 1,time:600},function () {
                             location.reload();
                         });

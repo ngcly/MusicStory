@@ -131,7 +131,7 @@
                 });
             }
             ,done: function(res){
-                if(res.code == 200){
+                if(res.code == 0){
                     $('#af').val(res.data);
                 }else{
                     return layer.msg('上传失败');
@@ -153,7 +153,7 @@
                     $("#save").attr("disabled","true"); //改变提交按钮上的文字并将按钮设置为不可点击
                 },
                 success:function(result){
-                    if(result.code == 200){
+                    if(result.code == 0){
                         layer.msg(result.msg, {icon: 1,time:600}, function () {
                             if($('#ctm').val()==$('#altId').val()){
                                 parent.$('#my-avatar').attr('src',data.field.avatar);

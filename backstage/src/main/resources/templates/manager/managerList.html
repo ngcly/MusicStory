@@ -161,7 +161,7 @@
             var _this = $(this);
             layer.confirm('重置后密码为：123456',{title:'重置密码'}, function(){
                 $.getJSON('/sys/resetPwd', {managerId:_this.data('id')}, function(ret){
-                    if (ret.code == 200){
+                    if (ret.code == 0){
                         layer.msg(ret.msg, {icon: 1,time:600});
                     } else {
                         layer.msg(ret.msg, {icon: 2,time:600});
@@ -175,7 +175,7 @@
             var _this = $(this);
             layer.confirm('确定删除吗?',{title:'删除'}, function(){
                 $.getJSON('/sys/adminDel', {managerId:_this.data('id')}, function(ret){
-                    if (ret.code == 200){
+                    if (ret.code == 0){
                         // $('#'+_this.data('id')).hide();
                         layer.msg(ret.msg, {icon: 1,time:600},function () {
                             location.reload();

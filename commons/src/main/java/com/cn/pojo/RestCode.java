@@ -4,7 +4,7 @@ package com.cn.pojo;
  * restful 风格 错误编码
  */
 public enum RestCode {
-    SUCCESS(200, "操作成功"),
+    SUCCESS(0, "操作成功"),
     VERIFYCODE_ERR(332,"验证码错误或过期"),
     USER_ERR(333,"用户名或密码错误"),
     USER_DISABLE(334,"用户被禁用"),

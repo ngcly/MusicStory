@@ -85,7 +85,7 @@
                 layer.confirm('确定删除吗？',{title:'删除'}, function(index){
                     //向服务端发送删除指令
                     $.getJSON('/ms/classifyDel/'+data.id, function(ret){
-                        if (ret.code == 200){
+                        if (ret.code == 0){
                             layer.msg(ret.msg, {icon: 1,time:600},function () {
                                 obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
                             });
