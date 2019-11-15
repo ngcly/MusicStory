@@ -1,5 +1,6 @@
 package com.cn.entity;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -10,12 +11,11 @@ import java.util.List;
  * 后台资源实体类
  * Created by chen on 2017/6/23.
  */
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name="permission")
 public class Permission implements Serializable {
-    private static final long serialVersionUID = 1L;
-
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     @Column(name="id")

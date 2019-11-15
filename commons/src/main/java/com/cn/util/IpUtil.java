@@ -1,8 +1,10 @@
 package com.cn.util;
 
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -17,6 +19,8 @@ import java.util.Map;
  */
 @Component
 public class IpUtil {
+    @Autowired
+    RestTemplate restTemplate;
 
     public static String appCode;
 
@@ -66,6 +70,7 @@ public class IpUtil {
             JSONObject data = json.getJSONObject("data");
             return data.getString("country")+data.getString("area")+data.getString("region")+data.getString("city");
         }
+
         return null;
     }
 }

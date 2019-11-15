@@ -3,6 +3,7 @@ package com.cn.config;
 import com.cn.LogService;
 import com.cn.entity.Manager;
 
+import com.cn.util.IpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -16,7 +17,7 @@ import java.io.PrintWriter;
 /**
  * 登录成功后事件
  *
- * @author chen
+ * @author ngcly
  * @date 2018-01-02 18:53
  */
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
@@ -35,7 +36,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         out.close();
 
         Manager userDetails = (Manager) authentication.getPrincipal();
-        logService.saveLog(userDetails.getId(),userDetails.getUsername(),request);
+        logService.saveLog(userDetails.getId(),userDetails.getUsername(), IpUtil.getIp(request));
     }
 
 }

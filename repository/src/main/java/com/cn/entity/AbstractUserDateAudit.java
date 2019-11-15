@@ -6,12 +6,15 @@ import org.springframework.data.annotation.LastModifiedBy;
 
 import javax.persistence.MappedSuperclass;
 
+/**
+ * @author ngcly
+ */
 @MappedSuperclass
 @JsonIgnoreProperties(
         value = {"createdBy", "updatedBy"},
         allowGetters = true
 )
-public abstract class UserDateAudit extends DateAudit {
+public abstract class AbstractUserDateAudit extends AbstractDateAudit {
 
     @CreatedBy
     private String createdBy;

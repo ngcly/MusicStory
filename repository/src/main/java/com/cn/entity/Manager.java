@@ -1,6 +1,7 @@
 package com.cn.entity;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,10 +17,11 @@ import java.util.Set;
  * @author chen
  * @date 2017-12-30 16:48
  */
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name="manager")
-public class Manager extends DateAudit implements Serializable {
+public class Manager implements Serializable {
     @Id
     @GeneratedValue(generator = "id")
     @GenericGenerator(name = "id", strategy = "uuid")

@@ -17,9 +17,8 @@ import java.util.Set;
  * @author chen
  * @date 2018-02-28 16:57
  */
-public class CustomerDetail extends User implements UserDetails{
-    private static final long serialVersionUID = 1L;
-    public CustomerDetail(User user) {
+public class UserDetail extends User implements UserDetails {
+    public UserDetail(User user) {
         if(user != null)
         {
             BeanUtils.copyProperties(user,this);

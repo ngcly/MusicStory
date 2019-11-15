@@ -2,7 +2,8 @@ package com.cn.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
 
@@ -13,7 +14,9 @@ import java.util.Date;
 import java.util.Set;
 
 /**
- * Created by chen on 2017/6/23.
+ *
+ * @author ngcly
+ * @date 2017/6/23
  * 会员账户实体
  * 在单向关系中没有mappedBy,主控方相当于拥有指向另一方的外键的一方。
  * 1.一对一和多对一的@JoinColumn注解的都是在“主控方”，都是本表指向外表的外键名称。
@@ -21,7 +24,8 @@ import java.util.Set;
  * 3.多对多中，joinColumns写的都是本表在中间表的外键名称，
  * inverseJoinColumns写的是另一个表在中间表的外键名称。
  */
-@Data
+@Getter
+@Setter
 @Entity
 @JsonIgnoreProperties(value = {"handler","hibernateLazyInitializer","fieldHandler"})
 @Table(name="user", uniqueConstraints = {
@@ -35,9 +39,7 @@ import java.util.Set;
                 "unionId"
         })
 })
-public class User extends DateAudit implements Serializable {
-    private static final long serialVersionUID = 1L;
-
+public class User extends AbstractDateAudit implements Serializable {
     @Id
     @GeneratedValue(generator = "id")
     @GenericGenerator(name = "id", strategy = "uuid")

@@ -51,7 +51,7 @@ subprojects {  //子项目通配
         implementation 'com.alibaba:fastjson:1.2.62'
         implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:2.1.2'
 
-        runtime('org.springframework.boot:spring-boot-devtools')
+//        runtime('org.springframework.boot:spring-boot-devtools')
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
 

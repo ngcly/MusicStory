@@ -12,7 +12,9 @@ import java.util.Objects;
 
 /**
  * 角色表
- * Created by chen on 2017/6/23.
+ *
+ * @author ngcly
+ * @date 2017/6/23
  */
 @Getter
 @Setter
@@ -20,7 +22,6 @@ import java.util.Objects;
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class) //该注解是为了解决当前json序列化的bug 由于many to many会让json序列化产生无限循环 所以该注解能避免restful json产生的死循环
 @Table(name="role",uniqueConstraints=@UniqueConstraint(columnNames={"roleCode","roleType"}))
 public class Role implements Serializable {
-    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)

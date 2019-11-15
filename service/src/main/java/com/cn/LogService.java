@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 /**
@@ -34,12 +33,11 @@ public class LogService {
      * 保存日志
      */
     @Async
-    public void saveLog(String userId, String username, HttpServletRequest request){
+    public void saveLog(String userId, String username, String ip){
         LoginLog loginLog = new LoginLog();
         loginLog.setUserId(userId);
         loginLog.setUserName(username);
         loginLog.setUserType((byte)1);
-        String ip = IpUtil.getIp(request);
         loginLog.setLoginIp(ip);
         loginLog.setAddressIp(IpUtil.getIpAddresses(ip));
         loginLog.setLoginTime(new Date());

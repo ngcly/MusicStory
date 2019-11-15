@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "carousel_category")
-public class CarouselCategory extends UserDateAudit {
+public class CarouselCategory extends AbstractUserDateAudit {
     @Id
     @Column(name="id")
     private String id;

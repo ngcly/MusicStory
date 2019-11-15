@@ -4,7 +4,6 @@ import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Date;
 
 /**
  * 用户点赞收藏表
@@ -15,7 +14,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "user_faves")
-public class UserFaves extends DateAudit {
+public class UserFaves extends AbstractDateAudit {
     public final static byte 点赞 = '1';
     public final static byte 收藏 = '2';
 

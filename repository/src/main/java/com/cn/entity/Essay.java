@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "essay")
 @JsonIgnoreProperties(value = {"handler","hibernateLazyInitializer","fieldHandler"})
-public class Essay extends DateAudit{
+public class Essay extends AbstractDateAudit {
     @Id
     @GeneratedValue(generator = "id")
     @GenericGenerator(name = "id", strategy = "uuid")

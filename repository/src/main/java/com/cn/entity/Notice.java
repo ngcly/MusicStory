@@ -15,7 +15,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "notice")
-public class Notice extends UserDateAudit{
+public class Notice extends AbstractUserDateAudit {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     @Column(name="id")

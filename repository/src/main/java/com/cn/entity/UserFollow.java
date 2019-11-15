@@ -4,7 +4,6 @@ import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Date;
 
 /**
  * 会员关注关系表
@@ -15,7 +14,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "user_follow")
-public class UserFollow extends DateAudit {
+public class UserFollow extends AbstractDateAudit {
     @Id
     @GeneratedValue(generator = "id")
     @GenericGenerator(name = "id", strategy = "uuid")

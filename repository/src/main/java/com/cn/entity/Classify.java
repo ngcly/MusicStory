@@ -5,7 +5,6 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 分类表实体
@@ -17,7 +16,7 @@ import java.util.Date;
 @Entity
 @JsonIgnoreProperties(value = {"handler","hibernateLazyInitializer","fieldHandler"})
 @Table(name = "classify")
-public class Classify extends UserDateAudit implements Serializable{
+public class Classify extends AbstractUserDateAudit implements Serializable{
     private static final long serialVersionUID = 1L;
 
     @Id
