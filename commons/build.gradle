@@ -9,8 +9,8 @@ dependencies {
     api project(":repository")
     api 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.apache.httpcomponents:httpclient:4.5.4'
-    implementation 'org.apache.commons:commons-lang3:3.7'
-    implementation 'org.apache.commons:commons-collections4:4.1'
+    api 'org.apache.commons:commons-lang3:3.7'
+    api 'org.apache.commons:commons-collections4:4.1'
     implementation 'com.qiniu:qiniu-java-sdk:7.2.+'
     implementation 'com.aliyun.oss:aliyun-sdk-oss:2.8.3'
     implementation 'org.springframework.boot:spring-boot-starter-mail'

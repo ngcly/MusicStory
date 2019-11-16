@@ -21,7 +21,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name="manager")
-public class Manager implements Serializable {
+public class Manager extends AbstractDateAudit implements Serializable {
     @Id
     @GeneratedValue(generator = "id")
     @GenericGenerator(name = "id", strategy = "uuid")
