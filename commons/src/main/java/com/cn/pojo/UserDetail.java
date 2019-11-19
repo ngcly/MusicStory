@@ -33,7 +33,7 @@ public class UserDetail extends User implements UserDetails {
         if(userRoles != null)
         {
             for (Role role : userRoles) {
-                SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getRoleName());
+                SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getRoleCode());
                 authorities.add(authority);
             }
         }

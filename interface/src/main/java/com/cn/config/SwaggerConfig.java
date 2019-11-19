@@ -1,9 +1,8 @@
 package com.cn.config;
 
-import com.cn.entity.User;
-import com.cn.pojo.CustomerDetail;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMethod;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -16,6 +15,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.Arrays;
 
+/**
+ * @author ngcly
+ */
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
@@ -28,8 +30,7 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.basePackage("com.cn.controller"))   //指定包
                 .paths(PathSelectors.any()) //所有路径
                 .build()
-                .ignoredParameterTypes(CustomerDetail.class)
-                .ignoredParameterTypes(User.class)
+                .ignoredParameterTypes(Authentication.class)
                 .globalResponseMessage(RequestMethod.GET,
                         Arrays.asList(new ResponseMessageBuilder()
                                         .code(0)

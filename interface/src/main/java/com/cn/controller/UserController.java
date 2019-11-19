@@ -2,21 +2,24 @@ package com.cn.controller;
 
 import com.cn.EssayService;
 import com.cn.UserService;
-import com.cn.config.CurrentUser;
-import com.cn.pojo.CustomerDetail;
+import com.cn.pojo.UserDetail;
 import com.cn.pojo.RestCode;
 import com.cn.entity.*;
+import com.cn.pojo.UserVO;
 import com.cn.util.RestUtil;
 import io.swagger.annotations.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+
 
 /**
  * 会员控制层
  *
- * @author chen
+ * @author ngcly
  * @date 2018-01-05 12:08
  */
 @Api(value = "UserController", tags = "用户相关API",authorizations = @Authorization(value = "user"))
@@ -30,8 +33,11 @@ public class UserController {
 
     @ApiOperation(value = "用户信息", notes = "获取用户详情信息")
     @GetMapping("/info")
-    public ModelMap userInfo(@CurrentUser CustomerDetail customerDetail) {
-        return RestUtil.success(customerDetail);
+    public ModelMap userInfo(Authentication authentication) {
+        UserDetail user = (UserDetail) authentication.getPrincipal();
+        UserVO vo = new UserVO();
+        BeanUtils.copyProperties(user,vo);
+        return RestUtil.success(vo);
     }
 
     /**
@@ -41,17 +47,19 @@ public class UserController {
     @ApiOperation(value = "我的文章", notes = "获取用户写的文章")
     @GetMapping("/essay/{page}/{size}")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "page",value = "页数",paramType = "path",dataType = "int"),
-            @ApiImplicitParam(name = "size",value = "条数",paramType = "path",dataType = "int"),
+            @ApiImplicitParam(name = "page",value = "页数",paramType = "path",dataType = "int",defaultValue = "1"),
+            @ApiImplicitParam(name = "size",value = "条数",paramType = "path",dataType = "int",defaultValue = "10"),
     })
-    public ModelMap getUserEssay(@CurrentUser CustomerDetail customerDetail,@PathVariable("page")Integer page,
+    public ModelMap getUserEssay(Authentication authentication,@PathVariable("page")Integer page,
                                  @PathVariable("size")Integer size){
-        return essayService.getUserEssayList(PageRequest.of(page - 1, size),customerDetail.getId());
+        UserDetail user = (UserDetail) authentication.getPrincipal();
+        return essayService.getUserEssayList(PageRequest.of(page - 1, size),user.getId());
     }
 
     @ApiOperation(value = "写文章", notes = "用户发表文章")
     @PostMapping("/essay")
-    public ModelMap createEssay(@CurrentUser User user, @RequestBody Essay essay){
+    public ModelMap createEssay(Authentication authentication, @RequestBody Essay essay){
+        UserDetail user = (UserDetail) authentication.getPrincipal();
         essay.setUser(user);
         essayService.createEssay(essay);
         return RestUtil.success();
@@ -59,15 +67,17 @@ public class UserController {
 
     @ApiOperation(value = "修改文章", notes = "用户修改文章")
     @PutMapping("/essay")
-    public ModelMap updateEssay(@CurrentUser User user,@RequestBody Essay essay){
+    public ModelMap updateEssay(Authentication authentication,@RequestBody Essay essay){
+        UserDetail user = (UserDetail) authentication.getPrincipal();
         //TODO
         return null;
     }
 
     @ApiOperation(value = "删文章", notes = "根据文章ID删除用户文章")
     @DeleteMapping("/essay/{id}")
-    public ModelMap deleteEssay(@CurrentUser User user,@PathVariable("id")String id){
+    public ModelMap deleteEssay(Authentication authentication,@PathVariable("id")String id){
         try {
+            UserDetail user = (UserDetail) authentication.getPrincipal();
             essayService.delUserEssay(user.getId(),id);
             return RestUtil.success();
         }catch (Exception e){
@@ -78,63 +88,72 @@ public class UserController {
 
     @ApiOperation(value = "评论文章", notes = "用户评论文章")
     @PostMapping("/comment")
-    public ModelMap commentEssay(@CurrentUser User user,@RequestBody Comment comment){
+    public ModelMap commentEssay(Authentication authentication,@RequestBody Comment comment){
+        UserDetail user = (UserDetail) authentication.getPrincipal();
         //TODO
         return null;
     }
 
     @ApiOperation(value = "获取用户消息", notes = "获取当前用户的所有消息")
     @GetMapping("/new")
-    public ModelMap getMyNews(@CurrentUser User user){
+    public ModelMap getMyNews(Authentication authentication){
+        UserDetail user = (UserDetail) authentication.getPrincipal();
         //TODO
         return null;
     }
 
     @ApiOperation(value = "发送消息", notes = "给某人发送消息")
     @PostMapping("/new")
-    public ModelMap sendNews(@CurrentUser User user, @RequestBody News news){
+    public ModelMap sendNews(Authentication authentication, @RequestBody News news){
+        UserDetail user = (UserDetail) authentication.getPrincipal();
         //TODO
         return null;
     }
 
     @ApiOperation(value = "获取用户点赞的文章", notes = "获取当前用户点赞的所有文章")
     @GetMapping("/star")
-    public ModelMap getMyStar(@CurrentUser User user){
+    public ModelMap getMyStar(Authentication authentication){
+        UserDetail user = (UserDetail) authentication.getPrincipal();
         //TODO
         return null;
     }
 
     @ApiOperation(value = "点赞", notes = "用户点赞文章")
     @PostMapping("/star")
-    public ModelMap star(@CurrentUser User user,@RequestBody String essayId){
+    public ModelMap star(Authentication authentication,@RequestBody String essayId){
+        UserDetail user = (UserDetail) authentication.getPrincipal();
         userService.addUserFaves(user.getId(),essayId, UserFaves.点赞);
         return RestUtil.success();
     }
 
     @ApiOperation(value = "取消点赞", notes = "用户取消点赞文章")
     @DeleteMapping("/star")
-    public ModelMap cancelStar(@CurrentUser User user,@RequestBody String essayId){
+    public ModelMap cancelStar(Authentication authentication,@RequestBody String essayId){
+        UserDetail user = (UserDetail) authentication.getPrincipal();
         userService.delUserFaves(user.getId(),essayId, UserFaves.点赞);
         return RestUtil.success();
     }
 
     @ApiOperation(value = "获取用户收藏的文章", notes = "获取当前用户收藏的所有文章")
     @GetMapping("/collect")
-    public ModelMap getMyCollect(@CurrentUser User user){
+    public ModelMap getMyCollect(Authentication authentication){
+        UserDetail user = (UserDetail) authentication.getPrincipal();
         //TODO
         return null;
     }
 
     @ApiOperation(value = "收藏", notes = "用户收藏文章")
     @PostMapping("/collect")
-    public ModelMap collect(@CurrentUser User user,@RequestBody String essayId){
+    public ModelMap collect(Authentication authentication,@RequestBody String essayId){
+        UserDetail user = (UserDetail) authentication.getPrincipal();
         userService.addUserFaves(user.getId(),essayId, UserFaves.收藏);
         return RestUtil.success();
     }
 
     @ApiOperation(value = "取消收藏", notes = "用户取消收藏文章")
-    @DeleteMapping("/collect")
-    public ModelMap cancelCollect(@CurrentUser User user,@RequestBody String essayId){
+    @DeleteMapping("/collect/{essayId}")
+    public ModelMap cancelCollect(Authentication authentication,@PathVariable("essayId") String essayId){
+        UserDetail user = (UserDetail) authentication.getPrincipal();
         userService.delUserFaves(user.getId(),essayId, UserFaves.收藏);
         return RestUtil.success();
 
@@ -142,28 +161,32 @@ public class UserController {
 
     @ApiOperation(value = "获取关注我的用户", notes = "获取关注当前用户的所有人")
     @GetMapping("/follow")
-    public ModelMap getFollowMe(@CurrentUser User user){
+    public ModelMap getFollowMe(Authentication authentication){
+        UserDetail user = (UserDetail) authentication.getPrincipal();
         //TODO
         return null;
     }
 
     @ApiOperation(value = "获取用户关注的人", notes = "获取当前用户关注的所有人")
     @GetMapping("/watch")
-    public ModelMap getMyWatches(@CurrentUser User user){
+    public ModelMap getMyWatches(Authentication authentication){
+        UserDetail user = (UserDetail) authentication.getPrincipal();
         //TODO
         return null;
     }
 
     @ApiOperation(value = "关注", notes = "关注某个用户")
     @PostMapping("/watch")
-    public ModelMap watch(@CurrentUser User user,@RequestBody String userId){
+    public ModelMap watch(Authentication authentication,@RequestBody String userId){
+        UserDetail user = (UserDetail) authentication.getPrincipal();
         userService.addUserFollow(user.getId(),userId);
         return RestUtil.success();
     }
 
     @ApiOperation(value = "取消关注", notes = "取消关注某个用户")
-    @DeleteMapping("/watch")
-    public ModelMap cancelWatch(@CurrentUser User user,@RequestBody String userId){
+    @DeleteMapping("/watch/{userId}")
+    public ModelMap cancelWatch(Authentication authentication,@PathVariable("userId") String userId){
+        UserDetail user = (UserDetail) authentication.getPrincipal();
         userService.delUserFollow(user.getId(),userId);
         return RestUtil.success();
     }

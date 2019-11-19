@@ -21,7 +21,7 @@ import java.io.PrintWriter;
  * @date 2018-03-01 11:03
  */
 @Component
-public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class UnauthorizedEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,

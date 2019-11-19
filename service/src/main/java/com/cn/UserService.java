@@ -52,6 +52,10 @@ public class UserService implements UserDetailsService {
         return userDetail;
     }
 
+    public User getUserByMobile(String phone,String password){
+        return userRepository.findByUsernameAndPassword(phone,password).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
+    }
+
     /**
      * 注册账户
      * @param signUpUser 用户信息

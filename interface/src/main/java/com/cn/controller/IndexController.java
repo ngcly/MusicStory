@@ -4,8 +4,8 @@ import com.cn.CarouselService;
 import com.cn.EssayService;
 import com.cn.NoticeService;
 import com.cn.UserService;
-import com.cn.config.JwtTokenProvider;
 import com.cn.pojo.LogInDTO;
+import com.cn.pojo.RestCode;
 import com.cn.pojo.SignUpDTO;
 import com.cn.entity.Carousel;
 import com.cn.entity.CarouselCategory;
@@ -15,15 +15,17 @@ import com.cn.util.RestUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
+import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +43,6 @@ public class IndexController {
     @Autowired
     AuthenticationManager authenticationManager;
     @Autowired
-    JwtTokenProvider tokenProvider;
-    @Autowired
     UserService userService;
     @Autowired
     EssayService essayService;
@@ -50,30 +50,26 @@ public class IndexController {
     NoticeService noticeService;
     @Autowired
     CarouselService carouselService;
+    @Autowired
+    private TokenEndpoint tokenEndpoint;
 
-    /**
-     * 登陆
-     * @param loginDTO
-     * @return
-     */
     @ApiOperation(value = "登录", notes = "用户登录")
     @PostMapping("/signin")
-    public ModelMap authenticateUser(@Valid @RequestBody LogInDTO loginDTO, BindingResult result) {
+    public ModelMap postAccessToken(Principal principal, @Valid@RequestBody LogInDTO logInDTO,BindingResult result) throws HttpRequestMethodNotSupportedException {
         if(result.hasErrors()){
             return RestUtil.failure(400,result.getFieldError().getField()+":"+result.getFieldError().getDefaultMessage());
         }
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginDTO.getUsername(),
-                            loginDTO.getPassword()
-                    )
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = tokenProvider.generateToken(authentication);
-            Map<String,String> map = new HashMap<>();
-            map.put("tokenType","Bearer");
-            map.put("accessToken",jwt);
-            return RestUtil.success(map);
+        try {
+            Map<String,String> parameters = new HashMap<>();
+            parameters.put("grant_type","password");
+            parameters.put("scope","all");
+            parameters.put("username",logInDTO.getUsername());
+            parameters.put("password",logInDTO.getPassword());
+            ResponseEntity entity = tokenEndpoint.postAccessToken(principal, parameters);
+            return RestUtil.success(entity.getBody());
+        }catch (InvalidGrantException e){
+            return RestUtil.failure(RestCode.USER_ERR);
+        }
     }
 
     /**
