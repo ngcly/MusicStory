@@ -42,6 +42,8 @@ public class UnauthorizedEntryPoint implements AuthenticationEntryPoint {
             restCode = RestCode.PASSWORD_EXPIRE;
         } else if (authException instanceof DisabledException) {
             restCode = RestCode.USER_DISABLE;
+        } else if (authException instanceof InsufficientAuthenticationException){
+            restCode = RestCode.TOKEN_EXPIRE;
         } else {
             restCode = RestCode.UNAUTHEN;
         }

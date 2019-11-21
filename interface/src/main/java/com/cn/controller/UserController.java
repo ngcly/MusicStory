@@ -127,8 +127,8 @@ public class UserController {
     }
 
     @ApiOperation(value = "取消点赞", notes = "用户取消点赞文章")
-    @DeleteMapping("/star")
-    public ModelMap cancelStar(Authentication authentication,@RequestBody String essayId){
+    @DeleteMapping("/star/{essayId}")
+    public ModelMap cancelStar(Authentication authentication,@PathVariable("essayId") String essayId){
         UserDetail user = (UserDetail) authentication.getPrincipal();
         userService.delUserFaves(user.getId(),essayId, UserFaves.点赞);
         return RestUtil.success();

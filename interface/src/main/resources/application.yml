@@ -1,8 +1,5 @@
 server:
   port: 8070
-#  ssl:
-#    key-store: cert-1536204654144_www.ngcly.cn.pfx
-#    key-store-password: 4VCyH2uM
   # 开启 gzip 压缩
   compression:
     enabled: true
@@ -12,11 +9,6 @@ server:
   # 开启 http2 支持 只在https下起作用
   http2:
     enabled: true
-
-## JWT 密钥 过期时间
-app:
-  jwtSecret: JWTSuperSecretKey
-  jwtExpirationInMs: 604800000
 
 spring:
   jpa:

@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
+import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -34,7 +35,7 @@ import java.util.Map;
  * 描述:
  * 测试
  *
- * @author chen
+ * @author ngcly
  * @create 2018-08-05 14:48
  */
 @Api(value = "IndexController", tags = "首页内容相关API")
@@ -52,13 +53,12 @@ public class IndexController {
     CarouselService carouselService;
     @Autowired
     private TokenEndpoint tokenEndpoint;
+    @Autowired
+    private ConsumerTokenServices consumerTokenServices;
 
     @ApiOperation(value = "登录", notes = "用户登录")
     @PostMapping("/signin")
-    public ModelMap postAccessToken(Principal principal, @Valid@RequestBody LogInDTO logInDTO,BindingResult result) throws HttpRequestMethodNotSupportedException {
-        if(result.hasErrors()){
-            return RestUtil.failure(400,result.getFieldError().getField()+":"+result.getFieldError().getDefaultMessage());
-        }
+    public ModelMap postAccessToken(Principal principal, @RequestBody LogInDTO logInDTO) throws HttpRequestMethodNotSupportedException {
         try {
             Map<String,String> parameters = new HashMap<>();
             parameters.put("grant_type","password");
@@ -70,6 +70,26 @@ public class IndexController {
         }catch (InvalidGrantException e){
             return RestUtil.failure(RestCode.USER_ERR);
         }
+    }
+
+    @ApiOperation(value = "刷新token", notes = "用户刷新token")
+    @GetMapping("/signin")
+    public ModelMap getAccessToken(Principal principal,@RequestParam Map<String, String> parameters) {
+        parameters.put("grant_type","refresh_token");
+        parameters.put("scope","all");
+        try {
+            ResponseEntity entity = tokenEndpoint.postAccessToken(principal, parameters);
+            return RestUtil.success(entity.getBody());
+        }catch (Exception e){
+            return RestUtil.failure(RestCode.UNAUTHEN);
+        }
+    }
+
+    @ApiOperation(value = "登出", notes = "退出登录")
+    @DeleteMapping("/signout/{token}")
+    public ModelMap logout(@PathVariable("token")String token){
+        consumerTokenServices.revokeToken(token);
+        return RestUtil.success();
     }
 
     /**

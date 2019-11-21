@@ -8,6 +8,7 @@ public enum RestCode {
     SUCCESS(0, "操作成功"),
     VERIFYCODE_ERR(408,"验证码错误或过期"),
     USER_ERR(407,"用户名或密码错误"),
+    TOKEN_EXPIRE(409,"Token过期"),
     USER_DISABLE(334,"用户被禁用"),
     USER_LOCKED(335,"用户被锁定"),
     USER_EXPIRE(336,"账号过期"),

@@ -62,7 +62,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .pathMapping("/oauth/token","/signin")
                 //使用redis方式
                 .tokenStore(redisTokenStore())
-                //配置以生效password模式
                 .authenticationManager(authenticationManager)
                 //异常翻译
                 .exceptionTranslator(e -> new ResponseEntity(RestUtil.failure(RestCode.USER_ERR), HttpStatus.OK))
