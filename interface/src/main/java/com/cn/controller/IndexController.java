@@ -68,6 +68,9 @@ public class IndexController {
             ResponseEntity entity = tokenEndpoint.postAccessToken(principal, parameters);
             return RestUtil.success(entity.getBody());
         }catch (InvalidGrantException e){
+            if("User is disabled".equals(e.getMessage())){
+                return RestUtil.failure(334,"未激活,请先确认邮件完成激活");
+            }
             return RestUtil.failure(RestCode.USER_ERR);
         }
     }
@@ -104,8 +107,14 @@ public class IndexController {
             return RestUtil.failure(400,result.getFieldError().getField()+":"+result.getFieldError().getDefaultMessage());
         }
         User user = new User();
-        BeanUtils.copyProperties(user, signUpDTO);
+        BeanUtils.copyProperties(signUpDTO, user);
         return userService.signUp(user);
+    }
+
+    @ApiOperation(value = "激活", notes = "用户注册激活")
+    @GetMapping("/active/{code}")
+    public ModelMap activeUser(@PathVariable("code")String code){
+        return userService.activeUser(code);
     }
 
     /**

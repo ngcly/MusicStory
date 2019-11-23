@@ -3,8 +3,6 @@ version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 
-//bootRepackage.enabled = false
-
 dependencies {
     api project(":repository")
     api 'org.springframework.boot:spring-boot-starter-data-redis'
@@ -14,5 +12,7 @@ dependencies {
     implementation 'com.qiniu:qiniu-java-sdk:7.2.+'
     implementation 'com.aliyun.oss:aliyun-sdk-oss:2.8.3'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+    api 'org.springframework.boot:spring-boot-starter-amqp'
+    api 'org.springframework.boot:spring-boot-starter-websocket'
     api 'com.github.penggle:kaptcha:2.3.2'
 }

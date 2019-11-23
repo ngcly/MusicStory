@@ -3,7 +3,7 @@ package com.cn.config;
 import com.cn.pojo.RestCode;
 
 /**
- * @author chenning
+ * @author ngcly
  * @Classname GlobalException
  * @Description 自定义全局异常
  * @Date 2019/5/18 11:58

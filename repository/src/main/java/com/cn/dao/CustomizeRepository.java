@@ -11,9 +11,10 @@ import java.util.List;
 
 /**
  * 自定义sql查询
+ * @author ngcly
  */
 @Repository
-public class CustomDAO {
+public class CustomizeRepository {
     @PersistenceContext  //注入实体管理器
     private EntityManager entityManager;
 
@@ -38,8 +39,8 @@ public class CustomDAO {
         Query q = entityManager.createNativeQuery(sql);
         if (params != null && params.length > 0) {
             for (int i = 0; i < params.length; i++) {
-                q.setParameter(i + 1, params[i]); // 与Hiberante不同,jpa
-                // query从位置1开始
+                // 与Hiberante不同,jpa query从位置1开始
+                q.setParameter(i + 1, params[i]);
             }
         }
         return q;

@@ -62,8 +62,7 @@ public class User extends AbstractDateAudit implements Serializable {
     private BigDecimal balance;    //账户余额
     private Integer level;         //等级
     private Integer credit;        //积分
-    @Column(columnDefinition="enum('0','1','2')")
-    private Byte state;//用户状态,0:不可用 1:正常状态,2:异常.
+    private Byte state;//用户状态,0:未激活 1:正常状态,2:异常.
     @JsonIgnore
     private String unionId;        //第三方账号唯一ID
 

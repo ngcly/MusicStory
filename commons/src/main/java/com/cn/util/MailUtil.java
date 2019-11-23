@@ -7,7 +7,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 /**
@@ -46,7 +45,7 @@ public class MailUtil {
      * @param subject 邮件主题
      * @param content 邮件内容
      */
-    public void sendHtmlMail(String to, String subject, String content) throws MessagingException {
+    public void sendHtmlMail(String to, String subject, String content) throws Exception {
         MimeMessage message = mailSender.createMimeMessage();
         //true表示需要创建一个multipart message
         MimeMessageHelper helper = new MimeMessageHelper(message, true);

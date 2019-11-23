@@ -10,7 +10,7 @@ import java.util.Properties;
 /**
  * 谷歌验证码配置
  *
- * @author chen
+ * @author ngcly
  * @date 2018-01-02 17:34
  */
 @Component

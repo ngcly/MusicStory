@@ -57,7 +57,7 @@ public class NoticeService {
      * 新增修改公告
      * @param notice
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void addOrUpdateNotice(Notice notice){
         noticeRepository.save(notice);
     }
@@ -66,7 +66,7 @@ public class NoticeService {
      * 删除公告
      * @param id 主键
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteNotice(Long id){
         noticeRepository.deleteById(id);
     }

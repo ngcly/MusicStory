@@ -1,5 +1,6 @@
 package com.cn;
 
+import com.cn.config.RabbitConfig;
 import com.cn.dao.RoleRepository;
 import com.cn.dao.UserFavesRepository;
 import com.cn.dao.UserFollowRepository;
@@ -10,9 +11,11 @@ import com.cn.entity.UserFaves;
 import com.cn.entity.UserFollow;
 import com.cn.pojo.UserDetail;
 import com.cn.util.RestUtil;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,10 +23,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.util.StringUtils;
 
-import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 会员 service 类
@@ -44,16 +50,16 @@ public class UserService implements UserDetailsService {
     UserFavesRepository userFavesRepository;
     @Autowired
     UserFollowRepository userFollowRepository;
+    @Autowired
+    RedisTemplate<String,String> redisTemplate;
+    @Autowired
+    RabbitTemplate rabbitTemplate;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsernameOrEmail(username,username).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
         UserDetail userDetail = new UserDetail(user);
         return userDetail;
-    }
-
-    public User getUserByMobile(String phone,String password){
-        return userRepository.findByUsernameAndPassword(phone,password).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
     }
 
     /**
@@ -70,18 +76,41 @@ public class UserService implements UserDetailsService {
             return RestUtil.failure(300,"该邮箱已注册");
         }
 
-        User user = new User();
-        user.setRealName(signUpUser.getRealName());
-        user.setUsername(signUpUser.getUsername());
-        user.setEmail(signUpUser.getEmail());
-        user.setPassword(passwordEncoder.encode(signUpUser.getPassword()));
-        User result = userRepository.save(user);
-        //设置前台注册成功跳转页面
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("/api/users/{username}")
-                .buildAndExpand(result.getUsername()).toUri();
+        signUpUser.setPassword(passwordEncoder.encode(signUpUser.getPassword()));
+        signUpUser.setState((byte) 0);
+        User result = userRepository.save(signUpUser);
+        //生成激活码
+        String code = System.currentTimeMillis()%100+result.getUsername();
+        //以激活码为KEY 将用户ID保存到redis 有效期三天
+        redisTemplate.opsForValue().set(code,result.getId(),3,TimeUnit.DAYS);
+        Map<String,String> map = new HashMap<>();
+        map.put("to",result.getEmail());
+        map.put("subject","来自音书网站的激活邮件");
+        map.put("context","感谢注册音书网站！<br/>请完成激活进行使用:<a href=\"https://api.ngcly.cn/active/"+code+"\">点击激活</a><br/>激活有效期为3天");
+        //通过MQ 异步进行邮件发送
+        rabbitTemplate.convertAndSend(RabbitConfig.ACTIVE_QUEUE,map);
+        return RestUtil.success(result.getUsername());
+    }
 
-        return RestUtil.success();
+    /**
+     * 用户注册激活
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public ModelMap activeUser(String code){
+        //根据激活码 从redis获取用户ID信息
+        String id = redisTemplate.opsForValue().get(code);
+        if(StringUtils.isEmpty(id)){
+            return RestUtil.failure(500,"激活码已过期或无效");
+        }
+        Optional<User> userOptional = userRepository.findById(id);
+        if(!userOptional.isPresent()){
+            return RestUtil.failure(500,"激活码错误");
+        }
+        User user = userOptional.get();
+        user.setState((byte) 1);
+        userRepository.save(user);
+        redisTemplate.delete(code);
+        return RestUtil.success("激活成功！请前往登录页面登录");
     }
 
     /**

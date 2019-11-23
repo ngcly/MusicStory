@@ -1,11 +1,13 @@
 package com.cn;
 
 import com.cn.dao.CommentRepository;
-import com.cn.dao.CustomDAO;
+import com.cn.dao.CustomizeRepository;
 import com.cn.dao.EssayRepository;
 import com.cn.entity.Comment;
 import com.cn.entity.Essay;
 import com.cn.entity.News;
+import com.cn.entity.User;
+import com.cn.util.MailUtil;
 import com.cn.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author ngcly
+ */
 @Service
 public class EssayService {
     @Autowired
@@ -26,7 +31,9 @@ public class EssayService {
     @Autowired
     CommentRepository commentRepository;
     @Autowired
-    CustomDAO customDAO;
+    CustomizeRepository customizeRepository;
+    @Autowired
+    MailUtil mailUtil;
 
     /**
      * 获取文章列表
@@ -35,7 +42,7 @@ public class EssayService {
     public ModelMap getEssayList(int page,int pageSize){
         String sql = "SELECT t.id,t.title,SUBSTRING(t.content,1,300)content,t3.username,t2.name,t.created_time,t.updated_time,t.read_num " +
                 "FROM essay t,classify t2,`user` t3 WHERE t.classify_id=t2.id AND t.user_id=t3.id LIMIT ?,?";
-        List<Map<String,Object>> essays = customDAO.nativeQueryListMap(sql,page-1,pageSize);
+        List<Map<String,Object>> essays = customizeRepository.nativeQueryListMap(sql,page-1,pageSize);
         return RestUtil.success(essays);
     }
 
@@ -63,9 +70,22 @@ public class EssayService {
      * 用户写文章
      * @param essay 文章内容
      */
-    @Transactional
-    public void createEssay(Essay essay){
+    @Transactional(rollbackFor = Exception.class)
+    public ModelMap createEssay(User user, Essay essay){
+        essay.setUser(user);
+        essay.setState((byte)0);
         essayRepository.save(essay);
+        return RestUtil.success();
+    }
+
+    /**
+     * 用户修改文章
+     * @param essay 文章内容
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public ModelMap updateEssay(Essay essay){
+        essayRepository.save(essay);
+        return RestUtil.success();
     }
 
     /**
@@ -73,9 +93,10 @@ public class EssayService {
      * @param userId  用户ID
      * @param essayId 文章ID
      */
-    @Transactional
-    public void delUserEssay(String userId,String essayId){
-        essayRepository.deleteEssayByIdAndUserId(essayId,userId);
+    @Transactional(rollbackFor = Exception.class)
+    public ModelMap delUserEssay(String userId,String essayId){
+        int num = essayRepository.deleteEssayByIdAndUserId(essayId,userId);
+        return num>0?RestUtil.success():RestUtil.failure(500,"删除失败");
     }
 
     /**
@@ -91,11 +112,12 @@ public class EssayService {
      * 审查文章
      * @param essay
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void altEssayState(Essay essay){
         Essay essay1 = essayRepository.getOne(essay.getId());
         essay1.setState(essay.getState());
-        if(essay.getState()==2){//审核不通过
+        //审核不通过
+        if(essay.getState()==2){
             essay1.setRemark(essay.getRemark());
             News news = new News();
             news.setUserId(essay1.getUser().getId());
@@ -103,7 +125,9 @@ public class EssayService {
             news.setCreateTime(new Date());
             news.setSenderId("1");
             news.setSendTime(new Date());
-            //TODO 通知作者
+            //TODO websocket消息通知
+            //邮件通知作者
+            mailUtil.sendSimpleMail(essay1.getUser().getEmail(),"文章审核不通过",essay1.getTitle()+"审核失败，理由： "+essay.getRemark());
         }
     }
 
@@ -111,11 +135,21 @@ public class EssayService {
      * 获取文章评论
      * @param id     文章Id
      * @param page   页数
-     * @return
      */
     public List<Comment> getComments(String id,int page){
         Page<Comment> comments = commentRepository.findByEssayIdOrderByCreatedTimeDesc(id, PageRequest.of(page-1,20));
         List<Comment> commentList = comments.getContent();
         return commentList;
+    }
+
+    /**
+     * 评论文章
+     * @param userId 用户Id
+     * @param comment 评论内容
+     */
+    public ModelMap addComments(String userId,Comment comment){
+        comment.setUserId(userId);
+        commentRepository.save(comment);
+        return RestUtil.success();
     }
 }

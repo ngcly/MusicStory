@@ -60,38 +60,27 @@ public class UserController {
     @PostMapping("/essay")
     public ModelMap createEssay(Authentication authentication, @RequestBody Essay essay){
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        essay.setUser(user);
-        essayService.createEssay(essay);
-        return RestUtil.success();
+        return essayService.createEssay(user,essay);
     }
 
     @ApiOperation(value = "修改文章", notes = "用户修改文章")
     @PutMapping("/essay")
-    public ModelMap updateEssay(Authentication authentication,@RequestBody Essay essay){
-        UserDetail user = (UserDetail) authentication.getPrincipal();
-        //TODO
-        return null;
+    public ModelMap updateEssay(@RequestBody Essay essay){
+        return essayService.updateEssay(essay);
     }
 
     @ApiOperation(value = "删文章", notes = "根据文章ID删除用户文章")
     @DeleteMapping("/essay/{id}")
     public ModelMap deleteEssay(Authentication authentication,@PathVariable("id")String id){
-        try {
-            UserDetail user = (UserDetail) authentication.getPrincipal();
-            essayService.delUserEssay(user.getId(),id);
-            return RestUtil.success();
-        }catch (Exception e){
-            e.printStackTrace();
-            return RestUtil.failure(RestCode.SERVER_ERROR);
-        }
+        UserDetail user = (UserDetail) authentication.getPrincipal();
+        return essayService.delUserEssay(user.getId(),id);
     }
 
     @ApiOperation(value = "评论文章", notes = "用户评论文章")
     @PostMapping("/comment")
     public ModelMap commentEssay(Authentication authentication,@RequestBody Comment comment){
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        //TODO
-        return null;
+        return essayService.addComments(user.getId(),comment);
     }
 
     @ApiOperation(value = "获取用户消息", notes = "获取当前用户的所有消息")

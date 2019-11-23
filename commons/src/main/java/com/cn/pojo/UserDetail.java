@@ -67,7 +67,7 @@ public class UserDetail extends User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return getState()==0?false:true;
     }
 
 }

@@ -25,7 +25,7 @@ public class Essay extends AbstractDateAudit {
     private String title;      //文章标题
     private String content;    //文章内容
     private Integer readNum;   //阅览数
-    private Byte state;        //状态 0-正常 1-推荐 2-审核不通过
+    private Byte state;        //状态 0-待审核 1-正常 2-审核不通过 3-推荐
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId",nullable = false)
     private User user;

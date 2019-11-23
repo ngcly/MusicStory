@@ -21,6 +21,7 @@ import java.util.Date;
 
 /**
  * 解决jackson 无法格式化Instant 时间类型
+ * @author ngcly
  */
 @Configuration
 public class JacksonConfig {

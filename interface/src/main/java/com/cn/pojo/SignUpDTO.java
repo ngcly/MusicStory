@@ -2,6 +2,8 @@ package com.cn.pojo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -10,15 +12,13 @@ import javax.validation.constraints.Size;
 /**
  * 描述:
  *
- * @author chen
+ * @author nglcy
  * @create 2018-08-05 13:50
  */
 @ApiModel(value="注册", description = "注册参数")
+@Getter
+@Setter
 public class SignUpDTO {
-    @ApiModelProperty(value="真实姓名", required = true)
-    @NotBlank
-    @Size(min = 4, max = 40)
-    private String realName;
 
     @ApiModelProperty(value="用户名", required = true)
     @NotBlank
@@ -31,40 +31,12 @@ public class SignUpDTO {
     @Email
     private String email;
 
+    @ApiModelProperty(value="手机号")
+    private String phone;
+
     @ApiModelProperty(value="密码", required = true)
     @NotBlank
-    @Size(min = 6, max = 20)
+    @Size(min = 6, max = 32)
     private String password;
 
-    public String getRealName() {
-        return realName;
-    }
-
-    public void setRealName(String realName) {
-        this.realName = realName;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

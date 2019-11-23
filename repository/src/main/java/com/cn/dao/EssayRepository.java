@@ -18,7 +18,7 @@ public interface EssayRepository extends JpaRepository<Essay,String>, JpaSpecifi
 
     Essay getById(String id);
 
-    void deleteEssayByIdAndUserId(String id,String userId);
+    int deleteEssayByIdAndUserId(String id,String userId);
 
     /**
      * 动态查询文章数据
