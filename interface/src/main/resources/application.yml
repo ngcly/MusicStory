@@ -70,6 +70,7 @@ spring:
     username: 531237716@qq.com
     password: ENC(tU3XEcH8VDNaNRNkGkKu5fvCRZK9Fv3Kf4Ii8+fC81s=)
     default-encoding: UTF-8
+    port: 465
 
 jasypt:
   encryptor:
