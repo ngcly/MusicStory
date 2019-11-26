@@ -74,13 +74,12 @@ spring:
       mail:
         smtp:
           auth: true
-          ssl.enable: true
-          socketFactory.class: javax.net.ssl.SSLSocketFactory
           starttls:
             enable: true
             required: true
-          socketFactory.port: 465
-          port: 465
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            port: 465
 
 jasypt:
   encryptor:

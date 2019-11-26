@@ -2,10 +2,7 @@ package com.cn.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.FanoutExchange;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -13,6 +10,9 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * RabbitMQ 配置
@@ -25,6 +25,13 @@ public class RabbitConfig {
 
     /**队列名称*/
     public static final String ACTIVE_QUEUE = "music-story";
+
+    /**延时队列**/
+    public static final String DELAY_QUEUE = "delay-queue";
+    /**延时交换机**/
+    public static final String DELAY_EXCHANGE = "delay-exchange";
+    /**延时路由名称*/
+    public static final String DELAY_ROUTING_KEY = "delay-key";
 
     /**
      * 配置摸板（非必要 测试延迟队列方便直观）
@@ -56,4 +63,23 @@ public class RabbitConfig {
         return new Queue(ACTIVE_QUEUE, true);
     }
 
+    /**延迟队列配置 以下采用了延迟插件**/
+    @Bean
+    public Queue delayQueue() {
+        return new Queue(DELAY_QUEUE, true);
+    }
+
+    /**延迟交换机配置**/
+    @Bean
+    public CustomExchange delayExchange() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("x-delayed-type", "direct");
+        return new CustomExchange(DELAY_EXCHANGE, "x-delayed-message",true, false, map);
+    }
+
+    /**延迟交换机与延迟队列绑定*/
+    @Bean
+    Binding bindingDelayExchangeQueue(){
+        return BindingBuilder.bind(delayQueue()).to(delayExchange()).with(DELAY_ROUTING_KEY).noargs();
+    }
 }

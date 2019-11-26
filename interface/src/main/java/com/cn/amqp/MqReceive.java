@@ -1,5 +1,6 @@
 package com.cn.amqp;
 
+import com.cn.UserService;
 import com.cn.config.RabbitConfig;
 import com.cn.util.MailUtil;
 import org.slf4j.Logger;
@@ -19,6 +20,8 @@ public class MqReceive {
 
     @Autowired
     MailUtil mailUtil;
+    @Autowired
+    UserService userService;
 
     @RabbitListener(queues = {RabbitConfig.ACTIVE_QUEUE})
     public void consume(Map<String,String> map) {
@@ -28,5 +31,11 @@ public class MqReceive {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @RabbitListener(queues = {RabbitConfig.DELAY_QUEUE})
+    public void consumeDelay(String userId) {
+        log.info("[执行过期未激活账号] - [{}]", userId);
+        userService.delUnActiveUser(userId);
     }
 }
