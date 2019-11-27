@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-
 /**
  * 会员控制层
  *
@@ -43,9 +42,11 @@ public class UserController {
     }
 
     @GetMapping("/test")
-    public void test(){
+    public ModelMap test(){
         //websocket 消息测试
         messageTemplate.convertAndSend("/topic/notify", "webSocket消息测试");
+        messageTemplate.convertAndSendToUser("ngcly","/queue/notify","哈哈哈");
+        return RestUtil.success();
     }
 
     /**
