@@ -86,12 +86,12 @@ public class UserService implements UserDetailsService {
         Map<String,String> map = new HashMap<>();
         map.put("to",result.getEmail());
         map.put("subject","来自音书网站的激活邮件");
-        map.put("context","感谢注册音书网站！<br/>请完成激活进行使用:<a href=\"https://api.ngcly.cn/active/"+code+"\">点击激活</a><br/>激活有效期为3天");
+        map.put("context","感谢注册音书网站！<br/>请完成激活进行使用:<a href=\"https://api.ngcly.cn/active/"+code+"\">点击激活</a><br/>激活有效期为3小时");
         //通过MQ 异步进行邮件发送
         rabbitTemplate.convertAndSend(RabbitConfig.ACTIVE_QUEUE,map);
         //通过延迟队列 清除过期未激活账号
         rabbitTemplate.convertAndSend(RabbitConfig.DELAY_EXCHANGE,RabbitConfig.DELAY_ROUTING_KEY,result.getId(),msg->{
-            msg.getMessageProperties().setExpiration(3*60*60 * 1000 + "");
+            msg.getMessageProperties().setHeader("x-delay", 3*60*60*1000);
             return msg;
         });
         return RestUtil.success(result.getUsername());
