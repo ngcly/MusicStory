@@ -10,7 +10,6 @@ import io.swagger.annotations.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +28,6 @@ public class UserController {
     EssayService essayService;
     @Autowired
     UserService userService;
-    @Autowired
-    SimpMessageSendingOperations messageTemplate;
 
     @ApiOperation(value = "用户信息", notes = "获取用户详情信息")
     @GetMapping("/info")
@@ -39,14 +36,6 @@ public class UserController {
         UserVO vo = new UserVO();
         BeanUtils.copyProperties(user, vo);
         return RestUtil.success(vo);
-    }
-
-    @GetMapping("/test")
-    public ModelMap test(){
-        //websocket 消息测试
-        messageTemplate.convertAndSend("/topic/notify", "webSocket消息测试");
-        messageTemplate.convertAndSendToUser("ngcly","/queue/notify","哈哈哈");
-        return RestUtil.success();
     }
 
     /**

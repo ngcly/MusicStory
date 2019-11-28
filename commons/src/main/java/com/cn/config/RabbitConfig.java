@@ -23,8 +23,10 @@ import java.util.Map;
 public class RabbitConfig {
     private static final Logger log = LoggerFactory.getLogger(RabbitConfig.class);
 
-    /**队列名称*/
+    /**激活队列名称*/
     public static final String ACTIVE_QUEUE = "music-story";
+    /**通知队列*/
+    public static final String NOTIFY_QUEUE = "notify-queue";
 
     /**延时队列**/
     public static final String DELAY_QUEUE = "delay-queue";
@@ -61,6 +63,12 @@ public class RabbitConfig {
     public Queue activeQueue() {
         // 第一个是 QUEUE 的名字,第二个是消息是否需要持久化处理
         return new Queue(ACTIVE_QUEUE, true);
+    }
+
+    @Bean
+    public Queue notifyQueue() {
+        // 第一个是 QUEUE 的名字,第二个是消息是否需要持久化处理
+        return new Queue(NOTIFY_QUEUE, true);
     }
 
     /**延迟队列配置 以下采用了延迟插件**/

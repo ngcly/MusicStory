@@ -5,10 +5,7 @@ import com.cn.dao.RoleRepository;
 import com.cn.dao.UserFavesRepository;
 import com.cn.dao.UserFollowRepository;
 import com.cn.dao.UserRepository;
-import com.cn.entity.Role;
-import com.cn.entity.User;
-import com.cn.entity.UserFaves;
-import com.cn.entity.UserFollow;
+import com.cn.entity.*;
 import com.cn.pojo.UserDetail;
 import com.cn.util.RestUtil;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -16,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -54,6 +53,8 @@ public class UserService implements UserDetailsService {
     RedisTemplate<String,String> redisTemplate;
     @Autowired
     RabbitTemplate rabbitTemplate;
+    @Autowired
+    SimpMessageSendingOperations messageTemplate;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -173,6 +174,17 @@ public class UserService implements UserDetailsService {
         if(null!=user&&0==user.getState()){
             userRepository.delete(user);
         }
+    }
+
+    /**
+     * websocket 通知
+     */
+    public void notifyUser(@NotNull News news){
+        //TODO 待完善
+        //群发
+        messageTemplate.convertAndSend("/topic/notify", "webSocket消息测试");
+        //对某个用户发
+        messageTemplate.convertAndSendToUser("ngcly","/queue/notify",news.getContent());
     }
 
     /**

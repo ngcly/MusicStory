@@ -2,6 +2,7 @@ package com.cn.amqp;
 
 import com.cn.UserService;
 import com.cn.config.RabbitConfig;
+import com.cn.entity.News;
 import com.cn.util.MailUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ public class MqReceive {
 
     @RabbitListener(queues = {RabbitConfig.ACTIVE_QUEUE})
     public void consume(Map<String,String> map) {
-        log.info("[Rabbit listener 监听的消息] - [{}]", map);
+        log.info("[注册激活邮件发送] - [{}]", map);
         try {
             mailUtil.sendHtmlMail(map.get("to"),map.get("subject"),map.get("context"));
         } catch (Exception e) {
@@ -37,5 +38,11 @@ public class MqReceive {
     public void consumeDelay(String userId) {
         log.info("[执行过期未激活账号] - [{}]", userId);
         userService.delUnActiveUser(userId);
+    }
+
+    @RabbitListener(queues = {RabbitConfig.DELAY_QUEUE})
+    public void consumeNotify(News news) {
+        log.info("[消息通知] - [{}]", news);
+        userService.notifyUser(news);
     }
 }
