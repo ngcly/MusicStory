@@ -2,10 +2,12 @@ package com.cn.controller;
 
 import com.cn.EssayService;
 import com.cn.UserService;
+import com.cn.pojo.RestCode;
 import com.cn.pojo.UserDetail;
 import com.cn.entity.*;
 import com.cn.pojo.UserVO;
 import com.cn.util.RestUtil;
+import com.cn.util.UploadUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 会员控制层
@@ -179,4 +182,22 @@ public class UserController {
         return RestUtil.success();
     }
 
+    @ApiOperation(value = "文件上传", notes = "文件上传接口")
+    @PostMapping("/upload/{dir}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "dir", value = "oss分类名", paramType = "path", dataType = "String", defaultValue = "img"),
+    })
+    public ModelMap uploadAvatar(@RequestParam("file") MultipartFile file,@PathVariable("dir")String dir){
+        if(file.isEmpty()){
+            return RestUtil.failure(222,"文件为空");
+        }
+        String path;
+        try {
+            path = UploadUtil.uploadFileByAli(file,dir);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return RestUtil.failure(RestCode.FILE_UPLOAD_ERR);
+        }
+        return RestUtil.success(path);
+    }
 }
