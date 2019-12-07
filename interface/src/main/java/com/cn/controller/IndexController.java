@@ -13,10 +13,10 @@ import com.cn.entity.Essay;
 import com.cn.entity.User;
 import com.cn.util.RestUtil;
 import io.swagger.annotations.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
@@ -40,21 +40,14 @@ import java.util.Map;
  */
 @Api(value = "IndexController", tags = "首页内容相关API")
 @RestController
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class IndexController {
-    @Autowired
-    AuthenticationManager authenticationManager;
-    @Autowired
-    UserService userService;
-    @Autowired
-    EssayService essayService;
-    @Autowired
-    NoticeService noticeService;
-    @Autowired
-    CarouselService carouselService;
-    @Autowired
-    private TokenEndpoint tokenEndpoint;
-    @Autowired
-    private ConsumerTokenServices consumerTokenServices;
+    private final UserService userService;
+    private final EssayService essayService;
+    private final NoticeService noticeService;
+    private final CarouselService carouselService;
+    private final TokenEndpoint tokenEndpoint;
+    private final ConsumerTokenServices consumerTokenServices;
 
     @ApiOperation(value = "登录", notes = "用户登录")
     @PostMapping("/signin")

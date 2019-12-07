@@ -13,6 +13,7 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.security.Principal;
 import java.util.Arrays;
 
 /**
@@ -27,10 +28,12 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.cn.controller"))   //指定包
-                .paths(PathSelectors.any()) //所有路径
+                //指定包
+                .apis(RequestHandlerSelectors.basePackage("com.cn.controller"))
+                //所有路径
+                .paths(PathSelectors.any())
                 .build()
-                .ignoredParameterTypes(Authentication.class)
+                .ignoredParameterTypes(Authentication.class, Principal.class)
                 .globalResponseMessage(RequestMethod.GET,
                         Arrays.asList(new ResponseMessageBuilder()
                                         .code(0)

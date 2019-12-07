@@ -29,15 +29,15 @@ import java.util.Map;
 @Service
 public class EssayService {
     @Autowired
-    EssayRepository essayRepository;
+    private EssayRepository essayRepository;
     @Autowired
-    CommentRepository commentRepository;
+    private CommentRepository commentRepository;
     @Autowired
-    CustomizeRepository customizeRepository;
+    private CustomizeRepository customizeRepository;
     @Autowired
-    MailUtil mailUtil;
+    private MailUtil mailUtil;
     @Autowired
-    RabbitTemplate rabbitTemplate;
+    private RabbitTemplate rabbitTemplate;
 
     /**
      * 获取文章列表
@@ -45,8 +45,8 @@ public class EssayService {
      */
     public ModelMap getEssayList(int page,int pageSize){
         String sql = "SELECT t.id,t.title,SUBSTRING(t.content,1,300)content,t3.username,t2.name,t.created_time,t.updated_time,t.read_num " +
-                "FROM essay t,classify t2,`user` t3 WHERE t.classify_id=t2.id AND t.user_id=t3.id LIMIT ?,?";
-        List<Map<String,Object>> essays = customizeRepository.nativeQueryListMap(sql,page-1,pageSize);
+                "FROM essay t,classify t2,`user` t3 WHERE t.classify_id=t2.id AND t.user_id=t3.id order by t.updated_time desc LIMIT ?,?";
+        List<Map<String,Object>> essays = customizeRepository.nativeQueryListMap(sql,(page-1)*pageSize,pageSize);
         return RestUtil.success(essays);
     }
 
