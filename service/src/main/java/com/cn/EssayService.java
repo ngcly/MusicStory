@@ -45,7 +45,7 @@ public class EssayService {
      */
     public ModelMap getEssayList(int page,int pageSize){
         String sql = "SELECT t.id,t.title,SUBSTRING(t.content,1,300)content,t3.username,t2.name,t.created_time,t.updated_time,t.read_num " +
-                "FROM essay t,classify t2,`user` t3 WHERE t.classify_id=t2.id AND t.user_id=t3.id order by t.updated_time desc LIMIT ?,?";
+                "FROM essay t,classify t2,user t3 WHERE t.classify_id=t2.id AND t.user_id=t3.id order by t.updated_time desc LIMIT ?,?";
         List<Map<String,Object>> essays = customizeRepository.nativeQueryListMap(sql,(page-1)*pageSize,pageSize);
         return RestUtil.success(essays);
     }
@@ -129,7 +129,7 @@ public class EssayService {
             news.setCreateTime(new Date());
             news.setSenderId("1");
             news.setSendTime(new Date());
-            //在线消息通知 由于后台服务与api服务分开部署 无法在此直接发送websocket消息 所以通过队列转发
+            //在线消息通知 由于后台服务与api服务分开部署 无法在此直接发送websocket消息 所以通过Rabbit转发
             rabbitTemplate.convertAndSend(RabbitConfig.NOTIFY_QUEUE,news);
             //邮件通知作者
             mailUtil.sendSimpleMail(essay1.getUser().getEmail(),"文章审核不通过",essay1.getTitle()+"审核失败，理由： "+essay.getRemark());
@@ -141,10 +141,8 @@ public class EssayService {
      * @param id     文章Id
      * @param page   页数
      */
-    public List<Comment> getComments(String id,int page){
-        Page<Comment> comments = commentRepository.findByEssayIdOrderByCreatedTimeDesc(id, PageRequest.of(page-1,20));
-        List<Comment> commentList = comments.getContent();
-        return commentList;
+    public Page<Map<String,Object>> getComments(String id,int page){
+        return commentRepository.selectComments(id,PageRequest.of(page-1,20));
     }
 
     /**

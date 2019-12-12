@@ -187,7 +187,7 @@ public class MsController {
     @RequestMapping("/essayList")
     public ModelMap getEssayList(@RequestParam(value="page",defaultValue="1") Integer page,
                                  @RequestParam(value="size",defaultValue="10") Integer size, Essay essay){
-        Page<Essay> essayList = essayService.getEssayList(PageRequest.of(page - 1, size),essay);
+        Page<Essay> essayList = essayService.getEssayList(PageRequest.of(page - 1, size, Sort.by("createdTime").descending()),essay);
         return RestUtil.success(essayList.getTotalElements(),essayList.getContent());
     }
 
