@@ -62,7 +62,7 @@ public class UserController {
         return essayService.getUserEssayList(PageRequest.of(page - 1, size), user.getId());
     }
 
-    @ApiOperation(value = "写文章", notes = "用户发表文章")
+    @ApiOperation(value = "写文章", notes = "用户保存草稿")
     @PostMapping("/essay")
     public ModelMap createEssay(Authentication authentication, @Valid @RequestBody EssayDTO essayDTO, BindingResult result) {
         if(result.hasErrors()){
@@ -77,7 +77,7 @@ public class UserController {
         return essayService.createEssay(essayDTO.getClassifyId(), essay);
     }
 
-    @ApiOperation(value = "修改文章", notes = "用户修改文章")
+    @ApiOperation(value = "发表文章", notes = "用户发表文章")
     @PutMapping("/essay")
     public ModelMap updateEssay(@RequestBody Essay essay) {
         return essayService.updateEssay(essay);

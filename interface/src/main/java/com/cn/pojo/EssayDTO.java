@@ -1,5 +1,6 @@
 package com.cn.pojo;
 
+import com.cn.entity.Music;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * @author ngcly
@@ -29,5 +31,8 @@ public class EssayDTO {
 
     @ApiModelProperty(value="内容", required = true)
     private String content;
+
+    @ApiModelProperty(value="音乐列表")
+    private List<Music> musicList;
 
 }

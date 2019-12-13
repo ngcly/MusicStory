@@ -6,6 +6,7 @@ import com.cn.dao.CommentRepository;
 import com.cn.dao.CustomizeRepository;
 import com.cn.dao.EssayRepository;
 import com.cn.entity.*;
+import com.cn.enums.CommonState;
 import com.cn.util.MailUtil;
 import com.cn.util.RestUtil;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -78,7 +79,7 @@ public class EssayService {
     public ModelMap createEssay(Long classifyId, Essay essay){
         Classify classify = classifyRepository.getOne(classifyId);
         essay.setClassify(classify);
-        essay.setState((byte)0);
+        essay.setState(CommonState.EssayState.DRAFT.getCode());
         essay.setReadNum(0);
         essayRepository.save(essay);
         return RestUtil.success();
@@ -90,6 +91,7 @@ public class EssayService {
      */
     @Transactional(rollbackFor = Exception.class)
     public ModelMap updateEssay(Essay essay){
+        essay.setState(CommonState.EssayState.PENDING.getCode());
         essayRepository.save(essay);
         return RestUtil.success();
     }
