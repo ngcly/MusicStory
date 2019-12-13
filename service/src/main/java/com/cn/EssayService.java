@@ -1,13 +1,11 @@
 package com.cn;
 
 import com.cn.config.RabbitConfig;
+import com.cn.dao.ClassifyRepository;
 import com.cn.dao.CommentRepository;
 import com.cn.dao.CustomizeRepository;
 import com.cn.dao.EssayRepository;
-import com.cn.entity.Comment;
-import com.cn.entity.Essay;
-import com.cn.entity.News;
-import com.cn.entity.User;
+import com.cn.entity.*;
 import com.cn.util.MailUtil;
 import com.cn.util.RestUtil;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -31,6 +29,8 @@ public class EssayService {
     @Autowired
     private EssayRepository essayRepository;
     @Autowired
+    private ClassifyRepository classifyRepository;
+    @Autowired
     private CommentRepository commentRepository;
     @Autowired
     private CustomizeRepository customizeRepository;
@@ -44,7 +44,7 @@ public class EssayService {
      * @return
      */
     public ModelMap getEssayList(int page,int pageSize){
-        String sql = "SELECT t.id,t.title,SUBSTRING(t.content,1,300)content,t3.username,t2.name,t.created_time,t.updated_time,t.read_num " +
+        String sql = "SELECT t.id,t.title,t.synopsis,t3.username,t2.name,t.created_time,t.updated_time,t.read_num " +
                 "FROM essay t,classify t2,user t3 WHERE t.classify_id=t2.id AND t.user_id=t3.id order by t.updated_time desc LIMIT ?,?";
         List<Map<String,Object>> essays = customizeRepository.nativeQueryListMap(sql,(page-1)*pageSize,pageSize);
         return RestUtil.success(essays);
@@ -75,9 +75,11 @@ public class EssayService {
      * @param essay 文章内容
      */
     @Transactional(rollbackFor = Exception.class)
-    public ModelMap createEssay(User user, Essay essay){
-        essay.setUser(user);
+    public ModelMap createEssay(Long classifyId, Essay essay){
+        Classify classify = classifyRepository.getOne(classifyId);
+        essay.setClassify(classify);
         essay.setState((byte)0);
+        essay.setReadNum(0);
         essayRepository.save(essay);
         return RestUtil.success();
     }

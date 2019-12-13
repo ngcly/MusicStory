@@ -22,16 +22,18 @@ public class Essay extends AbstractDateAudit {
     @GenericGenerator(name = "id", strategy = "uuid")
     @Column(name="id")
     private String id;
+    @Column(nullable = false)
     private String title;      //文章标题
+    private String synopsis;   //简介
     private String content;    //文章内容
-    @Column(columnDefinition = "int default 0")
+    @Column(columnDefinition = "int default 0",nullable = false)
     private Integer readNum;   //阅览数
-    private Byte state;        //状态 0-待审核 1-正常 2-审核不通过 3-推荐
+    private Byte state;        //状态 0-草稿 1-待审核 2-审核不通过 3-正常 4-推荐
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId",nullable = false)
+    @JoinColumn(name = "user_id",nullable = false)
     private User user;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "classifyId",nullable = false)
+    @JoinColumn(name = "classify_id",nullable = false)
     private Classify classify;
     private String remark;   //审核不通过原由
 }

@@ -1,9 +1,6 @@
 package com.cn.controller;
 
-import com.cn.CarouselService;
-import com.cn.EssayService;
-import com.cn.NoticeService;
-import com.cn.UserService;
+import com.cn.*;
 import com.cn.pojo.LogInDTO;
 import com.cn.pojo.RestCode;
 import com.cn.pojo.SignUpDTO;
@@ -48,6 +45,7 @@ public class IndexController {
     private final CarouselService carouselService;
     private final TokenEndpoint tokenEndpoint;
     private final ConsumerTokenServices consumerTokenServices;
+    private final ClassifyService classifyService;
 
     @ApiOperation(value = "登录", notes = "用户登录")
     @PostMapping("/signin")
@@ -143,6 +141,12 @@ public class IndexController {
     })
     public ModelMap getEssayComment(@PathVariable String id,@PathVariable Integer page){
         return RestUtil.success(essayService.getComments(id,page));
+    }
+
+    @ApiOperation(value = "获取分类列表", notes = "获取文章分类列表")
+    @GetMapping("/classify")
+    public ModelMap getClassifyList(){
+        return RestUtil.success(classifyService.getClassifyList());
     }
 
     /**

@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
  * 描述:
  * 登录数据封装类
  *
- * @author chen
+ * @author ngcly
  * @create 2018-08-05 13:42
  */
 

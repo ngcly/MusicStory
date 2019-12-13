@@ -20,9 +20,10 @@
                 <label class="layui-form-label">状态</label>
                 <div class="layui-input-inline">
                     <select name="state" lay-filter="statChange">
-                        <option value="0" th:selected="${essay.state==0}">正常</option>
-                        <option value="1" th:selected="${essay.state==1}">推荐</option>
+                        <option value="1" th:selected="${essay.state==1}">待审核</option>
                         <option value="2" th:selected="${essay.state==2}">查封</option>
+                        <option value="3" th:selected="${essay.state==3}">正常</option>
+                        <option value="4" th:selected="${essay.state==4}">推荐</option>
                     </select>
                 </div>
             </div>

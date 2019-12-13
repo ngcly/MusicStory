@@ -49,9 +49,10 @@
                 <div class="search-input">
                     <select name="state">
                         <option value=""></option>
-                        <option value="0">正常</option>
-                        <option value="1">推荐</option>
+                        <option value="1">待审核</option>
                         <option value="2">查封</option>
+                        <option value="3">正常</option>
+                        <option value="4">推荐</option>
                     </select>
                 </div>
             </div>
@@ -85,11 +86,11 @@
             ,cols: [
                 [{field: 'd.user.username', title: '作者',templet:'<div>{{d.user.username}}</div>'}
                     ,{field: 'title', title: '文章标题'}
-                    ,{field: 'content', title: '文章内容'}
+                    ,{field: 'synopsis', title: '文章简介'}
                     ,{field: 'd.classify.name', title: '分类名',templet:'<div>{{d.classify.name}}</div>'}
                     ,{field: 'readNum', title: '阅览数'}
                     ,{field: 'createdTime', title: '创建时间'}
-                    ,{field: 'state', title: '状态',templet:'<div>{{#  if(d.state == 0){ }}正常{{#  }else if(d.state == 1) {}}推荐{{#  } else { }}查封{{#  } }}</div>'}
+                    ,{field: 'state', title: '状态',templet:'<div>{{#  if(d.state == 1){ }}待审核{{#  }else if(d.state == 2) {}}查封{{#  }else if(d.state == 3) {}}正常{{#  } else if(d.state ==4) {}}查封{{#  } }}</div>'}
                     ,{fixed: 'right', title:'操作', align:'center',width:'100', toolbar: '#bar'}]
             ]
         });

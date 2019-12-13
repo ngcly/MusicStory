@@ -2,6 +2,7 @@ package com.cn.controller;
 
 import com.cn.EssayService;
 import com.cn.UserService;
+import com.cn.pojo.EssayDTO;
 import com.cn.pojo.RestCode;
 import com.cn.pojo.UserDetail;
 import com.cn.entity.*;
@@ -14,8 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
 
 /**
  * 会员控制层
@@ -60,9 +64,17 @@ public class UserController {
 
     @ApiOperation(value = "写文章", notes = "用户发表文章")
     @PostMapping("/essay")
-    public ModelMap createEssay(Authentication authentication, @RequestBody Essay essay) {
+    public ModelMap createEssay(Authentication authentication, @Valid @RequestBody EssayDTO essayDTO, BindingResult result) {
+        if(result.hasErrors()){
+            return RestUtil.failure(400,result.getFieldError().getField()+":"+result.getFieldError().getDefaultMessage());
+        }
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        return essayService.createEssay(user, essay);
+        Essay essay = new Essay();
+        essay.setTitle(essayDTO.getTitle());
+        essay.setSynopsis(essayDTO.getSynopsis());
+        essay.setContent(essayDTO.getContent());
+        essay.setUser(user);
+        return essayService.createEssay(essayDTO.getClassifyId(), essay);
     }
 
     @ApiOperation(value = "修改文章", notes = "用户修改文章")
