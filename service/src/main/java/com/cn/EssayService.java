@@ -72,6 +72,14 @@ public class EssayService {
     }
 
     /**
+     * 文章阅读数+1
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void readEssay(String id){
+        essayRepository.readOne(id);
+    }
+
+    /**
      * 用户写文章
      * @param essay 文章内容
      */

@@ -130,6 +130,16 @@ public class IndexController {
         return RestUtil.success(essay);
     }
 
+    @ApiOperation(value = "阅读文章", notes = "阅读文章 阅读数+1")
+    @PutMapping("/essay/{id}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id",value = "文章ID",paramType = "path",dataType = "string")
+    })
+    public ModelMap readEssay(@PathVariable String id){
+        essayService.readEssay(id);
+        return RestUtil.success();
+    }
+
     /**
      * 获取文章评论
      */

@@ -6,6 +6,9 @@ import com.cn.entity.User;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -43,4 +46,11 @@ public interface EssayRepository extends JpaRepository<Essay,String>, JpaSpecifi
             return query.where(cb.and(predicates.toArray(new Predicate[predicates.size()]))).getRestriction();
         };
     }
+
+    /**
+     * 文章阅读数+1
+     */
+    @Modifying
+    @Query("update Essay set readNum=readNum+1 where id=:id")
+    int readOne(@Param("id") String id);
 }

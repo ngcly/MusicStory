@@ -32,9 +32,9 @@ import javax.validation.Valid;
 @RequestMapping("/user")
 public class UserController {
     @Autowired
-    EssayService essayService;
+    private EssayService essayService;
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @ApiOperation(value = "用户信息", notes = "获取用户详情信息")
     @GetMapping("/info")
@@ -66,7 +66,7 @@ public class UserController {
     @PostMapping("/essay")
     public ModelMap createEssay(Authentication authentication, @Valid @RequestBody EssayDTO essayDTO, BindingResult result) {
         if(result.hasErrors()){
-            return RestUtil.failure(400,result.getFieldError().getField()+":"+result.getFieldError().getDefaultMessage());
+            return RestUtil.failure(400,result.getFieldError().getDefaultMessage());
         }
         UserDetail user = (UserDetail) authentication.getPrincipal();
         Essay essay = new Essay();
