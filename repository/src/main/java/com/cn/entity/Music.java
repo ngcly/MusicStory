@@ -25,7 +25,8 @@ public class Music {
     private String album;  //专辑
     private String cover;  //封面
     private String lrc;    //歌词
+    @Column(nullable = false)
     private String essayId;//文章ID
-    private String linkUrl;//链接地址
+    private String url;//链接地址
 
 }

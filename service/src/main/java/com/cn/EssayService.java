@@ -46,7 +46,8 @@ public class EssayService {
      */
     public ModelMap getEssayList(int page,int pageSize){
         String sql = "SELECT t.id,t.title,t.synopsis,t3.username,t2.name,t.created_time,t.updated_time,t.read_num " +
-                "FROM essay t,classify t2,user t3 WHERE t.classify_id=t2.id AND t.user_id=t3.id order by t.updated_time desc LIMIT ?,?";
+                "FROM essay t,classify t2,user t3 WHERE t.classify_id=t2.id AND t.user_id=t3.id " +
+                "AND (t.state=3 OR t.state=4) order by t.updated_time desc LIMIT ?,?";
         List<Map<String,Object>> essays = customizeRepository.nativeQueryListMap(sql,(page-1)*pageSize,pageSize);
         return RestUtil.success(essays);
     }
@@ -87,10 +88,9 @@ public class EssayService {
     public ModelMap createEssay(Long classifyId, Essay essay){
         Classify classify = classifyRepository.getOne(classifyId);
         essay.setClassify(classify);
-        essay.setState(CommonState.EssayState.DRAFT.getCode());
         essay.setReadNum(0);
-        essayRepository.save(essay);
-        return RestUtil.success();
+        essay.setState(CommonState.EssayState.DRAFT.getCode());
+        return RestUtil.success(essayRepository.save(essay).getId());
     }
 
     /**
@@ -98,8 +98,11 @@ public class EssayService {
      * @param essay 文章内容
      */
     @Transactional(rollbackFor = Exception.class)
-    public ModelMap updateEssay(Essay essay){
+    public ModelMap updateEssay(Long classifyId, Essay essay){
         essay.setState(CommonState.EssayState.PENDING.getCode());
+        Classify classify = classifyRepository.getOne(classifyId);
+        essay.setClassify(classify);
+        essay.setReadNum(0);
         essayRepository.save(essay);
         return RestUtil.success();
     }

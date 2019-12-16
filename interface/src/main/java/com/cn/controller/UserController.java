@@ -70,17 +70,22 @@ public class UserController {
         }
         UserDetail user = (UserDetail) authentication.getPrincipal();
         Essay essay = new Essay();
-        essay.setTitle(essayDTO.getTitle());
-        essay.setSynopsis(essayDTO.getSynopsis());
-        essay.setContent(essayDTO.getContent());
+        BeanUtils.copyProperties(essayDTO,essay);
         essay.setUser(user);
         return essayService.createEssay(essayDTO.getClassifyId(), essay);
     }
 
     @ApiOperation(value = "发表文章", notes = "用户发表文章")
     @PutMapping("/essay")
-    public ModelMap updateEssay(@RequestBody Essay essay) {
-        return essayService.updateEssay(essay);
+    public ModelMap updateEssay(Authentication authentication, @Valid @RequestBody EssayDTO essayDTO, BindingResult result) {
+        if(result.hasErrors()){
+            return RestUtil.failure(400,result.getFieldError().getDefaultMessage());
+        }
+        UserDetail user = (UserDetail) authentication.getPrincipal();
+        Essay essay = new Essay();
+        BeanUtils.copyProperties(essayDTO,essay);
+        essay.setUser(user);
+        return essayService.updateEssay(essayDTO.getClassifyId(), essay);
     }
 
     @ApiOperation(value = "删文章", notes = "根据文章ID删除用户文章")

@@ -11,7 +11,7 @@ public class CommonState {
         private byte code;
         private String msg;
 
-        private EssayState(byte code, String msg) {
+        EssayState(byte code, String msg) {
             this.code = code;
             this.msg = msg;
         }
