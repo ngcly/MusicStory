@@ -8,5 +8,6 @@ apply plugin: 'java'
 dependencies {
     implementation 'com.alibaba:druid-spring-boot-starter:1.1.17'
     api 'org.springframework.boot:spring-boot-starter-data-jpa'
+    api 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
     runtime('mysql:mysql-connector-java')
 }
