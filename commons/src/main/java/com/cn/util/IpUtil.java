@@ -2,14 +2,11 @@ package com.cn.util;
 
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * IP 获取工具类
@@ -21,13 +18,6 @@ import java.util.Map;
 public class IpUtil {
     @Autowired
     RestTemplate restTemplate;
-
-    public static String appCode;
-
-    @Value("${appcode}")
-    public void setAppCode(String appCode) {
-        IpUtil.appCode = appCode;
-    }
 
     public static String getIp(HttpServletRequest request){
         String ip = request.getHeader("x-forwarded-for");

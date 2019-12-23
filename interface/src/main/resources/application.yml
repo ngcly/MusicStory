@@ -68,7 +68,7 @@ spring:
   mail:
     host: smtp.qq.com
     username: 531237716@qq.com
-    password: ENC(tU3XEcH8VDNaNRNkGkKu5fvCRZK9Fv3Kf4Ii8+fC81s=)
+    password: ENC(i4zMO8N0ihz2sXZtcCMoDXId6gEW2xH4uv6p01hPxtCYm+aCZIfD9I26MQKkB2tIZiRGXg5aiP+slVPS+rMKhg==)
     default-encoding: UTF-8
     properties:
       mail:
@@ -86,6 +86,5 @@ jasypt:
     password: ngCly
 #私人密钥配置
 upload:
-  accessKey: ENC(ormo2Qg4s+fXW8qyJcwWdkH/MopGFUBTxsbVeJoOkuQ=)
-  secretKey: ENC(aHUGIXAeXajFvMtPdmI2RZAnwIFU+7umvjk/ea+eJCThNdZKmmHFnQ==)
-appcode: ENC(HaqiZpNoRrldOYjmhSw1mjtjOVV9Vrfh0bid7Ksz5c5rvgWBs33JEW95khhTgloc)
+  accessKey: ENC(5Y6vyBg0DOPFQlANueC2it4Z1IC7kc8rb6OvPtYOpWZ06zR96RmAY5Eldg1ftMEwjRYp6XDD7zunb/2dh56qlg==)
+  secretKey: ENC(8jNgqYXy9FOJQcr07dtv6Q/enW4QrNS2/zkkMup0A5oQLlNq2YM0z8Ia4kRsCIJRHvyGG0gb+dZCvBq91BgOFQ==)
