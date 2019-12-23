@@ -46,7 +46,7 @@ public class IndexController {
     private final TokenEndpoint tokenEndpoint;
     private final ConsumerTokenServices consumerTokenServices;
     private final ClassifyService classifyService;
-    private final BookService bookService;
+//    private final BookService bookService;
 
     @ApiOperation(value = "登录", notes = "用户登录")
     @PostMapping("/signin")
@@ -183,12 +183,15 @@ public class IndexController {
         return noticeService.getNotice();
     }
 
-    @ApiOperation(value = "搜索", notes = "文章搜索")
-    @GetMapping("/search/{keyword}")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "keyword",value = "关键字",paramType = "path",dataType = "string"),
-    })
-    public ModelMap search(@PathVariable("keyword")String keyword){
-        return bookService.highLightSearchEssay(keyword);
-    }
+    /**
+     * 全文搜索
+     */
+//    @ApiOperation(value = "搜索", notes = "文章搜索")
+//    @GetMapping("/search/{keyword}")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "keyword",value = "关键字",paramType = "path",dataType = "string"),
+//    })
+//    public ModelMap search(@PathVariable("keyword")String keyword){
+//        return bookService.highLightSearchEssay(keyword);
+//    }
 }

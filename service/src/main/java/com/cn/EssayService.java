@@ -37,8 +37,8 @@ public class EssayService {
     private CommentRepository commentRepository;
     @Autowired
     private CustomizeRepository customizeRepository;
-    @Autowired
-    private BookService bookService;
+//    @Autowired
+//    private BookService bookService;
     @Autowired
     private MailUtil mailUtil;
     @Autowired
@@ -153,12 +153,12 @@ public class EssayService {
             //邮件通知作者
             mailUtil.sendSimpleMail(essay1.getUser().getEmail(),"文章审核不通过",essay1.getTitle()+"审核失败，理由： "+essay.getRemark());
         }else{
-            Book book = new Book();
-            book.setId(essay1.getId());
-            book.setAuthor(essay1.getUser().getUsername());
-            book.setTitle(essay1.getTitle());
-            book.setContent(essay1.getContent());
-            bookService.save(book);
+//            Book book = new Book();
+//            book.setId(essay1.getId());
+//            book.setAuthor(essay1.getUser().getUsername());
+//            book.setTitle(essay1.getTitle());
+//            book.setContent(essay1.getContent());
+//            bookService.save(book);
         }
     }
 
