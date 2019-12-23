@@ -13,6 +13,7 @@ import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
@@ -187,11 +188,11 @@ public class IndexController {
      * 全文搜索
      */
     @ApiOperation(value = "搜索", notes = "文章搜索")
-    @GetMapping("/search/{keyword}")
+    @GetMapping("/search/{pageSize}/{page}/{keyword}")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "keyword",value = "关键字",paramType = "path",dataType = "string"),
     })
-    public ModelMap search(@PathVariable("keyword")String keyword){
-        return bookService.highLightSearchEssay(keyword);
+    public ModelMap search(@PathVariable int pageSize,@PathVariable int page,@PathVariable("keyword")String keyword){
+        return bookService.highLightSearchEssay(keyword, PageRequest.of(page - 1, pageSize));
     }
 }

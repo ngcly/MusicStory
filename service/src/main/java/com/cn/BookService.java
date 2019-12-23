@@ -41,10 +41,12 @@ public class BookService {
     }
 
     /**高亮查询*/
-    public ModelMap highLightSearchEssay(String keyword){
+    public ModelMap highLightSearchEssay(String keyword, Pageable pageable){
         // 构建查询条件
         SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(QueryBuilders.multiMatchQuery(keyword, "title","content"))
-                .withHighlightFields(new HighlightBuilder.Field("*").preTags("<span style='color:red'>").postTags("</span>")).build();
+                .withHighlightFields(new HighlightBuilder.Field("*").preTags("<span style='color:red'>").postTags("</span>"))
+                .withPageable(pageable)
+                .build();
         // 搜索，获取结果
         Page<Book> items = elasticsearchRestTemplate.queryForPage(searchQuery,Book.class,highLightResultMapper);
         return RestUtil.success(items);
