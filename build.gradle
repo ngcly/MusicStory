@@ -5,7 +5,7 @@ version '1.0-SNAPSHOT'
 
 buildscript { //构建脚本
     //定义版本号
-    ext { springBootVersion = '2.2.2.RELEASE' }
+    ext { springBootVersion = '2.2.6.RELEASE' }
     repositories {//jar包仓库
         maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
         maven { url "https://plugins.gradle.org/m2/" }

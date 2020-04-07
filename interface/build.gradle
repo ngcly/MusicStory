@@ -31,7 +31,7 @@ dependencies {
     implementation 'io.swagger:swagger-annotations:1.5.22'
     implementation 'io.swagger:swagger-models:1.5.22'
     implementation 'io.springfox:springfox-swagger-ui:2.9.2'
-    implementation 'org.jsoup:jsoup:1.12.1'
+    implementation 'org.jsoup:jsoup:1.13.1'
 
 //    compile 'org.springframework.social:spring-social-config:1.1.5.RELEASE'
 //    compile 'org.springframework.social:spring-social-core:1.1.5.RELEASE'
