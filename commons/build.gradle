@@ -10,7 +10,6 @@ dependencies {
     api 'org.apache.commons:commons-lang3:3.10'
     api 'commons-beanutils:commons-beanutils:1.9.4'
     api 'org.apache.commons:commons-collections4:4.1'
-    implementation 'com.qiniu:qiniu-java-sdk:7.2.+'
     implementation 'com.aliyun.oss:aliyun-sdk-oss:3.8.1'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     api 'org.springframework.boot:spring-boot-starter-amqp'

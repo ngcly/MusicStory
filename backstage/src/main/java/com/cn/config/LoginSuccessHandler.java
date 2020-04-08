@@ -36,7 +36,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         out.close();
 
         Manager userDetails = (Manager) authentication.getPrincipal();
-        logService.saveLog(userDetails.getId(),userDetails.getUsername(), IpUtil.getIp(request));
+        logService.saveLog(userDetails.getId(),userDetails.getUsername(), IpUtil.getIpAddress(request));
     }
 
 }

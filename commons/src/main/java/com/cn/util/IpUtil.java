@@ -1,12 +1,17 @@
 package com.cn.util;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.Enumeration;
 
 /**
  * IP 获取工具类
@@ -16,27 +21,88 @@ import java.io.UnsupportedEncodingException;
  */
 @Component
 public class IpUtil {
-    @Autowired
-    RestTemplate restTemplate;
 
-    public static String getIp(HttpServletRequest request){
-        String ip = request.getHeader("x-forwarded-for");
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
+    private static final String[] HEADERS = {
+            "X-Forwarded-For",
+            "Proxy-Client-IP",
+            "WL-Proxy-Client-IP",
+            "HTTP_X_FORWARDED_FOR",
+            "HTTP_X_FORWARDED",
+            "HTTP_X_CLUSTER_CLIENT_IP",
+            "HTTP_CLIENT_IP",
+            "HTTP_FORWARDED_FOR",
+            "HTTP_FORWARDED",
+            "HTTP_VIA",
+            "REMOTE_ADDR",
+            "X-Real-IP"
+    };
+
+    private static final String LOCAL_IPV6="0:0:0:0:0:0:0:1";
+
+    /**
+     * 判断ip是否为空，空返回true
+     * @param ip
+     * @return
+     */
+    public static boolean isEmptyIp(final String ip){
+        return (ip == null || ip.length() == 0 || ip.trim().equals("") || "unknown".equalsIgnoreCase(ip));
+    }
+
+
+    /**
+     * 判断ip是否不为空，不为空返回true
+     * @param ip
+     * @return
+     */
+    public static boolean isNotEmptyIp(final String ip){
+        return !isEmptyIp(ip);
+    }
+
+    /***
+     * 获取客户端ip地址(可以穿透代理)
+     * @param request HttpServletRequest
+     * @return
+     */
+    public static String getIpAddress(HttpServletRequest request) {
+        String ip = "";
+        for (String header : HEADERS) {
+            ip = request.getHeader(header);
+            if(isNotEmptyIp(ip)) {
+                break;
+            }
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_CLIENT_IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if(isEmptyIp(ip)){
             ip = request.getRemoteAddr();
         }
+        if(isNotEmptyIp(ip) && ip.contains(",")){
+            ip = ip.split(",")[0];
+        }
+        if(LOCAL_IPV6.equals(ip)){
+            ip = "127.0.0.1";
+        }
         return ip;
+    }
+
+
+    /**
+     * 获取本机的局域网ip地址，兼容Linux
+     * @return String
+     * @throws Exception
+     */
+    public String getLocalHostIP() throws Exception{
+        Enumeration<NetworkInterface> allNetInterfaces = NetworkInterface.getNetworkInterfaces();
+        String localHostAddress = "";
+        while(allNetInterfaces.hasMoreElements()){
+            NetworkInterface networkInterface = allNetInterfaces.nextElement();
+            Enumeration<InetAddress> address = networkInterface.getInetAddresses();
+            while(address.hasMoreElements()){
+                InetAddress inetAddress = address.nextElement();
+                if(inetAddress != null && inetAddress instanceof Inet4Address){
+                    localHostAddress = inetAddress.getHostAddress();
+                }
+            }
+        }
+        return localHostAddress;
     }
 
     /**
@@ -45,20 +111,14 @@ public class IpUtil {
      * @throws UnsupportedEncodingException
      */
     public static String getIpAddresses(String ip) {
-        String returnStr;
         String url;
-        //阿里云接口
-//        url = "https://dm-81.data.aliyun.com/rest/160601/ip/getIpInfo.json?ip="+ip;
-//		Map<String, String> headers = new HashMap<>(1);
-//		headers.put("Authorization", "APPCODE " + appCode);
-//        returnStr = HttpUtil.sendHttpGet(url,headers);
         // 淘宝接口
-        url = "http://ip.taobao.com/service/getIpInfo.php?ip="+ip;
-        returnStr = HttpUtil.sendHttpGet(url);
-        JSONObject json = JSONObject.parseObject(returnStr);
-        if("0".equals(json.getString("code"))){
-            JSONObject data = json.getJSONObject("data");
-            return data.getString("country")+data.getString("area")+data.getString("region")+data.getString("city");
+        url = "http://whois.pconline.com.cn/ipJson.jsp?json=true&ip="+ip;
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url,String.class);
+        if(responseEntity.getStatusCode().is2xxSuccessful()){
+            JSONObject data = JSON.parseObject(responseEntity.getBody());
+            return data.getString("addr");
         }
 
         return null;
