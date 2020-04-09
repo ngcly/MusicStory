@@ -2,6 +2,7 @@ package com.cn.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -79,7 +80,10 @@ public class MailUtil {
         //开启html 格式
         helper.setText(content, true);
         //添加附件
-        File file = new File(filePath);
+        FileSystemResource file=new FileSystemResource(new File(filePath));
+//        String fileName=filePath.substring(filePath.lastIndexOf(File.separator));
+        //添加多个附件可以使用多条
+        //helper.addAttachment(fileName,file);
         helper.addAttachment(fileName, file);
         mailSender.send(message);
     }
