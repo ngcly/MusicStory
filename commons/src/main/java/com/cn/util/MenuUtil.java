@@ -42,7 +42,7 @@ public class MenuUtil {
         for(Permission sysPermission:originMenus){
             contained=false;
             for(Permission rolePermission:roleMenus){
-                if(sysPermission.getId()==rolePermission.getId()){
+                if(sysPermission.getId().equals(rolePermission.getId())){
                     contained=true;
                     break;
                 }

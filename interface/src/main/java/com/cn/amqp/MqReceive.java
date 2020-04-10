@@ -20,9 +20,9 @@ public class MqReceive {
     private static final Logger log = LoggerFactory.getLogger(MqReceive.class);
 
     @Autowired
-    MailUtil mailUtil;
+    private MailUtil mailUtil;
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @RabbitListener(queues = {RabbitConfig.ACTIVE_QUEUE})
     public void consume(Map<String,String> map) {
@@ -36,7 +36,7 @@ public class MqReceive {
 
     @RabbitListener(queues = {RabbitConfig.DELAY_QUEUE})
     public void consumeDelay(String userId) {
-        log.info("[执行过期未激活账号] - [{}]", userId);
+        log.info("[执行清除过期未激活账号] - [{}]", userId);
         userService.delUnActiveUser(userId);
     }
 

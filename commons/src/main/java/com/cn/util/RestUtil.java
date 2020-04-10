@@ -16,7 +16,7 @@ public class RestUtil {
      * @return
      */
     public static ModelMap success() {
-        return success("");
+        return success(null);
     }
 
     /**

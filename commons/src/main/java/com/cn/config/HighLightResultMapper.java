@@ -44,7 +44,7 @@ public class HighLightResultMapper extends AbstractResultMapper {
     private final MappingContext<? extends ElasticsearchPersistentEntity<?>, ElasticsearchPersistentProperty> mappingContext;
 
     public HighLightResultMapper() {
-        this((MappingContext)(new SimpleElasticsearchMappingContext()));
+        this(new SimpleElasticsearchMappingContext());
     }
 
     public HighLightResultMapper(MappingContext<? extends ElasticsearchPersistentEntity<?>, ElasticsearchPersistentProperty> mappingContext) {
@@ -72,7 +72,7 @@ public class HighLightResultMapper extends AbstractResultMapper {
         while(var8.hasNext()) {
             SearchHit hit = (SearchHit)var8.next();
             if (hit != null) {
-                T result = null;
+                T result;
                 if (!StringUtils.isEmpty(hit.getSourceAsString())) {
                     result = this.mapEntity(hit.getSourceAsString(), clazz);
                 } else {
@@ -130,10 +130,10 @@ public class HighLightResultMapper extends AbstractResultMapper {
             int var4 = var3.length;
             for(int var5 = 0; var5 < var4; ++var5) {
                 Field field = var3[var5];
-                ScriptedField scriptedField = (ScriptedField)field.getAnnotation(ScriptedField.class);
+                ScriptedField scriptedField = field.getAnnotation(ScriptedField.class);
                 if (scriptedField != null) {
                     String name = scriptedField.name().isEmpty() ? field.getName() : scriptedField.name();
-                    DocumentField searchHitField = (DocumentField)hit.getFields().get(name);
+                    DocumentField searchHitField = hit.getFields().get(name);
                     if (searchHitField != null) {
                         field.setAccessible(true);
                         try {
@@ -215,8 +215,8 @@ public class HighLightResultMapper extends AbstractResultMapper {
 
     private <T> void setPersistentEntityId(T result, String id, Class<T> clazz) {
         if (clazz.isAnnotationPresent(Document.class)) {
-            ElasticsearchPersistentEntity<?> persistentEntity = (ElasticsearchPersistentEntity)this.mappingContext.getRequiredPersistentEntity(clazz);
-            ElasticsearchPersistentProperty idProperty = (ElasticsearchPersistentProperty)persistentEntity.getIdProperty();
+            ElasticsearchPersistentEntity<?> persistentEntity = this.mappingContext.getRequiredPersistentEntity(clazz);
+            ElasticsearchPersistentProperty idProperty = persistentEntity.getIdProperty();
             if (idProperty != null && idProperty.getType().isAssignableFrom(String.class)) {
                 persistentEntity.getPropertyAccessor(result).setProperty(idProperty, id);
             }
@@ -238,7 +238,7 @@ public class HighLightResultMapper extends AbstractResultMapper {
 
     private <T> void setPersistentEntityScore(T result, float score, Class<T> clazz) {
         if (clazz.isAnnotationPresent(Document.class)) {
-            ElasticsearchPersistentEntity<?> entity = (ElasticsearchPersistentEntity)this.mappingContext.getRequiredPersistentEntity(clazz);
+            ElasticsearchPersistentEntity<?> entity = this.mappingContext.getRequiredPersistentEntity(clazz);
             if (!entity.hasScoreProperty()) {
                 return;
             }
