@@ -9,7 +9,7 @@
 - 缓存：Redis  
 - 消息队列：RabbitMQ   
 - 消息推送：WebSocket  
-目前存在一个问题，直接地址栏访问页面会没有iframe外层  
+- 全文搜索：ElasticSearch
 
 ## 模块概述
 

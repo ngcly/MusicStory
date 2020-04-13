@@ -12,7 +12,6 @@ import com.cn.util.RestUtil;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
@@ -38,7 +37,7 @@ import java.util.Map;
  */
 @Api(value = "IndexController", tags = "首页内容相关API")
 @RestController
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@RequiredArgsConstructor
 public class IndexController {
     private final UserService userService;
     private final EssayService essayService;
