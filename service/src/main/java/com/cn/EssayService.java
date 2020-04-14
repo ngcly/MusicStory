@@ -179,4 +179,15 @@ public class EssayService {
         commentRepository.save(comment);
         return RestUtil.success();
     }
+
+    /**
+     * 获取用户 点赞/收藏 文章
+     * @param userId 用户Id
+     * @param faveType 类型
+     * @return Page<Essay>
+     */
+    public ModelMap getUserFavesEssay(String userId,Byte faveType,Pageable pageable){
+        Page<Essay> essays = essayRepository.findUserFaveEssay(userId,faveType,pageable);
+        return RestUtil.success(essays);
+    }
 }

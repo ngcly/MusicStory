@@ -45,11 +45,6 @@ public class UserController {
         return RestUtil.success(vo);
     }
 
-    /**
-     * 获取用户的文章
-     *
-     * @return
-     */
     @ApiOperation(value = "我的文章", notes = "获取用户写的文章")
     @GetMapping("/essay/{page}/{size}")
     @ApiImplicitParams({
@@ -119,11 +114,11 @@ public class UserController {
     }
 
     @ApiOperation(value = "获取用户点赞的文章", notes = "获取当前用户点赞的所有文章")
-    @GetMapping("/star")
-    public ModelMap getMyStar(Authentication authentication) {
+    @GetMapping("/star/{page}/{size}")
+    public ModelMap getMyStar(Authentication authentication,@PathVariable("page") Integer page,
+                              @PathVariable("size") Integer size) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        //TODO
-        return null;
+        return essayService.getUserFavesEssay(user.getId(),UserFaves.点赞,PageRequest.of(page - 1, size));
     }
 
     @ApiOperation(value = "点赞", notes = "用户点赞文章")
@@ -143,11 +138,11 @@ public class UserController {
     }
 
     @ApiOperation(value = "获取用户收藏的文章", notes = "获取当前用户收藏的所有文章")
-    @GetMapping("/collect")
-    public ModelMap getMyCollect(Authentication authentication) {
+    @GetMapping("/collect/{page}/{size}")
+    public ModelMap getMyCollect(Authentication authentication,@PathVariable("page") Integer page,
+                                 @PathVariable("size") Integer size) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        //TODO
-        return null;
+        return essayService.getUserFavesEssay(user.getId(),UserFaves.收藏,PageRequest.of(page - 1, size));
     }
 
     @ApiOperation(value = "收藏", notes = "用户收藏文章")

@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public class ClassifyService {
     @Autowired
-    ClassifyRepository classifyRepository;
+    private ClassifyRepository classifyRepository;
 
     /**
      * 根据条件获取分类列表

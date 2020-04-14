@@ -16,7 +16,7 @@ import java.util.Date;
 @Service
 public class NoticeService {
     @Autowired
-    NoticeRepository noticeRepository;
+    private NoticeRepository noticeRepository;
 
     /**
      * 获取展示公告

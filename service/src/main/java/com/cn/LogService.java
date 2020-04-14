@@ -20,7 +20,7 @@ import java.util.Date;
 @Service
 public class LogService {
     @Autowired
-    LoginLogRepository loginLogRepository;
+    private LoginLogRepository loginLogRepository;
 
     /**
      * 获取登录日志列表

@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CarouselService {
     @Autowired
-    CarouselRepository carouselRepository;
+    private CarouselRepository carouselRepository;
 
     /**
      * 根据条件获取轮播图列表

@@ -3,6 +3,8 @@ package com.cn.dao;
 import com.cn.entity.Classify;
 import com.cn.entity.Essay;
 import com.cn.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -53,4 +55,13 @@ public interface EssayRepository extends JpaRepository<Essay,String>, JpaSpecifi
     @Modifying
     @Query("update Essay set readNum=readNum+1 where id=:id")
     int readOne(@Param("id") String id);
+
+    /**
+     * 查询用户 收藏/点赞 文章
+     * @param userId 用户Id
+     * @param faveType 类型
+     * @return Page<Essay>
+     */
+    @Query("select e from Essay e, UserFaves u where u.userId =:userId and u.essayId = e.id and u.faveType=:faveType")
+    Page<Essay> findUserFaveEssay(@Param("userId") String userId, @Param("faveType") Byte faveType, Pageable pageable);
 }

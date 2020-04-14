@@ -30,9 +30,9 @@ import java.util.*;
 @Service
 public class ManagerService implements UserDetailsService {
     @Autowired
-    ManagerRepository managerRepository;
+    private ManagerRepository managerRepository;
     @Autowired
-    RoleRepository roleRepository;
+    private RoleRepository roleRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

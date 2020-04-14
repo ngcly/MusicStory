@@ -11,6 +11,9 @@ import org.springframework.stereotype.Repository;
 import java.util.Map;
 
 
+/**
+ * @author ngcly
+ */
 @Repository
 public interface CommentRepository extends JpaRepository<Comment,String> {
 
