@@ -61,7 +61,7 @@ public class UserController {
     @PostMapping("/essay")
     public ModelMap createEssay(Authentication authentication, @Valid @RequestBody EssayDTO essayDTO, BindingResult result) {
         if(result.hasErrors()){
-            return RestUtil.failure(400,result.getFieldError().getDefaultMessage());
+            return RestUtil.failure(400,result.getFieldError().getField()+":"+result.getFieldError().getDefaultMessage());
         }
         UserDetail user = (UserDetail) authentication.getPrincipal();
         Essay essay = new Essay();
@@ -74,7 +74,7 @@ public class UserController {
     @PutMapping("/essay")
     public ModelMap updateEssay(Authentication authentication, @Valid @RequestBody EssayDTO essayDTO, BindingResult result) {
         if(result.hasErrors()){
-            return RestUtil.failure(400,result.getFieldError().getDefaultMessage());
+            return RestUtil.failure(400,result.getFieldError().getField()+":"+result.getFieldError().getDefaultMessage());
         }
         UserDetail user = (UserDetail) authentication.getPrincipal();
         Essay essay = new Essay();

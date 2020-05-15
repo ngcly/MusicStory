@@ -19,14 +19,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.security.Principal;
 import java.util.*;
 
