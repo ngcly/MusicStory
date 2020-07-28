@@ -21,4 +21,8 @@
 | repository | 数据DAO层 |
 | service | 业务service层 |
 
-前端代码链接：https://github.com/ngcly/music-story
+前端代码链接：https://github.com/ngcly/music-story   
+  
+特别鸣谢：  
+感谢JetBrains免费提供Idea开发工具对本项目的支持  
+[![JetBrains](jetbrains.svg "jetbrains")](https://www.jetbrains.com/?from=MusicStory)
