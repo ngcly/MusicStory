@@ -1,6 +1,5 @@
 package com.cn;
 
-import com.cn.config.HighLightResultMapper;
 import com.cn.dao.BookRepository;
 import com.cn.entity.Book;
 import com.cn.util.RestUtil;
@@ -10,8 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
+import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
@@ -25,30 +25,20 @@ public class BookService {
     private BookRepository bookRepository;
     @Autowired
     private ElasticsearchRestTemplate elasticsearchRestTemplate;
-    @Autowired
-    private HighLightResultMapper highLightResultMapper;
 
     public Page<Book> findBook(String title, String content, Pageable pageable){
         return bookRepository.findBooksByTitleOrContent(title,content,pageable);
     }
 
-    public ModelMap searchEssay(String keyword){
-        // 构建查询条件
-        SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(QueryBuilders.multiMatchQuery(keyword, "title","content")).build();
-        // 搜索，获取结果
-        Page<Book> items = bookRepository.search(searchQuery);
-        return RestUtil.success(items);
-    }
-
     /**高亮查询*/
     public ModelMap highLightSearchEssay(String keyword, Pageable pageable){
         // 构建查询条件
-        SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(QueryBuilders.multiMatchQuery(keyword, "title","content"))
+        Query searchQuery = new NativeSearchQueryBuilder().withQuery(QueryBuilders.multiMatchQuery(keyword, "title","content"))
                 .withHighlightFields(new HighlightBuilder.Field("*").preTags("<span style='color:red'>").postTags("</span>"))
                 .withPageable(pageable)
                 .build();
         // 搜索，获取结果
-        Page<Book> items = elasticsearchRestTemplate.queryForPage(searchQuery,Book.class,highLightResultMapper);
+        SearchHits<Book> items = elasticsearchRestTemplate.search(searchQuery,Book.class);
         return RestUtil.success(items);
     }
 
