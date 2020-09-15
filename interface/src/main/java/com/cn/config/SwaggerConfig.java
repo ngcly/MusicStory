@@ -2,16 +2,14 @@ package com.cn.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMethod;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.builders.ResponseMessageBuilder;
+import springfox.documentation.builders.*;
+import springfox.documentation.oas.annotations.EnableOpenApi;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 import java.security.Principal;
 import java.util.Arrays;
@@ -20,7 +18,7 @@ import java.util.Arrays;
  * @author ngcly
  */
 @Configuration
-@EnableSwagger2WebMvc
+@EnableOpenApi
 public class SwaggerConfig {
 
     @Bean
@@ -34,41 +32,41 @@ public class SwaggerConfig {
                 .paths(PathSelectors.any())
                 .build()
                 .ignoredParameterTypes(Authentication.class, Principal.class)
-                .globalResponseMessage(RequestMethod.GET,
-                        Arrays.asList(new ResponseMessageBuilder()
-                                        .code(0)
-                                        .message("请求成功")
+                .globalResponses(HttpMethod.GET,
+                        Arrays.asList(new ResponseBuilder()
+                                        .code("0")
+                                        .description("请求成功")
                                         .build(),
-                                new ResponseMessageBuilder()
-                                        .code(500)
-                                        .message("系统异常").build()))
-                .globalResponseMessage(RequestMethod.POST,
-                        Arrays.asList(new ResponseMessageBuilder()
-                                        .code(0)
-                                        .message("请求成功")
+                                new ResponseBuilder()
+                                        .code("500")
+                                        .description("系统异常").build()))
+                .globalResponses(HttpMethod.POST,
+                        Arrays.asList(new ResponseBuilder()
+                                        .code("0")
+                                        .description("请求成功")
                                         .build(),
-                                new ResponseMessageBuilder()
-                                        .code(400)
-                                        .message("参数不合法").build(),
-                                new ResponseMessageBuilder()
-                                        .code(500)
-                                        .message("系统异常").build()))
-                .globalResponseMessage(RequestMethod.PUT,
-                        Arrays.asList(new ResponseMessageBuilder()
-                                        .code(0)
-                                        .message("执行成功")
+                                new ResponseBuilder()
+                                        .code("400")
+                                        .description("参数不合法").build(),
+                                new ResponseBuilder()
+                                        .code("500")
+                                        .description("系统异常").build()))
+                .globalResponses(HttpMethod.PUT,
+                        Arrays.asList(new ResponseBuilder()
+                                        .code("0")
+                                        .description("执行成功")
                                         .build(),
-                                new ResponseMessageBuilder()
-                                        .code(500)
-                                        .message("系统异常").build()))
-                .globalResponseMessage(RequestMethod.DELETE,
-                        Arrays.asList(new ResponseMessageBuilder()
-                                        .code(0)
-                                        .message("请求成功")
+                                new ResponseBuilder()
+                                        .code("500")
+                                        .description("系统异常").build()))
+                .globalResponses(HttpMethod.DELETE,
+                        Arrays.asList(new ResponseBuilder()
+                                        .code("0")
+                                        .description("请求成功")
                                         .build(),
-                                new ResponseMessageBuilder()
-                                        .code(500)
-                                        .message("系统异常").build()));
+                                new ResponseBuilder()
+                                        .code("500")
+                                        .description("系统异常").build()));
     }
 
     private ApiInfo apiInfo(){
