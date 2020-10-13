@@ -4,15 +4,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.RequestMethod;
 import springfox.documentation.builders.*;
 import springfox.documentation.oas.annotations.EnableOpenApi;
-import springfox.documentation.service.ApiInfo;
+import springfox.documentation.schema.ScalarType;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
 import java.security.Principal;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author ngcly
@@ -31,6 +33,7 @@ public class SwaggerConfig {
                 //所有路径
                 .paths(PathSelectors.any())
                 .build()
+                .securitySchemes(security())
                 .ignoredParameterTypes(Authentication.class, Principal.class)
                 .globalResponses(HttpMethod.GET,
                         Arrays.asList(new ResponseBuilder()
@@ -66,7 +69,8 @@ public class SwaggerConfig {
                                         .build(),
                                 new ResponseBuilder()
                                         .code("500")
-                                        .description("系统异常").build()));
+                                        .description("系统异常").build()))
+                .globalRequestParameters(globalRequestParameters());
     }
 
     private ApiInfo apiInfo(){
@@ -77,4 +81,19 @@ public class SwaggerConfig {
                 .version("1.0")
                 .build();
     }
+
+    private List<SecurityScheme> security() {
+        ApiKey apiKey = new ApiKey("Authorization", "Authorization", "header");
+        return Collections.singletonList(apiKey);
+    }
+
+    private List<RequestParameter> globalRequestParameters() {
+        RequestParameterBuilder parameterBuilder = new RequestParameterBuilder()
+                .in(ParameterType.HEADER)
+                .name("Authorization")
+                .required(false)
+                .query(param -> param.model(model -> model.scalarModel(ScalarType.STRING)));
+        return Collections.singletonList(parameterBuilder.build());
+    }
+
 }
