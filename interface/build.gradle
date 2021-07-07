@@ -24,14 +24,8 @@ repositories {
 dependencies {
     implementation project(":service")
 
-    //自动配置的是2.3.7版的oauth2 有redis反序列化bug
-//    implementation 'org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.3.3.RELEASE'
-
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
     implementation 'org.jsoup:jsoup:1.13.1'
+    implementation 'org.springframework.cloud:spring-cloud-starter-oauth2:2.2.5.RELEASE'
 
-//    compile 'org.springframework.social:spring-social-config:1.1.5.RELEASE'
-//    compile 'org.springframework.social:spring-social-core:1.1.5.RELEASE'
-//    compile 'org.springframework.social:spring-social-security:1.1.5.RELEASE'
-//    compile 'org.springframework.social:spring-social-web:1.1.5.RELEASE'
 }
