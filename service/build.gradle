@@ -9,6 +9,5 @@ sourceCompatibility = 1.8
 //bootRepackage.enabled = false
 
 dependencies {
-    compile project(":commons")
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    api project(":commons")
 }

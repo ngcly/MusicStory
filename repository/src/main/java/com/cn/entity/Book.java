@@ -8,7 +8,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 /**
  * @author ngcly
  */
-@Document(indexName = "book", type = "_doc")
+@Document(indexName = "book")
 @Getter
 @Setter
 public class Book {
