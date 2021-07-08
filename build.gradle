@@ -33,6 +33,8 @@ subprojects {  //子项目通配
     targetCompatibility = 1.8
 
     repositories {  //所有子项目jar包中央仓库
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url "https://plugins.gradle.org/m2/" }
         mavenCentral()
     }
 
