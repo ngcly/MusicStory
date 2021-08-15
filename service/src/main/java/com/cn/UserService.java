@@ -1,5 +1,6 @@
 package com.cn;
 
+import cn.hutool.core.map.MapUtil;
 import com.cn.config.RabbitConfig;
 import com.cn.dao.RoleRepository;
 import com.cn.dao.UserFavesRepository;
@@ -59,8 +60,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsernameOrEmail(username,username).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
-        UserDetail userDetail = new UserDetail(user);
-        return userDetail;
+        return user;
     }
 
     /**
@@ -84,7 +84,7 @@ public class UserService implements UserDetailsService {
         String code = System.currentTimeMillis()%100+result.getUsername();
         //以激活码为KEY 将用户ID保存到redis 有效期三小时
         redisTemplate.opsForValue().set(code,result.getId(),3,TimeUnit.HOURS);
-        Map<String,String> map = new HashMap<>();
+        Map<String,String> map = MapUtil.newHashMap(3);
         map.put("to",result.getEmail());
         map.put("subject","来自音书网站的激活邮件");
         map.put("context","感谢注册音书网站！<br/>请完成激活进行使用:<a href=\"https://api.ngcly.cn/active/"+code+"\">点击激活</a><br/>激活有效期为3小时");
@@ -105,7 +105,7 @@ public class UserService implements UserDetailsService {
     public ModelMap activeUser(String code){
         //根据激活码 从redis获取用户ID信息
         String id = redisTemplate.opsForValue().get(code);
-        if(StringUtils.isEmpty(id)){
+        if(StringUtils.hasLength(id)){
             return RestUtil.failure(500,"激活码已过期或无效");
         }
         Optional<User> userOptional = userRepository.findById(id);
@@ -124,7 +124,7 @@ public class UserService implements UserDetailsService {
      * @param user 用户信息
      */
     public void altUser(User user){
-        User user1 = userRepository.getOne(user.getId());
+        User user1 = userRepository.getById(user.getId());
         user1.setState(user.getState());
         Set<Role> allRole = roleRepository.getAllByAvailableIsTrueAndRoleType((byte) 2);
         if(user.getRoleIds()!=null){
@@ -154,7 +154,7 @@ public class UserService implements UserDetailsService {
      * @return user
      */
     public User getUserDetail(String userId){
-        return userRepository.getOne(userId);
+        return userRepository.getById(userId);
     }
 
     /**

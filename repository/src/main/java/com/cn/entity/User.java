@@ -100,30 +100,35 @@ public class User extends AbstractDateAudit implements UserDetails {
     private String[] roleIds;
 
     @Override
+    @Transient
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
     }
 
     @Override
+    @Transient
     @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @Transient
     @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @Transient
     @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
+    @Transient
     @JsonIgnore
     public boolean isEnabled() {
         return true;
