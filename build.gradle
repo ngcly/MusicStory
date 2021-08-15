@@ -5,7 +5,10 @@ version '1.0-SNAPSHOT'
 
 buildscript { //构建脚本
     //定义版本号
-    ext { springBootVersion = '2.5.2' }
+    ext {
+        springBootVersion = '2.5.2'
+        dockerPluginVersion = '0.22.2'
+    }
     repositories {//jar包仓库
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
         maven { url "https://plugins.gradle.org/m2/" }
@@ -13,7 +16,7 @@ buildscript { //构建脚本
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath('gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.22.2')
+        classpath("gradle.plugin.com.palantir.gradle.docker:gradle-docker:${dockerPluginVersion}")
     }
 }
 
@@ -43,15 +46,32 @@ subprojects {  //子项目通配
         enabled = true
     }
 
+    //定义版本
+    ext {
+        ulisesVersion = '3.0.3'
+        swaggerVersion = '3.0.0'
+        jsoupVersion = '1.13.1'
+        nekohtmlVersion = '1.9.22'
+        hutoolVersion = '5.7.8'
+        aliOssVersion = '3.13.0'
+        jjwtVersion = '0.11.2'
+        justAuthVersion = '1.16.2'
+        aliOssVersion = '3.13.0'
+        druidVersion = '1.2.6'
+        dialectVersion = '2.4.1'
+        extrasVersion = '3.0.4.RELEASE'
+        locatorVersion = '0.47'
+        layuiVersion = '2.6.8'
+        treegridVersion = '0.3.0'
+    }
+
     dependencies {  //所有子项目通用依赖
         implementation 'org.springframework.boot:spring-boot-starter'
         implementation 'org.springframework.boot:spring-boot-starter-actuator'
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-jersey'
         implementation 'org.springframework.boot:spring-boot-starter-security'
-        implementation 'org.springframework.boot:spring-boot-starter-json'
-        implementation 'com.alibaba:fastjson:1.2.62'
-        implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.0'
+        implementation "com.github.ulisesbocchio:jasypt-spring-boot-starter:${ulisesVersion}"
 
 //        runtime('org.springframework.boot:spring-boot-devtools')
         compileOnly 'org.projectlombok:lombok'
@@ -59,5 +79,9 @@ subprojects {  //子项目通配
 
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         testImplementation 'org.springframework.security:spring-security-test'
+    }
+
+    test {
+        useJUnitPlatform()
     }
 }

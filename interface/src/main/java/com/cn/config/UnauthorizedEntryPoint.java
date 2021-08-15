@@ -45,7 +45,7 @@ public class UnauthorizedEntryPoint implements AuthenticationEntryPoint {
         } else if (authException instanceof InsufficientAuthenticationException){
             restCode = RestCode.TOKEN_EXPIRE;
         } else {
-            restCode = RestCode.UNAUTHEN;
+            restCode = RestCode.UNAUTHORIZED;
         }
         out.write(JSON.toJSON(RestUtil.failure(restCode)).toString());
         out.flush();

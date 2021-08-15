@@ -40,7 +40,7 @@ public class ExceptionHandle
     public ModelMap handlerException(HttpServletRequest request, Exception e){
         e.printStackTrace();
         if (e instanceof AccessDeniedException) {
-            return RestUtil.failure(RestCode.UNAUTHZ);
+            return RestUtil.failure(RestCode.UNAUTHORIZED);
         } else if (e instanceof HttpRequestMethodNotSupportedException) {
             return RestUtil.failure(RestCode.METHOD_ERROR);
         } else if (e instanceof MissingPathVariableException) {

@@ -1,9 +1,14 @@
 package com.cn.config;
 
+import cn.hutool.http.ContentType;
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONConfig;
+import cn.hutool.json.JSONUtil;
 import com.cn.LogService;
 import com.cn.entity.Manager;
 
 import com.cn.util.IpUtil;
+import com.cn.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -13,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * 登录成功后事件
@@ -29,11 +36,11 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
                                         HttpServletResponse response, Authentication authentication) throws IOException,
             ServletException {
 
-        response.setContentType("application/json;charset=utf-8");
-        PrintWriter out = response.getWriter();
-        out.write("{\"code\":0,\"msg\":\"登录成功\"}");
-        out.flush();
-        out.close();
+        response.setContentType(ContentType.JSON.toString(UTF_8));
+        try (PrintWriter printWriter = response.getWriter()) {
+            JSON json = JSONUtil.parse(RestUtil.success(), JSONConfig.create().setOrder(true).setIgnoreNullValue(false));
+            JSONUtil.toJsonStr(json,printWriter);
+        }
 
         Manager userDetails = (Manager) authentication.getPrincipal();
         logService.saveLog(userDetails.getId(),userDetails.getUsername(), IpUtil.getIpAddress(request));

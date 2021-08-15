@@ -12,7 +12,6 @@ import javax.validation.constraints.NotBlank;
  * @author ngcly
  * @create 2018-08-05 13:42
  */
-
 @ApiModel(value="登录参数", description = "登录需要以下参数")
 public class LogInDTO {
     @ApiModelProperty(value="用户名", required = true)

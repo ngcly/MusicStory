@@ -1,7 +1,7 @@
 package com.cn.util;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -117,10 +117,9 @@ public class IpUtil {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(url,String.class);
         if(responseEntity.getStatusCode().is2xxSuccessful()){
-            JSONObject data = JSON.parseObject(responseEntity.getBody());
-            return data.getString("addr");
+            JSONObject json = JSONUtil.parseObj(responseEntity.getBody());
+            return json.getStr("addr");
         }
-
         return null;
     }
 }

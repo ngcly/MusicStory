@@ -1,5 +1,7 @@
 package com.cn.config;
 
+import cn.hutool.http.ContentType;
+import cn.hutool.http.Header;
 import com.cn.pojo.RestCode;
 import com.cn.util.RestUtil;
 import org.springframework.security.access.AccessDeniedException;
@@ -24,13 +26,13 @@ public class ExceptionResolver implements HandlerExceptionResolver {
     @Override
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         //判断是否为ajax请求
-        if (request.getHeader("accept").indexOf("application/json") > -1
+        if (request.getHeader(Header.ACCEPT.toString()).indexOf(ContentType.JSON.toString()) > -1
                 ||  "XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
             //返回json
             ModelAndView mv = new ModelAndView(new MappingJackson2JsonView());
             ModelMap modelMap;
             if(ex instanceof AccessDeniedException){
-                modelMap = RestUtil.failure(RestCode.UNAUTHZ);
+                modelMap = RestUtil.failure(RestCode.UNAUTHORIZED);
             } else if(ex instanceof GlobalException){
                 modelMap = RestUtil.failure(((GlobalException) ex).getCode(),ex.getMessage());
             } else {

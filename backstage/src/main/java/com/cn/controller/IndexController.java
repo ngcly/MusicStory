@@ -1,5 +1,7 @@
 package com.cn.controller;
 
+import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.ICaptcha;
 import com.cn.ManagerService;
 import com.cn.RoleService;
 import com.cn.entity.Manager;
@@ -8,7 +10,6 @@ import com.cn.entity.Role;
 import com.cn.pojo.ManagerDetail;
 import com.cn.pojo.ValidateCode;
 import com.cn.util.MenuUtil;
-import com.google.code.kaptcha.impl.DefaultKaptcha;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,9 +21,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
 import java.security.Principal;
 import java.util.*;
 
@@ -36,8 +37,6 @@ import java.util.*;
 public class IndexController {
     @Autowired
     RoleService roleService;
-    @Autowired
-    DefaultKaptcha defaultKaptcha;
     @Autowired
     ManagerService managerService;
 
@@ -103,11 +102,15 @@ public class IndexController {
      */
     @RequestMapping("/kaptcha")
     public void defaultKaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception{
-        String createText = defaultKaptcha.createText();
-        ValidateCode validateCode = new ValidateCode(createText,60);
+        //定义图形验证码的长、宽、验证码字符数、干扰元素个数
+        ICaptcha captcha = CaptchaUtil.createGifCaptcha(116, 36, 4);
+        ValidateCode validateCode = new ValidateCode(captcha.getCode(),60);
         //生产验证码字符串并保存到session中
         request.getSession().setAttribute("validateCode", validateCode);
-        ImageIO.write(defaultKaptcha.createImage(createText), "jpg", response.getOutputStream());
+        //图形验证码写出，可以写出到文件，也可以写出到流
+        try (OutputStream out = response.getOutputStream()){
+            captcha.write(out);
+        }
     }
 
     /**

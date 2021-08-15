@@ -24,8 +24,8 @@ repositories {
 dependencies {
     implementation project(":service")
 
-    implementation 'io.springfox:springfox-boot-starter:3.0.0'
-    implementation 'org.jsoup:jsoup:1.13.1'
-    implementation 'org.springframework.cloud:spring-cloud-starter-oauth2:2.2.5.RELEASE'
+    implementation "io.springfox:springfox-boot-starter:${swaggerVersion}"
+    implementation "org.jsoup:jsoup:${jsoupVersion}"
+    implementation "me.zhyd.oauth:JustAuth:${justAuthVersion}"
 
 }

@@ -1,6 +1,7 @@
 package com.cn.controller;
 
-import com.alibaba.fastjson.JSON;
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONUtil;
 import com.cn.LogService;
 import com.cn.ManagerService;
 import com.cn.RoleService;
@@ -244,7 +245,7 @@ public class SystemController {
     public String grantForm(@RequestParam long roleId,@RequestParam String type, Model model) {
         List<Permission> permissions = roleService.getPermissionList();
         List<Permission> rolePermissions = roleService.findRole(roleId).getPermissions();
-        String menuList = JSON.toJSONString(MenuUtil.makeTreeList(permissions,rolePermissions));
+        String menuList = JSONUtil.toJsonStr(MenuUtil.makeTreeList(permissions,rolePermissions));
         model.addAttribute("type",type);
         model.addAttribute("roleId", roleId);
         model.addAttribute("menuList",menuList);

@@ -6,10 +6,14 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 
@@ -39,39 +43,90 @@ import java.util.Set;
                 "unionId"
         })
 })
-public class User extends AbstractDateAudit implements Serializable {
+public class User extends AbstractDateAudit implements UserDetails {
     @Id
     @GeneratedValue(generator = "id")
     @GenericGenerator(name = "id", strategy = "uuid")
     @Column(name="id")
     private String id ;
     @Column(name="username",unique = true)
-    private String username;       //用户名
+    /**用户名*/
+    private String username;
+    /**密码*/
     @JsonIgnore
-    private String password;       //密码
-    private String nickName;       //昵称
-    private Date birthday;         //生日
-    private Byte gender ;          //性别
-    private String address;        //地址
-    private String realName;       //真实姓名
-    private String personDesc;     //个人简介
-    private String signature;      //个性签名
-    private String avatar;         //头像
-    private String phone;          //手机号
-    private String email;          //邮箱地址
-    private BigDecimal balance;    //账户余额
-    private Integer level;         //等级
-    private Integer credit;        //积分
-    private Byte state;//用户状态,0:未激活 1:正常状态,2:异常.
-    @JsonIgnore
-    private String unionId;        //第三方账号唯一ID
+    private String password;
+    /**昵称*/
+    private String nickName;
+    /**生日*/
+    private Date birthday;
+    /**性别*/
+    private Byte gender ;
+    /**地址*/
+    private String address;
+    /**真实姓名*/
+    private String realName;
+    /**个人简介*/
+    private String personDesc;
+    /**个性签名*/
+    private String signature;
+    /**头像*/
+    private String avatar;
+    /**手机号*/
+    private String phone;
+    /**邮箱地址*/
+    private String email;
+    /**账户余额*/
+    private BigDecimal balance;
+    /**等级*/
+    private Integer level;
+    /**积分*/
+    private Integer credit;
+    /**用户状态,0:未激活 1:正常状态,2:异常.*/
+    private Byte state;
+    /**
+     * 重置密码时间
+     */
+    /**重置密码时间*/
+    private LocalDateTime pwdReset;
 
-    @ManyToMany(fetch= FetchType.EAGER)//立即从数据库中进行加载数据;
+    /**立即从数据库中进行加载数据;*/
+    @ManyToMany(fetch= FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns ={@JoinColumn(name = "role_id") })
     @Where(clause = "available=true")
-    private Set<Role> roleList;// 一个用户具有多个角色
+    /**一个用户具有多个角色*/
+    private Set<Role> roleList;
 
     @Transient
     private String[] roleIds;
+
+    @Override
+    @JsonIgnore
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isEnabled() {
+        return true;
+    }
 }
 

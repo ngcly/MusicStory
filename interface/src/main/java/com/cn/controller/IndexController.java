@@ -1,8 +1,8 @@
 package com.cn.controller;
 
 import com.cn.*;
+import com.cn.config.JwtTokenUtil;
 import com.cn.pojo.LogInDTO;
-import com.cn.pojo.RestCode;
 import com.cn.pojo.SignUpDTO;
 import com.cn.entity.Carousel;
 import com.cn.entity.CarouselCategory;
@@ -13,20 +13,17 @@ import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
-import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
-import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.security.Principal;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 描述:
@@ -39,51 +36,35 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 public class IndexController {
+    private final JwtTokenUtil jwtTokenUtil;
+    private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final EssayService essayService;
     private final NoticeService noticeService;
     private final CarouselService carouselService;
-    private final TokenEndpoint tokenEndpoint;
-    private final ConsumerTokenServices consumerTokenServices;
     private final ClassifyService classifyService;
     private final BookService bookService;
 
     @ApiOperation(value = "登录", notes = "用户登录")
     @PostMapping("/signin")
-    public ModelMap postAccessToken(Principal principal, @RequestBody LogInDTO logInDTO) throws HttpRequestMethodNotSupportedException {
-        try {
-            Map<String,String> parameters = new HashMap<>();
-            parameters.put("grant_type","password");
-            parameters.put("scope","all");
-            parameters.put("username",logInDTO.getUsername());
-            parameters.put("password",logInDTO.getPassword());
-            ResponseEntity entity = tokenEndpoint.postAccessToken(principal, parameters);
-            return RestUtil.success(entity.getBody());
-        }catch (InvalidGrantException e){
-            if("User is disabled".equals(e.getMessage())){
-                return RestUtil.failure(334,"未激活,请先确认邮件完成激活");
-            }
-            return RestUtil.failure(RestCode.USER_ERR);
-        }
+    public ModelMap postAccessToken(@RequestBody LogInDTO logInDTO) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(logInDTO.getUsername(),logInDTO.getPassword());
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        User user = (User) authentication.getPrincipal();
+        String token = jwtTokenUtil.generateToken(user);
+        return RestUtil.success(token);
     }
 
     @ApiOperation(value = "刷新token", notes = "用户刷新token")
     @GetMapping("/signin")
-    public ModelMap getAccessToken(Principal principal,@RequestParam Map<String, String> parameters) {
-        parameters.put("grant_type","refresh_token");
-        parameters.put("scope","all");
-        try {
-            ResponseEntity entity = tokenEndpoint.postAccessToken(principal, parameters);
-            return RestUtil.success(entity.getBody());
-        }catch (Exception e){
-            return RestUtil.failure(RestCode.UNAUTHEN);
-        }
+    public ModelMap getAccessToken(HttpServletRequest request) {
+        return RestUtil.success(jwtTokenUtil.refreshToken(request.getHeader("authorization")));
     }
 
     @ApiOperation(value = "登出", notes = "退出登录")
     @DeleteMapping("/signout/{token}")
     public ModelMap logout(@PathVariable("token")String token){
-        consumerTokenServices.revokeToken(token);
         return RestUtil.success();
     }
 

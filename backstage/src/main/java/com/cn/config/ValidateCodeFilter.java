@@ -1,7 +1,7 @@
 package com.cn.config;
 
+import cn.hutool.core.util.StrUtil;
 import com.cn.pojo.ValidateCode;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -23,8 +23,8 @@ public class ValidateCodeFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        if (StringUtils.equalsIgnoreCase("/login", httpServletRequest.getRequestURI())
-                && StringUtils.equalsIgnoreCase(httpServletRequest.getMethod(), "post")) {
+        if (StrUtil.equalsIgnoreCase("/login", httpServletRequest.getRequestURI())
+                && StrUtil.equalsIgnoreCase(httpServletRequest.getMethod(), "post")) {
             try {
                 validateCode(httpServletRequest);
             } catch (AuthenticationServiceException e) {
@@ -39,14 +39,10 @@ public class ValidateCodeFilter extends OncePerRequestFilter {
         ValidateCode codeInSession = (ValidateCode) request.getSession().getAttribute("validateCode");
         String codeInRequest = request.getParameter("randomcode");
 
-        if (codeInSession.isExpire()||!StringUtils.equalsIgnoreCase(codeInSession.getCode(), codeInRequest)) {
+        if (codeInSession.isExpire() || !StrUtil.equalsIgnoreCase(codeInSession.getCode(), codeInRequest)) {
             throw new AuthenticationServiceException("验证码错误！");
         }
         request.getSession().removeAttribute("validateCode");
-    }
-
-    public LoginFailureHandler getLoginFailureHandler() {
-        return loginFailureHandler;
     }
 
     public void setLoginFailureHandler(LoginFailureHandler loginFailureHandler) {
