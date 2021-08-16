@@ -7,7 +7,6 @@ import com.cn.dao.UserFavesRepository;
 import com.cn.dao.UserFollowRepository;
 import com.cn.dao.UserRepository;
 import com.cn.entity.*;
-import com.cn.pojo.UserDetail;
 import com.cn.util.RestUtil;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotNull;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
