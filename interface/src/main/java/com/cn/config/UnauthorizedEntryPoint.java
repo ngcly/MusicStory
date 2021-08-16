@@ -1,6 +1,9 @@
 package com.cn.config;
 
-import com.alibaba.fastjson.JSON;
+import cn.hutool.http.ContentType;
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONConfig;
+import cn.hutool.json.JSONUtil;
 import com.cn.pojo.RestCode;
 import com.cn.util.RestUtil;
 import org.springframework.security.authentication.*;
@@ -15,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * 自定义未认证 401 返回值
  * @author chen
@@ -26,8 +31,8 @@ public class UnauthorizedEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
-        response.setContentType("application/json;charset=utf-8");
-        PrintWriter out = response.getWriter();
+        response.setContentType(ContentType.JSON.toString(UTF_8));
+
         RestCode restCode;
         if (authException instanceof BadCredentialsException ||
                 authException instanceof UsernameNotFoundException) {
@@ -47,8 +52,10 @@ public class UnauthorizedEntryPoint implements AuthenticationEntryPoint {
         } else {
             restCode = RestCode.UNAUTHORIZED;
         }
-        out.write(JSON.toJSON(RestUtil.failure(restCode)).toString());
-        out.flush();
-        out.close();
+
+        try (PrintWriter printWriter = response.getWriter()) {
+            JSON json = JSONUtil.parse(RestUtil.failure(restCode), JSONConfig.create().setOrder(true).setIgnoreNullValue(false));
+            JSONUtil.toJsonStr(json,printWriter);
+        }
     }
 }

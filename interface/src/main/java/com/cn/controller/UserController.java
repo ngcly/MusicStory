@@ -60,9 +60,6 @@ public class UserController {
     @ApiOperation(value = "写文章", notes = "用户保存草稿")
     @PostMapping("/essay")
     public ModelMap createEssay(Authentication authentication, @Valid @RequestBody EssayDTO essayDTO, BindingResult result) {
-        if(result.hasErrors()){
-            return RestUtil.failure(400,result.getFieldError().getField()+":"+result.getFieldError().getDefaultMessage());
-        }
         UserDetail user = (UserDetail) authentication.getPrincipal();
         Essay essay = new Essay();
         BeanUtils.copyProperties(essayDTO,essay);
@@ -73,9 +70,6 @@ public class UserController {
     @ApiOperation(value = "发表文章", notes = "用户发表文章")
     @PutMapping("/essay")
     public ModelMap updateEssay(Authentication authentication, @Valid @RequestBody EssayDTO essayDTO, BindingResult result) {
-        if(result.hasErrors()){
-            return RestUtil.failure(400,result.getFieldError().getField()+":"+result.getFieldError().getDefaultMessage());
-        }
         UserDetail user = (UserDetail) authentication.getPrincipal();
         Essay essay = new Essay();
         BeanUtils.copyProperties(essayDTO,essay);

@@ -1,6 +1,5 @@
 package com.cn.controller;
-
-import com.alibaba.fastjson.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.cn.UserService;
 import com.cn.pojo.RestCode;
 import com.cn.util.RestUtil;
@@ -61,10 +60,10 @@ public class RestAuthController {
      */
     @RequestMapping("/callback/{source}")
     public ModelAndView login(@PathVariable("source") String source, AuthCallback callback, HttpServletRequest request) {
-        log.info("进入callback：" + source + " callback params：" + JSONObject.toJSONString(callback));
+        log.info("进入callback：" + source + " callback params：" + JSONUtil.toJsonStr(callback));
         AuthRequest authRequest = getAuthRequest(source);
         AuthResponse<AuthUser> response = authRequest.login(callback);
-        log.info(JSONObject.toJSONString(response));
+        log.info(JSONUtil.toJsonStr(response));
 
         if (response.ok()) {
 //            userService.save(response.getData());
