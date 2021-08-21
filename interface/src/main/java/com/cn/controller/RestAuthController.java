@@ -5,6 +5,7 @@ import com.cn.pojo.RestCode;
 import com.cn.util.RestUtil;
 import com.xkcoding.http.config.HttpConfig;
 import lombok.extern.slf4j.Slf4j;
+import me.zhyd.oauth.AuthRequestBuilder;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.enums.scope.*;
 import me.zhyd.oauth.exception.AuthException;
@@ -45,11 +46,22 @@ public class RestAuthController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping("/render/{source}")
+    @RequestMapping("/render/{code}")
     @ResponseBody
-    public void renderAuth(@PathVariable("source") String source, HttpServletResponse response) throws IOException {
-        log.info("进入render：" + source);
-        AuthRequest authRequest = getAuthRequest(source);
+    public void renderAuth(@PathVariable("code") String code, HttpServletResponse response) throws IOException {
+        log.info("进入render：" + code);
+        AuthRequest authRequest = AuthRequestBuilder.builder()
+                .source(code)
+                .authConfig((source) -> {
+                    // 通过 source 动态获取 AuthConfig
+                    // 此处可以灵活的从 sql 中取配置也可以从配置文件中取配置
+                    return AuthConfig.builder()
+                            .clientId("clientId")
+                            .clientSecret("clientSecret")
+                            .redirectUri("redirectUri")
+                            .build();
+                })
+                .build();
         String authorizeUrl = authRequest.authorize(AuthStateUtils.createState());
         log.info(authorizeUrl);
         response.sendRedirect(authorizeUrl);
@@ -58,10 +70,21 @@ public class RestAuthController {
     /**
      * oauth平台中配置的授权回调地址，以本项目为例，在创建github授权应用时的回调地址应为：http://127.0.0.1:8443/oauth/callback/github
      */
-    @RequestMapping("/callback/{source}")
-    public ModelAndView login(@PathVariable("source") String source, AuthCallback callback, HttpServletRequest request) {
-        log.info("进入callback：" + source + " callback params：" + JSONUtil.toJsonStr(callback));
-        AuthRequest authRequest = getAuthRequest(source);
+    @RequestMapping("/callback/{code}")
+    public ModelAndView login(@PathVariable("code") String code, AuthCallback callback, HttpServletRequest request) {
+        log.info("进入callback：" + code + " callback params：" + JSONUtil.toJsonStr(callback));
+        AuthRequest authRequest = AuthRequestBuilder.builder()
+                .source(code)
+                .authConfig((source) -> {
+                    // 通过 source 动态获取 AuthConfig
+                    // 此处可以灵活的从 sql 中取配置也可以从配置文件中取配置
+                    return AuthConfig.builder()
+                            .clientId("clientId")
+                            .clientSecret("clientSecret")
+                            .redirectUri("redirectUri")
+                            .build();
+                })
+                .build();
         AuthResponse<AuthUser> response = authRequest.login(callback);
         log.info(JSONUtil.toJsonStr(response));
 
@@ -78,9 +101,19 @@ public class RestAuthController {
 
     @RequestMapping("/revoke/{source}/{uuid}")
     @ResponseBody
-    public ModelMap revokeAuth(@PathVariable("source") String source, @PathVariable("uuid") String uuid) throws IOException {
-        AuthRequest authRequest = getAuthRequest(source.toLowerCase());
-
+    public ModelMap revokeAuth(@PathVariable("code") String code, @PathVariable("uuid") String uuid) throws IOException {
+        AuthRequest authRequest = AuthRequestBuilder.builder()
+                .source(code)
+                .authConfig((source) -> {
+                    // 通过 source 动态获取 AuthConfig
+                    // 此处可以灵活的从 sql 中取配置也可以从配置文件中取配置
+                    return AuthConfig.builder()
+                            .clientId("clientId")
+                            .clientSecret("clientSecret")
+                            .redirectUri("redirectUri")
+                            .build();
+                })
+                .build();
 //        AuthUser user = userService.getByUuid(uuid);
 //        if (null == user) {
 //            return RestUtil.failure(RestCode.USER_ERR);
@@ -101,9 +134,19 @@ public class RestAuthController {
 
     @RequestMapping("/refresh/{source}/{uuid}")
     @ResponseBody
-    public ModelMap refreshAuth(@PathVariable("source") String source, @PathVariable("uuid") String uuid) {
-        AuthRequest authRequest = getAuthRequest(source.toLowerCase());
-
+    public ModelMap refreshAuth(@PathVariable("code") String code, @PathVariable("uuid") String uuid) {
+        AuthRequest authRequest = AuthRequestBuilder.builder()
+                .source(code)
+                .authConfig((source) -> {
+                    // 通过 source 动态获取 AuthConfig
+                    // 此处可以灵活的从 sql 中取配置也可以从配置文件中取配置
+                    return AuthConfig.builder()
+                            .clientId("clientId")
+                            .clientSecret("clientSecret")
+                            .redirectUri("redirectUri")
+                            .build();
+                })
+                .build();
 //        AuthUser user = userService.getByUuid(uuid);
 //        if (null == user) {
 //            return RestUtil.failure(RestCode.USER_ERR);
@@ -123,110 +166,4 @@ public class RestAuthController {
         return null;
     }
 
-    /**
-     * 根据具体的授权来源，获取授权请求工具类
-     *
-     * @param source
-     * @return
-     */
-    private AuthRequest getAuthRequest(String source) {
-        AuthRequest authRequest = null;
-        switch (source.toLowerCase()) {
-            case "dingtalk":
-                authRequest = new AuthDingTalkRequest(AuthConfig.builder()
-                        .clientId("")
-                        .clientSecret("")
-                        .redirectUri("http://localhost:8443/oauth/callback/dingtalk")
-                        .build());
-                break;
-            case "baidu":
-                authRequest = new AuthBaiduRequest(AuthConfig.builder()
-                        .clientId("")
-                        .clientSecret("")
-                        .redirectUri("http://localhost:8443/oauth/callback/baidu")
-                        .scopes(Arrays.asList(
-                                AuthBaiduScope.BASIC.getScope(),
-                                AuthBaiduScope.SUPER_MSG.getScope(),
-                                AuthBaiduScope.NETDISK.getScope()
-                        ))
-                        .build());
-                break;
-            case "github":
-                authRequest = new AuthGithubRequest(AuthConfig.builder()
-                        .clientId("")
-                        .clientSecret("")
-                        .redirectUri("http://localhost:8443/oauth/callback/github")
-                        .scopes(AuthScopeUtils.getScopes(AuthGithubScope.values()))
-                        // 针对国外平台配置代理
-                        .httpConfig(HttpConfig.builder()
-                                .timeout(15000)
-                                .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 10080)))
-                                .build())
-                        .build());
-                break;
-            case "gitee":
-                authRequest = new AuthGiteeRequest(AuthConfig.builder()
-                        .clientId("")
-                        .clientSecret("")
-                        .redirectUri("http://127.0.0.1:8443/oauth/callback/gitee")
-                        .scopes(AuthScopeUtils.getScopes(AuthGiteeScope.values()))
-                        .build());
-                break;
-            case "weibo":
-                authRequest = new AuthWeiboRequest(AuthConfig.builder()
-                        .clientId("")
-                        .clientSecret("")
-                        .redirectUri("http://dblog-web.zhyd.me/oauth/callback/weibo")
-                        .scopes(Arrays.asList(
-                                AuthWeiboScope.EMAIL.getScope(),
-                                AuthWeiboScope.FRIENDSHIPS_GROUPS_READ.getScope(),
-                                AuthWeiboScope.STATUSES_TO_ME_READ.getScope()
-                        ))
-                        .build());
-                break;
-            case "oschina":
-                authRequest = new AuthOschinaRequest(AuthConfig.builder()
-                        .clientId("")
-                        .clientSecret("")
-                        .redirectUri("http://localhost:8443/oauth/callback/oschina")
-                        .build());
-                break;
-            case "alipay":
-                // 支付宝在创建回调地址时，不允许使用localhost或者127.0.0.1，所以这儿的回调地址使用的局域网内的ip
-                authRequest = new AuthAlipayRequest(AuthConfig.builder()
-                        .clientId("")
-                        .clientSecret("")
-                        .alipayPublicKey("")
-                        .redirectUri("https://www.zhyd.me/oauth/callback/alipay")
-                        .build());
-                break;
-            case "qq":
-                authRequest = new AuthQqRequest(AuthConfig.builder()
-                        .clientId("")
-                        .clientSecret("")
-                        .redirectUri("http://localhost:8443/oauth/callback/qq")
-                        .build());
-                break;
-            case "wechat_open":
-                authRequest = new AuthWeChatOpenRequest(AuthConfig.builder()
-                        .clientId("")
-                        .clientSecret("")
-                        .redirectUri("http://www.zhyd.me/oauth/callback/wechat")
-                        .build());
-                break;
-            case "taobao":
-                authRequest = new AuthTaobaoRequest(AuthConfig.builder()
-                        .clientId("")
-                        .clientSecret("")
-                        .redirectUri("http://dblog-web.zhyd.me/oauth/callback/taobao")
-                        .build());
-                break;
-            default:
-                break;
-        }
-        if (null == authRequest) {
-            throw new AuthException("未获取到有效的Auth配置");
-        }
-        return authRequest;
-    }
 }
