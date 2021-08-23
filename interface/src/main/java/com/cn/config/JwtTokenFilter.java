@@ -5,7 +5,7 @@ import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import com.cn.entity.User;
+import com.cn.pojo.UserDetail;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -42,12 +42,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwtToken = request.getHeader("authorization");
         if(StringUtils.hasLength(jwtToken) && jwtToken.startsWith(BEARER)){
-            User user = null;
+            UserDetail user = null;
             LocalDateTime issuedAt = null;
             try {
                 JWT jwt = JWTUtil.parseToken(jwtToken.substring(BEARER.length()));
                 if(jwtTokenUtil.verify(jwt)){
-                    user = jwt.getPayload().getClaimsJson().toBean(User.class);
+                    user = jwt.getPayload().getClaimsJson().toBean(UserDetail.class);
                     issuedAt = DateUtil.toLocalDateTime(jwt.getPayloads().getDate(JWT.ISSUED_AT));
                 }
             } catch (Exception e) {
@@ -55,7 +55,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
 
             if (user != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                if(issuedAt!=null && issuedAt.isAfter(user.getPwdReset())){
+                if(issuedAt!=null && issuedAt.isAfter(user.getPwdAlt())){
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     log.info("authenticated user:{}", authenticationToken);
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);

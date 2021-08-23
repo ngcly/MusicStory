@@ -3,8 +3,7 @@ package com.cn.pojo;
 import com.cn.entity.Music;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -13,9 +12,8 @@ import java.util.List;
 /**
  * @author ngcly
  */
+@Data
 @ApiModel(value="创建文章参数", description = "创建文章需要参数")
-@Getter
-@Setter
 public class EssayDTO {
 
     @ApiModelProperty(value="主键")

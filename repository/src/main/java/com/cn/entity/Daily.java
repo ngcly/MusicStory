@@ -1,18 +1,23 @@
 package com.cn.entity;
 
-import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
-@Data
+/**
+ * @author ngcly
+ */
+@Getter
+@Setter
 @Entity
 @Table(name = "daily")
 public class Daily extends AbstractDateAudit {
     @Id
-    @GeneratedValue(generator = "id")
-    @GenericGenerator(name = "id", strategy = "uuid")
-    @Column(name="id")
-    private String id;
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
     private String content;
+
 }

@@ -1,7 +1,7 @@
 package com.cn.entity;
 
-import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -11,18 +11,29 @@ import javax.persistence.*;
  * @author chen
  * @date 2017-12-30 17:41
  */
-@Data
+@Setter
+@Getter
 @Entity
 @Table(name = "carousel")
 public class Carousel {
+
     @Id
-    @GeneratedValue(generator = "id")
-    @GenericGenerator(name = "id", strategy = "uuid")
-    @Column(name="id")
-    private String id;
-    private String imageUrl;     //图片地址
-    private String imageTip;     //图片提示
-    private String forwardUrl;   //跳转地址
-    private Integer sort;        //排序
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
+
+    /**图片地址*/
+    @Column(nullable = false)
+    private String imageUrl;
+
+    /**图片提示*/
+    @Column(length = 20)
+    private String imageTip;
+
+    /**跳转地址*/
+    @Column(nullable = false)
+    private String forwardUrl;
+
+    /**排序*/
+    private Integer sort;
 
 }

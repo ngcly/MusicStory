@@ -6,7 +6,7 @@ import com.cn.pojo.RestCode;
 import com.cn.entity.*;
 import com.cn.util.RestUtil;
 import com.cn.util.UploadUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -22,23 +22,18 @@ import java.util.Set;
 
 /**
  * 音书管理 控制类
+ * @author ngcly
  */
 @Controller
 @RequestMapping("/ms")
+@AllArgsConstructor
 public class MsController {
-    @Autowired
-    UserService userService;
-    @Autowired
-    RoleService roleService;
-    @Autowired
-    ClassifyService classifyService;
-    @Autowired
-    NoticeService noticeService;
-    @Autowired
-    CarouselService carouselService;
-    @Autowired
-    EssayService essayService;
-
+    private final UserService userService;
+    private final RoleService roleService;
+    private final ClassifyService classifyService;
+    private final NoticeService noticeService;
+    private final CarouselService carouselService;
+    private final EssayService essayService;
 
     /**
      * 用户列表页
@@ -64,9 +59,9 @@ public class MsController {
      * 用户编辑页
      */
     @RequestMapping("/userEdit")
-    public String userEdit(@RequestParam String userId, Model model){
+    public String userEdit(@RequestParam Long userId, Model model){
         User user = userService.getUserDetail(userId);
-        Set<Role> roles = roleService.getAvailableRoles((byte) 2);
+        Set<Role> roles = roleService.getAvailableRoles(Role.ROLE_TYPE_CUSTOMER);
         ArrayList<String> checkRoleIds = new ArrayList<>();
         for(Role role:user.getRoleList()){
             checkRoleIds.add(role.getId().toString());
@@ -84,7 +79,7 @@ public class MsController {
      * 用户详情页
      */
     @RequestMapping("/userDetail")
-    public String userDetail(@RequestParam String userId, Model model){
+    public String userDetail(@RequestParam Long userId, Model model){
         User user = userService.getUserDetail(userId);
         model.addAttribute(user);
         return "user/userDetail";
@@ -108,7 +103,7 @@ public class MsController {
     @PreAuthorize("hasAuthority('user:del')")
     @ResponseBody
     @RequestMapping("/userDel")
-    public ModelMap delUser(@RequestParam String userId){
+    public ModelMap delUser(@RequestParam Long userId){
         userService.delUser(userId);
         return RestUtil.success();
 
@@ -195,7 +190,7 @@ public class MsController {
      * 文章审查页
      */
     @RequestMapping("/essayAlt")
-    public String essayAlt(@RequestParam String id, Model model){
+    public String essayAlt(@RequestParam Long id, Model model){
         Essay essay = essayService.getEssayDetail(id);
         model.addAttribute(essay);
         return "essay/essayEdit";
@@ -291,7 +286,7 @@ public class MsController {
      * 修改轮播分类页
      */
     @RequestMapping("/carouselCategoryAlt")
-    public String altCarouselCategory(@RequestParam(required = false)String id,Model model){
+    public String altCarouselCategory(@RequestParam(required = false)Long id,Model model){
         CarouselCategory carouselCategory = new CarouselCategory();
         if(id!=null){
             carouselCategory = carouselService.getCarouselDetail(id);
@@ -304,7 +299,7 @@ public class MsController {
      * 修改轮播图页
      */
     @RequestMapping("/carouselAlt")
-    public String altCarousel(@RequestParam String id,Model model){
+    public String altCarousel(@RequestParam Long id,Model model){
         CarouselCategory carouselCategory = carouselService.getCarouselDetail(id);
         model.addAttribute(carouselCategory);
         return "carousel/carouselEdit";
@@ -327,7 +322,7 @@ public class MsController {
     @PreAuthorize("hasAnyAuthority('sel:add','sel:alt')")
     @ResponseBody
     @RequestMapping("/addCarousel")
-    public ModelMap addCarousel(@RequestParam("file") MultipartFile file,@RequestParam("id")String id) {
+    public ModelMap addCarousel(@RequestParam("file") MultipartFile file,@RequestParam("id")Long id) {
         if(file.isEmpty()){
             return RestUtil.failure(222,"文件为空");
         }
@@ -347,7 +342,7 @@ public class MsController {
     @PreAuthorize("hasAuthority('sel:del')")
     @ResponseBody
     @GetMapping("/carouselDel/{id}")
-    public ModelMap delCarouselCategory(@PathVariable("id")String id){
+    public ModelMap delCarouselCategory(@PathVariable("id")Long id){
         carouselService.deleteCarouselCategory(id);
         return RestUtil.success();
     }
@@ -358,7 +353,7 @@ public class MsController {
     @PreAuthorize("hasAuthority('sel:del')")
     @ResponseBody
     @GetMapping("/carouselDel")
-    public ModelMap delCarousel(@RequestParam("id")String id,@RequestParam("url")String url){
+    public ModelMap delCarousel(@RequestParam("id")Long id,@RequestParam("url")String url){
         carouselService.deleteCarousel(id,url);
         return RestUtil.success();
     }

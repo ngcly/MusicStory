@@ -14,16 +14,21 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author ngcly
+ */
 @Repository
 public interface ClassifyRepository extends JpaRepository<Classify,Long>, JpaSpecificationExecutor<Classify> {
 
     /**
-     * 动态查询分类数据
+     *  动态查询分类数据
+     * @param name 分类名
+     * @return Specification<Classify>
      */
     static Specification<Classify> getClassifyList(String name){
         return (Root<Classify> root, CriteriaQuery<?> query, CriteriaBuilder cb)->{
             List<Predicate> predicates = new ArrayList<>();
-            if(!StringUtils.isEmpty(name)) {
+            if(StringUtils.hasLength(name)) {
                 predicates.add(cb.like(root.get("name"),"%"+name+"%"));
             }
             return query.where(cb.and(predicates.toArray(new Predicate[predicates.size()]))).getRestriction();

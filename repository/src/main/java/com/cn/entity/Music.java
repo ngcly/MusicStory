@@ -1,7 +1,7 @@
 package com.cn.entity;
 
-import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -11,22 +11,39 @@ import javax.persistence.*;
  * @author chen
  * @date 2017-12-30 17:40
  */
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "music")
 public class Music {
     @Id
-    @GeneratedValue(generator = "id")
-    @GenericGenerator(name = "id", strategy = "uuid")
-    @Column(name="id")
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private String id;
-    private String name;   //歌名
-    private String artist; //歌手
-    private String album;  //专辑
-    private String cover;  //封面
-    private String lrc;    //歌词
+
+    /**歌名*/
+    @Column(nullable = false, length = 32)
+    private String name;
+
+    /**歌手*/
+    @Column(length = 20)
+    private String artist;
+
+    /**专辑*/
+    @Column(length = 32)
+    private String album;
+
+    /**封面*/
+    private String cover;
+
+    /**歌词*/
+    private String lrc;
+
+    /**文章id*/
     @Column(nullable = false)
-    private String essayId;//文章ID
-    private String url;//链接地址
+    private Long essayId;
+
+    /**链接地址*/
+    @Column(nullable = false)
+    private String url;
 
 }

@@ -1,13 +1,13 @@
 package com.cn;
 
+import com.cn.config.GlobalException;
 import com.cn.dao.ManagerRepository;
 import com.cn.dao.RoleRepository;
 import com.cn.entity.Manager;
 import com.cn.entity.Role;
 import com.cn.pojo.ManagerDetail;
-import com.cn.util.RestUtil;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,44 +16,46 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
 
 /**
  * 后台客服管理员 service类
- *
- * @author chen
- * @date 2018-01-02 17:50
+ * @author ngcly
+ * @since 2018-01-02 17:50
  */
 @Service
+@AllArgsConstructor
 public class ManagerService implements UserDetailsService {
-    @Autowired
-    private ManagerRepository managerRepository;
-    @Autowired
-    private RoleRepository roleRepository;
+    private final ManagerRepository managerRepository;
+    private final RoleRepository roleRepository;
 
+    /**
+     * 根据用户名获取用户
+     * @param username 用户名
+     * @return UserDetails
+     * @throws UsernameNotFoundException 用户名未找到
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Manager manager = managerRepository.findUserByName(username).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
-        ManagerDetail manage = new ManagerDetail(manager);
-        return manage;
+        Manager manager = managerRepository.findManagerByUsername(username).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
+        return new ManagerDetail(manager);
     }
 
     /**
      * 根据Id获取管理员信息
-     * @param managerId
-     * @return
+     * @param managerId 管理员id
+     * @return Manager
      */
-    public Manager getManagerById(String managerId){
-        return managerRepository.getOne(managerId);
+    public Manager getManagerById(Long managerId){
+        return managerRepository.getById(managerId);
     }
 
     /**
      * 获取管理员列表
-     * @param pageable
-     * @return
+     * @param pageable 分页
+     * @return Page<Manager>
      */
     public Page<Manager> getManagersList(Pageable pageable, Manager manager){
         return managerRepository.findAll(ManagerRepository.getManagerList(manager.getUsername(),
@@ -62,22 +64,21 @@ public class ManagerService implements UserDetailsService {
 
     /**
      * 新增或更新管理员信息
-     * @param manager
-     * @return
+     * @param curManager 当前操作人
+     * @param manager 被修改人
      */
     @Transactional(rollbackFor = Exception.class)
-    public ModelMap saveManager(Manager curManager,Manager manager){
-        Set<Role> allRole = new HashSet<>();
+    public void saveManager(Manager curManager,Manager manager){
         Set<Role> roleList = curManager.getRoleList();
         if("admin".equals(curManager.getUsername())){
-            roleList = roleRepository.getAllByAvailableIsTrueAndRoleType((byte) 1);
+            roleList = roleRepository.getAllByAvailableIsTrueAndRoleType(Role.ROLE_TYPE_MANAGER);
         }
         //获取被修改人之前的角色-当前人的角色=必存角色 最后结果为必存角色+回传角色
-        allRole.addAll(roleList);
+        Set<Role> allRole = new HashSet<>(roleList);
 
         Set<Role> roles = new HashSet<>();
-        if(!StringUtils.isEmpty(manager.getId())){
-            Manager manager1 = managerRepository.getOne(manager.getId());
+        if(Objects.nonNull(manager.getId())){
+            Manager manager1 = managerRepository.getById(manager.getId());
             //判断是否当前人在改自己的信息
             if(!curManager.getId().equals(manager.getId())){
                 manager.setUsername(manager1.getUsername());
@@ -90,13 +91,13 @@ public class ManagerService implements UserDetailsService {
         }else{
             BCryptPasswordEncoder bc=new BCryptPasswordEncoder(4);
             manager.setPassword(bc.encode("123456"));
-            manager.setState((byte) 0);
+            manager.setState(Manager.STATE_INITIALIZE);
         }
-        if(StringUtils.isEmpty(manager.getUsername())){
-            return RestUtil.failure(333,"用户名不可为空");
+        if(!StringUtils.hasLength(manager.getUsername())){
+            throw new GlobalException(333,"用户名不可为空");
         }
         if(managerRepository.existsByUsernameAndIdIsNot(manager.getUsername(),manager.getId())){
-            return RestUtil.failure(333,"该用户名已存在");
+            throw new GlobalException(333,"该用户名已存在");
         }
 
         if(manager.getRoleIds()!=null){
@@ -106,7 +107,6 @@ public class ManagerService implements UserDetailsService {
             manager.setRoleList(roles);
         }
         managerRepository.save(manager);
-        return RestUtil.success();
     }
 
     /**
@@ -121,35 +121,33 @@ public class ManagerService implements UserDetailsService {
      * 删除管理员
      */
     @Transactional(rollbackFor = Exception.class)
-    public void delManager(String managerId){
+    public void delManager(Long managerId){
         managerRepository.deleteById(managerId);
     }
 
     /**
      * 修改管理员密码
-     * @param managerId
-     * @param password
+     * @param managerId 管理员id
+     * @param password 密码
      */
     @Transactional(rollbackFor = Exception.class)
-    public ModelMap updatePassword(String managerId,String oldPassword,String password){
-        Manager manager = managerRepository.getOne(managerId);
+    public void updatePassword(Long managerId,String oldPassword,String password){
+        Manager manager = managerRepository.getById(managerId);
         BCryptPasswordEncoder bc=new BCryptPasswordEncoder(4);
-        if(bc.matches(oldPassword,manager.getPassword())){
-            manager.setPassword(bc.encode(password));
-            return RestUtil.success();
-        }else{
-            return RestUtil.failure(333,"原密码错误");
+        if(!bc.matches(oldPassword,manager.getPassword())){
+           throw new GlobalException(333,"原密码错误");
         }
+        manager.setPassword(bc.encode(password));
     }
 
     /**
      * 重置密码
-     * @param managerId
-     * @param password
+     * @param managerId 管理员id
+     * @param password 修改密码
      */
     @Transactional(rollbackFor = Exception.class)
-    public void updatePassword(String managerId,String password){
-        Manager manager = managerRepository.getOne(managerId);
+    public void updatePassword(Long managerId,String password){
+        Manager manager = managerRepository.getById(managerId);
         BCryptPasswordEncoder bc=new BCryptPasswordEncoder(4);
         manager.setPassword(bc.encode(password));
     }

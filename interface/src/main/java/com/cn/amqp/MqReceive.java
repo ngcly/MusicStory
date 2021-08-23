@@ -35,7 +35,7 @@ public class MqReceive {
     }
 
     @RabbitListener(queues = {RabbitConfig.DELAY_QUEUE})
-    public void consumeDelay(String userId) {
+    public void consumeDelay(Long userId) {
         log.info("[执行清除过期未激活账号] - [{}]", userId);
         userService.delUnActiveUser(userId);
     }

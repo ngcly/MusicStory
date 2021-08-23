@@ -5,14 +5,16 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 日志操作
@@ -21,29 +23,36 @@ import java.util.List;
  * @date 2018-01-02 18:55
  */
 @Repository
-public interface LoginLogRepository extends JpaRepository<LoginLog,String>,JpaSpecificationExecutor<LoginLog> {
+public interface LoginLogRepository extends JpaRepository<LoginLog,Long>,JpaSpecificationExecutor<LoginLog> {
+
     /**
      * 动态查询登录日志数据
+     * @param userName 用户名
+     * @param userType 用户类型
+     * @param beginTime 开始时间
+     * @param endTime 截止时间
+     * @return Specification<LoginLog>
      */
-    static Specification<LoginLog> getLoginLogList(String userName, Byte userType, Date beginTime, Date endTime){
+    static Specification<LoginLog> getLoginLogList(String userName, Byte userType, LocalDateTime beginTime, LocalDateTime endTime){
         return (Root<LoginLog> root, CriteriaQuery<?> query, CriteriaBuilder cb)->{
             List<Predicate> predicates = new ArrayList<>();
-            if(userName!=null&&!"".equals(userName)) {
+            if(StringUtils.hasLength(userName)) {
                 predicates.add(cb.like(root.get("userName"),"%"+userName+"%"));
             }
 
-            if(userType!=null) {
+            if(Objects.nonNull(userType)) {
                 predicates.add(cb.equal(root.get("userType"), userType));
             }
 
-            if(beginTime!=null&&!"".equals(beginTime)){
+            if(Objects.nonNull(beginTime)){
                 predicates.add(cb.greaterThanOrEqualTo(root.get("loginTime"), beginTime));
             }
 
-            if(endTime!=null&&!"".equals(endTime)){
+            if(Objects.nonNull(endTime)){
                 predicates.add(cb.lessThanOrEqualTo(root.get("loginTime"), endTime));
             }
             return query.where(cb.and(predicates.toArray(new Predicate[predicates.size()]))).getRestriction();
         };
     }
+
 }

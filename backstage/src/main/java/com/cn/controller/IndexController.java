@@ -10,6 +10,7 @@ import com.cn.entity.Role;
 import com.cn.pojo.ManagerDetail;
 import com.cn.pojo.ValidateCode;
 import com.cn.util.MenuUtil;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,11 +35,10 @@ import java.util.*;
  * @date 2018-01-02 17:26
  */
 @Controller
+@AllArgsConstructor
 public class IndexController {
-    @Autowired
-    RoleService roleService;
-    @Autowired
-    ManagerService managerService;
+    private final ManagerService managerService;
+    private final RoleService roleService;
 
     /**
      * 若加载了data rest包 则默认根目录为 所有接口link
@@ -71,10 +71,10 @@ public class IndexController {
             SecurityContextHolder.getContext().setAuthentication(newAuth);
             menuList.addAll(permissions);
         }
-        if(managerDetail.getState()==0){
+        if(managerDetail.getState()==Manager.STATE_INITIALIZE){
             init = true;
             Manager manager = managerService.getManagerById(managerDetail.getId());
-            manager.setState((byte) 1);
+            manager.setState(Manager.STATE_NORMAL);
             managerService.updateManager(manager);
         }
         model.addAttribute("init",init);

@@ -1,10 +1,9 @@
 package com.cn.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 /**
  * 分类表实体
@@ -12,18 +11,22 @@ import java.io.Serializable;
  * @author chen
  * @date 2017-12-30 17:37
  */
-@Data
+@Getter
+@Setter
 @Entity
-@JsonIgnoreProperties(value = {"handler","hibernateLazyInitializer","fieldHandler"})
 @Table(name = "classify")
-public class Classify extends AbstractUserDateAudit implements Serializable{
-    private static final long serialVersionUID = 1L;
+public class Classify extends AbstractUserDateAudit {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    @Column(name="id")
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-    private String name;     //分类名称
-    private String introduction; //分类说明
+
+    /**分类名称*/
+    @Column(nullable = false, length = 8)
+    private String name;
+
+    /**分类说明*/
+    @Column(length = 100)
+    private String introduction;
 
 }

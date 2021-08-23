@@ -2,22 +2,19 @@ package com.cn.pojo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 /**
- * 描述:
- *
+ * 注册参数数据封装类
  * @author nglcy
- * @create 2018-08-05 13:50
+ * @since 2018-08-05 13:50
  */
+@Data
 @ApiModel(value="注册", description = "注册参数")
-@Getter
-@Setter
 public class SignUpDTO {
 
     @ApiModelProperty(value="用户名", required = true)

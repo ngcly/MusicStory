@@ -33,7 +33,7 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
                 exception instanceof UsernameNotFoundException) {
             restCode = RestCode.USER_ERR;
         } else if(exception instanceof AuthenticationServiceException){
-            restCode = RestCode.VERIFYCODE_ERR;
+            restCode = RestCode.VERIFY_CODE_ERR;
         } else if (exception instanceof LockedException) {
             restCode = RestCode.USER_LOCKED;
         } else if (exception instanceof AccountExpiredException) {

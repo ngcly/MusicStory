@@ -16,9 +16,11 @@ import javax.persistence.MappedSuperclass;
 )
 public abstract class AbstractUserDateAudit extends AbstractDateAudit {
 
+    /** 创建人 */
     @CreatedBy
     private String createdBy;
 
+    /** 修改建人 */
     @LastModifiedBy
     private String updatedBy;
 

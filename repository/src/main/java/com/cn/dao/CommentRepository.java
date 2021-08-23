@@ -15,12 +15,24 @@ import java.util.Map;
  * @author ngcly
  */
 @Repository
-public interface CommentRepository extends JpaRepository<Comment,String> {
+public interface CommentRepository extends JpaRepository<Comment,Long> {
 
-    Page<Comment> findByEssayIdOrderByCreatedTimeDesc(String essayId, Pageable pageable);
+    /**
+     * 获取评论
+     * @param essayId 文章id
+     * @param pageable 分页
+     * @return Page<Comment>
+     */
+    Page<Comment> findByEssayIdOrderByCreatedTimeDesc(Long essayId, Pageable pageable);
 
+    /**
+     * 查询评论
+     * @param essayId 文章id
+     * @param pageable 分页
+     * @return Page<Map<String,Object>>
+     */
     @Query("select new map(t2.id as userId,t2.username as username,t2.avatar as avatar,t1.id as id," +
             "t1.createdTime as createdTime,t1.replyUserId as replyUserId,t1.content as content)" +
             " from Comment t1 inner join User t2 on t1.userId=t2.id where t1.essayId=:essayId")
-    Page<Map<String,Object>> selectComments(@Param("essayId") String essayId, Pageable pageable);
+    Page<Map<String,Object>> selectComments(@Param("essayId") Long essayId, Pageable pageable);
 }

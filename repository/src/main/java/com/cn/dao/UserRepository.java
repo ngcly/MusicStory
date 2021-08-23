@@ -13,49 +13,71 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Created by chen on 2017/6/23.
+ *
+ * @author ngcly
+ * @since 2017/6/23
  */
 @Repository
 //@Table(name="user")
 //@Qualifier("userRepository")
 //@CacheConfig(cacheNames = "users")
-public interface UserRepository extends JpaRepository<User,String>, JpaSpecificationExecutor<User> {
+public interface UserRepository extends JpaRepository<User,Long>, JpaSpecificationExecutor<User> {
 
-    @Override
-    Optional<User> findById(String userId);
-
+    /**
+     * 根据用户名或邮箱查找
+     * @param username 用户名
+     * @param email 邮箱
+     * @return User
+     */
     Optional<User> findByUsernameOrEmail(String username, String email);
 
-    Boolean existsByUsername(String username);
+    /**
+     * 根据用户名判断用户是否存在
+     * @param username 用户名
+     * @return boolean
+     */
+    boolean existsByUsername(String username);
 
-    Boolean existsByEmail(String email);
+    /**
+     * 根据邮箱判断用户是否存在
+     * @param email 邮箱
+     * @return boolean
+     */
+    boolean existsByEmail(String email);
 
     /**
      * 动态查询管理员数据
+     * @param username 用户名
+     * @param nickName 昵称
+     * @param phone 手机号
+     * @param email 邮箱
+     * @param state 状态
+     * @return Specification<User
      */
     static Specification<User> getUserList(String username, String nickName, String phone, String email, Byte state){
         return (Root<User> root, CriteriaQuery<?> query, CriteriaBuilder cb)->{
             List<Predicate> predicates = new ArrayList<>();
-            if(!StringUtils.isEmpty(username)) {
+            if(!StringUtils.hasLength(username)) {
                 predicates.add(cb.like(root.get("username"),"%"+username+"%"));
             }
 
-            if(!StringUtils.isEmpty(nickName)) {
+            if(!StringUtils.hasLength(nickName)) {
                 predicates.add(cb.like(root.get("nickName"),"%"+nickName+"%"));
             }
 
-            if(!StringUtils.isEmpty(phone)) {
+            if(!StringUtils.hasLength(phone)) {
                 predicates.add(cb.like(root.get("phone"),"%"+phone+"%"));
             }
 
-            if(!StringUtils.isEmpty(email)) {
+            if(!StringUtils.hasLength(email)) {
                 predicates.add(cb.like(root.get("email"),"%"+email+"%"));
             }
 
-            if(state!=null) {
+            if(Objects.nonNull(state)) {
                 predicates.add(cb.equal(root.get("state"), state));
             }
 

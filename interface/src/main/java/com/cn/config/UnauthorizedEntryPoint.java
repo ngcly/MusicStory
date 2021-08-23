@@ -38,7 +38,7 @@ public class UnauthorizedEntryPoint implements AuthenticationEntryPoint {
                 authException instanceof UsernameNotFoundException) {
             restCode = RestCode.USER_ERR;
         } else if(authException instanceof AuthenticationServiceException){
-            restCode = RestCode.VERIFYCODE_ERR;
+            restCode = RestCode.VERIFY_CODE_ERR;
         } else if (authException instanceof LockedException) {
             restCode = RestCode.USER_LOCKED;
         } else if (authException instanceof AccountExpiredException) {

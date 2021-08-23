@@ -1,4 +1,5 @@
 package com.cn.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +10,8 @@ import java.util.List;
 
 /**
  * 后台资源实体类
- * Created by chen on 2017/6/23.
+ * @author ngcly
+ * @since 2017/6/23.
  */
 @Getter
 @Setter
@@ -17,21 +19,48 @@ import java.util.List;
 @Table(name="permission")
 public class Permission implements Serializable {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    @Column(name="id")
-    private Long id;//主键.
-    private String name;//名称.
-    @Column(columnDefinition="enum('menu','button')")
-    private String resourceType;//资源类型，[menu|button]
-    private String url;//资源路径.
-    private String purview; //权限字符串,menu例子：role:*，button例子：role:create,role:update,role:delete,role:view
-    private String icon;
-    private Long parentId; //父编号
-    private String parentIds; //父编号列表
-    private Integer sort; //排序
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
 
+    /** 名称 */
+    @Column(nullable = false, length = 12)
+    private String name;
+
+    /** 资源类型，[menu|button] */
+    @Column(nullable = false, length = 10)
+    private String resourceType;
+
+    /** 资源路径 */
+    @Column(length = 32)
+    private String url;
+
+    /** 权限字符串,menu例子：role:*，button例子：role:create,role:update,role:delete,role:view */
+    @Column(length = 32)
+    private String purview;
+
+    /** 菜单图标 */
+    @Column(length = 50)
+    private String icon;
+
+    /** 父id */
+    @Column(nullable = false)
+    private Long parentId;
+
+    /** 父级id列表 */
+    @Column(nullable = false,length = 100)
+    private String parentIds;
+
+    /** 排序号 */
+    private Integer sort;
+
+    /** 菜单与角色 多对多 */
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name="role_permission",joinColumns={@JoinColumn(name="permission_id")},inverseJoinColumns={@JoinColumn(name="role_id")})
     private List<Role> roles;
+
+    /**资源类型*/
+    public static final String RESOURCE_MENU = "menu";
+    public static final String RESOURCE_BUTTON = "button";
 
 }

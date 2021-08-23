@@ -1,10 +1,10 @@
 package com.cn.entity;
 
-import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 消息表实体
@@ -12,20 +12,38 @@ import java.util.Date;
  * @author chen
  * @date 2017-12-30 17:42
  */
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "news")
 public class News {
+
     @Id
-    @GeneratedValue(generator = "id")
-    @GenericGenerator(name = "id", strategy = "uuid")
-    @Column(name="id")
-    private String id;
-    private String userId;   //用户ID
-    private String content;  //消息内容
-    private Boolean sent;    //是否已发送
-    private Date createTime; //创建时间
-    private Date sendTime;   //发送时间
-    private String senderId; //发送人ID
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
+
+    /** 用户id */
+    @Column(nullable = false)
+    private Long userId;
+
+    /** 发送人id */
+    @Column(nullable = false)
+    private Long senderId;
+
+    /** 消息内容 */
+    @Column(nullable = false)
+    private String content;
+
+    /** 是否已发送 */
+    @Column(nullable = false)
+    private Boolean sent;
+
+    /** 创建时间 */
+    @Column(nullable = false)
+    private LocalDateTime createTime;
+
+    /** 发送时间 */
+    @Column(nullable = false)
+    private LocalDateTime sendTime;
 
 }

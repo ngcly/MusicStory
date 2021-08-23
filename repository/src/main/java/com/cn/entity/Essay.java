@@ -1,46 +1,59 @@
 package com.cn.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.List;
 
 /**
  * 文章表实体
- *
- * @author chen
- * @date 2017-12-30 17:39
+ * @author ngcly
+ * @since 2017-12-30 17:39
  */
 @Setter
 @Getter
 @Entity
 @Table(name = "essay")
-@JsonIgnoreProperties(value = {"handler","hibernateLazyInitializer","fieldHandler"})
 public class Essay extends AbstractDateAudit {
     @Id
-    @GeneratedValue(generator = "id")
-    @GenericGenerator(name = "id", strategy = "uuid")
-    @Column(name="id")
-    private String id;
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
+
+    /**文章标题*/
+    @Column(nullable = false,length = 80)
+    private String title;
+
+    /**简介*/
     @Column(nullable = false)
-    private String title;      //文章标题
-    private String synopsis;   //简介
-    private String content;    //文章内容
+    private String synopsis;
+
+    /**文章内容*/
+    @Column(nullable = false)
+    private String content;
+
+    /**阅览数*/
     @Column(columnDefinition = "int default 0",nullable = false)
-    private Integer readNum;   //阅览数
-    private Byte state;        //状态 0-草稿 1-待审核 2-审核不通过 3-正常 4-推荐
+    private Integer readNum;
+
+    /**0-草稿 1-待审核 2-审核不通过 3-正常 4-推荐*/
+    @Column(nullable = false)
+    private Byte state;
+
+    /**审核不通过原由*/
+    private String remark;
+
+    /**文章所属用户*/
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId",nullable = false)
     private User user;
+
+    /**文章所属分类*/
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "classifyId",nullable = false)
     private Classify classify;
-    private String remark;   //审核不通过原由
 
+    /**文章音乐列表*/
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
     @JoinColumn(name = "essayId")
     private List<Music> musicList;

@@ -13,14 +13,12 @@ import java.util.Set;
 
 /**
  * security用户与数据库用户 合体信息封装类
- *
- * @author chen
+ * @author ngcly
  * @date 2018-02-28 16:57
  */
 public class UserDetail extends User implements UserDetails {
     public UserDetail(User user) {
-        if(user != null)
-        {
+        if(user != null) {
             BeanUtils.copyProperties(user,this);
         }
     }
@@ -30,8 +28,7 @@ public class UserDetail extends User implements UserDetails {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         Set<Role> userRoles = this.getRoleList();
 
-        if(userRoles != null)
-        {
+        if(userRoles != null) {
             for (Role role : userRoles) {
                 SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getRoleCode());
                 authorities.add(authority);

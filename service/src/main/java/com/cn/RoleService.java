@@ -4,14 +4,13 @@ import com.cn.dao.PermissionRepository;
 import com.cn.dao.RoleRepository;
 import com.cn.entity.Permission;
 import com.cn.entity.Role;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 角色权限service
@@ -20,17 +19,16 @@ import java.util.stream.Collectors;
  * @date 2018-03-21 18:07
  */
 @Service
+@AllArgsConstructor
 public class RoleService {
-    @Autowired
-    RoleRepository roleRepository;
-    @Autowired
-    PermissionRepository permissionRepository;
+    private final RoleRepository roleRepository;
+    private final PermissionRepository permissionRepository;
 
     /**
      * 根据ID获取角色
      */
     public Role findRole(long roleId){
-        return roleRepository.getOne(roleId);
+        return roleRepository.getById(roleId);
     }
 
     /**
@@ -59,15 +57,15 @@ public class RoleService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void saveRole(Role role){
-        if(role.getId()!=null){
-            Role role1 = roleRepository.getOne(role.getId());
+        if(role.getId() == null){
+            roleRepository.save(role);
+        }else{
+            Role role1 = roleRepository.getById(role.getId());
             role1.setRoleName(role.getRoleName());
             role1.setRoleCode(role.getRoleCode());
             role1.setRoleType(role.getRoleType());
             role1.setDescription(role.getDescription());
             role1.setAvailable(role.getAvailable());
-        }else{
-            roleRepository.save(role);
         }
     }
 
@@ -76,7 +74,7 @@ public class RoleService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void saveGrant(long roleId,String menuIds){
-        Role role = roleRepository.getOne(roleId);
+        Role role = roleRepository.getById(roleId);
         List<Permission> permissions = permissionRepository.findMenuList();
         List<Permission> permissionList = new ArrayList<>();
         String[] permissionIds = menuIds.split(",");
@@ -95,12 +93,8 @@ public class RoleService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void altAvailable(long roleId){
-        Role role = roleRepository.getOne(roleId);
-        if(role.getAvailable()){
-            role.setAvailable(false);
-        }else{
-            role.setAvailable(true);
-        }
+        Role role = roleRepository.getById(roleId);
+        role.setAvailable(!role.getAvailable());
     }
 
     /**
@@ -115,7 +109,7 @@ public class RoleService {
      * 根据ID获取菜单
      */
     public Permission getPermissionById(long menuId){
-        return permissionRepository.getOne(menuId);
+        return permissionRepository.getById(menuId);
     }
 
     /**
@@ -132,10 +126,10 @@ public class RoleService {
     public void saveMenu(Permission permission){
         Permission pms = new Permission();
         if(permission.getId()!=null){
-            pms = permissionRepository.getOne(permission.getId());
+            pms = permissionRepository.getById(permission.getId());
         }else{
             if(permission.getParentId()!=null&&permission.getParentId()!=0){
-                Permission parentPermission = permissionRepository.getOne(permission.getParentId());
+                Permission parentPermission = permissionRepository.getById(permission.getParentId());
                 pms.setParentId(parentPermission.getId());
                 pms.setParentIds(parentPermission.getParentIds()+"/"+parentPermission.getId());
             }else{
@@ -157,7 +151,7 @@ public class RoleService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void delMenu(long menuId){
-        Permission permission = permissionRepository.getOne(menuId);
+        Permission permission = permissionRepository.getById(menuId);
         permissionRepository.deletePermissionByParentIdsStartingWith(permission.getParentIds()+"/"+permission.getId());
         permissionRepository.delete(permission);
     }

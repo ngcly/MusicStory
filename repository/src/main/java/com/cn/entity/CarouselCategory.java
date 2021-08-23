@@ -1,23 +1,36 @@
 package com.cn.entity;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
 /**
  * 轮播图分类实体
+ * @author ngcly
  */
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "carousel_category")
 public class CarouselCategory extends AbstractUserDateAudit {
+
     @Id
-    @Column(name="id")
-    private String id;
-    private String title;  //标题名称
-    private String remark; //描述
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
+
+    /**标题名称*/
+    @Column(nullable = false,length = 10)
+    private String title;
+
+    /**描述*/
+    @Column(length = 32)
+    private String remark;
+
+    /**轮播图列表*/
+    @Transient
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "categoryId",nullable = false)
     private List<Carousel> carousels;
+
 }

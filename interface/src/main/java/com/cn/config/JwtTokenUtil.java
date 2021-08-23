@@ -6,7 +6,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
-import com.cn.entity.User;
+import com.cn.pojo.UserDetail;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +30,7 @@ public class JwtTokenUtil {
      * @param user 用户信息
      * @return jwt字符串
      */
-    public String generateToken(User user) {
+    public String generateToken(UserDetail user) {
         final Date now = new Date();
         //创建jwt
         return JWT.create()

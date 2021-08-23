@@ -5,15 +5,14 @@ import cn.hutool.json.JSON;
 import cn.hutool.json.JSONConfig;
 import cn.hutool.json.JSONUtil;
 import com.cn.LogService;
+import com.cn.entity.LoginLog;
 import com.cn.entity.Manager;
 
-import com.cn.util.IpUtil;
 import com.cn.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -23,9 +22,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * 登录成功后事件
- *
  * @author ngcly
- * @date 2018-01-02 18:53
+ * @since 2018-01-02 18:53
  */
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     @Autowired
@@ -33,8 +31,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
-                                        HttpServletResponse response, Authentication authentication) throws IOException,
-            ServletException {
+                                        HttpServletResponse response, Authentication authentication) throws IOException {
 
         response.setContentType(ContentType.JSON.toString(UTF_8));
         try (PrintWriter printWriter = response.getWriter()) {
@@ -43,7 +40,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         }
 
         Manager userDetails = (Manager) authentication.getPrincipal();
-        logService.saveLog(userDetails.getId(),userDetails.getUsername(), IpUtil.getIpAddress(request));
+        logService.saveLog(userDetails.getId(),userDetails.getUsername(), LoginLog.USER_TYPE_MANAGER, request);
     }
 
 }

@@ -2,12 +2,10 @@ package com.cn.controller;
 
 import com.cn.*;
 import com.cn.config.JwtTokenUtil;
+import com.cn.entity.*;
 import com.cn.pojo.LogInDTO;
 import com.cn.pojo.SignUpDTO;
-import com.cn.entity.Carousel;
-import com.cn.entity.CarouselCategory;
-import com.cn.entity.Essay;
-import com.cn.entity.User;
+import com.cn.pojo.UserDetail;
 import com.cn.util.RestUtil;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +16,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,9 +25,8 @@ import java.util.List;
 /**
  * 描述:
  * 测试
- *
  * @author ngcly
- * @create 2018-08-05 14:48
+ * @since 2018-08-05 14:48
  */
 @Api(value = "IndexController", tags = "首页内容相关API")
 @RestController
@@ -44,15 +40,17 @@ public class IndexController {
     private final CarouselService carouselService;
     private final ClassifyService classifyService;
     private final BookService bookService;
+    private final LogService logService;
 
     @ApiOperation(value = "登录", notes = "用户登录")
     @PostMapping("/signin")
-    public ModelMap postAccessToken(@RequestBody LogInDTO logInDTO) {
+    public ModelMap postAccessToken(HttpServletRequest request, @RequestBody LogInDTO logInDTO) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(logInDTO.getUsername(),logInDTO.getPassword());
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        User user = (User) authentication.getPrincipal();
+        UserDetail user = (UserDetail) authentication.getPrincipal();
         String token = jwtTokenUtil.generateToken(user);
+        logService.saveLog(user.getId(),user.getUsername(), LoginLog.USER_TYPE_CUSTOMER, request);
         return RestUtil.success(token);
     }
 
@@ -70,15 +68,12 @@ public class IndexController {
 
     /**
      * 注册
-     * @param signUpDTO
-     * @return
+     * @param signUpDTO 注册参数
+     * @return ModelMap 注册结果
      */
     @ApiOperation(value = "注册", notes = "用户注册")
     @PostMapping("/signup")
-    public ModelMap registerUser(@Valid @RequestBody SignUpDTO signUpDTO, BindingResult result) {
-        if(result.hasErrors()){
-            return RestUtil.failure(400,result.getFieldError().getField()+":"+result.getFieldError().getDefaultMessage());
-        }
+    public ModelMap registerUser(@Valid @RequestBody SignUpDTO signUpDTO) {
         User user = new User();
         BeanUtils.copyProperties(signUpDTO, user);
         return userService.signUp(user);
@@ -96,7 +91,7 @@ public class IndexController {
     @ApiOperation(value = "文章列表", notes = "获取首页文章简介列表")
     @GetMapping("/essay/{pageSize}/{page}")
     public ModelMap getEssayList(@PathVariable int pageSize,@PathVariable int page){
-        return essayService.getEssayList(page,pageSize);
+        return RestUtil.success(essayService.getEssayList(page,pageSize));
     }
 
     /**
@@ -107,7 +102,7 @@ public class IndexController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id",value = "文章ID",paramType = "path",dataType = "string")
     })
-    public ModelMap getEssayDetail(@PathVariable String id){
+    public ModelMap getEssayDetail(@PathVariable Long id){
         Essay essay = essayService.getEssayDetail(id);
         return RestUtil.success(essay);
     }
@@ -117,7 +112,7 @@ public class IndexController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id",value = "文章ID",paramType = "path",dataType = "string")
     })
-    public ModelMap readEssay(@PathVariable String id){
+    public ModelMap readEssay(@PathVariable Long id){
         essayService.readEssay(id);
         return RestUtil.success();
     }
@@ -131,7 +126,7 @@ public class IndexController {
             @ApiImplicitParam(name = "id",value = "文章ID",paramType = "path",dataType = "string"),
             @ApiImplicitParam(name = "page",value = "页数",paramType = "path",dataType = "int")
     })
-    public ModelMap getEssayComment(@PathVariable String id,@PathVariable Integer page){
+    public ModelMap getEssayComment(@PathVariable Long id,@PathVariable Integer page){
         return RestUtil.success(essayService.getComments(id,page));
     }
 
@@ -147,7 +142,7 @@ public class IndexController {
     @ApiOperation(value = "轮播图", notes = "获取轮播图列表")
     @GetMapping("/carousel")
     public ModelMap getCarousel(){
-        CarouselCategory carouselCategory = carouselService.getCarouselDetail("index");
+        CarouselCategory carouselCategory = carouselService.getCarouselDetail(1L);
         List<Carousel> carousels = null;
         if(carouselCategory!=null){
             carousels = carouselCategory.getCarousels();
@@ -161,7 +156,7 @@ public class IndexController {
     @ApiOperation(value = "公告", notes = "获取展示公告")
     @GetMapping("/notice")
     public ModelMap getNotice(){
-        return noticeService.getNotice();
+        return RestUtil.success(noticeService.getNotice());
     }
 
     /**
@@ -173,6 +168,6 @@ public class IndexController {
             @ApiImplicitParam(name = "keyword",value = "关键字",paramType = "path",dataType = "string"),
     })
     public ModelMap search(@PathVariable int pageSize,@PathVariable int page,@PathVariable("keyword")String keyword){
-        return bookService.highLightSearchEssay(keyword, PageRequest.of(page - 1, pageSize));
+        return RestUtil.success(bookService.highLightSearchEssay(keyword, PageRequest.of(page - 1, pageSize)));
     }
 }

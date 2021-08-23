@@ -17,20 +17,32 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author ngcly
+ */
 @Repository
-public interface CarouselRepository extends JpaRepository<CarouselCategory,String>, JpaSpecificationExecutor<CarouselCategory> {
+public interface CarouselRepository extends JpaRepository<CarouselCategory,Long>, JpaSpecificationExecutor<CarouselCategory> {
 
-    static Specification<CarouselCategory> getNoticeList(String name){
+    /**
+     * 动态获取轮播图分类
+     * @param name 名称
+     * @return Specification<CarouselCategory>
+     */
+    static Specification<CarouselCategory> getCarouselCategory(String name){
         return (Root<CarouselCategory> root, CriteriaQuery<?> query, CriteriaBuilder cb)->{
             List<Predicate> predicates = new ArrayList<>();
-            if(!StringUtils.isEmpty(name)) {
+            if(StringUtils.hasLength(name)) {
                 predicates.add(cb.like(root.get("title"),"%"+name+"%"));
             }
             return query.where(cb.and(predicates.toArray(new Predicate[predicates.size()]))).getRestriction();
         };
     }
 
+    /**
+     * 删除轮播图分类
+     * @param id 主键
+     */
     @Modifying
     @Query(value = "delete from carousel where id=:id",nativeQuery = true)
-    void deleteCarousel(@Param("id") String id);
+    void deleteCarousel(@Param("id") Long id);
 }

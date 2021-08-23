@@ -1,11 +1,11 @@
 package com.cn.entity;
 
-import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 登录日志表实体
@@ -13,26 +13,53 @@ import java.util.Date;
  * @author chen
  * @date 2018-01-02 16:52
  */
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "login_log")
 public class LoginLog {
+
     @Id
-    @GeneratedValue(generator = "id")
-    @GenericGenerator(name = "id", strategy = "uuid")
-    @Column(name="id")
-    private String id;
-    private String userId;    //登录用户IP
-    private String userName;  //登录用户名
-    private Byte userType;    //用户类型 1-后台管理员 2-前台会员
-    private String loginIp;   //登录IP
-    private String addressIp; //IP地址
-    private Date loginTime;   //登录时间
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
+
+    /**登录用户ID*/
+    @Column(nullable = false)
+    private Long userId;
+
+    /**登录用户名*/
+    @Column(nullable = false, length = 32)
+    private String userName;
+
+    /**用户类型 1-后台管理员 2-前台会员*/
+    @Column(nullable = false)
+    private Byte userType;
+
+    /**登录IP*/
+    @Column(length = 20)
+    private String loginIp;
+
+    /**登录地址*/
+    @Column(length = 32)
+    private String loginAddress;
+
+    /**登录浏览器*/
+    @Column(length = 32)
+    private String loginBrowser;
+
+    /**登录时间*/
+    @Column(nullable = false)
+    private LocalDateTime loginTime;
 
     @Transient
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date beginTime;
+    private LocalDateTime beginTime;
     @Transient
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date endTime;
+    private LocalDateTime endTime;
+
+    /**用户类型*/
+    public static final byte USER_TYPE_MANAGER = 1;
+    public static final byte USER_TYPE_CUSTOMER = 2;
+
 }

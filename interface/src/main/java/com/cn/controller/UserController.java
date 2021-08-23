@@ -10,12 +10,11 @@ import com.cn.pojo.UserVO;
 import com.cn.util.RestUtil;
 import com.cn.util.UploadUtil;
 import io.swagger.annotations.*;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,18 +22,16 @@ import javax.validation.Valid;
 
 /**
  * 会员控制层
- *
  * @author ngcly
- * @date 2018-01-05 12:08
+ * @since 2018-01-05 12:08
  */
 @Api(value = "UserController", tags = "用户相关API",authorizations = @Authorization(value = "user"))
 @RestController
 @RequestMapping("/user")
+@AllArgsConstructor
 public class UserController {
-    @Autowired
-    private EssayService essayService;
-    @Autowired
-    private UserService userService;
+    private final EssayService essayService;
+    private final UserService userService;
 
     @ApiOperation(value = "用户信息", notes = "获取用户详情信息")
     @GetMapping("/info")
@@ -54,41 +51,43 @@ public class UserController {
     public ModelMap getUserEssay(Authentication authentication, @PathVariable("page") Integer page,
                                  @PathVariable("size") Integer size) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        return essayService.getUserEssayList(PageRequest.of(page - 1, size), user.getId());
+        return RestUtil.success(essayService.getUserEssayList(PageRequest.of(page - 1, size), user.getId()));
     }
 
     @ApiOperation(value = "写文章", notes = "用户保存草稿")
     @PostMapping("/essay")
-    public ModelMap createEssay(Authentication authentication, @Valid @RequestBody EssayDTO essayDTO, BindingResult result) {
+    public ModelMap createEssay(Authentication authentication, @Valid @RequestBody EssayDTO essayDTO) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
         Essay essay = new Essay();
         BeanUtils.copyProperties(essayDTO,essay);
         essay.setUser(user);
-        return essayService.createEssay(essayDTO.getClassifyId(), essay);
+        return RestUtil.success(essayService.createEssay(essayDTO.getClassifyId(), essay));
     }
 
     @ApiOperation(value = "发表文章", notes = "用户发表文章")
     @PutMapping("/essay")
-    public ModelMap updateEssay(Authentication authentication, @Valid @RequestBody EssayDTO essayDTO, BindingResult result) {
+    public ModelMap updateEssay(Authentication authentication, @Valid @RequestBody EssayDTO essayDTO) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
         Essay essay = new Essay();
         BeanUtils.copyProperties(essayDTO,essay);
         essay.setUser(user);
-        return essayService.updateEssay(essayDTO.getClassifyId(), essay);
+        essayService.updateEssay(essayDTO.getClassifyId(), essay);
+        return RestUtil.success();
     }
 
     @ApiOperation(value = "删文章", notes = "根据文章ID删除用户文章")
     @DeleteMapping("/essay/{id}")
-    public ModelMap deleteEssay(Authentication authentication, @PathVariable("id") String id) {
+    public ModelMap deleteEssay(Authentication authentication, @PathVariable("id") Long id) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        return essayService.delUserEssay(user.getId(), id);
+        return essayService.delUserEssay(user.getId(), id)?RestUtil.success():RestUtil.failure(500,"删除失败");
     }
 
     @ApiOperation(value = "评论文章", notes = "用户评论文章")
     @PostMapping("/comment")
-    public ModelMap commentEssay(Authentication authentication, @RequestBody Comment comment) {
+    public ModelMap commentEssay(Authentication authentication, @Valid @RequestBody Comment comment) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        return essayService.addComments(user.getId(), comment);
+        essayService.addComments(user.getId(), comment);
+        return RestUtil.success();
     }
 
     @ApiOperation(value = "获取用户消息", notes = "获取当前用户的所有消息")
@@ -112,22 +111,22 @@ public class UserController {
     public ModelMap getMyStar(Authentication authentication,@PathVariable("page") Integer page,
                               @PathVariable("size") Integer size) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        return essayService.getUserFavesEssay(user.getId(),UserFaves.点赞,PageRequest.of(page - 1, size));
+        return RestUtil.success(essayService.getUserFavesEssay(user.getId(),UserFaves.FAVE_TYPE_LIKE,PageRequest.of(page - 1, size)));
     }
 
     @ApiOperation(value = "点赞", notes = "用户点赞文章")
     @PostMapping("/star")
-    public ModelMap star(Authentication authentication, @RequestBody String essayId) {
+    public ModelMap star(Authentication authentication, @RequestBody Long essayId) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        userService.addUserFaves(user.getId(), essayId, UserFaves.点赞);
+        userService.addUserFaves(user.getId(), essayId, UserFaves.FAVE_TYPE_LIKE);
         return RestUtil.success();
     }
 
     @ApiOperation(value = "取消点赞", notes = "用户取消点赞文章")
     @DeleteMapping("/star/{essayId}")
-    public ModelMap cancelStar(Authentication authentication, @PathVariable("essayId") String essayId) {
+    public ModelMap cancelStar(Authentication authentication, @PathVariable("essayId") Long essayId) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        userService.delUserFaves(user.getId(), essayId, UserFaves.点赞);
+        userService.delUserFaves(user.getId(), essayId, UserFaves.FAVE_TYPE_LIKE);
         return RestUtil.success();
     }
 
@@ -136,22 +135,22 @@ public class UserController {
     public ModelMap getMyCollect(Authentication authentication,@PathVariable("page") Integer page,
                                  @PathVariable("size") Integer size) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        return essayService.getUserFavesEssay(user.getId(),UserFaves.收藏,PageRequest.of(page - 1, size));
+        return RestUtil.success(essayService.getUserFavesEssay(user.getId(),UserFaves.FAVE_TYPE_COLLECT,PageRequest.of(page - 1, size)));
     }
 
     @ApiOperation(value = "收藏", notes = "用户收藏文章")
     @PostMapping("/collect")
-    public ModelMap collect(Authentication authentication, @RequestBody String essayId) {
+    public ModelMap collect(Authentication authentication, @RequestBody Long essayId) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        userService.addUserFaves(user.getId(), essayId, UserFaves.收藏);
+        userService.addUserFaves(user.getId(), essayId, UserFaves.FAVE_TYPE_COLLECT);
         return RestUtil.success();
     }
 
     @ApiOperation(value = "取消收藏", notes = "用户取消收藏文章")
     @DeleteMapping("/collect/{essayId}")
-    public ModelMap cancelCollect(Authentication authentication, @PathVariable("essayId") String essayId) {
+    public ModelMap cancelCollect(Authentication authentication, @PathVariable("essayId") Long essayId) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        userService.delUserFaves(user.getId(), essayId, UserFaves.收藏);
+        userService.delUserFaves(user.getId(), essayId, UserFaves.FAVE_TYPE_COLLECT);
         return RestUtil.success();
 
     }
@@ -174,7 +173,7 @@ public class UserController {
 
     @ApiOperation(value = "关注", notes = "关注某个用户")
     @PostMapping("/watch")
-    public ModelMap watch(Authentication authentication, @RequestBody String userId) {
+    public ModelMap watch(Authentication authentication, @RequestBody Long userId) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
         userService.addUserFollow(user.getId(), userId);
         return RestUtil.success();
@@ -182,7 +181,7 @@ public class UserController {
 
     @ApiOperation(value = "取消关注", notes = "取消关注某个用户")
     @DeleteMapping("/watch/{userId}")
-    public ModelMap cancelWatch(Authentication authentication, @PathVariable("userId") String userId) {
+    public ModelMap cancelWatch(Authentication authentication, @PathVariable("userId") Long userId) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
         userService.delUserFollow(user.getId(), userId);
         return RestUtil.success();

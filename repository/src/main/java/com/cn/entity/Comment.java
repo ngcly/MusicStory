@@ -1,7 +1,7 @@
 package com.cn.entity;
 
-import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -11,19 +11,34 @@ import javax.persistence.*;
  * @author chen
  * @date 2017-12-30 17:38
  */
-@Data
+@Setter
+@Getter
 @Entity
 @Table(name = "comment")
 public class Comment extends AbstractDateAudit {
+
     @Id
-    @GeneratedValue(generator = "id")
-    @GenericGenerator(name = "id", strategy = "uuid")
-    @Column(name="id")
-    private String id;
-    private String userId;   //用户ID
-    private String essayId;  //文章ID
-    private String content;  //内容
-    private String replyUserId;    //回复用户ID
-    private String replyCommentId; //回复评论ID
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private Long id;
+
+    /**用户id*/
+    @Column(nullable = false)
+    private Long userId;
+
+    /**文章id*/
+    @Column(nullable = false)
+    private Long essayId;
+
+    /**内容*/
+    @Column(nullable = false)
+    private String content;
+
+    /**回复用户ID*/
+    @Column(nullable = false)
+    private Long replyUserId;
+
+    /**回复评论ID*/
+    @Column(nullable = false)
+    private Long replyCommentId;
 
 }

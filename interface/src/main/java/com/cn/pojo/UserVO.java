@@ -1,32 +1,48 @@
 package com.cn.pojo;
 
-import lombok.Getter;
-import lombok.Setter;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
+ * 用户展示数据封装类
  * @author ngcly
  */
-@Getter
-@Setter
+@Data
+@ApiModel(value="注册", description = "注册参数")
 public class UserVO {
-    private String id ;
-    private String username;       //用户名
-    private String nickName;       //昵称
-    private Date birthday;         //生日
-    private Byte gender ;          //性别
-    private String address;        //地址
-    private String realName;       //真实姓名
-    private String personDesc;     //个人简介
-    private String signature;      //个性签名
-    private String avatar;         //头像
-    private String phone;          //手机号
-    private String email;          //邮箱地址
-    private BigDecimal balance;    //账户余额
-    private Integer level;         //等级
-    private Integer credit;        //积分
-    private Byte state;//用户状态,0:不可用 1:正常状态,2:异常.
+    @ApiModelProperty("用户名")
+    private String username;
+    @ApiModelProperty("昵称")
+    private String nickName;
+    @ApiModelProperty("生日")
+    private LocalDate birthday;
+    @ApiModelProperty("性别")
+    private Byte gender ;
+    @ApiModelProperty("地址")
+    private String address;
+    @ApiModelProperty("真实姓名")
+    private String realName;
+    @ApiModelProperty("个人简介")
+    private String personDesc;
+    @ApiModelProperty("个性签名")
+    private String signature;
+    @ApiModelProperty("头像")
+    private String avatar;
+    @ApiModelProperty("手机号")
+    private String phone;
+    @ApiModelProperty("邮箱地址")
+    private String email;
+    @ApiModelProperty("账户余额")
+    private BigDecimal balance;
+    @ApiModelProperty("等级")
+    private Integer level;
+    @ApiModelProperty("积分")
+    private Integer credit;
+    @ApiModelProperty("用户状态")
+    private Byte state;
 
 }

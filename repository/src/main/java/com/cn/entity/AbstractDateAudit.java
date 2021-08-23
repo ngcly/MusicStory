@@ -10,6 +10,9 @@ import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.time.Instant;
 
+/**
+ * @author ngcly
+ */
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(
@@ -18,27 +21,29 @@ import java.time.Instant;
 )
 public abstract class AbstractDateAudit implements Serializable {
 
+    /** 创建时间 */
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    private Instant createdTime;
+    private Instant createdAt;
 
+    /** 修改时间 */
     @LastModifiedDate
     @Column(nullable = false)
-    private Instant updatedTime;
+    private Instant updatedAt;
 
-    public Instant getCreatedTime() {
-        return createdTime;
+    public Instant getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreatedTime(Instant createdTime) {
-        this.createdTime = createdTime;
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public Instant getUpdatedTime() {
-        return updatedTime;
+    public Instant getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdatedTime(Instant updatedTime) {
-        this.updatedTime = updatedTime;
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

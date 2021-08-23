@@ -1,26 +1,29 @@
 package com.cn;
 
+import cn.hutool.http.Header;
+import cn.hutool.http.useragent.UserAgent;
+import cn.hutool.http.useragent.UserAgentUtil;
 import com.cn.dao.LoginLogRepository;
 import com.cn.entity.LoginLog;
 import com.cn.util.IpUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 
 /**
  * 系统日志 service
- *
- * @author chen
- * @date 2018-03-22 16:24
+ * @author ngcly
+ * @since 2018-03-22 16:24
  */
 @Service
+@AllArgsConstructor
 public class LogService {
-    @Autowired
-    private LoginLogRepository loginLogRepository;
+    private final LoginLogRepository loginLogRepository;
 
     /**
      * 获取登录日志列表
@@ -33,14 +36,20 @@ public class LogService {
      * 保存日志
      */
     @Async
-    public void saveLog(String userId, String username, String ip){
+    public void saveLog(Long userId, String username, Byte userType, HttpServletRequest request){
+        String ip = IpUtil.getIpAddress(request);
+        String ua = request.getHeader(Header.USER_AGENT.getValue());
+        UserAgent userAgent = UserAgentUtil.parse(ua);
+
         LoginLog loginLog = new LoginLog();
         loginLog.setUserId(userId);
         loginLog.setUserName(username);
-        loginLog.setUserType((byte)1);
+        loginLog.setUserType(userType);
         loginLog.setLoginIp(ip);
-        loginLog.setAddressIp(IpUtil.getIpAddresses(ip));
-        loginLog.setLoginTime(new Date());
+        loginLog.setLoginAddress(IpUtil.getIpAddresses(ip));
+        loginLog.setLoginBrowser(userAgent.getBrowser().toString());
+        loginLog.setLoginTime(LocalDateTime.now());
         loginLogRepository.save(loginLog);
     }
+
 }

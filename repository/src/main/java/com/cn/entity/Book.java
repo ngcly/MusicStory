@@ -13,8 +13,11 @@ import org.springframework.data.elasticsearch.annotations.Document;
 @Setter
 public class Book {
     @Id
-    private String id;
+    private Long id;
+    /**标题*/
     private String title;
+    /**作者*/
     private String author;
+    /**内容*/
     private String content;
 }
