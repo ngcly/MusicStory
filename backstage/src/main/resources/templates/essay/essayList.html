@@ -89,7 +89,7 @@
                     ,{field: 'synopsis', title: '文章简介'}
                     ,{field: 'd.classify.name', title: '分类名',templet:'<div>{{d.classify.name}}</div>'}
                     ,{field: 'readNum', title: '阅览数'}
-                    ,{field: 'createdTime', title: '创建时间'}
+                    ,{field: 'createdAt', title: '创建时间'}
                     ,{field: 'state', title: '状态',templet:'<div>{{#  if(d.state == 1){ }}待审核{{#  }else if(d.state == 2) {}}查封{{#  }else if(d.state == 3) {}}正常{{#  } else if(d.state ==4) {}}查封{{#  } }}</div>'}
                     ,{fixed: 'right', title:'操作', align:'center',width:'100', toolbar: '#bar'}]
             ]

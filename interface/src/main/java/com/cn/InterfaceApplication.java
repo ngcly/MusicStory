@@ -6,10 +6,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import springfox.documentation.oas.annotations.EnableOpenApi;
 
 /**
  * @author ngcly
  */
+@EnableOpenApi
 @SpringBootApplication
 public class InterfaceApplication {
 

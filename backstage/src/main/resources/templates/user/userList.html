@@ -72,8 +72,8 @@
 <script src="/webjars/layui/layui.js"></script>
 <script type="text/javascript">
     layui.use(['element','table','form'], function(){
-        var table = layui.table,
-        form = layui.form;
+        const table = layui.table,
+            form = layui.form;
 
         //执行渲染
         table.render({
@@ -92,7 +92,7 @@
                     ,{field: 'phone', title: '手机'}
                     ,{field: 'email', title: '邮箱'}
                     ,{field: 'state', title: '状态',templet:'#stateTpl'}
-                    ,{field: 'createdTime', title: '注册时间'}
+                    ,{field: 'createdAt', title: '注册时间'}
                     ,{fixed: 'right', title:'操作', align:'center',width:'220', toolbar: '#bar'}]
             ]
         });

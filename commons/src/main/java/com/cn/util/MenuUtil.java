@@ -7,11 +7,12 @@ import java.util.*;
 
 /**
  * 菜单工具类
- *
- * @author chen
+ * @author ngcly
  * @date 2018-01-02 17:54
  */
 public class MenuUtil {
+    private MenuUtil(){}
+
     static List<Permission> resultList;
 
     /**
@@ -21,7 +22,7 @@ public class MenuUtil {
         Set<TreeVO> trees = new LinkedHashSet<>();
         TreeVO tree1;
         for(Permission permission:originMenus){
-            if("menu".equals(permission.getResourceType())){
+            if(Permission.RESOURCE_MENU.equals(permission.getResourceType())){
                 tree1 = new TreeVO(permission.getId(),permission.getName(),permission.getParentId(),permission.getUrl(),false,permission.getIcon());
                 trees.add(tree1);
             }
@@ -33,7 +34,6 @@ public class MenuUtil {
      * 判断菜单是否被勾选
      * @param originMenus 原菜单
      * @param roleMenus   角色对应菜单
-     * @return
      */
     public static Set<TreeVO> makeTreeList(List<Permission> originMenus, List<Permission> roleMenus){
         Set<TreeVO> trees = new HashSet<>();
@@ -69,9 +69,9 @@ public class MenuUtil {
             for (TreeVO t : trees) {
                 if(t.getParentId().equals(tree.getId())){
                     if(tree.getChildren() == null){
-                        List<TreeVO> myChildrens = new ArrayList<>();
-                        myChildrens.add(t);
-                        tree.setChildren(myChildrens);
+                        List<TreeVO> myChildrenList = new ArrayList<>();
+                        myChildrenList.add(t);
+                        tree.setChildren(myChildrenList);
                     }else{
                         tree.getChildren().add(t);
                     }

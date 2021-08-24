@@ -1,16 +1,22 @@
 package com.cn.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.lang.Dict;
+import cn.hutool.extra.template.Template;
+import cn.hutool.extra.template.TemplateConfig;
+import cn.hutool.extra.template.TemplateEngine;
+import cn.hutool.extra.template.TemplateUtil;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
+import java.util.Map;
 
 /**
  * 描述:
@@ -21,7 +27,7 @@ import java.io.File;
  */
 @Component
 public class MailUtil {
-    @Autowired
+    @Resource
     private JavaMailSender mailSender;
 
     @Value("${spring.mail.username}")
@@ -60,16 +66,31 @@ public class MailUtil {
     }
 
     /**
+     * 根据邮件模板发送
+     * @param to 收件人
+     * @param subject 邮件主题
+     * @param templateName 模板文件名
+     * @param context 注入模板内容
+     * @throws Exception 异常
+     */
+    public void sendTemplateMail(String to,String subject,String templateName, Dict context) throws Exception{
+        TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("templates", TemplateConfig.ResourceMode.CLASSPATH));
+        Template template = engine.getTemplate(templateName);
+        String result = template.render(context);
+        sendHtmlMail(to,subject,result);
+    }
+
+    /**
      * 完整版发送邮件
      * @param to 收件人
      * @param cc 抄送人
      * @param subject 主题
      * @param content 内容
-     * @param fileName 附件名
-     * @param filePath 附件地址
+     * @param isHtml 是否为html格式
+     * @param files 附件列表Map（附件名:附件地址）
      * @throws MessagingException
      */
-    public void sendEmail(String to,String cc,String subject,String content,String fileName,String filePath) throws MessagingException {
+    public void sendEmail(String[] to, String[] cc, String subject, String content, boolean isHtml, Map<String,String> files) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         //true表示需要创建一个multipart message
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -78,14 +99,13 @@ public class MailUtil {
         helper.setCc(cc);
         helper.setSubject(subject);
         //开启html 格式
-        helper.setText(content, true);
-        //添加附件
-        FileSystemResource file=new FileSystemResource(new File(filePath));
-//        String fileName=filePath.substring(filePath.lastIndexOf(File.separator));
-        //添加多个附件可以使用多条
-        //helper.addAttachment(fileName,file);
-        helper.addAttachment(fileName, file);
+        helper.setText(content, isHtml);
+        File file;
+        for(Map.Entry<String, String> entry : files.entrySet()){
+            //添加附件
+            file= FileUtil.file(entry.getValue());
+            helper.addAttachment(entry.getKey(), file);
+        }
         mailSender.send(message);
     }
-
 }

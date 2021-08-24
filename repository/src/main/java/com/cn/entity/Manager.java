@@ -1,5 +1,6 @@
 package com.cn.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Where;
@@ -19,6 +20,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name="manager")
+@JsonIgnoreProperties(value = {"handler","hibernateLazyInitializer","fieldHandler"})
 public class Manager extends AbstractDateAudit {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -29,7 +31,7 @@ public class Manager extends AbstractDateAudit {
     private String username;
 
     /**密码*/
-    @Column(length = 50, nullable = false)
+    @Column(length = 120, nullable = false)
     private String password;
 
     /**性别 1-男 2-女*/
@@ -40,7 +42,6 @@ public class Manager extends AbstractDateAudit {
     private String realName;
 
     /**头像*/
-    @Column(length = 80)
     private String avatar;
 
     /**生日*/
@@ -56,8 +57,8 @@ public class Manager extends AbstractDateAudit {
      * 立即从数据库中进行加载数据;
      */
     @ManyToMany(fetch= FetchType.EAGER)
-    @JoinTable(name = "manager_role", joinColumns = { @JoinColumn(name = "manager_id") },
-            inverseJoinColumns ={@JoinColumn(name = "role_id") })
+    @JoinTable(name = "manager_role", joinColumns = { @JoinColumn(name = "managerId") },
+            inverseJoinColumns ={@JoinColumn(name = "roleId") })
     @Where(clause = "available=true")
     private Set<Role> roleList;
 

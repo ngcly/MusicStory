@@ -46,7 +46,7 @@ spring:
       # 打开PSCache，并且指定每个连接上PSCache的大小
       poolPreparedStatements: true
       maxPoolPreparedStatementPerConnectionSize: 20
-      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall' 用于防火墙
       filter:
         stat:
           merge-sql: true
@@ -80,6 +80,10 @@ spring:
           socketFactory:
             class: javax.net.ssl.SSLSocketFactory
             port: 465
+
+jwt:
+  secret: ngcly
+  expiration: 3600
 
 jasypt:
   encryptor:

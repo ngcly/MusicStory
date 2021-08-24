@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @Table(name = "carousel")
-public class Carousel {
+public class Carousel extends AbstractUserDateAudit {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

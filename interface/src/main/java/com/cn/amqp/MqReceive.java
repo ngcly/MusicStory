@@ -4,10 +4,10 @@ import com.cn.UserService;
 import com.cn.config.RabbitConfig;
 import com.cn.entity.News;
 import com.cn.util.MailUtil;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -16,13 +16,12 @@ import java.util.Map;
  * @author ngcly
  */
 @Component
+@AllArgsConstructor
 public class MqReceive {
     private static final Logger log = LoggerFactory.getLogger(MqReceive.class);
 
-    @Autowired
-    private MailUtil mailUtil;
-    @Autowired
-    private UserService userService;
+    private final MailUtil mailUtil;
+    private final UserService userService;
 
     @RabbitListener(queues = {RabbitConfig.ACTIVE_QUEUE})
     public void consume(Map<String,String> map) {

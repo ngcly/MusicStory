@@ -61,19 +61,19 @@ public interface UserRepository extends JpaRepository<User,Long>, JpaSpecificati
     static Specification<User> getUserList(String username, String nickName, String phone, String email, Byte state){
         return (Root<User> root, CriteriaQuery<?> query, CriteriaBuilder cb)->{
             List<Predicate> predicates = new ArrayList<>();
-            if(!StringUtils.hasLength(username)) {
+            if(StringUtils.hasLength(username)) {
                 predicates.add(cb.like(root.get("username"),"%"+username+"%"));
             }
 
-            if(!StringUtils.hasLength(nickName)) {
+            if(StringUtils.hasLength(nickName)) {
                 predicates.add(cb.like(root.get("nickName"),"%"+nickName+"%"));
             }
 
-            if(!StringUtils.hasLength(phone)) {
+            if(StringUtils.hasLength(phone)) {
                 predicates.add(cb.like(root.get("phone"),"%"+phone+"%"));
             }
 
-            if(!StringUtils.hasLength(email)) {
+            if(StringUtils.hasLength(email)) {
                 predicates.add(cb.like(root.get("email"),"%"+email+"%"));
             }
 

@@ -55,11 +55,11 @@
             <div class="layui-inline">
                 <label class="search-label">创建时间</label>
                 <div class="date-input">
-                    <input type="text" name="beginTime" class="layui-input time-item" th:value="${#dates.format(manger.beginTime,'yyyy-MM-dd HH:mm:ss')}" placeholder="开始时间">
+                    <input type="text" name="beginTime" class="layui-input time-item" th:value="${#temporals.format(manger.beginTime,'yyyy-MM-dd HH:mm:ss')}" placeholder="开始时间">
                 </div>
                 <div class="layui-form-mid">-</div>
                 <div class="date-input">
-                    <input type="text" name="endTime" class="layui-input time-item" th:value="${#dates.format(manger.endTime,'yyyy-MM-dd HH:mm:ss')}" placeholder="截止时间">
+                    <input type="text" name="endTime" class="layui-input time-item" th:value="${#temporals.format(manger.endTime,'yyyy-MM-dd HH:mm:ss')}" placeholder="截止时间">
                 </div>
             </div>
             <div class="layui-inline">
@@ -82,8 +82,8 @@
         <th lay-data="{field:'gender',width:70}">性别</th>
         <th lay-data="{field:'birthday',width:110}">生日</th>
         <th lay-data="{field:'state',width:85}">状态</th>
-        <th lay-data="{field:'createdTime', sort:true}">创建时间</th>
-        <th lay-data="{field:'updatedTime', sort:true}">修改时间</th>
+        <th lay-data="{field:'createdAt', sort:true}">创建时间</th>
+        <th lay-data="{field:'updatedAt', sort:true}">修改时间</th>
         <th lay-data="{field:'opt',fixed: 'right',align:'center',width:300}">操作</th>
     </tr>
     </thead>
@@ -92,10 +92,10 @@
         <td th:text="${manager.username}"></td>
         <td th:text="${manager.realName}"></td>
         <td th:text="${#strings.equals(manager.gender,'1')?'男':'女'}"></td>
-        <td th:text="${#dates.format(manager.birthday, 'yyyy-MM-dd')}"></td>
+        <td th:text="${#temporals.format(manager.birthday, 'yyyy-MM-dd')}"></td>
         <td th:case="'0'">初始化</td><td th:case="'1'">正常</td><td th:case="'2'">封禁</td><td th:case="*"></td>
-        <td th:text="${#dates.format(manager.createdTime,'yyyy-MM-dd HH:mm:ss')}"></td>
-        <td th:text="${#dates.format(manager.updatedTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+        <td th:text="${#temporals.format(manager.createdAt, 'dd-MM-yyyy HH:mm:ss')}"></td>
+        <td th:text="${#temporals.format(manager.updatedAt,'yyyy-MM-dd HH:mm:ss')}"></td>
         <td>
             <a class="layui-btn layui-btn-xs model" th:attr="data-id=${manager.id}" href="javascript:void(0);"><i class="layui-icon iconfont icon-detail"></i>详情</a>
             <a sec:authorize="hasAuthority('admin:alt')" class="layui-btn layui-btn-xs" th:attr="data-id=${manager.id}" th:href="@{'/sys/adminEdit/?managerId='+${manager.id}}"><i class="layui-icon">&#xe642;</i>编辑</a>

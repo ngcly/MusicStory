@@ -1,6 +1,6 @@
 package com.cn.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,6 +17,7 @@ import java.util.Objects;
 @Setter
 @Entity
 @Table(name="role",uniqueConstraints=@UniqueConstraint(columnNames={"roleCode","roleType"}))
+@JsonIgnoreProperties(value = {"handler","hibernateLazyInitializer","fieldHandler"})
 public class Role extends AbstractUserDateAudit{
 
     @Id
@@ -44,20 +45,18 @@ public class Role extends AbstractUserDateAudit{
     private Boolean available;
 
     /** 用户 - 角色关系定义; 用户-角色 多对多*/
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable(name="user_role",joinColumns={@JoinColumn(name="role_id")},inverseJoinColumns={@JoinColumn(name="user_id")})
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="user_role",joinColumns={@JoinColumn(name="roleId")},inverseJoinColumns={@JoinColumn(name="userId")})
     private List<User> userInfoList;
 
     /** 管理员 - 角色关系定义; 管理员-角色 多对多 */
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable(name="manager_role",joinColumns={@JoinColumn(name="role_id")},inverseJoinColumns={@JoinColumn(name="manager_id")})
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="manager_role",joinColumns={@JoinColumn(name="roleId")},inverseJoinColumns={@JoinColumn(name="managerId")})
     private List<Manager> managers;
 
     /** 角色 -- 权限关系：多对多关系; */
     @ManyToMany(fetch=FetchType.EAGER)
-    @JoinTable(name="role_permission",joinColumns={@JoinColumn(name="role_id")},inverseJoinColumns={@JoinColumn(name="permission_id")})
+    @JoinTable(name="role_permission",joinColumns={@JoinColumn(name="roleId")},inverseJoinColumns={@JoinColumn(name="permissionId")})
     @OrderBy("sort asc")
     private List<Permission> permissions;
 

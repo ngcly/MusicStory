@@ -46,11 +46,11 @@
             <div class="layui-inline">
                 <label class="search-label">登入时间</label>
                 <div class="date-input">
-                    <input type="text" name="beginTime" class="layui-input time-item" th:value="${#dates.format(log.beginTime,'yyyy-MM-dd HH:mm:ss')}" placeholder="开始时间">
+                    <input type="text" name="beginTime" class="layui-input time-item" th:value="${#temporals.format(log.beginTime,'yyyy-MM-dd HH:mm:ss')}" placeholder="开始时间">
                 </div>
                 <div class="layui-form-mid">-</div>
                 <div class="date-input">
-                    <input type="text" name="endTime" class="layui-input time-item" th:value="${#dates.format(log.endTime,'yyyy-MM-dd HH:mm:ss')}" placeholder="截止时间">
+                    <input type="text" name="endTime" class="layui-input time-item" th:value="${#temporals.format(log.endTime,'yyyy-MM-dd HH:mm:ss')}" placeholder="截止时间">
                 </div>
             </div>
             <div class="layui-inline">
@@ -68,7 +68,8 @@
         <th lay-data="{field:'userName', sort:true}">用户名</th>
         <th lay-data="{field:'userType'}">用户类型</th>
         <th lay-data="{field:'loginIp'}">IP</th>
-        <th lay-data="{field:'addressIp'}">地区</th>
+        <th lay-data="{field:'loginAddress'}">地区</th>
+        <th lay-data="{field:'loginBrowser'}">登录浏览器</th>
         <th lay-data="{field:'loginTime', sort:true}">登录时间</th>
     </tr>
     </thead>
@@ -77,8 +78,9 @@
         <td th:text="${log.userName}"></td>
         <td th:text="${#strings.equals(log.userType,'1')?'后台管理员':'前台会员'}"></td>
         <td th:text="${log.loginIp}"></td>
-        <td th:text="${log.addressIp}"></td>
-        <td th:text="${#dates.format(log.loginTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+        <td th:text="${log.loginAddress}"></td>
+        <td th:text="${log.loginBrowser}">
+        <td th:text="${#temporals.format(log.loginTime,'yyyy-MM-dd HH:mm:ss')}"></td>
     </tr>
     </tbody>
 </table>

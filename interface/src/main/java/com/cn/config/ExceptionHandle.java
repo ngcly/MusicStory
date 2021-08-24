@@ -1,5 +1,7 @@
 package com.cn.config;
 
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
 import com.cn.pojo.RestCode;
 import com.cn.util.RestUtil;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
  */
 @ControllerAdvice
 public class ExceptionHandle extends ResponseEntityExceptionHandler {
+    private static final Log log = LogFactory.get();
 
 //    @ExceptionHandler(value
 //            = { IllegalArgumentException.class, IllegalStateException.class })
@@ -41,6 +44,7 @@ public class ExceptionHandle extends ResponseEntityExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
     public ModelMap handlerException(HttpServletRequest request, Exception e){
+        log.error(e);
         if (e instanceof AccessDeniedException) {
             return RestUtil.failure(RestCode.UNAUTHORIZED);
         } else if (e instanceof HttpRequestMethodNotSupportedException) {

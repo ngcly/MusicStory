@@ -28,7 +28,7 @@ public interface NoticeRepository extends JpaRepository<Notice,Long>, JpaSpecifi
      * @param endTime 结束时间
      * @return List<Notice>
      */
-    List<Notice> getNoticesByBeginTimeBeforeAndEndTimeAfterOrderByCreatedTimeDesc(LocalDateTime beginTime,LocalDateTime endTime);
+    List<Notice> getNoticesByBeginTimeBeforeAndEndTimeAfterOrderByCreatedAtDesc(LocalDateTime beginTime,LocalDateTime endTime);
 
     /**
      * 动态查询公告

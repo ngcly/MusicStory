@@ -15,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,7 @@ import java.util.List;
 public class IndexController {
     private final JwtTokenUtil jwtTokenUtil;
     private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
     private final UserService userService;
     private final EssayService essayService;
     private final NoticeService noticeService;
@@ -74,15 +76,16 @@ public class IndexController {
     @ApiOperation(value = "注册", notes = "用户注册")
     @PostMapping("/signup")
     public ModelMap registerUser(@Valid @RequestBody SignUpDTO signUpDTO) {
+        signUpDTO.setPassword(passwordEncoder.encode(signUpDTO.getPassword()));
         User user = new User();
         BeanUtils.copyProperties(signUpDTO, user);
-        return userService.signUp(user);
+        return RestUtil.success(userService.signUp(user));
     }
 
     @ApiOperation(value = "激活", notes = "用户注册激活")
     @GetMapping("/active/{code}")
     public ModelMap activeUser(@PathVariable("code")String code){
-        return userService.activeUser(code);
+        return RestUtil.success(userService.activeUser(code));
     }
 
     /**

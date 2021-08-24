@@ -1,5 +1,6 @@
 package com.cn.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "carousel_category")
+@JsonIgnoreProperties(value = {"handler","hibernateLazyInitializer","fieldHandler"})
 public class CarouselCategory extends AbstractUserDateAudit {
 
     @Id
@@ -28,9 +30,8 @@ public class CarouselCategory extends AbstractUserDateAudit {
     private String remark;
 
     /**轮播图列表*/
-    @Transient
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinColumn(name = "categoryId",nullable = false)
+    @JoinColumn(name = "categoryId")
     private List<Carousel> carousels;
 
 }

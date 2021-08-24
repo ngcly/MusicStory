@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * 社会化用户实体
@@ -15,7 +16,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @Table(name = "social_user")
-public class SocialUserEntity {
+public class SocialUser implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * 系统日志 service
@@ -47,7 +48,7 @@ public class LogService {
         loginLog.setUserType(userType);
         loginLog.setLoginIp(ip);
         loginLog.setLoginAddress(IpUtil.getIpAddresses(ip));
-        loginLog.setLoginBrowser(userAgent.getBrowser().toString());
+        loginLog.setLoginBrowser(Objects.nonNull(userAgent)?userAgent.getBrowser().toString():"");
         loginLog.setLoginTime(LocalDateTime.now());
         loginLogRepository.save(loginLog);
     }

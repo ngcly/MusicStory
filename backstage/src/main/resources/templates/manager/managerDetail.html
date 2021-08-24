@@ -27,15 +27,15 @@
         </tr>
         <tr>
             <td>生日：</td>
-            <td th:text="${#dates.format(manager.birthday,'yyyy-MM-dd')}"></td>
+            <td th:text="${#temporals.format(manager.birthday,'yyyy-MM-dd')}"></td>
             <td>头像：</td>
             <td><img class="layui-circle" th:src="${manager.avatar}" /></td>
         </tr>
         <tr>
             <td>创建时间：</td>
-            <td th:text="${#dates.format(manager.createdTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td th:text="${#temporals.format(manager.createdAt,'yyyy-MM-dd HH:mm:ss')}"></td>
             <td>修改时间：</td>
-            <td th:text="${#dates.format(manager.updatedTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td th:text="${#temporals.format(manager.updatedAt,'yyyy-MM-dd HH:mm:ss')}"></td>
         </tr>
         <tr>
             <td>角色：</td>

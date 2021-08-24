@@ -1,5 +1,6 @@
 package com.cn.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +16,7 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "essay")
+@JsonIgnoreProperties(value = {"handler","hibernateLazyInitializer","fieldHandler"})
 public class Essay extends AbstractDateAudit {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -29,7 +31,8 @@ public class Essay extends AbstractDateAudit {
     private String synopsis;
 
     /**文章内容*/
-    @Column(nullable = false)
+    @Lob @Basic(fetch = FetchType.LAZY)
+    @Column(columnDefinition="mediumtext NOT NULL")
     private String content;
 
     /**阅览数*/

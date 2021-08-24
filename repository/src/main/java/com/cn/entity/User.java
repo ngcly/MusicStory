@@ -1,5 +1,7 @@
 package com.cn.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.annotations.Where;
 
@@ -7,6 +9,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -24,6 +27,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name="user", uniqueConstraints= @UniqueConstraint(columnNames={"username", "email"}))
+@JsonIgnoreProperties(value = {"handler","hibernateLazyInitializer","fieldHandler"})
 public class User extends AbstractDateAudit {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -34,7 +38,8 @@ public class User extends AbstractDateAudit {
     private String username;
 
     /** 密码 */
-    @Column(nullable = false,length = 50)
+    @JsonIgnore
+    @Column(length = 120)
     private String password;
 
     /** 昵称 */
@@ -92,11 +97,14 @@ public class User extends AbstractDateAudit {
      * 一个用户具有多个角色
      * 立即从数据库中进行加载数据;
      */
-    @Transient
     @ManyToMany(fetch= FetchType.EAGER)
-    @JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns ={@JoinColumn(name = "role_id") })
+    @JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "userId") }, inverseJoinColumns ={@JoinColumn(name = "roleId") })
     @Where(clause = "available=true")
     private Set<Role> roleList;
+
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "userId")
+    private List<SocialUser> socialUserList;
 
     @Transient
     private Long[] roleIds;

@@ -4,21 +4,21 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * 音乐表实体
- *
- * @author chen
+ * @author ngcly
  * @date 2017-12-30 17:40
  */
 @Getter
 @Setter
 @Entity
 @Table(name = "music")
-public class Music {
+public class Music implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     /**歌名*/
     @Column(nullable = false, length = 32)

@@ -39,7 +39,7 @@
         </tr>
         <tr>
             <td>生日：</td>
-            <td th:text="${#dates.format(user.birthday,'yyyy-MM-dd')}"></td>
+            <td th:text="${#temporals.format(user.birthday,'yyyy-MM-dd')}"></td>
             <td>头像：</td>
             <td><img class="layui-circle" th:src="${user.avatar}" /></td>
         </tr>
@@ -51,9 +51,9 @@
         </tr>
         <tr>
             <td>创建时间：</td>
-            <td th:text="${#dates.format(user.createdTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td th:text="${#temporals.format(user.createdAt,'yyyy-MM-dd HH:mm:ss')}"></td>
             <td>修改时间：</td>
-            <td th:text="${#dates.format(user.updatedTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td th:text="${#temporals.format(user.updatedAt,'yyyy-MM-dd HH:mm:ss')}"></td>
         </tr>
         <tr>
             <td>地址：</td>

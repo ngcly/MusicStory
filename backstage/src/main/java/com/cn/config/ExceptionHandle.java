@@ -2,11 +2,12 @@ package com.cn.config;
 
 import cn.hutool.http.ContentType;
 import cn.hutool.http.Header;
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
 import com.cn.pojo.RestCode;
 import com.cn.util.RestUtil;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.stereotype.Component;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -14,12 +15,11 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 import java.util.stream.Collectors;
 
@@ -28,27 +28,25 @@ import java.util.stream.Collectors;
  * @author ngcly
  * @since 2019/5/18 14:53
  */
-@Component
-public class ExceptionResolver implements HandlerExceptionResolver {
+@ControllerAdvice
+public class ExceptionHandle {
+    private static final Log log = LogFactory.get();
 
-    @Override
-    public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        //判断是否为ajax请求
+    @ResponseBody
+    @ExceptionHandler(value = Exception.class)
+    public ModelMap handlerException(HttpServletRequest request, Exception e) throws Exception{
+        log.error(e);
         if (request.getHeader(Header.ACCEPT.toString()).contains(ContentType.JSON.toString())
                 ||  "XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-            //返回json
-            ModelAndView mv = new ModelAndView(new MappingJackson2JsonView());
-            mv.addAllObjects(getResult(ex));
-            return mv;
+            return getResult(e);
         }else{
-            //返回 null 时 spring 会自动查询其它的实现类 直到返回 ModelAndView
-            return null;
+            throw e;
         }
     }
 
     public ModelMap getResult(Exception e){
         if(e instanceof AccessDeniedException){
-           return RestUtil.failure(RestCode.UNAUTHORIZED);
+            return RestUtil.failure(RestCode.UNAUTHORIZED);
         } else if (e instanceof DataIntegrityViolationException){
             return RestUtil.failure(RestCode.UNION_DUMP);
         } else if (e instanceof HttpRequestMethodNotSupportedException) {

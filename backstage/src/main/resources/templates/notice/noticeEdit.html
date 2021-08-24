@@ -15,13 +15,13 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">开始时间</label>
                     <div class="layui-input-inline">
-                        <input type="text" class="layui-input time-item" name="beginTime" th:value="${#dates.format(notice.beginTime,'yyyy-MM-dd HH:mm:ss')}" autocomplete="off" lay-verify="required" lay-vertype="tips">
+                        <input type="text" class="layui-input time-item" name="beginTime" th:value="${#temporals.format(notice.beginTime,'yyyy-MM-dd HH:mm:ss')}" autocomplete="off" lay-verify="required" lay-vertype="tips">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">结束时间</label>
                     <div class="layui-input-inline">
-                        <input type="text" class="layui-input time-item" name="endTime" th:value="${#dates.format(notice.endTime,'yyyy-MM-dd HH:mm:ss')}" autocomplete="off" lay-verify="required" lay-vertype="tips">
+                        <input type="text" class="layui-input time-item" name="endTime" th:value="${#temporals.format(notice.endTime,'yyyy-MM-dd HH:mm:ss')}" autocomplete="off" lay-verify="required" lay-vertype="tips">
                     </div>
                 </div>
                 <div class="layui-form-item">

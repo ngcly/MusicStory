@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * Spring Security 配置
- *
  * @author ngcly
  * @date 2018-02-28 16:23
  */

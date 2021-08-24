@@ -45,7 +45,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">生日</label>
                     <div class="layui-input-inline">
-                        <input type="text" id="birthday" name="birthday" th:value="${#dates.format(manager.birthday,'yyyy-MM-dd')}" placeholder="出生年月" autocomplete="off" class="layui-input">
+                        <input type="text" id="birthday" name="birthday" th:value="${#temporals.format(manager.birthday,'yyyy-MM-dd')}" placeholder="出生年月" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item" th:if="${manager.state!=null}">

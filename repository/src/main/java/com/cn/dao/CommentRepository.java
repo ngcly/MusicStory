@@ -23,7 +23,7 @@ public interface CommentRepository extends JpaRepository<Comment,Long> {
      * @param pageable 分页
      * @return Page<Comment>
      */
-    Page<Comment> findByEssayIdOrderByCreatedTimeDesc(Long essayId, Pageable pageable);
+    Page<Comment> findByEssayIdOrderByCreatedAtDesc(Long essayId, Pageable pageable);
 
     /**
      * 查询评论
@@ -32,7 +32,7 @@ public interface CommentRepository extends JpaRepository<Comment,Long> {
      * @return Page<Map<String,Object>>
      */
     @Query("select new map(t2.id as userId,t2.username as username,t2.avatar as avatar,t1.id as id," +
-            "t1.createdTime as createdTime,t1.replyUserId as replyUserId,t1.content as content)" +
+            "t1.createdAt as createdAt,t1.replyUserId as replyUserId,t1.content as content)" +
             " from Comment t1 inner join User t2 on t1.userId=t2.id where t1.essayId=:essayId")
     Page<Map<String,Object>> selectComments(@Param("essayId") Long essayId, Pageable pageable);
 }

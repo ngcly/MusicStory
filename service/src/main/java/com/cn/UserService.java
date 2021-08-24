@@ -1,6 +1,7 @@
 package com.cn;
 
 import cn.hutool.core.map.MapUtil;
+import com.cn.config.GlobalException;
 import com.cn.config.RabbitConfig;
 import com.cn.dao.RoleRepository;
 import com.cn.dao.UserFavesRepository;
@@ -8,8 +9,6 @@ import com.cn.dao.UserFollowRepository;
 import com.cn.dao.UserRepository;
 import com.cn.entity.*;
 import com.cn.pojo.UserDetail;
-import com.cn.util.RestUtil;
-import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,11 +17,10 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.ModelMap;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 import java.util.Objects;
@@ -35,17 +33,22 @@ import java.util.concurrent.TimeUnit;
  * @author chen
  * @date 2018-01-02 18:20
  */
-@AllArgsConstructor
 @Service
 public class UserService implements UserDetailsService {
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final UserFavesRepository userFavesRepository;
-    private final UserFollowRepository userFollowRepository;
-    private final RedisTemplate<String,Long> redisTemplate;
-    private final RabbitTemplate rabbitTemplate;
-    private final SimpMessageSendingOperations messageTemplate;
+    @Resource
+    private UserRepository userRepository;
+    @Resource
+    private RoleRepository roleRepository;
+    @Resource
+    private UserFavesRepository userFavesRepository;
+    @Resource
+    private UserFollowRepository userFollowRepository;
+    @Resource
+    private RedisTemplate<String,Long> redisTemplate;
+    @Resource
+    private RabbitTemplate rabbitTemplate;
+    @Resource
+    private SimpMessageSendingOperations messageTemplate;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -58,16 +61,15 @@ public class UserService implements UserDetailsService {
      * @param newUser 用户信息
      * @return string
      */
-    public ModelMap signUp(User newUser){
+    public String signUp(User newUser){
         if(userRepository.existsByUsername(newUser.getUsername())) {
-            return RestUtil.failure(300,"用户名已存在");
+            throw new GlobalException(300,"用户名已存在");
         }
 
         if(userRepository.existsByEmail(newUser.getEmail())) {
-            return RestUtil.failure(300,"该邮箱已注册");
+            throw new GlobalException(300,"该邮箱已注册");
         }
 
-        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         newUser.setState(User.STATE_INITIALIZE);
         User result = userRepository.save(newUser);
         //生成激活码
@@ -85,28 +87,28 @@ public class UserService implements UserDetailsService {
             msg.getMessageProperties().setHeader("x-delay", 3*60*60*1000);
             return msg;
         });
-        return RestUtil.success(result.getUsername());
+        return result.getUsername();
     }
 
     /**
      * 用户注册激活
      */
     @Transactional(rollbackFor = Exception.class)
-    public ModelMap activeUser(String code){
+    public String activeUser(String code){
         //根据激活码 从redis获取用户ID信息
         Long id = redisTemplate.opsForValue().get(code);
         if(Objects.isNull(id)){
-            return RestUtil.failure(500,"激活码已过期或无效");
+            throw new GlobalException(500, "激活码已过期或无效");
         }
         Optional<User> userOptional = userRepository.findById(id);
         if(!userOptional.isPresent()){
-            return RestUtil.failure(500,"激活码错误");
+            throw new GlobalException(500, "激活码错误");
         }
         User user = userOptional.get();
         user.setState(User.STATE_NORMAL);
         userRepository.save(user);
         redisTemplate.delete(code);
-        return RestUtil.success("激活成功！请前往登录页面登录");
+        return "激活成功！请前往登录页面登录";
     }
 
     /**

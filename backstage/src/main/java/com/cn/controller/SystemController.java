@@ -65,7 +65,7 @@ public class SystemController {
      */
     @PreAuthorize("hasAuthority('sys:admin')")
     @RequestMapping("/adminList")
-    public String managerList(@PageableDefault(sort = { "createdTime" }, direction = Sort.Direction.DESC)
+    public String managerList(@PageableDefault(sort = { "createdAt" }, direction = Sort.Direction.DESC)
                                       Pageable pageable, Model model, @Valid Manager manager){
         Page<Manager> managerList = managerService.getManagersList(pageable,manager);
         model.addAttribute("managerList",managerList);

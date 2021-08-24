@@ -25,7 +25,7 @@ public class NoticeService {
      */
     public List<Notice> getNotice(){
         LocalDateTime now = LocalDateTime.now();
-        return noticeRepository.getNoticesByBeginTimeBeforeAndEndTimeAfterOrderByCreatedTimeDesc(now,now);
+        return noticeRepository.getNoticesByBeginTimeBeforeAndEndTimeAfterOrderByCreatedAtDesc(now,now);
     }
 
     /**
@@ -33,7 +33,7 @@ public class NoticeService {
      * @return List<Notice>
      */
     public List<Notice> getNoticeList(){
-        return noticeRepository.findAll(Sort.by("createdTime"));
+        return noticeRepository.findAll(Sort.by("createdAt"));
     }
 
     /**

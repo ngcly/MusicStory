@@ -40,7 +40,7 @@ public class LoginLog {
     private String loginIp;
 
     /**登录地址*/
-    @Column(length = 32)
+    @Column(length = 50)
     private String loginAddress;
 
     /**登录浏览器*/

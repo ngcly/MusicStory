@@ -64,11 +64,11 @@ public interface ManagerRepository extends JpaRepository<Manager,Long>,JpaSpecif
                 }
 
                 if(Objects.nonNull(beginTime)){
-                    predicates.add(cb.greaterThanOrEqualTo(root.get("createdTime"), beginTime));
+                    predicates.add(cb.greaterThanOrEqualTo(root.get("createdAt"), beginTime));
                 }
 
                 if(Objects.nonNull(endTime)){
-                    predicates.add(cb.lessThanOrEqualTo(root.get("createdTime"), endTime));
+                    predicates.add(cb.lessThanOrEqualTo(root.get("createdAt"), endTime));
                 }
                 return query.where(cb.and(predicates.toArray(new Predicate[predicates.size()]))).getRestriction();
         };

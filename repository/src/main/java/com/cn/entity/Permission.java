@@ -1,5 +1,5 @@
 package com.cn.entity;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,6 +17,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name="permission")
+@JsonIgnoreProperties(value = {"handler","hibernateLazyInitializer","fieldHandler"})
 public class Permission implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -54,9 +55,8 @@ public class Permission implements Serializable {
     private Integer sort;
 
     /** 菜单与角色 多对多 */
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable(name="role_permission",joinColumns={@JoinColumn(name="permission_id")},inverseJoinColumns={@JoinColumn(name="role_id")})
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="role_permission",joinColumns={@JoinColumn(name="permissionId")},inverseJoinColumns={@JoinColumn(name="roleId")})
     private List<Role> roles;
 
     /**资源类型*/
