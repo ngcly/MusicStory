@@ -3,10 +3,7 @@ package com.cn;
 import cn.hutool.core.map.MapUtil;
 import com.cn.config.GlobalException;
 import com.cn.config.RabbitConfig;
-import com.cn.dao.RoleRepository;
-import com.cn.dao.UserFavesRepository;
-import com.cn.dao.UserFollowRepository;
-import com.cn.dao.UserRepository;
+import com.cn.dao.*;
 import com.cn.entity.*;
 import com.cn.pojo.UserDetail;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -37,6 +34,8 @@ import java.util.concurrent.TimeUnit;
 public class UserService implements UserDetailsService {
     @Resource
     private UserRepository userRepository;
+    @Resource
+    private SocialUserRepository socialUserRepository;
     @Resource
     private RoleRepository roleRepository;
     @Resource
@@ -177,6 +176,15 @@ public class UserService implements UserDetailsService {
         messageTemplate.convertAndSend("/topic/notify", "webSocket消息测试");
         //对某个用户发
         messageTemplate.convertAndSendToUser("ngcly","/queue/notify",news.getContent());
+    }
+
+    /**
+     * 根据uuid 查询三方用户
+     * @param uuid 唯一id
+     * @return SocialUser
+     */
+    public SocialUser getByUuid(String uuid){
+        return socialUserRepository.findByUuid(uuid);
     }
 
     /**

@@ -5,6 +5,7 @@ import cn.hutool.log.LogFactory;
 import com.cn.pojo.RestCode;
 import com.cn.util.RestUtil;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -45,7 +46,9 @@ public class ExceptionHandle extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public ModelMap handlerException(HttpServletRequest request, Exception e){
         log.error(e);
-        if (e instanceof AccessDeniedException) {
+        if(e instanceof BadCredentialsException) {
+            return RestUtil.failure(RestCode.USER_ERR);
+        } else if (e instanceof AccessDeniedException) {
             return RestUtil.failure(RestCode.UNAUTHORIZED);
         } else if (e instanceof HttpRequestMethodNotSupportedException) {
             return RestUtil.failure(RestCode.METHOD_ERROR);

@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * 校验token过滤器
@@ -40,7 +41,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String jwtToken = request.getHeader("authorization");
+        String jwtToken = request.getHeader("Authorization");
         if(StringUtils.hasLength(jwtToken) && jwtToken.startsWith(BEARER)){
             UserDetail user = null;
             LocalDateTime issuedAt = null;
@@ -54,8 +55,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 log.info("token 无效:{}", e.getMessage());
             }
 
-            if (user != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                if(issuedAt!=null && issuedAt.isAfter(user.getPwdAlt())){
+            if (Objects.nonNull(user) && SecurityContextHolder.getContext().getAuthentication() == null) {
+                if(Objects.nonNull(issuedAt) && (Objects.isNull(user.getPwdAlt()) || issuedAt.isAfter(user.getPwdAlt()))){
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     log.info("authenticated user:{}", authenticationToken);
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);

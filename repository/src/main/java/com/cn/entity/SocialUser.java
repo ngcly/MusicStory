@@ -34,7 +34,7 @@ public class SocialUser implements Serializable {
     private String accessToken;
 
     /**第三方用户的授权令牌的有效期*/
-    private Long expireIn;
+    private Integer expireIn;
 
     /**刷新令牌*/
     @Column(length = 50)

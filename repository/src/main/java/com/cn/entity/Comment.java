@@ -34,11 +34,9 @@ public class Comment extends AbstractDateAudit {
     private String content;
 
     /**回复用户ID*/
-    @Column(nullable = false)
     private Long replyUserId;
 
     /**回复评论ID*/
-    @Column(nullable = false)
     private Long replyCommentId;
 
 }
