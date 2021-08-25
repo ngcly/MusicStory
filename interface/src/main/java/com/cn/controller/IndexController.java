@@ -46,7 +46,7 @@ public class IndexController {
 
     @ApiOperation(value = "登录", notes = "用户登录")
     @PostMapping("/signin")
-    public ModelMap postAccessToken(HttpServletRequest request, @RequestBody LogInDTO logInDTO) {
+    public ModelMap postAccessToken(HttpServletRequest request, @Valid @RequestBody LogInDTO logInDTO) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(logInDTO.getUsername(),logInDTO.getPassword());
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);

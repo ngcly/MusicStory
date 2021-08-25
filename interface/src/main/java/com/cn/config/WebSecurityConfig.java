@@ -29,6 +29,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtTokenUtil jwtTokenUtil;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
+    /**放行接口*/
+    private final String[] pass={"/", "/login","/signin","signup"};
+
     @Override
     public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/webjars/**","/swagger-ui/**","/swagger-resources/**","/v2/**");
@@ -37,23 +40,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
-                // 跨域支持
-                .cors()
+                .cors().and()
+                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
-                //对请求URL进行权限配置
                 .authorizeRequests()
-                .antMatchers("/", "/login","/signin","signup").permitAll()
+                .antMatchers(pass).permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 //authenticated 必须要进行身份验证
                 .antMatchers("/user/**").authenticated()
-                //anonymous 可以以匿名身份登录
-                .anyRequest().anonymous()
                 .and()
-                //认证不通过后的处理
-                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .and()
-                .addFilterBefore(new JwtTokenFilter(userService, jwtTokenUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtTokenFilter(userService, jwtTokenUtil),UsernamePasswordAuthenticationFilter.class)
+                .csrf().disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
