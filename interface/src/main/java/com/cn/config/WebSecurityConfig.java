@@ -49,7 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //authenticated 必须要进行身份验证
                 .antMatchers("/user/**").authenticated()
                 .and()
-                .addFilterBefore(new JwtTokenFilter(userService, jwtTokenUtil),UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtTokenFilter(jwtTokenUtil),UsernamePasswordAuthenticationFilter.class)
                 .csrf().disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

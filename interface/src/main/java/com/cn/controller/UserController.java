@@ -1,7 +1,7 @@
 package com.cn.controller;
 
 import com.cn.EssayService;
-import com.cn.UserService;
+import com.cn.UserRelatedService;
 import com.cn.pojo.EssayDTO;
 import com.cn.pojo.RestCode;
 import com.cn.pojo.UserDetail;
@@ -30,8 +30,8 @@ import javax.validation.Valid;
 @RequestMapping("/user")
 @AllArgsConstructor
 public class UserController {
+    private final UserRelatedService userRelatedService;
     private final EssayService essayService;
-    private final UserService userService;
 
     @ApiOperation(value = "用户信息", notes = "获取用户详情信息")
     @GetMapping("/info")
@@ -118,7 +118,7 @@ public class UserController {
     @PostMapping("/star")
     public ModelMap star(Authentication authentication, @RequestBody Long essayId) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        userService.addUserFaves(user.getId(), essayId, UserFaves.FAVE_TYPE_LIKE);
+        userRelatedService.addUserFaves(user.getId(), essayId, UserFaves.FAVE_TYPE_LIKE);
         return RestUtil.success();
     }
 
@@ -126,7 +126,7 @@ public class UserController {
     @DeleteMapping("/star/{essayId}")
     public ModelMap cancelStar(Authentication authentication, @PathVariable("essayId") Long essayId) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        userService.delUserFaves(user.getId(), essayId, UserFaves.FAVE_TYPE_LIKE);
+        userRelatedService.delUserFaves(user.getId(), essayId, UserFaves.FAVE_TYPE_LIKE);
         return RestUtil.success();
     }
 
@@ -142,7 +142,7 @@ public class UserController {
     @PostMapping("/collect")
     public ModelMap collect(Authentication authentication, @RequestBody Long essayId) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        userService.addUserFaves(user.getId(), essayId, UserFaves.FAVE_TYPE_COLLECT);
+        userRelatedService.addUserFaves(user.getId(), essayId, UserFaves.FAVE_TYPE_COLLECT);
         return RestUtil.success();
     }
 
@@ -150,7 +150,7 @@ public class UserController {
     @DeleteMapping("/collect/{essayId}")
     public ModelMap cancelCollect(Authentication authentication, @PathVariable("essayId") Long essayId) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        userService.delUserFaves(user.getId(), essayId, UserFaves.FAVE_TYPE_COLLECT);
+        userRelatedService.delUserFaves(user.getId(), essayId, UserFaves.FAVE_TYPE_COLLECT);
         return RestUtil.success();
 
     }
@@ -175,7 +175,7 @@ public class UserController {
     @PostMapping("/watch")
     public ModelMap watch(Authentication authentication, @RequestBody Long userId) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        userService.addUserFollow(user.getId(), userId);
+        userRelatedService.addUserFollow(user.getId(), userId);
         return RestUtil.success();
     }
 
@@ -183,7 +183,7 @@ public class UserController {
     @DeleteMapping("/watch/{userId}")
     public ModelMap cancelWatch(Authentication authentication, @PathVariable("userId") Long userId) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        userService.delUserFollow(user.getId(), userId);
+        userRelatedService.delUserFollow(user.getId(), userId);
         return RestUtil.success();
     }
 

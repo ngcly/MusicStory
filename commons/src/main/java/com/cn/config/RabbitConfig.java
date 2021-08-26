@@ -37,8 +37,8 @@ public class RabbitConfig {
 
     /**
      * 配置摸板（非必要 测试延迟队列方便直观）
-     * @param connectionFactory
-     * @return
+     * @param connectionFactory 连接工厂
+     * @return RabbitTemplate
      */
     @Bean
     public RabbitTemplate rabbitTemplate(CachingConnectionFactory connectionFactory) {
@@ -46,7 +46,7 @@ public class RabbitConfig {
         rabbitTemplate.setMandatory(true);
         rabbitTemplate.setMessageConverter(messageConverter());
         rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> log.info("消息发送成功:correlationData({}),ack({}),cause({})", correlationData, ack, cause));
-        rabbitTemplate.setReturnCallback((message, replyCode, replyText, exchange, routingKey) -> log.info("消息丢失:exchange({}),route({}),replyCode({}),replyText({}),message:{}", exchange, routingKey, replyCode, replyText, message));
+        rabbitTemplate.setReturnsCallback(returned -> log.info("消息丢失:exchange({}),route({}),replyCode({}),replyText({}),message:{}", returned.getExchange(), returned.getRoutingKey(), returned.getReplyCode(), returned.getReplyText(), returned.getMessage()));
         return rabbitTemplate;
     }
 
@@ -80,7 +80,7 @@ public class RabbitConfig {
     /**延迟交换机配置**/
     @Bean
     public CustomExchange delayExchange() {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
         map.put("x-delayed-type", "direct");
         return new CustomExchange(DELAY_EXCHANGE, "x-delayed-message",true, false, map);
     }

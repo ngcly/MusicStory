@@ -8,7 +8,6 @@ import cn.hutool.log.LogFactory;
 import com.cn.pojo.UserDetail;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -29,13 +28,11 @@ import java.util.Objects;
 public class JwtTokenFilter extends OncePerRequestFilter {
     private static final Log log = LogFactory.get();
 
-    private final UserDetailsService userDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
 
     private static final String BEARER = "Bearer ";
 
-    public JwtTokenFilter(UserDetailsService userDetailsService, JwtTokenUtil jwtTokenUtil) {
-        this.userDetailsService = userDetailsService;
+    public JwtTokenFilter(JwtTokenUtil jwtTokenUtil) {
         this.jwtTokenUtil = jwtTokenUtil;
     }
 
@@ -55,15 +52,26 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 log.info("token 无效:{}", e.getMessage());
             }
 
-            if (Objects.nonNull(user) && SecurityContextHolder.getContext().getAuthentication() == null) {
-                if(Objects.nonNull(issuedAt) && (Objects.isNull(user.getPwdAlt()) || issuedAt.isAfter(user.getPwdAlt()))){
-                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                    log.info("authenticated user:{}", authenticationToken);
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                }
+            if(validUserAuthenticated(user,issuedAt)) {
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                log.info("authenticated user:{}", authenticationToken);
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
         }
         filterChain.doFilter(request,response);
+    }
+
+    /**
+     * 判断是否已授权
+     * @param userDetail 用户信息
+     * @param issuedAt jwt有效期
+     * @return boolean
+     */
+    public boolean validUserAuthenticated(UserDetail userDetail,LocalDateTime issuedAt){
+        return Objects.nonNull(userDetail)
+                && Objects.isNull(SecurityContextHolder.getContext().getAuthentication())
+                && Objects.nonNull(issuedAt)
+                && (Objects.isNull(userDetail.getPwdAlt()) || issuedAt.isAfter(userDetail.getPwdAlt()));
     }
 
 }

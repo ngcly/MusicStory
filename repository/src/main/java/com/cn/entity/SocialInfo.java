@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * 社会化用户实体
+ * 社会化信息实体
  * @author ngcly
  * @version V1.0
  * @since 2021/8/23 11:20
@@ -15,8 +15,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Entity
-@Table(name = "social_user")
-public class SocialUser implements Serializable {
+@Table(name = "social_info")
+public class SocialInfo implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
@@ -48,10 +48,6 @@ public class SocialUser implements Serializable {
     @Column(length = 50)
     private String uid;
 
-    /**个别平台的授权信息*/
-    @Column(length = 50)
-    private String accessCode;
-
     /**第三方用户的 union id*/
     @Column(length = 50)
     private String unionId;
@@ -60,32 +56,8 @@ public class SocialUser implements Serializable {
     @Column(length = 50)
     private String scope;
 
-    /**个别平台的授权信息*/
-    @Column(length = 50)
-    private String tokenType;
-
-    /**id_token*/
-    @Column(length = 50)
-    private String idToken;
-
-    /**小米平台用户的附带属性*/
-    @Column(length = 50)
-    private String macAlgorithm;
-
-    /**小米平台用户的附带属性*/
-    @Column(length = 50)
-    private String macKey;
-
-    /**用户的授权code*/
-    @Column(length = 50)
-    private String code;
-
-    /**Twitter平台用户的附带属性*/
-    @Column(length = 50)
-    private String oauthToken;
-
-    /**Twitter平台用户的附带属性*/
-    @Column(length = 50)
-    private String oauthTokenSecret;
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "userId")
+    private User user;
 
 }

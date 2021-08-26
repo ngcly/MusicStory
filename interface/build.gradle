@@ -26,6 +26,4 @@ dependencies {
 
     implementation "io.springfox:springfox-boot-starter:${swaggerVersion}"
     implementation "org.jsoup:jsoup:${jsoupVersion}"
-    implementation "me.zhyd.oauth:JustAuth:${justAuthVersion}"
-
 }

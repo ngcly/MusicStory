@@ -1,5 +1,6 @@
 package com.cn.amqp;
 
+import com.cn.UserRelatedService;
 import com.cn.UserService;
 import com.cn.config.RabbitConfig;
 import com.cn.entity.News;
@@ -22,6 +23,7 @@ public class MqReceive {
 
     private final MailUtil mailUtil;
     private final UserService userService;
+    private final UserRelatedService userRelatedService;
 
     @RabbitListener(queues = {RabbitConfig.ACTIVE_QUEUE})
     public void consume(Map<String,String> map) {
@@ -42,6 +44,6 @@ public class MqReceive {
     @RabbitListener(queues = {RabbitConfig.DELAY_QUEUE})
     public void consumeNotify(News news) {
         log.info("[消息通知] - [{}]", news);
-        userService.notifyUser(news);
+        userRelatedService.notifyUser(news);
     }
 }

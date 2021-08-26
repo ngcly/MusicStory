@@ -11,16 +11,14 @@ import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -34,7 +32,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class IndexController {
     private final JwtTokenUtil jwtTokenUtil;
-    private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
     private final EssayService essayService;
@@ -44,13 +41,16 @@ public class IndexController {
     private final BookService bookService;
     private final LogService logService;
 
-    @ApiOperation(value = "登录", notes = "用户登录")
+    /**
+     * 用户登录
+     * @param request 请求request
+     * @param logInDTO 登录参数
+     * @return ModelMap
+     */
+    @ApiOperation(value = "登录", notes = "普通登录")
     @PostMapping("/signin")
     public ModelMap postAccessToken(HttpServletRequest request, @Valid @RequestBody LogInDTO logInDTO) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(logInDTO.getUsername(),logInDTO.getPassword());
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserDetail user = (UserDetail) authentication.getPrincipal();
+        UserDetail user = userService.login(logInDTO.getUsername(),logInDTO.getPassword());
         String token = jwtTokenUtil.generateToken(user);
         logService.saveLog(user.getId(),user.getUsername(), LoginLog.USER_TYPE_CUSTOMER, request);
         return RestUtil.success(token);
@@ -65,6 +65,44 @@ public class IndexController {
     @ApiOperation(value = "登出", notes = "退出登录")
     @DeleteMapping("/signout/{token}")
     public ModelMap logout(@PathVariable("token")String token){
+        return RestUtil.success();
+    }
+
+    /**
+     * 请求跳转到授权页
+     * @param source 三方标识
+     * @param response 请求response
+     * @throws IOException IO异常
+     */
+    @ApiOperation(value = "跳转三方授权页", notes = "请求跳转到三方授权页")
+    @GetMapping("/render/{source}")
+    public void renderAuth(@PathVariable("source") String source, HttpServletResponse response) throws IOException {
+        response.sendRedirect(userService.getSocialRedirectUrl(source));
+    }
+
+    /**
+     * 第三方回调前端后 前端再调这个 进行登录
+     * @param source 三方类型标识
+     * @param request 请求request
+     * @return ModelMap
+     */
+    @ApiOperation(value = "登录", notes = "三方用户登录")
+    @GetMapping("/login/{source}")
+    public ModelMap login(@PathVariable("source") String source,HttpServletRequest request) {
+        UserDetail userDetail = userService.socialLogin(source,request.getParameter("code"),request.getParameter("state"));
+        String token = jwtTokenUtil.generateToken(userDetail);
+        logService.saveLog(userDetail.getId(),userDetail.getUsername(), LoginLog.USER_TYPE_CUSTOMER, request);
+        return RestUtil.success(token);
+    }
+
+    /**
+     * 解除绑定
+     * @param openid 三方openid
+     * @return ModelMap
+     */
+    @PutMapping("/revoke/{openid}")
+    public ModelMap revokeSocial(@PathVariable("openid") String openid) {
+        userService.revokeSocial(openid);
         return RestUtil.success();
     }
 

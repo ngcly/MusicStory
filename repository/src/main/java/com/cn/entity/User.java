@@ -102,10 +102,6 @@ public class User extends AbstractDateAudit {
     @Where(clause = "available=true")
     private Set<Role> roleList;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "userId")
-    private List<SocialUser> socialUserList;
-
     @Transient
     private Long[] roleIds;
 
