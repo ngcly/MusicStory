@@ -4,16 +4,14 @@ import com.cn.UserRelatedService;
 import com.cn.UserService;
 import com.cn.config.RabbitConfig;
 import com.cn.entity.News;
-import com.cn.util.MailUtil;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-
 /**
+ * RabbitMQ 队列消费
  * @author ngcly
  */
 @Component
@@ -21,19 +19,8 @@ import java.util.Map;
 public class MqReceive {
     private static final Logger log = LoggerFactory.getLogger(MqReceive.class);
 
-    private final MailUtil mailUtil;
     private final UserService userService;
     private final UserRelatedService userRelatedService;
-
-    @RabbitListener(queues = {RabbitConfig.ACTIVE_QUEUE})
-    public void consume(Map<String,String> map) {
-        log.info("[注册激活邮件发送] - [{}]", map);
-        try {
-            mailUtil.sendHtmlMail(map.get("to"),map.get("subject"),map.get("context"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @RabbitListener(queues = {RabbitConfig.DELAY_QUEUE})
     public void consumeDelay(Long userId) {

@@ -1,6 +1,6 @@
 package com.cn;
 
-import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONObject;
 import com.cn.config.GlobalException;
@@ -10,6 +10,7 @@ import com.cn.entity.*;
 import com.cn.enums.SocialEnum;
 import com.cn.enums.SocialParamEnum;
 import com.cn.pojo.UserDetail;
+import com.cn.util.MailUtil;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -53,13 +53,8 @@ public class UserService implements UserDetailsService {
     private RabbitTemplate rabbitTemplate;
     @Resource
     private RestTemplate restTemplate;
-
-    private static final String APP_ID = "101447968";
-    private static final String APP_SECRET = "46474c655bd4f21ddc55cf827e2f04be";
-    /**回调地址填写前端地址  不然后面拿到用户信息后没办法通知前端登录成功*/
-    private static final String APP_REDIRECT = "https://localhost/oauth/callback";
-    /**为了简单起见，这里直接用固定值，该值是为了防止 csrf 攻击*/
-    private static final String STATE = "cly";
+    @Resource
+    private MailUtil mailUtil;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -87,12 +82,12 @@ public class UserService implements UserDetailsService {
         String code = System.currentTimeMillis()%100+result.getUsername();
         //以激活码为KEY 将用户ID保存到redis 有效期三小时
         redisTemplate.opsForValue().set(code,result.getId(),3,TimeUnit.HOURS);
-        Map<String,String> map = MapUtil.newHashMap(3);
-        map.put("to",result.getEmail());
-        map.put("subject","来自音书网站的激活邮件");
-        map.put("context","感谢注册音书网站！<br/>请完成激活进行使用:<a href=\"https://api.ngcly.cn/active/"+code+"\">点击激活</a><br/>激活有效期为3小时");
-        //通过MQ 异步进行邮件发送
-        rabbitTemplate.convertAndSend(RabbitConfig.ACTIVE_QUEUE,map);
+
+        String subject="来自[音书]网站的激活邮件";
+        String templateName = "activation.html";
+        Dict context = Dict.create().set("username",result.getUsername()).set("code",code);
+        //发送激活邮件
+        mailUtil.sendAsyncMail(result.getEmail(),subject,templateName,context);
         //通过延迟队列 清除过期未激活账号
         rabbitTemplate.convertAndSend(RabbitConfig.DELAY_EXCHANGE,RabbitConfig.DELAY_ROUTING_KEY,result.getId(),msg->{
             msg.getMessageProperties().setHeader("x-delay", 3*60*60*1000);
@@ -147,10 +142,11 @@ public class UserService implements UserDetailsService {
      */
     @Transactional(rollbackFor = Exception.class)
     public UserDetail socialLogin(String source,String authCode,String state){
-        if(!STATE.equals(state)){
+        if(!SocialEnum.STATE.equals(state)){
             throw new GlobalException("state不一致");
         }
-        SocialInfo socialInfo = getSocialInfo(source,authCode);
+        SocialEnum socialEnum = SocialEnum.valueOf(source.toUpperCase());
+        SocialInfo socialInfo = getSocialInfo(socialEnum,authCode);
         socialInfo.setSource(source);
 
         //根据OpenId 从数据库中查找是否有该用户信息 若有则直接使用用户信息 进行token生成操作
@@ -158,7 +154,7 @@ public class UserService implements UserDetailsService {
         if(Objects.isNull(thirdUser)){
             thirdUser = socialInfo;
             //若未登录过，则需要获取用户信息进行注册
-            User user = getThirdUserInfo(socialInfo);
+            User user = getThirdUserInfo(socialInfo,socialEnum);
             //如果名称已存在 则添加随机数
             String username = user.getNickName();
             while (userRepository.existsByUsername(username)){
@@ -179,16 +175,16 @@ public class UserService implements UserDetailsService {
 
     /**
      * 获取三方 access_token,open_id等信息
-     * @param source 三方标识
+     * @param socialEnum 三方枚举
      * @param authCode 授权码
      * @return SocialInfo
      */
-    public SocialInfo getSocialInfo(String source,String authCode){
+    public SocialInfo getSocialInfo(SocialEnum socialEnum,String authCode){
         SocialInfo social = new SocialInfo();
-        if(SocialEnum.QQ.getSource().equals(source)){
+        if(SocialEnum.QQ.equals(socialEnum)){
             //通过Authorization Code获取Access Token
             String url = String.format("https://graph.qq.com/oauth2.0/token"+
-                    "?grant_type=authorization_code&client_id=%s&client_secret=%s&code=%s&redirect_uri=%s",APP_ID,APP_SECRET,authCode,APP_REDIRECT+source);
+                    "?grant_type=authorization_code&client_id=%s&client_secret=%s&code=%s&redirect_uri=%s",socialEnum.getAppId(),socialEnum.getAppSecret(),authCode,SocialEnum.APP_REDIRECT+socialEnum.getSource());
             JSONObject tokenResult = restTemplate.getForObject(url, JSONObject.class);
             if(Objects.isNull(tokenResult)){
                 throw new GlobalException("QQ获取access_token失败");
@@ -213,7 +209,7 @@ public class UserService implements UserDetailsService {
             social.setOpenId(openid);
         }else{
             //微信 通过code获取access_token
-            String wechatUrl = String.format("https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code",APP_ID,APP_SECRET,authCode);
+            String wechatUrl = String.format("https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code",socialEnum.getAppId(),socialEnum.getAppSecret(),authCode);
             JSONObject json = restTemplate.getForObject(wechatUrl,JSONObject.class);
             if(Objects.isNull(json)){
                 throw new GlobalException("微信获取access_token失败");
@@ -232,15 +228,17 @@ public class UserService implements UserDetailsService {
     /**
      * 获取三方用户信息
      * @param social 三方 access_token open_id等信息
+     * @param socialEnum 三方枚举
      * @return User
      */
-    public User getThirdUserInfo(SocialInfo social){
+    public User getThirdUserInfo(SocialInfo social,SocialEnum socialEnum){
         User user = new User();
+        user.setState(User.STATE_NORMAL);
         String userInfoUrl;
         JSONObject userInfo;
-        if(SocialEnum.QQ.getSource().equals(social.getSource())){
+        if(SocialEnum.QQ.equals(socialEnum)){
             //获取QQ用户信息
-            userInfoUrl = String.format("https://graph.qq.com/user/get_user_info?access_token=%s&oauth_consumer_key=%s&openid=%s",social.getAccessToken(),APP_ID,social.getOpenId());
+            userInfoUrl = String.format("https://graph.qq.com/user/get_user_info?access_token=%s&oauth_consumer_key=%s&openid=%s",social.getAccessToken(),socialEnum.getAppId(),social.getOpenId());
             userInfo = restTemplate.getForObject(userInfoUrl,JSONObject.class);
             if(Objects.isNull(userInfo)){
                 throw new GlobalException("获取QQ用户信息失败");
@@ -277,13 +275,14 @@ public class UserService implements UserDetailsService {
      * @return String url地址
      */
     public String getSocialRedirectUrl(String source){
+        SocialEnum socialEnum = SocialEnum.valueOf(source.toUpperCase());
         String url;
-        if(SocialEnum.QQ.getSource().equals(source)){
+        if(SocialEnum.QQ.equals(socialEnum)){
             url = String.format("https://graph.qq.com/oauth2.0/authorize?" +
-                    "response_type=code&client_id=%s&redirect_uri=%s&state=%s", APP_ID, APP_REDIRECT+source, STATE);
+                    "response_type=code&client_id=%s&redirect_uri=%s&state=%s", socialEnum.getAppId(), SocialEnum.APP_REDIRECT+source, SocialEnum.STATE);
         }else{
             url = String.format("https://open.weixin.qq.com/connect/qrconnect?" +
-                    "appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_login&state=%s",APP_ID, APP_REDIRECT+source, STATE);
+                    "appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_login&state=%s",socialEnum.getAppId(), SocialEnum.APP_REDIRECT+source, SocialEnum.STATE);
         }
         return url;
     }

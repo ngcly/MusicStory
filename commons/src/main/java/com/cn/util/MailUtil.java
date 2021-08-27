@@ -6,10 +6,12 @@ import cn.hutool.extra.template.Template;
 import cn.hutool.extra.template.TemplateConfig;
 import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -21,11 +23,11 @@ import java.util.Map;
 /**
  * 描述:
  * 邮件工具类
- *
  * @author chen
- * @create 2018-07-21 11:22
+ * @since 2018-07-21 11:22
  */
 @Component
+@Slf4j
 public class MailUtil {
     @Resource
     private JavaMailSender mailSender;
@@ -54,7 +56,7 @@ public class MailUtil {
      * @param subject 邮件主题
      * @param content 邮件内容
      */
-    public void sendHtmlMail(String to, String subject, String content) throws Exception {
+    public void sendHtmlMail(String to, String subject, String content) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         //true表示需要创建一个multipart message
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -66,14 +68,30 @@ public class MailUtil {
     }
 
     /**
+     * 异步发送邮件
+     * @param to 收件人
+     * @param subject 邮件主题
+     * @param templateName 模板文件名
+     * @param context 注入模板内容
+     */
+    @Async
+    public void sendAsyncMail(String to,String subject,String templateName, Dict context) {
+        try {
+            sendTemplateMail(to,subject,templateName,context);
+        }catch (Exception e){
+            log.error("邮件发送失败",e);
+        }
+    }
+
+    /**
      * 根据邮件模板发送
      * @param to 收件人
      * @param subject 邮件主题
      * @param templateName 模板文件名
      * @param context 注入模板内容
-     * @throws Exception 异常
+     * @throws MessagingException 信息异常
      */
-    public void sendTemplateMail(String to,String subject,String templateName, Dict context) throws Exception{
+    public void sendTemplateMail(String to,String subject,String templateName, Dict context) throws MessagingException {
         TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("templates", TemplateConfig.ResourceMode.CLASSPATH));
         Template template = engine.getTemplate(templateName);
         String result = template.render(context);
@@ -88,7 +106,7 @@ public class MailUtil {
      * @param content 内容
      * @param isHtml 是否为html格式
      * @param files 附件列表Map（附件名:附件地址）
-     * @throws MessagingException
+     * @throws MessagingException 信息异常
      */
     public void sendEmail(String[] to, String[] cc, String subject, String content, boolean isHtml, Map<String,String> files) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();

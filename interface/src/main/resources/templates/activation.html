@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>激活账号</title>
+</head>
+<body>
+<table style="border: 0; cellpadding: 0; cellspacing: 0; width: 100%; border-collapse: collapse; background-color: rgb(235, 237, 240)" >
+    <tbody>
+    <tr>
+        <td>
+            <table style="cellpadding:0; cellspacing: 0; align:center; width:640px">
+                <tbody>
+                <tr>
+                    <td style="height:20px;"></td>
+                </tr>
+
+                <tr>
+                    <td height="10"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <table style="cellpadding:0; cellspacing:0; width:640px">
+                            <tbody><tr style="line-height: 40px;">
+                                <td style="width:80px; padding-left: 290px;">
+                                    <a href="http://xiangling.cn" rel="noopener" target="_blank">
+                                        <img src="http://7xkjur.com2.z0.glb.qiniucdn.com/poffineqiniulogo.png" width="54">
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td height="40"></td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgb(255, 255, 255); border-radius: 6px; padding: 40px 40px 0;">
+                        <table>
+                            <tbody><tr height="40">
+                                <td style="padding-left:25px;padding-right:25px;font-size:18px;">
+                                    尊敬的 <span th:text="${username}"></span> 你好:
+                                </td>
+                            </tr>
+                            <tr height="15">
+                                <td></td>
+                            </tr>
+                            <tr height="30">
+                                <td style="padding-left:55px;padding-right:55px;">
+                                    感谢注册音书网站。
+                                </td>
+                            </tr>
+                            <tr height="30">
+                                <td style="padding-left:55px;padding-right:55px;">
+                                    请在<span style="color: rgb(255, 0, 0);">3小时</span>内点击下面链接进行激活使用：
+                                </td>
+                            </tr>
+                            <tr height="60">
+                                <td style="padding-left:55px;padding-right:55px;font-size:14px;">
+                                    <a th:href="@{'https://api.ngcly.cn/active?code='+${code}}" target="_blank" style="display: inline-block; color: rgb(255, 255, 255); line-height: 40px; background-color: rgb(25, 137, 250); border-radius: 5px; text-align: center; text-decoration: none; font-size: 14px; padding: 1px 30px;" rel="noopener">激活账号</a>
+                                </td>
+                            </tr>
+                            <tr height="10">
+                                <td></td>
+                            </tr>
+                            <tr height="20">
+                                <td style="padding-left:55px;padding-right:55px;;font-size:12px;">
+                                    如果上面的链接点击无效，请复制以下链接至浏览器的地址栏直接打开。
+                                </td>
+                            </tr>
+                            <tr height="30">
+                                <td style="padding-left:55px;padding-right:65px;">
+                                    <a href="http://xianling.com/reset" target="_blank" style="color: rgb(12, 148, 222); font-size: 12px;" rel="noopener"
+                                       th:text="'https://api.ngcly.cn/active?code='+${code}"></a>
+                                </td>
+                            </tr>
+                            <tr height="20">
+                                <td style="padding-left:55px;padding-right:55px;font-size:12px;">
+                                    如果您不知道为什么收到了这封邮件，可能是他人不小心输错邮箱意外发给了您，请忽略此邮件。
+                                </td>
+                            </tr>
+                            <tr height="20">
+                                <td></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="height:40px;"></td>
+                </tr>
+                <tr>
+                    <td style="height:50px;"></td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

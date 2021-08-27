@@ -5,15 +5,13 @@ import org.springframework.ui.ModelMap;
 
 /**
  * Rest 风格 格式工具类
- *
- * @author chen
- * @date 2018-01-05 11:15
+ * @author ngcly
+ * @since 2018-01-05 11:15
  */
 public class RestUtil {
 
     /**
      * 成功返回
-     * @return
      */
     public static ModelMap success() {
         return success(null);

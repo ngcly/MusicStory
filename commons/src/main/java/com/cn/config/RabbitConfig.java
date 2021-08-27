@@ -23,8 +23,6 @@ import java.util.Map;
 public class RabbitConfig {
     private static final Logger log = LoggerFactory.getLogger(RabbitConfig.class);
 
-    /**激活队列名称*/
-    public static final String ACTIVE_QUEUE = "music-story";
     /**通知队列*/
     public static final String NOTIFY_QUEUE = "notify-queue";
 
@@ -59,12 +57,6 @@ public class RabbitConfig {
     }
 
     /**默认队列 该队列会自动被 rabbitmq 绑定到默认的交换机上*/
-    @Bean
-    public Queue activeQueue() {
-        // 第一个是 QUEUE 的名字,第二个是消息是否需要持久化处理
-        return new Queue(ACTIVE_QUEUE, true);
-    }
-
     @Bean
     public Queue notifyQueue() {
         // 第一个是 QUEUE 的名字,第二个是消息是否需要持久化处理

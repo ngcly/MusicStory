@@ -7,10 +7,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.Enumeration;
 
 /**
@@ -41,18 +41,17 @@ public class IpUtil {
 
     /**
      * 判断ip是否为空，空返回true
-     * @param ip
-     * @return
+     * @param ip IP
+     * @return boolean
      */
     public static boolean isEmptyIp(final String ip){
-        return (ip == null || ip.length() == 0 || ip.trim().equals("") || "unknown".equalsIgnoreCase(ip));
+        return ip==null || ip.length()==0 || "".equals(ip.trim()) || "unknown".equalsIgnoreCase(ip);
     }
-
 
     /**
      * 判断ip是否不为空，不为空返回true
-     * @param ip
-     * @return
+     * @param ip IP
+     * @return boolean
      */
     public static boolean isNotEmptyIp(final String ip){
         return !isEmptyIp(ip);
@@ -61,7 +60,7 @@ public class IpUtil {
     /***
      * 获取客户端ip地址(可以穿透代理)
      * @param request HttpServletRequest
-     * @return
+     * @return String
      */
     public static String getIpAddress(HttpServletRequest request) {
         String ip = "";
@@ -87,9 +86,9 @@ public class IpUtil {
     /**
      * 获取本机的局域网ip地址，兼容Linux
      * @return String
-     * @throws Exception
+     * @throws SocketException 异常
      */
-    public String getLocalHostIP() throws Exception{
+    public String getLocalHostIP() throws SocketException {
         Enumeration<NetworkInterface> allNetInterfaces = NetworkInterface.getNetworkInterfaces();
         String localHostAddress = "";
         while(allNetInterfaces.hasMoreElements()){
@@ -97,7 +96,7 @@ public class IpUtil {
             Enumeration<InetAddress> address = networkInterface.getInetAddresses();
             while(address.hasMoreElements()){
                 InetAddress inetAddress = address.nextElement();
-                if(inetAddress != null && inetAddress instanceof Inet4Address){
+                if(inetAddress instanceof Inet4Address){
                     localHostAddress = inetAddress.getHostAddress();
                 }
             }
@@ -107,8 +106,7 @@ public class IpUtil {
 
     /**
      * 根据ip获取城市
-     * @return
-     * @throws UnsupportedEncodingException
+     * @return String
      */
     public static String getIpAddresses(String ip) {
         String url;
