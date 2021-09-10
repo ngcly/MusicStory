@@ -7,7 +7,6 @@ buildscript { //构建脚本
     //定义版本号
     ext {
         springBootVersion = '2.5.2'
-        dockerPluginVersion = '0.22.2'
     }
     repositories {//jar包仓库
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
@@ -16,7 +15,6 @@ buildscript { //构建脚本
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath("gradle.plugin.com.palantir.gradle.docker:gradle-docker:${dockerPluginVersion}")
     }
 }
 
@@ -61,6 +59,7 @@ subprojects {  //子项目通配
         locatorVersion = '0.47'
         layuiVersion = '2.6.8'
         treegridVersion = '0.3.0'
+        logstashVersion = '6.6'
     }
 
     dependencies {  //所有子项目通用依赖
@@ -70,6 +69,7 @@ subprojects {  //子项目通配
         implementation 'org.springframework.boot:spring-boot-starter-jersey'
         implementation 'org.springframework.boot:spring-boot-starter-security'
         implementation "com.github.ulisesbocchio:jasypt-spring-boot-starter:${ulisesVersion}"
+        implementation "net.logstash.logback:logstash-logback-encoder:${logstashVersion}"
 
 //        runtime('org.springframework.boot:spring-boot-devtools')
         compileOnly 'org.projectlombok:lombok'

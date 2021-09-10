@@ -1,21 +1,8 @@
 apply plugin: 'java'
-apply plugin: 'com.palantir.docker'
 
 bootJar {
     archiveBaseName = "backstage"
     archiveVersion =  '1.0'
-}
-
-task unpack(type: Copy) {
-    dependsOn bootJar
-    from(zipTree(tasks.bootJar.outputs.files.singleFile))
-    into("build/dependency")
-}
-
-docker {
-    name "com.cn/backstage"
-    copySpec.from(tasks.unpack.outputs).into("dependency")
-    buildArgs(['DEPENDENCY': "dependency"])
 }
 
 dependencies {
