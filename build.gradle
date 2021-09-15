@@ -6,7 +6,7 @@ version '1.0-SNAPSHOT'
 buildscript { //构建脚本
     //定义版本号
     ext {
-        springBootVersion = '2.5.2'
+        springBootVersion = '2.5.4'
     }
     repositories {//jar包仓库
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
@@ -30,8 +30,8 @@ subprojects {  //子项目通配
     //编译使用UTF-8
     [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
 
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    sourceCompatibility = 11
+    targetCompatibility = 11
 
     repositories {  //所有子项目jar包中央仓库
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
