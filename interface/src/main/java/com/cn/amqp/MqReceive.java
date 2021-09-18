@@ -28,7 +28,7 @@ public class MqReceive {
         userService.delUnActiveUser(userId);
     }
 
-    @RabbitListener(queues = {RabbitConfig.DELAY_QUEUE})
+    @RabbitListener(queues = {RabbitConfig.NOTIFY_QUEUE})
     public void consumeNotify(News news) {
         log.info("[消息通知] - [{}]", news);
         userRelatedService.notifyUser(news);
