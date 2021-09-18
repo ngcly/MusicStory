@@ -180,4 +180,20 @@ public class EssayService {
     public Page<Essay> getUserFavesEssay(Long userId,Byte faveType,Pageable pageable){
         return essayRepository.findUserFaveEssay(userId,faveType,pageable);
     }
+
+    /**
+     * 初始化ES数据 仅供测试使用
+     */
+    public void initBookDataTest(){
+        List<Essay> essayList = essayRepository.findAll();
+        Book book;
+        for(Essay essay:essayList){
+            book = new Book();
+            book.setId(essay.getId());
+            book.setTitle(essay.getTitle());
+            book.setAuthor(essay.getUser().getUsername());
+            book.setContent(essay.getContent());
+            bookService.save(book);
+        }
+    }
 }

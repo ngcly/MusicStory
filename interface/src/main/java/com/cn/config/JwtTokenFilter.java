@@ -30,20 +30,18 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
 
-    private static final String BEARER = "Bearer ";
-
     public JwtTokenFilter(JwtTokenUtil jwtTokenUtil) {
         this.jwtTokenUtil = jwtTokenUtil;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String jwtToken = request.getHeader("Authorization");
-        if(StringUtils.hasLength(jwtToken) && jwtToken.startsWith(BEARER)){
+        String token = JwtTokenUtil.getToken(request);
+        if(StringUtils.hasLength(token)){
             UserDetail user = null;
             LocalDateTime issuedAt = null;
             try {
-                JWT jwt = JWTUtil.parseToken(jwtToken.substring(BEARER.length()));
+                JWT jwt = JWTUtil.parseToken(token);
                 if(jwtTokenUtil.verify(jwt)){
                     user = jwt.getPayload().getClaimsJson().toBean(UserDetail.class);
                     issuedAt = DateUtil.toLocalDateTime(jwt.getPayloads().getDate(JWT.ISSUED_AT));

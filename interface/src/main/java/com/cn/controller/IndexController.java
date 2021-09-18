@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.List;
+import java.util.Objects;
 
 /**
  * 描述:
@@ -63,8 +63,9 @@ public class IndexController {
     }
 
     @ApiOperation(value = "登出", notes = "退出登录")
-    @DeleteMapping("/signout/{token}")
-    public ModelMap logout(@PathVariable("token")String token){
+    @DeleteMapping("/signout")
+    public ModelMap logout(HttpServletRequest request){
+        JwtTokenUtil.getToken(request);
         return RestUtil.success();
     }
 
@@ -184,11 +185,10 @@ public class IndexController {
     @GetMapping("/carousel")
     public ModelMap getCarousel(){
         CarouselCategory carouselCategory = carouselService.getCarouselDetail(1L);
-        List<Carousel> carousels = null;
-        if(carouselCategory!=null){
-            carousels = carouselCategory.getCarousels();
+        if(Objects.nonNull(carouselCategory)){
+            return RestUtil.success(carouselCategory.getCarousels());
         }
-        return RestUtil.success(carousels);
+        return RestUtil.success();
     }
 
     /**
@@ -210,5 +210,15 @@ public class IndexController {
     })
     public ModelMap search(@PathVariable int pageSize,@PathVariable int page,@PathVariable("keyword")String keyword){
         return RestUtil.success(bookService.highLightSearchEssay(keyword, PageRequest.of(page - 1, pageSize)));
+    }
+
+    /**
+     * 测试使用 初始化ES数据
+     */
+    @ApiOperation(value = "初始化ES数据", notes = "将数据库数据同步至ES 测试用")
+    @GetMapping("/init/es/data")
+    public ModelMap InitEsDataTest(){
+        essayService.initBookDataTest();
+        return RestUtil.success();
     }
 }

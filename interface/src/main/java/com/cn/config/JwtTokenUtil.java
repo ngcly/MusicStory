@@ -4,12 +4,15 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.crypto.SecureUtil;
+import cn.hutool.http.Header;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
 import com.cn.pojo.UserDetail;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 /**
@@ -24,6 +27,8 @@ public class JwtTokenUtil {
     private String secret;
     @Value("${jwt.expiration}")
     private Integer expiration;
+
+    private static final String BEARER = "Bearer ";
 
     /**
      * 生成 user token
@@ -80,6 +85,19 @@ public class JwtTokenUtil {
      */
     public boolean verify(JWT jwt){
         return jwt.setKey(SecureUtil.md5(secret).getBytes()).validate(0L);
+    }
+
+    /**
+     * 从Http请求里获取token
+     * @param request 请求
+     * @return String
+     */
+    public static String getToken(HttpServletRequest request){
+        String jwtToken = request.getHeader(Header.AUTHORIZATION.toString());
+        if(StringUtils.hasLength(jwtToken) && jwtToken.startsWith(BEARER)){
+            return jwtToken.substring(BEARER.length());
+        }
+        return null;
     }
 
 }
