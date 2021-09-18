@@ -1,5 +1,6 @@
 package com.cn.config;
 
+import cn.hutool.http.Header;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,7 +26,7 @@ public class SwaggerConfig {
 
     @Bean
     public Docket createRestApi(){
-        return new Docket(DocumentationType.SWAGGER_2)
+        return new Docket(DocumentationType.OAS_30)
                 .apiInfo(apiInfo())
                 .select()
                 //指定包
@@ -83,14 +84,14 @@ public class SwaggerConfig {
     }
 
     private List<SecurityScheme> security() {
-        ApiKey apiKey = new ApiKey("Authorization", "Authorization", "header");
+        ApiKey apiKey = new ApiKey(Header.AUTHORIZATION.toString(), Header.AUTHORIZATION.toString(), ParameterType.HEADER.toString());
         return Collections.singletonList(apiKey);
     }
 
     private List<RequestParameter> globalRequestParameters() {
         RequestParameterBuilder parameterBuilder = new RequestParameterBuilder()
                 .in(ParameterType.HEADER)
-                .name("Authorization")
+                .name(Header.AUTHORIZATION.toString())
                 .required(false)
                 .query(param -> param.model(model -> model.scalarModel(ScalarType.STRING)));
         return Collections.singletonList(parameterBuilder.build());

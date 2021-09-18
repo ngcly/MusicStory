@@ -39,7 +39,7 @@ public class LogService {
     @Async
     public void saveLog(Long userId, String username, Byte userType, HttpServletRequest request){
         String ip = IpUtil.getIpAddress(request);
-        String ua = request.getHeader(Header.USER_AGENT.getValue());
+        String ua = request.getHeader(Header.USER_AGENT.toString());
         UserAgent userAgent = UserAgentUtil.parse(ua);
 
         LoginLog loginLog = new LoginLog();
