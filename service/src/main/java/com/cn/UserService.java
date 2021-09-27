@@ -109,7 +109,7 @@ public class UserService implements UserDetailsService {
             throw new GlobalException(500, "激活码已过期或无效");
         }
         Optional<User> userOptional = userRepository.findById(id);
-        if(!userOptional.isPresent()){
+        if(userOptional.isEmpty()){
             throw new GlobalException(500, "激活码错误");
         }
         User user = userOptional.get();
@@ -172,6 +172,23 @@ public class UserService implements UserDetailsService {
         return userDetail;
     }
 
+    /**
+     * 三方账号绑定
+     * @param source 三方资源名
+     * @param authCode 三方授权码
+     * @param state 防 csrf 标识符
+     * @param currentUser 当前登陆用户
+     */
+    public void socialBinding(String source, String authCode, String state, User currentUser){
+        if(!SocialEnum.STATE.equals(state)){
+            throw new GlobalException("state不一致");
+        }
+        SocialEnum socialEnum = SocialEnum.valueOf(source.toUpperCase());
+        SocialInfo thirdUser = getSocialInfo(socialEnum,authCode);
+        thirdUser.setSource(source);
+        thirdUser.setUser(currentUser);
+        socialInfoRepository.save(thirdUser);
+    }
 
     /**
      * 获取三方 access_token,open_id等信息

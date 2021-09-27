@@ -1,5 +1,6 @@
 package com.cn;
 
+import com.cn.enums.ConfigEnum;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -18,6 +19,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 public class BackstageApplication {
     public static void main(String[] args) {
+        ConfigEnum configEnum = ConfigEnum.JASYPT_ENCRYPTOR;
+        System.setProperty(configEnum.getKey(),configEnum.getValue());
         SpringApplication.run(BackstageApplication.class, args);
     }
 

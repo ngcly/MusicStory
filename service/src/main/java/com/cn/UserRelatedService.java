@@ -1,16 +1,20 @@
 package com.cn;
 
+import com.cn.dao.CustomizeRepository;
 import com.cn.dao.UserFavesRepository;
 import com.cn.dao.UserFollowRepository;
 import com.cn.entity.News;
 import com.cn.entity.UserFaves;
 import com.cn.entity.UserFollow;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 用户相关 service
@@ -24,6 +28,8 @@ public class UserRelatedService {
     private UserFavesRepository userFavesRepository;
     @Resource
     private UserFollowRepository userFollowRepository;
+    @Resource
+    private CustomizeRepository customizeRepository;
     @Resource
     private SimpMessageSendingOperations messageTemplate;
 
@@ -74,6 +80,34 @@ public class UserRelatedService {
     @Transactional(rollbackFor = Exception.class)
     public void delUserFollow(Long userId,Long followId){
         userFollowRepository.deleteUserFollowByUserIdAndFollowId(userId,followId);
+    }
+
+    /**
+     * 获取我的关注用户列表
+     * @param userId 用户id
+     * @param pageable 分页
+     * @return List<Map>
+     */
+    public List<Map<String,Object>> getMyFollowList(Long userId, Pageable pageable){
+        String sql = "SELECT t.created_at, t2.id as userId, t2.username, t2.nick_name, t2.birthday, t2.gender, " +
+                "t2.address, t2.real_name, t2.person_desc, t2.signature, t2.avatar, t2.phone, t2.email" +
+                "FROM user_follow t,user t1 WHERE t.user_id=t2.id AND t.user_id=? " +
+                "order by t.created_at desc";
+        return customizeRepository.nativeQueryListMap(sql,pageable,userId);
+    }
+
+    /**
+     * 获取关注我的用户列表
+     * @param userId 用户id
+     * @param pageable 分页
+     * @return List<User>
+     */
+    public List<Map<String,Object>> getFollowMeList(Long userId, Pageable pageable){
+        String sql = "SELECT t.created_at, t2.id as userId, t2.username, t2.nick_name, t2.birthday, t2.gender, " +
+                "t2.address, t2.real_name, t2.person_desc, t2.signature, t2.avatar, t2.phone, t2.email" +
+                "FROM user_follow t,user t1 WHERE t.follow_id=t2.id AND t.follow_id=? " +
+                "order by t.created_at desc";
+        return customizeRepository.nativeQueryListMap(sql,pageable,userId);
     }
 
     /**

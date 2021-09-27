@@ -85,10 +85,7 @@ jwt:
   secret: ngcly
   expiration: 3600
 
-jasypt:
-  encryptor:
-    password: ngCly
 #私人密钥配置
 upload:
-  accessKey: ENC(5Y6vyBg0DOPFQlANueC2it4Z1IC7kc8rb6OvPtYOpWZ06zR96RmAY5Eldg1ftMEwjRYp6XDD7zunb/2dh56qlg==)
-  secretKey: ENC(8jNgqYXy9FOJQcr07dtv6Q/enW4QrNS2/zkkMup0A5oQLlNq2YM0z8Ia4kRsCIJRHvyGG0gb+dZCvBq91BgOFQ==)
+  accessKey: ENC(BFmGqMfhERt8BVG81BuQFAI4L165TxyjahwvlTGx9QnjkKAWytNvhhtfiajw1mhsGTLh5JErMOFrjltogIkOUg==)
+  secretKey: ENC(Ng+yTJPV6RPseJCbuVbk2vqwElnl5fdddl22TAYCvyOVoHSjINi9Tk01j+8CLmozS/ysp3gWFbU5Ock4znKENw==)

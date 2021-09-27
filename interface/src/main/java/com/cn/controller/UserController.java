@@ -2,6 +2,7 @@ package com.cn.controller;
 
 import com.cn.EssayService;
 import com.cn.UserRelatedService;
+import com.cn.UserService;
 import com.cn.pojo.EssayDTO;
 import com.cn.pojo.RestCode;
 import com.cn.pojo.UserDetail;
@@ -18,6 +19,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
@@ -30,6 +32,7 @@ import javax.validation.Valid;
 @RequestMapping("/user")
 @AllArgsConstructor
 public class UserController {
+    private final UserService userService;
     private final UserRelatedService userRelatedService;
     private final EssayService essayService;
 
@@ -40,6 +43,20 @@ public class UserController {
         UserVO vo = new UserVO();
         BeanUtils.copyProperties(user, vo);
         return RestUtil.success(vo);
+    }
+
+    /**
+     * 绑定三方账号
+     * @param source 三方类型标识
+     * @param request 请求request
+     * @return ModelMap
+     */
+    @ApiOperation(value = "登录", notes = "三方用户登录")
+    @GetMapping("/binding/{source}")
+    public ModelMap bindingSocial(Authentication authentication, @PathVariable("source") String source, HttpServletRequest request){
+        UserDetail user = (UserDetail) authentication.getPrincipal();
+        userService.socialBinding(source, request.getParameter("code"), request.getParameter("state"), user);
+        return RestUtil.success();
     }
 
     @ApiOperation(value = "我的文章", notes = "获取用户写的文章")
@@ -156,19 +173,27 @@ public class UserController {
     }
 
     @ApiOperation(value = "获取关注我的用户", notes = "获取关注当前用户的所有人")
-    @GetMapping("/follow")
-    public ModelMap getFollowMe(Authentication authentication) {
+    @GetMapping("/follow/{page}/{size}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页数", paramType = "path", dataType = "int", defaultValue = "1"),
+            @ApiImplicitParam(name = "size", value = "条数", paramType = "path", dataType = "int", defaultValue = "10"),
+    })
+    public ModelMap getFollowMe(Authentication authentication,@PathVariable("page") Integer page,
+                                @PathVariable("size") Integer size) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        //TODO
-        return null;
+        return RestUtil.success(userRelatedService.getFollowMeList(user.getId(),PageRequest.of(page - 1, size)));
     }
 
     @ApiOperation(value = "获取用户关注的人", notes = "获取当前用户关注的所有人")
-    @GetMapping("/watch")
-    public ModelMap getMyWatches(Authentication authentication) {
+    @GetMapping("/watch/{page}/{size}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页数", paramType = "path", dataType = "int", defaultValue = "1"),
+            @ApiImplicitParam(name = "size", value = "条数", paramType = "path", dataType = "int", defaultValue = "10"),
+    })
+    public ModelMap getMyWatches(Authentication authentication, @PathVariable("page") Integer page,
+                                 @PathVariable("size") Integer size) {
         UserDetail user = (UserDetail) authentication.getPrincipal();
-        //TODO
-        return null;
+        return RestUtil.success(userRelatedService.getMyFollowList(user.getId(),PageRequest.of(page - 1, size)));
     }
 
     @ApiOperation(value = "关注", notes = "关注某个用户")
