@@ -6,7 +6,7 @@ version '1.0-SNAPSHOT'
 buildscript { //构建脚本
     //定义版本号
     ext {
-        springBootVersion = '2.5.4'
+        springBootVersion = '2.5.6'
     }
     repositories {//jar包仓库
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
@@ -30,8 +30,8 @@ subprojects {  //子项目通配
     //编译使用UTF-8
     [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
 
-    sourceCompatibility = 11
-    targetCompatibility = 11
+    sourceCompatibility = 17
+    targetCompatibility = 17
 
     repositories {  //所有子项目jar包中央仓库
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
@@ -46,17 +46,16 @@ subprojects {  //子项目通配
 
     //定义版本
     ext {
-        ulisesVersion = '3.0.3'
+        ulisesVersion = '3.0.4'
         swaggerVersion = '3.0.0'
-        jsoupVersion = '1.13.1'
+        jsoupVersion = '1.14.3'
         nekohtmlVersion = '1.9.22'
-        hutoolVersion = '5.7.8'
-        aliOssVersion = '3.13.0'
-        aliOssVersion = '3.13.0'
-        druidVersion = '1.2.6'
-        dialectVersion = '2.4.1'
+        hutoolVersion = '5.7.16'
+        aliOssVersion = '3.13.2'
+        druidVersion = '1.2.8'
+        dialectVersion = '3.0.0'
         extrasVersion = '3.0.4.RELEASE'
-        locatorVersion = '0.47'
+        locatorVersion = '0.48'
         layuiVersion = '2.6.8'
         treegridVersion = '0.3.0'
         logstashVersion = '6.6'
