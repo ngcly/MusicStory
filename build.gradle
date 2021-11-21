@@ -6,7 +6,7 @@ version '1.0-SNAPSHOT'
 buildscript { //构建脚本
     //定义版本号
     ext {
-        springBootVersion = '2.5.6'
+        springBootVersion = '2.6.0'
     }
     repositories {//jar包仓库
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
@@ -58,7 +58,7 @@ subprojects {  //子项目通配
         locatorVersion = '0.48'
         layuiVersion = '2.6.8'
         treegridVersion = '0.3.0'
-        logstashVersion = '6.6'
+        logstashVersion = '7.0'
     }
 
     dependencies {  //所有子项目通用依赖
