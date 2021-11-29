@@ -1,4 +1,4 @@
-package com.cn.entity;
+package com.cn.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.CreatedDate;

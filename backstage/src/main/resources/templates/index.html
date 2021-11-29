@@ -82,14 +82,14 @@
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree"  lay-filter="test">
                 <li class="layui-nav-item layui-nav-itemed" th:each="menuList:${menuList}">
-                    <a class="" href="javascript:;"><i class="layui-icon" th:utext="${menuList.ico}"></i><cite th:text="${menuList.name}"></cite></a>
+                    <a class="" href="javascript:;"><i class="layui-icon" th:utext="${menuList.icon}"></i><cite th:text="${menuList.name}"></cite></a>
                     <dl class="layui-nav-child">
                         <dd th:each="menuChild:${menuList.children}">
                             <!--<a href="javascript:;" th:data="${menuChild.menuUrl}" th:text="${menuChild.name}"></a>-->
-                            <a th:href="${menuChild.menuUrl}" target="content"><i class="layui-icon" th:utext="${menuChild.ico}"></i><cite th:text="${menuChild.name}"></cite></a>
+                            <a th:href="${menuChild.url}" target="content"><i class="layui-icon" th:utext="${menuChild.icon}"></i><cite th:text="${menuChild.name}"></cite></a>
                             <dl class="layui-nav-child" th:if="${not #lists.isEmpty(menuChild.children)}">
                                 <dd th:each="threeChild:${menuChild.children}">
-                                    <a th:href="${threeChild.menuUrl}" target="content"><i class="layui-icon" th:utext="${threeChild.ico}"></i><cite th:text="${threeChild.name}"></cite></a>
+                                    <a th:href="${threeChild.url}" target="content"><i class="layui-icon" th:utext="${threeChild.icon}"></i><cite th:text="${threeChild.name}"></cite></a>
                                 </dd>
                             </dl>
                         </dd>

@@ -5,7 +5,6 @@ import com.cn.dao.ManagerRepository;
 import com.cn.dao.RoleRepository;
 import com.cn.entity.Manager;
 import com.cn.entity.Role;
-import com.cn.pojo.ManagerDetail;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -40,7 +39,7 @@ public class ManagerService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Manager manager = managerRepository.findManagerByUsername(username).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
-        return new ManagerDetail(manager);
+        return manager;
     }
 
     /**

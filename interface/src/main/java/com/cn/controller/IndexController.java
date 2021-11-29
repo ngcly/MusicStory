@@ -5,12 +5,15 @@ import com.cn.config.JwtTokenUtil;
 import com.cn.entity.*;
 import com.cn.pojo.LogInDTO;
 import com.cn.pojo.SignUpDTO;
-import com.cn.pojo.UserDetail;
 import com.cn.util.RestUtil;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +34,7 @@ import java.util.Objects;
 @RestController
 @RequiredArgsConstructor
 public class IndexController {
+    private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
@@ -50,7 +54,11 @@ public class IndexController {
     @ApiOperation(value = "登录", notes = "普通登录")
     @PostMapping("/signin")
     public ModelMap postAccessToken(HttpServletRequest request, @Valid @RequestBody LogInDTO logInDTO) {
-        UserDetail user = userService.login(logInDTO.getUsername(),logInDTO.getPassword());
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(logInDTO.getUsername(),logInDTO.getPassword());
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        User user =  (User) authentication.getPrincipal();
         String token = jwtTokenUtil.generateToken(user);
         logService.saveLog(user.getId(),user.getUsername(), LoginLog.USER_TYPE_CUSTOMER, request);
         return RestUtil.success(token);
@@ -90,7 +98,7 @@ public class IndexController {
     @ApiOperation(value = "登录", notes = "三方用户登录")
     @GetMapping("/login/{source}")
     public ModelMap login(@PathVariable("source") String source,HttpServletRequest request) {
-        UserDetail userDetail = userService.socialLogin(source,request.getParameter("code"),request.getParameter("state"));
+        User userDetail = userService.socialLogin(source,request.getParameter("code"),request.getParameter("state"));
         String token = jwtTokenUtil.generateToken(userDetail);
         logService.saveLog(userDetail.getId(),userDetail.getUsername(), LoginLog.USER_TYPE_CUSTOMER, request);
         return RestUtil.success(token);
@@ -217,7 +225,7 @@ public class IndexController {
      */
     @ApiOperation(value = "初始化ES数据", notes = "将数据库数据同步至ES 测试用")
     @GetMapping("/init/es/data")
-    public ModelMap InitEsDataTest(){
+    public ModelMap initEsDataTest(){
         essayService.initBookDataTest();
         return RestUtil.success();
     }

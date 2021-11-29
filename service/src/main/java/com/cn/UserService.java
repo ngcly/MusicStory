@@ -9,15 +9,12 @@ import com.cn.dao.*;
 import com.cn.entity.*;
 import com.cn.enums.SocialEnum;
 import com.cn.enums.SocialParamEnum;
-import com.cn.pojo.UserDetail;
 import com.cn.util.MailUtil;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -46,8 +43,6 @@ public class UserService implements UserDetailsService {
     @Resource
     private RoleRepository roleRepository;
     @Resource
-    private AuthenticationManager authenticationManager;
-    @Resource
     private RedisTemplate<String,Long> redisTemplate;
     @Resource
     private RabbitTemplate rabbitTemplate;
@@ -59,7 +54,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsernameOrEmail(username,username).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
-        return new UserDetail(user);
+        return user;
     }
 
     /**
@@ -120,20 +115,6 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 用户登录 (普通登录)
-     * @param username 用户名
-     * @param password 密码
-     * @return UserDetail
-     */
-    public UserDetail login(String username,String password){
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,password);
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return  (UserDetail) authentication.getPrincipal();
-    }
-
-
-    /**
      * 用户登录 (三方登录)
      * @param source 三方资源名称
      * @param authCode 三方授权码
@@ -141,7 +122,7 @@ public class UserService implements UserDetailsService {
      * @return UserDetail
      */
     @Transactional(rollbackFor = Exception.class)
-    public UserDetail socialLogin(String source,String authCode,String state){
+    public User socialLogin(String source,String authCode,String state){
         if(!SocialEnum.STATE.equals(state)){
             throw new GlobalException("state不一致");
         }
@@ -166,7 +147,7 @@ public class UserService implements UserDetailsService {
             thirdUser.setUser(user);
             socialInfoRepository.save(thirdUser);
         }
-        UserDetail userDetail = new UserDetail(socialInfo.getUser());
+        User userDetail = socialInfo.getUser();
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetail, null, userDetail.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         return userDetail;

@@ -6,13 +6,12 @@ import cn.hutool.log.LogFactory;
 import com.cn.LogService;
 import com.cn.ManagerService;
 import com.cn.RoleService;
-import com.cn.pojo.ManagerDetail;
+import com.cn.pojo.MenuDTO;
 import com.cn.pojo.RestCode;
 import com.cn.entity.LoginLog;
 import com.cn.entity.Manager;
 import com.cn.entity.Permission;
 import com.cn.entity.Role;
-import com.cn.util.MenuUtil;
 import com.cn.util.RestUtil;
 import com.cn.util.UploadUtil;
 import lombok.AllArgsConstructor;
@@ -90,13 +89,13 @@ public class SystemController {
     public String altManager(@RequestParam(required = false)Long managerId, Principal principal,Model model){
         //最好是从当前授权信息里面提出角色列表来
         Authentication authentication = (Authentication) principal;
-        ManagerDetail managerDetail = (ManagerDetail) authentication.getPrincipal();
+        Manager managerDetail = (Manager) authentication.getPrincipal();
         Set<Role> roles = managerDetail.getRoleList();
         if("admin".equals(managerDetail.getUsername())){
             roles = roleService.getAvailableRoles(Role.ROLE_TYPE_MANAGER);
         }
         List<String> optRole = new ArrayList<>();
-        roles.stream().forEach(role -> optRole.add(role.getId().toString()));
+        roles.forEach(role -> optRole.add(role.getId().toString()));
         Manager manager = new Manager();
         ArrayList<String> checkRoleIds = new ArrayList<>();
         if(managerId!=null){
@@ -123,7 +122,7 @@ public class SystemController {
     @ResponseBody
     @RequestMapping("/adminSave")
     public ModelMap register(@Valid Manager manager){
-        ManagerDetail managerDetail = (ManagerDetail) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
+        Manager managerDetail = (Manager) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
         managerService.saveManager(managerDetail,manager);
         return RestUtil.success();
     }
@@ -135,7 +134,7 @@ public class SystemController {
     @ResponseBody
     @RequestMapping("/adminDel")
     public ModelMap delManager(@RequestParam Long managerId){
-        ManagerDetail managerDetail = (ManagerDetail) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
+        Manager managerDetail = (Manager) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
         if(managerDetail.getId().equals(managerId) || Long.valueOf(1).equals(managerId)){
             return RestUtil.failure(333,"禁止删除自己和admin");
         }
@@ -145,7 +144,7 @@ public class SystemController {
 
     /**
      * 修改密码页面
-     * @return
+     * @return String
      */
     @RequestMapping("/altPwd")
     public String altPwd(){
@@ -158,15 +157,14 @@ public class SystemController {
     @RequestMapping("/updatePwd")
     @ResponseBody
     public ModelMap updatePassword(@RequestParam String oldPassword,@RequestParam String password){
-        ManagerDetail managerDetail = (ManagerDetail) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
+        Manager managerDetail = (Manager) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
         managerService.updatePassword(managerDetail.getId(),oldPassword,password);
         return RestUtil.success();
     }
 
     /**
      * 重置管理员密码
-     * @param managerId
-     * @return
+     * @param managerId 管理员id
      */
     @PreAuthorize("hasAuthority('admin:reset')")
     @ResponseBody
@@ -227,9 +225,8 @@ public class SystemController {
     @PreAuthorize("hasAnyAuthority('role:grant','role:view')")
     @RequestMapping("/grant")
     public String grantForm(@RequestParam long roleId,@RequestParam String type, Model model) {
-        List<Permission> permissions = roleService.getPermissionList();
-        List<Permission> rolePermissions = roleService.findRole(roleId).getPermissions();
-        String menuList = JSONUtil.toJsonStr(MenuUtil.makeTreeList(permissions,rolePermissions));
+        Set<MenuDTO> menuSet = roleService.getMenuListWithChecked(roleId);
+        String menuList = JSONUtil.toJsonStr(menuSet);
         model.addAttribute("type",type);
         model.addAttribute("roleId", roleId);
         model.addAttribute("menuList",menuList);
@@ -278,8 +275,8 @@ public class SystemController {
     @PreAuthorize("hasAuthority('menu:view')")
     @RequestMapping("/menuList")
     public String menuList(Model model){
-        List<Permission> permissionList = roleService.getPermissionList();
-        model.addAttribute("menuList",MenuUtil.treeOrderList(permissionList));
+        List<Permission> menuList = roleService.getMenuList();
+        model.addAttribute("menuList",menuList);
         return "menu/menuList";
     }
 
@@ -298,7 +295,7 @@ public class SystemController {
         }
         if(menuId!=null){
             permission = roleService.getPermissionById(menuId);
-            if(permission.getParentId()!=0){
+            if(!MenuDTO.rootId.equals(permission.getParentId())){
                 parentName = roleService.getPermissionById(permission.getParentId()).getName();
             }else{
                 parentName = "顶层菜单";

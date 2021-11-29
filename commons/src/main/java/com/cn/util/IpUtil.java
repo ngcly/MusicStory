@@ -3,7 +3,6 @@ package com.cn.util;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,8 +18,8 @@ import java.util.Enumeration;
  * @author ngcly
  * @date 2018-01-05 10:38
  */
-@Component
-public class IpUtil {
+public final class IpUtil {
+    private IpUtil(){}
 
     private static final String[] HEADERS = {
             "X-Forwarded-For",
@@ -88,7 +87,7 @@ public class IpUtil {
      * @return String
      * @throws SocketException 异常
      */
-    public String getLocalHostIP() throws SocketException {
+    public String getLocalHostIp() throws SocketException {
         Enumeration<NetworkInterface> allNetInterfaces = NetworkInterface.getNetworkInterfaces();
         String localHostAddress = "";
         while(allNetInterfaces.hasMoreElements()){

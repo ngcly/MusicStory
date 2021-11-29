@@ -8,7 +8,8 @@ import org.springframework.ui.ModelMap;
  * @author ngcly
  * @since 2018-01-05 11:15
  */
-public class RestUtil {
+public final class RestUtil {
+    private RestUtil(){}
 
     /**
      * 成功返回

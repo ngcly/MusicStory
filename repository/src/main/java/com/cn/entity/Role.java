@@ -1,5 +1,6 @@
 package com.cn.entity;
 
+import com.cn.config.AbstractUserDateAudit;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +19,7 @@ import java.util.Objects;
 @Entity
 @Table(name="role",uniqueConstraints=@UniqueConstraint(columnNames={"roleCode","roleType"}))
 @JsonIgnoreProperties(value = {"handler","hibernateLazyInitializer","fieldHandler"})
-public class Role extends AbstractUserDateAudit{
+public class Role extends AbstractUserDateAudit {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

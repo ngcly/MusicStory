@@ -1,15 +1,20 @@
 package com.cn.entity;
 
+import com.cn.config.AbstractDateAudit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.annotations.Where;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -28,7 +33,7 @@ import java.util.Set;
 @Entity
 @Table(name="user", uniqueConstraints= @UniqueConstraint(columnNames={"username", "email"}))
 @JsonIgnoreProperties(value = {"handler","hibernateLazyInitializer","fieldHandler"})
-public class User extends AbstractDateAudit {
+public class User extends AbstractDateAudit implements UserDetails {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id ;
@@ -110,4 +115,37 @@ public class User extends AbstractDateAudit {
     public static final byte STATE_NORMAL = 1;
     public static final byte STATE_EXCEPTION = 2;
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        Set<Role> userRoles = this.getRoleList();
+
+        if(userRoles != null) {
+            for (Role role : userRoles) {
+                SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getRoleCode());
+                authorities.add(authority);
+            }
+        }
+        return authorities;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return getState()==STATE_INITIALIZE?false:true;
+    }
 }

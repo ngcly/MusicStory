@@ -7,11 +7,10 @@ import com.cn.RoleService;
 import com.cn.entity.Manager;
 import com.cn.entity.Permission;
 import com.cn.entity.Role;
-import com.cn.pojo.ManagerDetail;
+import com.cn.pojo.MenuDTO;
 import com.cn.pojo.ValidateCode;
 import com.cn.util.MenuUtil;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -48,7 +47,7 @@ public class IndexController {
     @RequestMapping("/")
     public String index(Principal principal, Model model) {
         Authentication authentication = (Authentication) principal;
-        ManagerDetail managerDetail = (ManagerDetail) authentication.getPrincipal();
+        Manager managerDetail = (Manager) authentication.getPrincipal();
         Set<Role> roleList = managerDetail.getRoleList();
         boolean init = false;
         List<Permission> menuList = new ArrayList<>();
@@ -71,15 +70,26 @@ public class IndexController {
             SecurityContextHolder.getContext().setAuthentication(newAuth);
             menuList.addAll(permissions);
         }
-        if(managerDetail.getState()==Manager.STATE_INITIALIZE){
+        if (managerDetail.getState() == Manager.STATE_INITIALIZE) {
             init = true;
             Manager manager = managerService.getManagerById(managerDetail.getId());
             manager.setState(Manager.STATE_NORMAL);
             managerService.updateManager(manager);
         }
-        model.addAttribute("init",init);
-        model.addAttribute("manager",managerService.getManagerById(managerDetail.getId()));
-        model.addAttribute("menuList", MenuUtil.makeTreeList(menuList));
+        model.addAttribute("init", init);
+        model.addAttribute("manager", managerService.getManagerById(managerDetail.getId()));
+
+        List<MenuDTO> list = menuList.stream().filter(permission ->
+                        Permission.RESOURCE_MENU.equals(permission.getResourceType())).map(permission ->
+                MenuDTO.builder()
+                        .id(permission.getId())
+                        .name(permission.getName())
+                        .parentId(permission.getParentId())
+                        .url(permission.getUrl())
+                        .icon(permission.getIcon())
+                        .build())
+                .toList();
+        model.addAttribute("menuList", MenuUtil.makeMenuToTree(list));
         return "index";
     }
 
@@ -89,26 +99,27 @@ public class IndexController {
      * @return login.html
      */
     @RequestMapping("/login")
-    public String login(@RequestParam(required = false)String error,Model model) {
-        model.addAttribute("error",error);
+    public String login(@RequestParam(required = false) String error, Model model) {
+        model.addAttribute("error", error);
         return "login";
     }
 
     /**
      * kaptcha 验证码
-     * @param request
-     * @param response
-     * @throws Exception
+     *
+     * @param request  请求对象
+     * @param response 返回对象
+     * @throws Exception 异常
      */
     @RequestMapping("/kaptcha")
-    public void defaultKaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception{
+    public void defaultKaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
         //定义图形验证码的长、宽、验证码字符数、干扰元素个数
         ICaptcha captcha = CaptchaUtil.createGifCaptcha(116, 36, 4);
-        ValidateCode validateCode = new ValidateCode(captcha.getCode(),60);
+        ValidateCode validateCode = new ValidateCode(captcha.getCode(), 60);
         //生产验证码字符串并保存到session中
         request.getSession().setAttribute("validateCode", validateCode);
         //图形验证码写出，可以写出到文件，也可以写出到流
-        try (OutputStream out = response.getOutputStream()){
+        try (OutputStream out = response.getOutputStream()) {
             captcha.write(out);
         }
     }
@@ -117,7 +128,7 @@ public class IndexController {
      * 主页
      */
     @RequestMapping("/home")
-    public String home(){
+    public String home() {
         return "home";
     }
 
@@ -125,7 +136,7 @@ public class IndexController {
      * 云中遨游
      */
     @RequestMapping("/clouds")
-    public String clouds(){
+    public String clouds() {
         return "other/clouds";
     }
 

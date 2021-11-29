@@ -6,8 +6,10 @@ apply plugin: 'java'
 //bootRepackage.enabled = false
 
 dependencies {
-    implementation "com.alibaba:druid-spring-boot-starter:${druidVersion}"
+    api project(":commons")
     api 'org.springframework.boot:spring-boot-starter-data-jpa'
     api 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+    implementation "com.alibaba:druid-spring-boot-starter:${druidVersion}"
+
     runtimeOnly 'mysql:mysql-connector-java'
 }

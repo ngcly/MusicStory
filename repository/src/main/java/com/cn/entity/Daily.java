@@ -1,5 +1,6 @@
 package com.cn.entity;
 
+import com.cn.config.AbstractDateAudit;
 import lombok.Getter;
 import lombok.Setter;
 

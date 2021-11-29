@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 /**
  * Spring Security 配置
+ *
  * @author ngcly
  * @date 2018-02-28 16:23
  */
@@ -29,18 +30,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtTokenUtil jwtTokenUtil;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-    /**放行接口*/
-    private final String[] pass={"/", "/login","/signin","signup"};
+    /**
+     * 放行接口
+     */
+    private final String[] pass = {"/", "/login", "/signin", "signup"};
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/webjars/**","/swagger-ui/**","/swagger-resources/**","/v2/**");
+        web.ignoring().antMatchers("/webjars/**", "/swagger-ui/**", "/swagger-resources/**", "/v2/**");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors().and()
+                .cors()
+                .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
                 .authorizeRequests()
@@ -49,7 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //authenticated 必须要进行身份验证
                 .antMatchers("/user/**").authenticated()
                 .and()
-                .addFilterBefore(new JwtTokenFilter(jwtTokenUtil),UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtTokenFilter(jwtTokenUtil), UsernamePasswordAuthenticationFilter.class)
                 .csrf().disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

@@ -1,100 +1,74 @@
 package com.cn.util;
 
-import com.cn.pojo.TreeVO;
-import com.cn.entity.Permission;
+import cn.hutool.core.collection.CollectionUtil;
+import com.cn.pojo.MenuDTO;
 
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * 菜单工具类
+ *
  * @author ngcly
  * @date 2018-01-02 17:54
  */
-public class MenuUtil {
-    private MenuUtil(){}
-
-    static List<Permission> resultList;
-
-    /**
-     * 根据条件将菜单转成Tree对象
-     */
-    public static Set<TreeVO> makeTreeList(List<Permission> originMenus){
-        Set<TreeVO> trees = new LinkedHashSet<>();
-        TreeVO tree1;
-        for(Permission permission:originMenus){
-            if(Permission.RESOURCE_MENU.equals(permission.getResourceType())){
-                tree1 = new TreeVO(permission.getId(),permission.getName(),permission.getParentId(),permission.getUrl(),false,permission.getIcon());
-                trees.add(tree1);
-            }
-        }
-        return eachTree(trees);
+public final class MenuUtil {
+    private MenuUtil() {
     }
 
     /**
      * 判断菜单是否被勾选
+     *
      * @param originMenus 原菜单
      * @param roleMenus   角色对应菜单
      */
-    public static Set<TreeVO> makeTreeList(List<Permission> originMenus, List<Permission> roleMenus){
-        Set<TreeVO> trees = new HashSet<>();
-        TreeVO tree1;
-        boolean contained;
-        for(Permission sysPermission:originMenus){
-            contained=false;
-            for(Permission rolePermission:roleMenus){
-                if(sysPermission.getId().equals(rolePermission.getId())){
-                    contained=true;
-                    break;
-                }
-            }
-            if(contained){
-                tree1 = new TreeVO(sysPermission.getId(),sysPermission.getName(),sysPermission.getParentId(),sysPermission.getUrl(),true,sysPermission.getIcon());
-            }else {
-                tree1 = new TreeVO(sysPermission.getId(),sysPermission.getName(),sysPermission.getParentId(),sysPermission.getUrl(),false,sysPermission.getIcon());
-            }
-            trees.add(tree1);
-        }
-        return eachTree(trees);
+    public static <T> Set<MenuDTO> checkMenuSelected(List<T> originMenus, List<T> roleMenus, Function<T, MenuDTO> convert) {
+        List<MenuDTO> menuList = new ArrayList<>();
+        originMenus.forEach(t -> {
+            MenuDTO menu = convert.apply(t);
+            menu.setChecked(roleMenus.contains(t));
+            menuList.add(menu);
+        });
+        return makeMenuToTree(menuList);
     }
 
     /**
-     * 将已转成Tree对象的list进行转换成树状
+     * 将菜单list转换成树状
      */
-    public static Set<TreeVO> eachTree(Set<TreeVO> trees){
-        Set<TreeVO> rootTrees = new HashSet<>();
-        for (TreeVO tree : trees) {
-            if(tree.getParentId() == 0){
-                rootTrees.add(tree);
+    public static Set<MenuDTO> makeMenuToTree(List<MenuDTO> menuList) {
+        Set<MenuDTO> rootTrees = new HashSet<>();
+        menuList.forEach(menu -> {
+            if(MenuDTO.rootId.equals(menu.getParentId())){
+                rootTrees.add(menu);
             }
-            for (TreeVO t : trees) {
-                if(t.getParentId().equals(tree.getId())){
-                    if(tree.getChildren() == null){
-                        List<TreeVO> myChildrenList = new ArrayList<>();
-                        myChildrenList.add(t);
-                        tree.setChildren(myChildrenList);
+            menuList.forEach(menuDTO -> {
+                if(menu.getId().equals(menuDTO.getParentId())){
+                    if(menu.getChildren()==null){
+                        menu.setChildren(CollectionUtil.newArrayList(menuDTO));
                     }else{
-                        tree.getChildren().add(t);
+                        menu.getChildren().add(menuDTO);
                     }
                 }
-            }
-        }
+            });
+        });
         return rootTrees;
     }
 
     /**
-     * 将菜单根据树状排序
+     * 将菜单进行树状排序
      */
-    public static List<Permission> treeOrderList(List<Permission> sysPermissions){
-        resultList = new ArrayList<>();
-        sortList(sysPermissions,0);
+    public static <T extends MenuDTO> List<T> menuTreeSort(List<T> list) {
+        List<T> resultList = new ArrayList<>();
+        sortList(list, MenuDTO.rootId,resultList);
         return resultList;
     }
 
-    public static void sortList(List<Permission> list,long id){
-        for(Permission permission:list){
-            if(permission.getParentId() == id){
-                resultList.add(permission);
-                sortList(list,permission.getId());
+    public static <T extends MenuDTO> void sortList(List<T> list, long id,List<T> resultList) {
+        for (int i = 0, j = list.size(); i < j; i++) {
+            T menu = list.get(i);
+            if (menu.getParentId() == id) {
+                resultList.add(menu);
+                sortList(list, menu.getId(),resultList);
             }
         }
     }

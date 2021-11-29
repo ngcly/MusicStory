@@ -7,6 +7,7 @@ import cn.hutool.extra.template.TemplateConfig;
 import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -14,7 +15,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
@@ -26,14 +26,18 @@ import java.util.Map;
  * @author chen
  * @since 2018-07-21 11:22
  */
-@Component
 @Slf4j
+@Component
 public class MailUtil {
-    @Resource
     private JavaMailSender mailSender;
 
     @Value("${spring.mail.username}")
     private String from;
+
+    @Autowired
+    public MailUtil(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
 
     /**
      * 发送简单邮件

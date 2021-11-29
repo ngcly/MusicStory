@@ -1,14 +1,20 @@
 package com.cn.entity;
 
+import com.cn.config.AbstractDateAudit;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -21,7 +27,7 @@ import java.util.Set;
 @Entity
 @Table(name="manager")
 @JsonIgnoreProperties(value = {"handler","hibernateLazyInitializer","fieldHandler"})
-public class Manager extends AbstractDateAudit {
+public class Manager extends AbstractDateAudit implements UserDetails {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
@@ -76,4 +82,44 @@ public class Manager extends AbstractDateAudit {
     public static final byte STATE_NORMAL = 1;
     public static final byte STATE_LOCK = 2;
 
+    /**
+     * 加载权限
+     */
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Collection<GrantedAuthority> authorities = new HashSet<>();
+        SimpleGrantedAuthority authority;
+        for (Role role : this.getRoleList()) {
+            authority = new SimpleGrantedAuthority(role.getRoleCode());
+            authorities.add(authority);
+            for(Permission permission:role.getPermissions()){
+                authority = new SimpleGrantedAuthority(permission.getPurview());
+                authorities.add(authority);
+            }
+        }
+        return authorities;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        if(STATE_LOCK == state){
+            return false;
+        }
+        return true;
+    }
 }

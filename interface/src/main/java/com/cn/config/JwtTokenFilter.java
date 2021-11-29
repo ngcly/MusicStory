@@ -5,7 +5,7 @@ import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import com.cn.pojo.UserDetail;
+import com.cn.entity.User;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -38,12 +38,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = JwtTokenUtil.getToken(request);
         if(StringUtils.hasLength(token)){
-            UserDetail user = null;
+            User user = null;
             LocalDateTime issuedAt = null;
             try {
                 JWT jwt = JWTUtil.parseToken(token);
                 if(jwtTokenUtil.verify(jwt)){
-                    user = jwt.getPayload().getClaimsJson().toBean(UserDetail.class);
+                    user = jwt.getPayload().getClaimsJson().toBean(User.class);
                     issuedAt = DateUtil.toLocalDateTime(jwt.getPayloads().getDate(JWT.ISSUED_AT));
                 }
             } catch (Exception e) {
@@ -65,7 +65,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
      * @param issuedAt jwt有效期
      * @return boolean
      */
-    public boolean validUserAuthenticated(UserDetail userDetail,LocalDateTime issuedAt){
+    public boolean validUserAuthenticated(User userDetail,LocalDateTime issuedAt){
         return Objects.nonNull(userDetail)
                 && Objects.isNull(SecurityContextHolder.getContext().getAuthentication())
                 && Objects.nonNull(issuedAt)
