@@ -5,10 +5,10 @@ apply plugin: 'java'
 
 dependencies {
     api 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation "com.aliyun.oss:aliyun-sdk-oss:${aliOssVersion}"
-    implementation 'org.springframework.boot:spring-boot-starter-mail'
     api 'org.springframework.boot:spring-boot-starter-amqp'
     api 'org.springframework.boot:spring-boot-starter-websocket'
     api "cn.hutool:hutool-all:${hutoolVersion}"
     api "com.google.guava:guava:${guavaVersion}"
+    implementation "com.aliyun.oss:aliyun-sdk-oss:${aliOssVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 }

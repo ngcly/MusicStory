@@ -6,9 +6,9 @@ bootJar {
 }
 
 dependencies {
-
-    implementation 'org.springframework.boot:spring-boot-starter-test'
     implementation project(":service")
+    implementation 'org.springframework.boot:spring-boot-starter-test'
+
     //后台模板jar包
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 

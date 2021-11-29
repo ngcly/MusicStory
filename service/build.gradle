@@ -3,9 +3,6 @@ version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 
-//非主启动类模块  若不进行此指定就需要在根build下指定 而根build下只能指定一个主启动类 多模块下所有非主启动类都需要下面指定
-//bootRepackage.enabled = false
-
 dependencies {
     api project(":repository")
 }

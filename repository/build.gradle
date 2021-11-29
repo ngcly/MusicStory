@@ -3,8 +3,6 @@ version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 
-//bootRepackage.enabled = false
-
 dependencies {
     api project(":commons")
     api 'org.springframework.boot:spring-boot-starter-data-jpa'

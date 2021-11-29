@@ -9,8 +9,9 @@ buildscript { //构建脚本
         springBootVersion = '2.6.0'
     }
     repositories {//jar包仓库
-        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
-        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
+        mavenLocal()
         mavenCentral()
     }
     dependencies {
@@ -34,8 +35,9 @@ subprojects {  //子项目通配
     targetCompatibility = 17
 
     repositories {  //所有子项目jar包中央仓库
-        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
-        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
+        mavenLocal()
         mavenCentral()
     }
 
