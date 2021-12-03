@@ -6,8 +6,8 @@ package com.cn.enums;
 public enum EssayState {
     DRAFT((byte)0, "草稿"), PENDING((byte)1, "待审核"), FORBIDDEN((byte)2, "查封"), NORMAL((byte)3, "已确认"), RECOMMEND((byte)4, "推荐");
 
-    private byte code;
-    private String msg;
+    private final byte code;
+    private final String msg;
 
     EssayState(byte code, String msg) {
         this.code = code;

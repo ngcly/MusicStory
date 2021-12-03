@@ -75,12 +75,14 @@ public class Manager extends AbstractDateAudit implements UserDetails {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
     @Transient
-    private String[] roleIds;
+    private Long[] roleIds;
 
     /**用户状态*/
     public static final byte STATE_INITIALIZE = 0;
     public static final byte STATE_NORMAL = 1;
     public static final byte STATE_LOCK = 2;
+
+    public static final String ADMIN = "admin";
 
     /**
      * 加载权限
@@ -117,9 +119,6 @@ public class Manager extends AbstractDateAudit implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        if(STATE_LOCK == state){
-            return false;
-        }
-        return true;
+        return STATE_LOCK != state;
     }
 }

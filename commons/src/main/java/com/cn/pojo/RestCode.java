@@ -23,8 +23,8 @@ public enum RestCode {
     SERVER_ERROR(500, "服务异常"),
     FILE_UPLOAD_ERR(611,"文件上传失败");
 
-    public int code;
-    public String msg;
+    public final int code;
+    public final String msg;
 
     RestCode(int code, String msg) {
         this.code = code;

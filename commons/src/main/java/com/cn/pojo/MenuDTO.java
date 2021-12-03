@@ -1,6 +1,6 @@
 package com.cn.pojo;
 
-import lombok.*;
+import lombok.Data;
 
 import java.util.List;
 
@@ -10,10 +10,7 @@ import java.util.List;
  * @author chen
  * @date 2018-01-02 17:56
  */
-@Builder
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class MenuDTO {
     public static Long rootId = 0L;
 

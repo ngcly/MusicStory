@@ -1,6 +1,5 @@
 package com.cn.config;
 
-import com.cn.config.AbstractDateAudit;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -20,7 +19,7 @@ public abstract class AbstractUserDateAudit extends AbstractDateAudit {
 
     /** 创建人 */
     @CreatedBy
-    @Column(nullable = false,length = 32)
+    @Column(nullable = false,updatable = false, length = 32)
     private String createdBy;
 
     /** 修改建人 */

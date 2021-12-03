@@ -31,7 +31,7 @@ public class Notice extends AbstractUserDateAudit {
     private String content;
 
     /**公告类型 暂不用*/
-    @Column(nullable = false, length = 8)
+    @Column(length = 8)
     private String noticeType;
 
     /**展示开始时间*/
