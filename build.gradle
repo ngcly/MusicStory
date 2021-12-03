@@ -53,7 +53,7 @@ subprojects {  //子项目通配
         jsoupVersion = '1.14.3'
         nekohtmlVersion = '1.9.22'
         hutoolVersion = '5.7.16'
-        guavaVersion = '30.1-jre'
+        guavaVersion = '31.0.1-jre'
         aliOssVersion = '3.13.2'
         druidVersion = '1.2.8'
         dialectVersion = '3.0.0'

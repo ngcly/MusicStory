@@ -50,25 +50,24 @@ public class IndexController {
         Manager managerDetail = (Manager) authentication.getPrincipal();
         Set<Role> roleList = managerDetail.getRoleList();
         boolean init = false;
-        List<Permission> menuList = new ArrayList<>();
-        if (!"admin".equals(principal.getName())) {
-            roleList.forEach(role -> menuList.addAll(role.getPermissions()));
-        } else {
+        List<Permission> menuList;
+        if (Manager.ADMIN.equals(principal.getName())) {
             //管理员拥有最高权限
-            List<Role> roles = roleService.getAllRole();
-            List<Permission> permissions = roleService.getPermissionList();
-            // 得到当前的认证信息
+            menuList = roleService.getPermissionList();
+            //得到当前的认证信息
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            //  生成当前的所有授权
+            //生成当前的所有授权
             Collection<GrantedAuthority> updatedAuthorities = new HashSet<>(auth.getAuthorities());
             // 添加 授权
-            roles.forEach(role -> updatedAuthorities.add(new SimpleGrantedAuthority(role.getRoleCode())));
-            permissions.forEach(permission -> updatedAuthorities.add(new SimpleGrantedAuthority(permission.getPurview())));
+            roleService.getAllRole().forEach(role -> updatedAuthorities.add(new SimpleGrantedAuthority(role.getRoleCode())));
+            menuList.forEach(permission -> updatedAuthorities.add(new SimpleGrantedAuthority(permission.getPurview())));
             // 生成新的认证信息
             Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials(), updatedAuthorities);
             // 重置认证信息
             SecurityContextHolder.getContext().setAuthentication(newAuth);
-            menuList.addAll(permissions);
+        } else {
+            menuList = new ArrayList<>();
+            roleList.forEach(role -> menuList.addAll(role.getPermissions()));
         }
         if (managerDetail.getState() == Manager.STATE_INITIALIZE) {
             init = true;
@@ -80,15 +79,8 @@ public class IndexController {
         model.addAttribute("manager", managerService.getManagerById(managerDetail.getId()));
 
         List<MenuDTO> list = menuList.stream().filter(permission ->
-                        Permission.RESOURCE_MENU.equals(permission.getResourceType())).map(permission ->
-                MenuDTO.builder()
-                        .id(permission.getId())
-                        .name(permission.getName())
-                        .parentId(permission.getParentId())
-                        .url(permission.getUrl())
-                        .icon(permission.getIcon())
-                        .build())
-                .toList();
+                Permission.RESOURCE_MENU.equals(permission.getResourceType()))
+                .map(permission -> (MenuDTO) permission).toList();
         model.addAttribute("menuList", MenuUtil.makeMenuToTree(list));
         return "index";
     }

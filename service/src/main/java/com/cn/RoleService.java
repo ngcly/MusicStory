@@ -138,13 +138,7 @@ public class RoleService {
     public Set<MenuDTO> getMenuListWithChecked(long roleId){
         List<Permission> permissions = permissionRepository.findMenuList();
         List<Permission> rolePermissions = roleRepository.getById(roleId).getPermissions();
-        return MenuUtil.checkMenuSelected(permissions,rolePermissions,permission -> MenuDTO.builder()
-                .id(permission.getId())
-                .name(permission.getName())
-                .parentId(permission.getParentId())
-                .url(permission.getUrl())
-                .icon(permission.getIcon())
-                .build());
+        return MenuUtil.checkMenuSelected(permissions,rolePermissions);
     }
 
     /**

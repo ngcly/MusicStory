@@ -94,7 +94,7 @@
         <td th:text="${#strings.equals(manager.gender,'1')?'男':'女'}"></td>
         <td th:text="${#temporals.format(manager.birthday, 'yyyy-MM-dd')}"></td>
         <td th:case="'0'">初始化</td><td th:case="'1'">正常</td><td th:case="'2'">封禁</td><td th:case="*"></td>
-        <td th:text="${#temporals.format(manager.createdAt, 'dd-MM-yyyy HH:mm:ss')}"></td>
+        <td th:text="${#temporals.format(manager.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
         <td th:text="${#temporals.format(manager.updatedAt,'yyyy-MM-dd HH:mm:ss')}"></td>
         <td>
             <a class="layui-btn layui-btn-xs model" th:attr="data-id=${manager.id}" href="javascript:void(0);"><i class="layui-icon iconfont icon-detail"></i>详情</a>

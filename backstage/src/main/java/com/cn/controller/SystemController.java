@@ -1,13 +1,10 @@
 package com.cn.controller;
 
 import cn.hutool.json.JSONUtil;
-import cn.hutool.log.Log;
-import cn.hutool.log.LogFactory;
 import com.cn.LogService;
 import com.cn.ManagerService;
 import com.cn.RoleService;
 import com.cn.pojo.MenuDTO;
-import com.cn.pojo.RestCode;
 import com.cn.entity.LoginLog;
 import com.cn.entity.Manager;
 import com.cn.entity.Permission;
@@ -15,7 +12,6 @@ import com.cn.entity.Role;
 import com.cn.util.RestUtil;
 import com.cn.util.UploadUtil;
 import lombok.AllArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -32,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 系统设置 控制类
@@ -46,8 +43,6 @@ public class SystemController {
     private final ManagerService managerService;
     private final RoleService roleService;
     private final LogService logService;
-
-    private static final Log log = LogFactory.get();
 
     /*
       下面两个底层实现一样  唯一区别就是hasRole默认添加 ROLE_ 前缀
@@ -64,11 +59,11 @@ public class SystemController {
      */
     @PreAuthorize("hasAuthority('sys:admin')")
     @RequestMapping("/adminList")
-    public String managerList(@PageableDefault(sort = { "createdAt" }, direction = Sort.Direction.DESC)
-                                      Pageable pageable, Model model, @Valid Manager manager){
-        Page<Manager> managerList = managerService.getManagersList(pageable,manager);
-        model.addAttribute("managerList",managerList);
-        model.addAttribute("manger",manager);
+    public String managerList(@PageableDefault(sort = {"createdAt"}, direction = Sort.Direction.DESC)
+                                      Pageable pageable, Model model, @Valid Manager manager) {
+        Page<Manager> managerList = managerService.getManagersList(pageable, manager);
+        model.addAttribute("managerList", managerList);
+        model.addAttribute("manger", manager);
         return "manager/managerList";
     }
 
@@ -76,9 +71,9 @@ public class SystemController {
      * 管理员详情页
      */
     @RequestMapping("/adminView")
-    public String managerDetail(@RequestParam Long mangerId, Model model){
+    public String managerDetail(@RequestParam Long mangerId, Model model) {
         Manager manager = managerService.getManagerById(mangerId);
-        model.addAttribute("manager",manager);
+        model.addAttribute("manager", manager);
         return "manager/managerDetail";
     }
 
@@ -86,33 +81,31 @@ public class SystemController {
      * 管理员编辑页
      */
     @RequestMapping("/adminEdit")
-    public String altManager(@RequestParam(required = false)Long managerId, Principal principal,Model model){
+    public String altManager(@RequestParam(required = false) Long managerId, Principal principal, Model model) {
         //最好是从当前授权信息里面提出角色列表来
         Authentication authentication = (Authentication) principal;
         Manager managerDetail = (Manager) authentication.getPrincipal();
         Set<Role> roles = managerDetail.getRoleList();
-        if("admin".equals(managerDetail.getUsername())){
+        if (Manager.ADMIN.equals(managerDetail.getUsername())) {
             roles = roleService.getAvailableRoles(Role.ROLE_TYPE_MANAGER);
         }
-        List<String> optRole = new ArrayList<>();
-        roles.forEach(role -> optRole.add(role.getId().toString()));
+        String optRole = roles.stream().map(role -> role.getId().toString()).collect(Collectors.joining(","));
         Manager manager = new Manager();
-        ArrayList<String> checkRoleIds = new ArrayList<>();
-        if(managerId!=null){
+        String checkRoleIds = "";
+        if (managerId != null) {
             manager = managerService.getManagerById(managerId);
-            for(Role role:manager.getRoleList()){
-                checkRoleIds.add(role.getId().toString());
-                roles.add(role);
-            }
+            checkRoleIds = manager.getRoleList().stream().map(role ->
+                    role.getId().toString()).collect(Collectors.joining(","));
+            roles.addAll(manager.getRoleList());
         }
-        model.addAttribute("currentId",managerDetail.getId());
-        model.addAttribute("manager",manager);
+        model.addAttribute("currentId", managerDetail.getId());
+        model.addAttribute("manager", manager);
         //待选角色列表
-        model.addAttribute("roles",roles);
+        model.addAttribute("roles", roles);
         //已勾选角色ID
-        model.addAttribute("checkRoleId",String.join(",",checkRoleIds));
+        model.addAttribute("checkRoleId", checkRoleIds);
         //可授权角色ID
-        model.addAttribute("optionRoles",String.join(",",optRole));
+        model.addAttribute("optionRoles", optRole);
         return "manager/managerEdit";
     }
 
@@ -121,9 +114,9 @@ public class SystemController {
      */
     @ResponseBody
     @RequestMapping("/adminSave")
-    public ModelMap register(@Valid Manager manager){
-        Manager managerDetail = (Manager) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
-        managerService.saveManager(managerDetail,manager);
+    public ModelMap register(@Valid Manager manager) {
+        Manager managerDetail = (Manager) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        managerService.saveManager(managerDetail, manager);
         return RestUtil.success();
     }
 
@@ -133,10 +126,10 @@ public class SystemController {
     @PreAuthorize("hasAuthority('admin:del')")
     @ResponseBody
     @RequestMapping("/adminDel")
-    public ModelMap delManager(@RequestParam Long managerId){
-        Manager managerDetail = (Manager) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
-        if(managerDetail.getId().equals(managerId) || Long.valueOf(1).equals(managerId)){
-            return RestUtil.failure(333,"禁止删除自己和admin");
+    public ModelMap delManager(@RequestParam Long managerId) {
+        Manager managerDetail = (Manager) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (managerDetail.getId().equals(managerId) || Long.valueOf(1).equals(managerId)) {
+            return RestUtil.failure(333, "禁止删除自己和admin");
         }
         managerService.delManager(managerId);
         return RestUtil.success();
@@ -144,10 +137,11 @@ public class SystemController {
 
     /**
      * 修改密码页面
+     *
      * @return String
      */
     @RequestMapping("/altPwd")
-    public String altPwd(){
+    public String altPwd() {
         return "manager/updatePwd";
     }
 
@@ -156,21 +150,22 @@ public class SystemController {
      */
     @RequestMapping("/updatePwd")
     @ResponseBody
-    public ModelMap updatePassword(@RequestParam String oldPassword,@RequestParam String password){
-        Manager managerDetail = (Manager) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
-        managerService.updatePassword(managerDetail.getId(),oldPassword,password);
+    public ModelMap updatePassword(@RequestParam String oldPassword, @RequestParam String password) {
+        Manager managerDetail = (Manager) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        managerService.updatePassword(managerDetail.getId(), oldPassword, password);
         return RestUtil.success();
     }
 
     /**
      * 重置管理员密码
+     *
      * @param managerId 管理员id
      */
     @PreAuthorize("hasAuthority('admin:reset')")
     @ResponseBody
     @RequestMapping("/resetPwd")
-    public ModelMap resetPassword(@RequestParam Long managerId){
-        managerService.updatePassword(managerId,"123456");
+    public ModelMap resetPassword(@RequestParam Long managerId) {
+        managerService.updatePassword(managerId, "123456");
         return RestUtil.success();
     }
 
@@ -179,11 +174,11 @@ public class SystemController {
      */
     @PreAuthorize("hasAuthority('role:view')")
     @RequestMapping("/roleList")
-    public String roleList(@PageableDefault(sort = { "roleName" }, direction = Sort.Direction.DESC)
-                                   Pageable pageable,@Valid Role role,Model model){
-        Page<Role> roleList = roleService.getRoleList(pageable,role);
-        model.addAttribute("roleList",roleList);
-        model.addAttribute("roleRt",role);
+    public String roleList(@PageableDefault(sort = {"roleName"}, direction = Sort.Direction.DESC)
+                                   Pageable pageable, @Valid Role role, Model model) {
+        Page<Role> roleList = roleService.getRoleList(pageable, role);
+        model.addAttribute("roleList", roleList);
+        model.addAttribute("roleRt", role);
         return "role/roleList";
     }
 
@@ -192,12 +187,12 @@ public class SystemController {
      */
     @PreAuthorize("hasAnyAuthority('role:add','role:alt')")
     @RequestMapping("/roleEdit")
-    public String roleEdit(@RequestParam(required = false) Long roleId,Model model){
+    public String roleEdit(@RequestParam(required = false) Long roleId, Model model) {
         Role role = new Role();
-        if(roleId!=null){
+        if (roleId != null) {
             role = roleService.findRole(roleId);
         }
-        model.addAttribute("role",role);
+        model.addAttribute("role", role);
         return "role/roleEdit";
     }
 
@@ -207,15 +202,8 @@ public class SystemController {
     @PreAuthorize("hasAnyAuthority('role:add','role:alt')")
     @RequestMapping("/roleSave")
     @ResponseBody
-    public ModelMap saveRole(@Valid Role role){
-        try {
-            roleService.saveRole(role);
-        }catch (DataIntegrityViolationException e){
-            return RestUtil.failure(333,"唯一标识符重复");
-        }catch (Exception e){
-            e.printStackTrace();
-            return RestUtil.failure(RestCode.SERVER_ERROR);
-        }
+    public ModelMap saveRole(@Valid Role role) {
+        roleService.saveRole(role);
         return RestUtil.success();
     }
 
@@ -224,26 +212,27 @@ public class SystemController {
      */
     @PreAuthorize("hasAnyAuthority('role:grant','role:view')")
     @RequestMapping("/grant")
-    public String grantForm(@RequestParam long roleId,@RequestParam String type, Model model) {
+    public String grantForm(@RequestParam long roleId, @RequestParam String type, Model model) {
         Set<MenuDTO> menuSet = roleService.getMenuListWithChecked(roleId);
         String menuList = JSONUtil.toJsonStr(menuSet);
-        model.addAttribute("type",type);
+        model.addAttribute("type", type);
         model.addAttribute("roleId", roleId);
-        model.addAttribute("menuList",menuList);
+        model.addAttribute("menuList", menuList);
         return "role/grant";
     }
 
     /**
      * 保存授权
-     * @param roleId 角色id
+     *
+     * @param roleId  角色id
      * @param menuIds 菜单id列表
      * @return ModelMap
      */
     @PreAuthorize("hasAuthority('role:grant')")
     @PostMapping("/saveGrant")
     @ResponseBody
-    public ModelMap saveGrant(Long roleId, String menuIds){
-        roleService.saveGrant(roleId,menuIds);
+    public ModelMap saveGrant(Long roleId, String menuIds) {
+        roleService.saveGrant(roleId, menuIds);
         return RestUtil.success();
     }
 
@@ -253,7 +242,7 @@ public class SystemController {
     @PreAuthorize("hasAuthority('role:alt')")
     @RequestMapping("/togAvailable")
     @ResponseBody
-    public ModelMap altRole(@RequestParam long roleId){
+    public ModelMap altRole(@RequestParam long roleId) {
         roleService.altAvailable(roleId);
         return RestUtil.success();
     }
@@ -264,7 +253,7 @@ public class SystemController {
     @PreAuthorize("hasAuthority('role:del')")
     @RequestMapping("/roleDel")
     @ResponseBody
-    public ModelMap delRole(@RequestParam long roleId){
+    public ModelMap delRole(@RequestParam long roleId) {
         roleService.delRole(roleId);
         return RestUtil.success();
     }
@@ -274,9 +263,9 @@ public class SystemController {
      */
     @PreAuthorize("hasAuthority('menu:view')")
     @RequestMapping("/menuList")
-    public String menuList(Model model){
+    public String menuList(Model model) {
         List<Permission> menuList = roleService.getMenuList();
-        model.addAttribute("menuList",menuList);
+        model.addAttribute("menuList", menuList);
         return "menu/menuList";
     }
 
@@ -285,24 +274,24 @@ public class SystemController {
      */
     @PreAuthorize("hasAnyAuthority('menu:add','menu:alt')")
     @RequestMapping("/menuEdit")
-    public String menuEdit(@RequestParam(required = false)Long menuId,@RequestParam(required = false)Long parentId,Model model){
+    public String menuEdit(@RequestParam(required = false) Long menuId, @RequestParam(required = false) Long parentId, Model model) {
         Permission permission = new Permission();
         permission.setSort(0);
-        String parentName="";
-        if(parentId!=null){
+        String parentName = "";
+        if (parentId != null) {
             parentName = roleService.getPermissionById(parentId).getName();
             permission.setParentId(parentId);
         }
-        if(menuId!=null){
+        if (menuId != null) {
             permission = roleService.getPermissionById(menuId);
-            if(!MenuDTO.rootId.equals(permission.getParentId())){
+            if (!MenuDTO.rootId.equals(permission.getParentId())) {
                 parentName = roleService.getPermissionById(permission.getParentId()).getName();
-            }else{
+            } else {
                 parentName = "顶层菜单";
             }
         }
-        model.addAttribute("menu",permission);
-        model.addAttribute("parentName",parentName);
+        model.addAttribute("menu", permission);
+        model.addAttribute("parentName", parentName);
         return "menu/menuEdit";
     }
 
@@ -312,7 +301,7 @@ public class SystemController {
     @PreAuthorize("hasAnyAuthority('menu:add','menu:alt')")
     @RequestMapping("/menuSave")
     @ResponseBody
-    public ModelMap saveMenu(@Valid Permission permission){
+    public ModelMap saveMenu(@Valid Permission permission) {
         roleService.saveMenu(permission);
         return RestUtil.success();
     }
@@ -323,7 +312,7 @@ public class SystemController {
     @PreAuthorize("hasAuthority('menu:del')")
     @RequestMapping("/menuDel")
     @ResponseBody
-    public ModelMap delMenu(@RequestParam long menuId){
+    public ModelMap delMenu(@RequestParam long menuId) {
         roleService.delMenu(menuId);
         return RestUtil.success();
     }
@@ -333,31 +322,27 @@ public class SystemController {
      */
     @PreAuthorize("hasAuthority('sys:log')")
     @RequestMapping("/loginLogs")
-    public String loginLogList(@PageableDefault(sort = { "loginTime" }, direction = Sort.Direction.DESC)
-                                       Pageable pageable, @Valid LoginLog loginLog, Model model){
-        Page<LoginLog> logs = logService.getLoginLogList(pageable,loginLog);
-        model.addAttribute("logList",logs);
-        model.addAttribute("log",loginLog);
+    public String loginLogList(@PageableDefault(sort = {"loginTime"}, direction = Sort.Direction.DESC)
+                                       Pageable pageable, @Valid LoginLog loginLog, Model model) {
+        Page<LoginLog> logs = logService.getLoginLogList(pageable, loginLog);
+        model.addAttribute("logList", logs);
+        model.addAttribute("log", loginLog);
         return "system/logList";
     }
 
     /**
      * 头像上传
+     *
      * @param file 文件
      * @return ModelMap
      */
     @RequestMapping("/upload")
     @ResponseBody
-    public ModelMap uploadAvatar(@RequestParam("file")MultipartFile file){
-        if(file.isEmpty()){
-            return RestUtil.failure(222,"文件为空");
+    public ModelMap uploadAvatar(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return RestUtil.failure(222, "文件为空");
         }
-        try {
-            String path = UploadUtil.uploadFileByAli(file,"avatar");
-            return RestUtil.success(path);
-        } catch (Exception e) {
-            log.error(e,"上传文件失败");
-            return RestUtil.failure(RestCode.FILE_UPLOAD_ERR);
-        }
+        String path = UploadUtil.uploadFileByAli(file, "avatar");
+        return RestUtil.success(path);
     }
 }

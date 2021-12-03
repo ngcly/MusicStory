@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.cn.pojo.MenuDTO;
 
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * 菜单工具类
@@ -22,12 +21,11 @@ public final class MenuUtil {
      * @param originMenus 原菜单
      * @param roleMenus   角色对应菜单
      */
-    public static <T> Set<MenuDTO> checkMenuSelected(List<T> originMenus, List<T> roleMenus, Function<T, MenuDTO> convert) {
+    public static <T extends MenuDTO> Set<MenuDTO> checkMenuSelected(List<T> originMenus, List<T> roleMenus) {
         List<MenuDTO> menuList = new ArrayList<>();
         originMenus.forEach(t -> {
-            MenuDTO menu = convert.apply(t);
-            menu.setChecked(roleMenus.contains(t));
-            menuList.add(menu);
+            t.setChecked(roleMenus.contains(t));
+            menuList.add(t);
         });
         return makeMenuToTree(menuList);
     }

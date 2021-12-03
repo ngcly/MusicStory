@@ -4,9 +4,8 @@ import com.cn.pojo.RestCode;
 
 /**
  * @author ngcly
- * @Classname GlobalException
- * @Description 自定义全局异常
- * @Date 2019/5/18 11:58
+ * 自定义全局异常
+ * @since 2019/5/18 11:58
  */
 public class GlobalException extends RuntimeException {
     private int code;
