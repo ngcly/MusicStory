@@ -11,7 +11,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -20,19 +19,20 @@ import java.io.PrintWriter;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
- * @author chenning
+ * @author ngcly
  * @date 2018/3/24 下午7:43
  * 登录失败处理
  */
 public class LoginFailureHandler implements AuthenticationFailureHandler {
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
+                                        AuthenticationException exception) throws IOException {
         response.setContentType(ContentType.JSON.toString(UTF_8));
         RestCode restCode;
         if (exception instanceof BadCredentialsException ||
                 exception instanceof UsernameNotFoundException) {
             restCode = RestCode.USER_ERR;
-        } else if(exception instanceof AuthenticationServiceException){
+        } else if (exception instanceof AuthenticationServiceException) {
             restCode = RestCode.VERIFY_CODE_ERR;
         } else if (exception instanceof LockedException) {
             restCode = RestCode.USER_LOCKED;
@@ -46,8 +46,9 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
             restCode = RestCode.UNAUTHORIZED;
         }
         try (PrintWriter printWriter = response.getWriter()) {
-            JSON json = JSONUtil.parse(RestUtil.failure(restCode), JSONConfig.create().setOrder(true).setIgnoreNullValue(false));
-            JSONUtil.toJsonStr(json,printWriter);
+            JSON json = JSONUtil.parse(RestUtil.failure(restCode), JSONConfig.create().setOrder(true)
+                    .setIgnoreNullValue(false));
+            JSONUtil.toJsonStr(json, printWriter);
         }
     }
 }

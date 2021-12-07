@@ -60,15 +60,13 @@ public class ExceptionHandle extends ResponseEntityExceptionHandler {
             return RestUtil.failure(RestCode.PARAM_ERROR);
         } else if (e instanceof HttpMediaTypeNotAcceptableException){
             return RestUtil.failure(RestCode.HEAD_ERROR);
-        }else if (e instanceof GlobalException){
-            return RestUtil.failure(((GlobalException) e).getCode(),e.getMessage());
-        } else if (e instanceof ConstraintViolationException) {
+        }else if (e instanceof GlobalException exception){
+            return RestUtil.failure(exception.getCode(),exception.getMessage());
+        } else if (e instanceof ConstraintViolationException exception) {
             //@RequestParam 参数校验失败
-            ConstraintViolationException exception = (ConstraintViolationException) e;
             String msg = exception.getConstraintViolations().stream().map(constraint -> constraint.getInvalidValue()+":"+constraint.getMessage()).collect(Collectors.joining(";"));
             return RestUtil.failure(400, msg);
-        } else if (e instanceof MethodArgumentNotValidException){
-            MethodArgumentNotValidException exception = (MethodArgumentNotValidException) e;
+        } else if (e instanceof MethodArgumentNotValidException exception){
             StringBuilder errMsg = new StringBuilder();
             String msg = exception.getBindingResult().getAllErrors().stream().map(objectError -> {
                 if(objectError instanceof FieldError){

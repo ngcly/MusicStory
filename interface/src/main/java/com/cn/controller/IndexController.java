@@ -6,7 +6,11 @@ import com.cn.entity.*;
 import com.cn.pojo.LogInDTO;
 import com.cn.pojo.SignUpDTO;
 import com.cn.util.RestUtil;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
@@ -25,12 +29,12 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * 描述:
- * 测试
+ * 首页控制层
+ *
  * @author ngcly
  * @since 2018-08-05 14:48
  */
-@Api(value = "IndexController", tags = "首页内容相关API")
+@Tag(name = "IndexController", description = "首页内容相关API")
 @RestController
 @RequiredArgsConstructor
 public class IndexController {
@@ -47,43 +51,45 @@ public class IndexController {
 
     /**
      * 用户登录
-     * @param request 请求request
+     *
+     * @param request  请求request
      * @param logInDTO 登录参数
      * @return ModelMap
      */
-    @ApiOperation(value = "登录", notes = "普通登录")
+    @Operation(summary = "登录", description = "普通登录")
     @PostMapping("/signin")
     public ModelMap postAccessToken(HttpServletRequest request, @Valid @RequestBody LogInDTO logInDTO) {
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(logInDTO.getUsername(),logInDTO.getPassword());
+                new UsernamePasswordAuthenticationToken(logInDTO.getUsername(), logInDTO.getPassword());
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        User user =  (User) authentication.getPrincipal();
+        User user = (User) authentication.getPrincipal();
         String token = jwtTokenUtil.generateToken(user);
-        logService.saveLog(user.getId(),user.getUsername(), LoginLog.USER_TYPE_CUSTOMER, request);
+        logService.saveLog(user.getId(), user.getUsername(), LoginLog.USER_TYPE_CUSTOMER, request);
         return RestUtil.success(token);
     }
 
-    @ApiOperation(value = "刷新token", notes = "用户刷新token")
+    @Operation(summary = "刷新token", description = "用户刷新token")
     @GetMapping("/signin")
     public ModelMap getAccessToken(HttpServletRequest request) {
         return RestUtil.success(jwtTokenUtil.refreshToken(request.getHeader("authorization")));
     }
 
-    @ApiOperation(value = "登出", notes = "退出登录")
+    @Operation(summary = "登出", description = "退出登录")
     @DeleteMapping("/signout")
-    public ModelMap logout(HttpServletRequest request){
+    public ModelMap logout(HttpServletRequest request) {
         JwtTokenUtil.getToken(request);
         return RestUtil.success();
     }
 
     /**
      * 请求跳转到授权页
-     * @param source 三方标识
+     *
+     * @param source   三方标识
      * @param response 请求response
      * @throws IOException IO异常
      */
-    @ApiOperation(value = "跳转三方授权页", notes = "请求跳转到三方授权页")
+    @Operation(summary = "跳转三方授权页", description = "请求跳转到三方授权页")
     @GetMapping("/render/{source}")
     public void renderAuth(@PathVariable("source") String source, HttpServletResponse response) throws IOException {
         response.sendRedirect(userService.getSocialRedirectUrl(source));
@@ -91,21 +97,23 @@ public class IndexController {
 
     /**
      * 第三方回调前端后 前端再调这个 进行登录
-     * @param source 三方类型标识
+     *
+     * @param source  三方类型标识
      * @param request 请求request
      * @return ModelMap
      */
-    @ApiOperation(value = "登录", notes = "三方用户登录")
+    @Operation(summary = "登录", description = "三方用户登录")
     @GetMapping("/login/{source}")
-    public ModelMap login(@PathVariable("source") String source,HttpServletRequest request) {
-        User userDetail = userService.socialLogin(source,request.getParameter("code"),request.getParameter("state"));
+    public ModelMap login(@PathVariable("source") String source, HttpServletRequest request) {
+        User userDetail = userService.socialLogin(source, request.getParameter("code"), request.getParameter("state"));
         String token = jwtTokenUtil.generateToken(userDetail);
-        logService.saveLog(userDetail.getId(),userDetail.getUsername(), LoginLog.USER_TYPE_CUSTOMER, request);
+        logService.saveLog(userDetail.getId(), userDetail.getUsername(), LoginLog.USER_TYPE_CUSTOMER, request);
         return RestUtil.success(token);
     }
 
     /**
      * 解除绑定
+     *
      * @param openid 三方openid
      * @return ModelMap
      */
@@ -117,10 +125,11 @@ public class IndexController {
 
     /**
      * 注册
+     *
      * @param signUpDTO 注册参数
      * @return ModelMap 注册结果
      */
-    @ApiOperation(value = "注册", notes = "用户注册")
+    @Operation(summary = "注册", description = "用户注册")
     @PostMapping("/signup")
     public ModelMap registerUser(@Valid @RequestBody SignUpDTO signUpDTO) {
         signUpDTO.setPassword(passwordEncoder.encode(signUpDTO.getPassword()));
@@ -129,40 +138,40 @@ public class IndexController {
         return RestUtil.success(userService.signUp(user));
     }
 
-    @ApiOperation(value = "激活", notes = "用户注册激活")
+    @Operation(summary = "激活", description = "用户注册激活")
     @GetMapping("/active/{code}")
-    public ModelMap activeUser(@PathVariable("code")String code){
+    public ModelMap activeUser(@PathVariable("code") String code) {
         return RestUtil.success(userService.activeUser(code));
     }
 
     /**
      * 获取文章列表
      */
-    @ApiOperation(value = "文章列表", notes = "获取首页文章简介列表")
+    @Operation(summary = "文章列表", description = "获取首页文章简介列表")
     @GetMapping("/essay/{pageSize}/{page}")
-    public ModelMap getEssayList(@PathVariable int pageSize,@PathVariable int page){
-        return RestUtil.success(essayService.getEssayList(page,pageSize));
+    public ModelMap getEssayList(@PathVariable int pageSize, @PathVariable int page) {
+        return RestUtil.success(essayService.getEssayList(page, pageSize));
     }
 
     /**
      * 根据id获取文章详情
      */
-    @ApiOperation(value = "文章详情", notes = "根据文章Id获取文章详情")
+    @Operation(summary = "文章详情", description = "根据文章Id获取文章详情")
     @GetMapping("/essay/{id}")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id",value = "文章ID",paramType = "path",dataType = "string")
+    @Parameters({
+            @Parameter(name = "id", description = "文章ID", in = ParameterIn.PATH)
     })
-    public ModelMap getEssayDetail(@PathVariable Long id){
+    public ModelMap getEssayDetail(@PathVariable Long id) {
         Essay essay = essayService.getEssayDetail(id);
         return RestUtil.success(essay);
     }
 
-    @ApiOperation(value = "阅读文章", notes = "阅读文章 阅读数+1")
+    @Operation(summary = "阅读文章", description = "阅读文章 阅读数+1")
     @PutMapping("/essay/{id}")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id",value = "文章ID",paramType = "path",dataType = "string")
+    @Parameters({
+            @Parameter(name = "id", description = "文章ID", in = ParameterIn.PATH)
     })
-    public ModelMap readEssay(@PathVariable Long id){
+    public ModelMap readEssay(@PathVariable Long id) {
         essayService.readEssay(id);
         return RestUtil.success();
     }
@@ -170,30 +179,30 @@ public class IndexController {
     /**
      * 获取文章评论
      */
-    @ApiOperation(value = "获取文章评论", notes = "根据文章Id和页数获取评论")
+    @Operation(summary = "获取文章评论", description = "根据文章Id和页数获取评论")
     @GetMapping("/comments/{id}/{page}")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id",value = "文章ID",paramType = "path",dataType = "string"),
-            @ApiImplicitParam(name = "page",value = "页数",paramType = "path",dataType = "int")
+    @Parameters({
+            @Parameter(name = "id", description = "文章ID", in = ParameterIn.PATH),
+            @Parameter(name = "page", description = "页数", in = ParameterIn.PATH)
     })
-    public ModelMap getEssayComment(@PathVariable Long id,@PathVariable Integer page){
-        return RestUtil.success(essayService.getComments(id,page));
+    public ModelMap getEssayComment(@PathVariable Long id, @PathVariable Integer page) {
+        return RestUtil.success(essayService.getComments(id, page));
     }
 
-    @ApiOperation(value = "获取分类列表", notes = "获取文章分类列表")
+    @Operation(summary = "获取分类列表", description = "获取文章分类列表")
     @GetMapping("/classify")
-    public ModelMap getClassifyList(){
+    public ModelMap getClassifyList() {
         return RestUtil.success(classifyService.getClassifyList());
     }
 
     /**
      * 获取轮播图
      */
-    @ApiOperation(value = "轮播图", notes = "获取轮播图列表")
+    @Operation(summary = "轮播图", description = "获取轮播图列表")
     @GetMapping("/carousel")
-    public ModelMap getCarousel(){
+    public ModelMap getCarousel() {
         CarouselCategory carouselCategory = carouselService.getCarouselDetail(1L);
-        if(Objects.nonNull(carouselCategory)){
+        if (Objects.nonNull(carouselCategory)) {
             return RestUtil.success(carouselCategory.getCarousels());
         }
         return RestUtil.success();
@@ -202,30 +211,30 @@ public class IndexController {
     /**
      * 获取公告
      */
-    @ApiOperation(value = "公告", notes = "获取展示公告")
+    @Operation(summary = "公告", description = "获取展示公告")
     @GetMapping("/notice")
-    public ModelMap getNotice(){
+    public ModelMap getNotice() {
         return RestUtil.success(noticeService.getNotice());
     }
 
     /**
      * 全文搜索
      */
-    @ApiOperation(value = "搜索", notes = "文章搜索")
+    @Operation(summary = "搜索", description = "文章搜索")
     @GetMapping("/search/{pageSize}/{page}/{keyword}")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "keyword",value = "关键字",paramType = "path",dataType = "string"),
+    @Parameters({
+            @Parameter(name = "keyword", description = "关键字", in = ParameterIn.PATH),
     })
-    public ModelMap search(@PathVariable int pageSize,@PathVariable int page,@PathVariable("keyword")String keyword){
+    public ModelMap search(@PathVariable int pageSize, @PathVariable int page, @PathVariable("keyword") String keyword) {
         return RestUtil.success(bookService.highLightSearchEssay(keyword, PageRequest.of(page - 1, pageSize)));
     }
 
     /**
      * 测试使用 初始化ES数据
      */
-    @ApiOperation(value = "初始化ES数据", notes = "将数据库数据同步至ES 测试用")
+    @Operation(summary = "初始化ES数据", description = "将数据库数据同步至ES 测试用")
     @GetMapping("/init/es/data")
-    public ModelMap initEsDataTest(){
+    public ModelMap initEsDataTest() {
         essayService.initBookDataTest();
         return RestUtil.success();
     }

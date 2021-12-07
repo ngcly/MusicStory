@@ -89,3 +89,9 @@ jwt:
 upload:
   accessKey: ENC(BFmGqMfhERt8BVG81BuQFAI4L165TxyjahwvlTGx9QnjkKAWytNvhhtfiajw1mhsGTLh5JErMOFrjltogIkOUg==)
   secretKey: ENC(Ng+yTJPV6RPseJCbuVbk2vqwElnl5fdddl22TAYCvyOVoHSjINi9Tk01j+8CLmozS/ysp3gWFbU5Ock4znKENw==)
+
+springdoc:
+  packagesToScan: com.cn.controller
+  pathsToMatch: /**
+  swagger-ui:
+    enabled: true

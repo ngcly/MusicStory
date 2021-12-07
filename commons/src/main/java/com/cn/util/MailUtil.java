@@ -23,13 +23,13 @@ import java.util.Map;
 /**
  * 描述:
  * 邮件工具类
- * @author chen
+ * @author ngcly
  * @since 2018-07-21 11:22
  */
 @Slf4j
 @Component
 public class MailUtil {
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
 
     @Value("${spring.mail.username}")
     private String from;

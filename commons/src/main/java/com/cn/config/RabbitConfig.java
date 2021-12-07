@@ -16,6 +16,7 @@ import java.util.Map;
 
 /**
  * RabbitMQ 配置
+ *
  * @author ngcly
  */
 @Configuration
@@ -23,18 +24,27 @@ import java.util.Map;
 public class RabbitConfig {
     private static final Logger log = LoggerFactory.getLogger(RabbitConfig.class);
 
-    /**通知队列*/
+    /**
+     * 通知队列
+     */
     public static final String NOTIFY_QUEUE = "notify-queue";
 
-    /**延时队列**/
+    /**
+     * 延时队列
+     **/
     public static final String DELAY_QUEUE = "delay-queue";
-    /**延时交换机**/
+    /**
+     * 延时交换机
+     **/
     public static final String DELAY_EXCHANGE = "delay-exchange";
-    /**延时路由名称*/
+    /**
+     * 延时路由名称
+     */
     public static final String DELAY_ROUTING_KEY = "delay-key";
 
     /**
      * 配置摸板（非必要 测试延迟队列方便直观）
+     *
      * @param connectionFactory 连接工厂
      * @return RabbitTemplate
      */
@@ -43,8 +53,12 @@ public class RabbitConfig {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMandatory(true);
         rabbitTemplate.setMessageConverter(messageConverter());
-        rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> log.info("消息发送成功:correlationData({}),ack({}),cause({})", correlationData, ack, cause));
-        rabbitTemplate.setReturnsCallback(returned -> log.info("消息丢失:exchange({}),route({}),replyCode({}),replyText({}),message:{}", returned.getExchange(), returned.getRoutingKey(), returned.getReplyCode(), returned.getReplyText(), returned.getMessage()));
+        rabbitTemplate.setConfirmCallback((correlationData, ack, cause) ->
+                log.info("消息发送成功:correlationData({}),ack({}),cause({})", correlationData, ack, cause));
+        rabbitTemplate.setReturnsCallback(returned ->
+                log.info("消息丢失:exchange({}),route({}),replyCode({}),replyText({}),message:{}",
+                        returned.getExchange(), returned.getRoutingKey(), returned.getReplyCode(),
+                        returned.getReplyText(), returned.getMessage()));
         return rabbitTemplate;
     }
 
@@ -56,30 +70,38 @@ public class RabbitConfig {
         return new Jackson2JsonMessageConverter();
     }
 
-    /**默认队列 该队列会自动被 rabbitmq 绑定到默认的交换机上*/
+    /**
+     * 默认队列 该队列会自动被 rabbitmq 绑定到默认的交换机上
+     */
     @Bean
     public Queue notifyQueue() {
         // 第一个是 QUEUE 的名字,第二个是消息是否需要持久化处理
         return new Queue(NOTIFY_QUEUE, true);
     }
 
-    /**延迟队列配置 以下采用了延迟插件**/
+    /**
+     * 延迟队列配置 以下采用了延迟插件
+     **/
     @Bean
     public Queue delayQueue() {
         return new Queue(DELAY_QUEUE, true);
     }
 
-    /**延迟交换机配置**/
+    /**
+     * 延迟交换机配置
+     **/
     @Bean
     public CustomExchange delayExchange() {
         Map<String, Object> map = new HashMap<>(16);
         map.put("x-delayed-type", "direct");
-        return new CustomExchange(DELAY_EXCHANGE, "x-delayed-message",true, false, map);
+        return new CustomExchange(DELAY_EXCHANGE, "x-delayed-message", true, false, map);
     }
 
-    /**延迟交换机与延迟队列绑定*/
+    /**
+     * 延迟交换机与延迟队列绑定
+     */
     @Bean
-    Binding bindingDelayExchangeQueue(){
+    Binding bindingDelayExchangeQueue() {
         return BindingBuilder.bind(delayQueue()).to(delayExchange()).with(DELAY_ROUTING_KEY).noargs();
     }
 }

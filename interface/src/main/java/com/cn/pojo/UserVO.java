@@ -1,7 +1,6 @@
 package com.cn.pojo;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -12,37 +11,37 @@ import java.time.LocalDate;
  * @author ngcly
  */
 @Data
-@ApiModel(value="注册", description = "注册参数")
+@Schema(title="用户", description = "用户信息")
 public class UserVO {
-    @ApiModelProperty("用户名")
+    @Schema(title = "用户名")
     private String username;
-    @ApiModelProperty("昵称")
+    @Schema(title = "昵称")
     private String nickName;
-    @ApiModelProperty("生日")
+    @Schema(title = "生日")
     private LocalDate birthday;
-    @ApiModelProperty("性别")
+    @Schema(title = "性别")
     private Byte gender ;
-    @ApiModelProperty("地址")
+    @Schema(title = "地址")
     private String address;
-    @ApiModelProperty("真实姓名")
+    @Schema(title = "真实姓名")
     private String realName;
-    @ApiModelProperty("个人简介")
+    @Schema(title = "个人简介")
     private String personDesc;
-    @ApiModelProperty("个性签名")
+    @Schema(title = "个性签名")
     private String signature;
-    @ApiModelProperty("头像")
+    @Schema(title = "头像")
     private String avatar;
-    @ApiModelProperty("手机号")
+    @Schema(title = "手机号")
     private String phone;
-    @ApiModelProperty("邮箱地址")
+    @Schema(title = "邮箱地址")
     private String email;
-    @ApiModelProperty("账户余额")
+    @Schema(title = "账户余额")
     private BigDecimal balance;
-    @ApiModelProperty("等级")
+    @Schema(title = "等级")
     private Integer level;
-    @ApiModelProperty("积分")
+    @Schema(title = "积分")
     private Integer credit;
-    @ApiModelProperty("用户状态")
+    @Schema(title = "用户状态")
     private Byte state;
 
 }

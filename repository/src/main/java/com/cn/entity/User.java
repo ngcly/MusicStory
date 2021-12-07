@@ -146,6 +146,6 @@ public class User extends AbstractDateAudit implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return getState()==STATE_INITIALIZE?false:true;
+        return getState()!=STATE_INITIALIZE;
     }
 }

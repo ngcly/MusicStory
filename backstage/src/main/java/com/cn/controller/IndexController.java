@@ -30,7 +30,7 @@ import java.util.*;
 /**
  * 后台首页控制器
  *
- * @author chen
+ * @author ngcly
  * @date 2018-01-02 17:26
  */
 @Controller
@@ -79,7 +79,7 @@ public class IndexController {
         model.addAttribute("manager", managerService.getManagerById(managerDetail.getId()));
 
         List<MenuDTO> list = menuList.stream().filter(permission ->
-                Permission.RESOURCE_MENU.equals(permission.getResourceType()))
+                        Permission.RESOURCE_MENU.equals(permission.getResourceType()))
                 .map(permission -> (MenuDTO) permission).toList();
         model.addAttribute("menuList", MenuUtil.makeMenuToTree(list));
         return "index";

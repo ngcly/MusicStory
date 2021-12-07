@@ -22,6 +22,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * 登录成功后事件
+ *
  * @author ngcly
  * @since 2018-01-02 18:53
  */
@@ -30,17 +31,19 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     LogService logService;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request,
-                                        HttpServletResponse response, Authentication authentication) throws IOException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                                        Authentication authentication) throws IOException {
 
         response.setContentType(ContentType.JSON.toString(UTF_8));
         try (PrintWriter printWriter = response.getWriter()) {
-            JSON json = JSONUtil.parse(RestUtil.success(), JSONConfig.create().setOrder(true).setIgnoreNullValue(false));
-            JSONUtil.toJsonStr(json,printWriter);
+            JSON json = JSONUtil.parse(RestUtil.success(), JSONConfig.create().setOrder(true)
+                    .setIgnoreNullValue(false));
+
+            JSONUtil.toJsonStr(json, printWriter);
         }
 
         Manager userDetails = (Manager) authentication.getPrincipal();
-        logService.saveLog(userDetails.getId(),userDetails.getUsername(), LoginLog.USER_TYPE_MANAGER, request);
+        logService.saveLog(userDetails.getId(), userDetails.getUsername(), LoginLog.USER_TYPE_MANAGER, request);
     }
 
 }

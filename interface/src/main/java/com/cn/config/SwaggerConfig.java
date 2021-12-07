@@ -1,100 +1,34 @@
 package com.cn.config;
 
-import cn.hutool.http.Header;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.ExternalDocumentation;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.core.Authentication;
-import springfox.documentation.builders.*;
-import springfox.documentation.oas.annotations.EnableOpenApi;
-import springfox.documentation.schema.ScalarType;
-import springfox.documentation.service.*;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-
-import java.security.Principal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author ngcly
  */
 @Configuration
-@EnableOpenApi
 public class SwaggerConfig {
 
     @Bean
-    public Docket createRestApi(){
-        return new Docket(DocumentationType.OAS_30)
-                .apiInfo(apiInfo())
-                .select()
-                //指定包
-                .apis(RequestHandlerSelectors.basePackage("com.cn.controller"))
-                //所有路径
-                .paths(PathSelectors.any())
-                .build()
-                .securitySchemes(security())
-                .ignoredParameterTypes(Authentication.class, Principal.class)
-                .globalResponses(HttpMethod.GET,
-                        Arrays.asList(new ResponseBuilder()
-                                        .code("0")
-                                        .description("请求成功")
-                                        .build(),
-                                new ResponseBuilder()
-                                        .code("500")
-                                        .description("系统异常").build()))
-                .globalResponses(HttpMethod.POST,
-                        Arrays.asList(new ResponseBuilder()
-                                        .code("0")
-                                        .description("请求成功")
-                                        .build(),
-                                new ResponseBuilder()
-                                        .code("400")
-                                        .description("参数不合法").build(),
-                                new ResponseBuilder()
-                                        .code("500")
-                                        .description("系统异常").build()))
-                .globalResponses(HttpMethod.PUT,
-                        Arrays.asList(new ResponseBuilder()
-                                        .code("0")
-                                        .description("执行成功")
-                                        .build(),
-                                new ResponseBuilder()
-                                        .code("500")
-                                        .description("系统异常").build()))
-                .globalResponses(HttpMethod.DELETE,
-                        Arrays.asList(new ResponseBuilder()
-                                        .code("0")
-                                        .description("请求成功")
-                                        .build(),
-                                new ResponseBuilder()
-                                        .code("500")
-                                        .description("系统异常").build()))
-                .globalRequestParameters(globalRequestParameters());
-    }
-
-    private ApiInfo apiInfo(){
-        return new ApiInfoBuilder()
-                .title("接口文档API")
-                .description("音书API文档说明")
-                .termsOfServiceUrl("https://ngcly.cn")
-                .version("1.0")
-                .build();
-    }
-
-    private List<SecurityScheme> security() {
-        ApiKey apiKey = new ApiKey(Header.AUTHORIZATION.toString(), Header.AUTHORIZATION.toString(), ParameterType.HEADER.toString());
-        return Collections.singletonList(apiKey);
-    }
-
-    private List<RequestParameter> globalRequestParameters() {
-        RequestParameterBuilder parameterBuilder = new RequestParameterBuilder()
-                .in(ParameterType.HEADER)
-                .name(Header.AUTHORIZATION.toString())
-                .required(false)
-                .query(param -> param.model(model -> model.scalarModel(ScalarType.STRING)));
-        return Collections.singletonList(parameterBuilder.build());
+    public OpenAPI openApi() {
+        return new OpenAPI()
+                .components(new Components().addSecuritySchemes("bearer-key",
+                        new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
+                .addSecurityItem(new SecurityRequirement().addList("bearer-key"))
+                .info(new Info().title("MusicStory API")
+                        .description("Music and story application")
+                        .version("v1.0")
+                        .license(new License().name("Apache 2.0").url("https://springdoc.org")))
+                .externalDocs(new ExternalDocumentation()
+                        .description("Music Story Wiki Documentation")
+                        .url("https://ngcly.cn"));
     }
 
 }

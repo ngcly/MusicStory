@@ -1,7 +1,7 @@
 package com.cn.config;
 
 import com.cn.ManagerService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,23 +20,23 @@ import javax.sql.DataSource;
 
 /**
  * Spring Security 配置
- *
- * @author chen
+ * EnableGlobalMethodSecurity(prePostEnabled = true) 开启security注解
+ * @author ngcly
  * @date 2018-01-02 17:32
  */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)//开启security注解
+@AllArgsConstructor
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private ManagerService managerService;
-    @Autowired
-    private DataSource dataSource;
+    private final ManagerService managerService;
+    private final DataSource dataSource;
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         //忽略静态文件 也可以在下面忽略
-        web.ignoring().antMatchers("/webjars/**","/layui/**", "/js/**", "/css/**", "/img/**", "/media/**", "/**/favicon.ico","/druid/**");
+        web.ignoring().antMatchers("/webjars/**","/layui/**", "/js/**", "/css/**", "/img/**", "/media/**",
+                "/**/favicon.ico","/druid/**");
     }
 
     @Override

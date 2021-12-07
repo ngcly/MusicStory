@@ -49,7 +49,7 @@ subprojects {  //子项目通配
     //定义版本
     ext {
         ulisesVersion = '3.0.4'
-        swaggerVersion = '3.0.0'
+        docVersion = '1.5.13'
         jsoupVersion = '1.14.3'
         nekohtmlVersion = '1.9.22'
         hutoolVersion = '5.7.16'

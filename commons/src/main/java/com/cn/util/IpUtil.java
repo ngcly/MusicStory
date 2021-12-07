@@ -19,7 +19,8 @@ import java.util.Enumeration;
  * @date 2018-01-05 10:38
  */
 public final class IpUtil {
-    private IpUtil(){}
+    private IpUtil() {
+    }
 
     private static final String[] HEADERS = {
             "X-Forwarded-For",
@@ -36,23 +37,31 @@ public final class IpUtil {
             "X-Real-IP"
     };
 
-    private static final String LOCAL_IPV6="0:0:0:0:0:0:0:1";
+    private static final String LOCAL_IPV6 = "0:0:0:0:0:0:0:1";
+    private static final String LOCAL_IP = "127.0.0.1";
+    private static final String COMMA = ",";
+    private static final String UNKNOWN = "unknown";
+    private static final String EMPTY = "";
+    private static final String IP_ADDRESS_URL = "http://whois.pconline.com.cn/ipJson.jsp?json=true&ip=%s";
+    private static final String ADDRESS_KEY = "addr";
 
     /**
      * 判断ip是否为空，空返回true
+     *
      * @param ip IP
      * @return boolean
      */
-    public static boolean isEmptyIp(final String ip){
-        return ip==null || ip.length()==0 || "".equals(ip.trim()) || "unknown".equalsIgnoreCase(ip);
+    public static boolean isEmptyIp(final String ip) {
+        return ip == null || ip.length() == 0 || EMPTY.equals(ip.trim()) || UNKNOWN.equalsIgnoreCase(ip);
     }
 
     /**
      * 判断ip是否不为空，不为空返回true
+     *
      * @param ip IP
      * @return boolean
      */
-    public static boolean isNotEmptyIp(final String ip){
+    public static boolean isNotEmptyIp(final String ip) {
         return !isEmptyIp(ip);
     }
 
@@ -62,21 +71,21 @@ public final class IpUtil {
      * @return String
      */
     public static String getIpAddress(HttpServletRequest request) {
-        String ip = "";
+        String ip = EMPTY;
         for (String header : HEADERS) {
             ip = request.getHeader(header);
-            if(isNotEmptyIp(ip)) {
+            if (isNotEmptyIp(ip)) {
                 break;
             }
         }
-        if(isEmptyIp(ip)){
+        if (isEmptyIp(ip)) {
             ip = request.getRemoteAddr();
         }
-        if(isNotEmptyIp(ip) && ip.contains(",")){
-            ip = ip.split(",")[0];
+        if (isNotEmptyIp(ip) && ip.contains(COMMA)) {
+            ip = ip.split(COMMA)[0];
         }
-        if(LOCAL_IPV6.equals(ip)){
-            ip = "127.0.0.1";
+        if (LOCAL_IPV6.equals(ip)) {
+            ip = LOCAL_IP;
         }
         return ip;
     }
@@ -84,18 +93,19 @@ public final class IpUtil {
 
     /**
      * 获取本机的局域网ip地址，兼容Linux
+     *
      * @return String
      * @throws SocketException 异常
      */
     public String getLocalHostIp() throws SocketException {
         Enumeration<NetworkInterface> allNetInterfaces = NetworkInterface.getNetworkInterfaces();
-        String localHostAddress = "";
-        while(allNetInterfaces.hasMoreElements()){
+        String localHostAddress = EMPTY;
+        while (allNetInterfaces.hasMoreElements()) {
             NetworkInterface networkInterface = allNetInterfaces.nextElement();
             Enumeration<InetAddress> address = networkInterface.getInetAddresses();
-            while(address.hasMoreElements()){
+            while (address.hasMoreElements()) {
                 InetAddress inetAddress = address.nextElement();
-                if(inetAddress instanceof Inet4Address){
+                if (inetAddress instanceof Inet4Address) {
                     localHostAddress = inetAddress.getHostAddress();
                 }
             }
@@ -105,17 +115,16 @@ public final class IpUtil {
 
     /**
      * 根据ip获取城市
+     *
      * @return String
      */
     public static String getIpAddresses(String ip) {
-        String url;
-        // 淘宝接口
-        url = "http://whois.pconline.com.cn/ipJson.jsp?json=true&ip="+ip;
+        String url = String.format(IP_ADDRESS_URL, ip);
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url,String.class);
-        if(responseEntity.getStatusCode().is2xxSuccessful()){
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
             JSONObject json = JSONUtil.parseObj(responseEntity.getBody());
-            return json.getStr("addr");
+            return json.getStr(ADDRESS_KEY);
         }
         return null;
     }
