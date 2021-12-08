@@ -27,13 +27,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @AllArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserService userService;
-    private final JwtTokenUtil jwtTokenUtil;
+    private final JwtTokenFilter jwtTokenFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     /**
      * 放行接口
      */
-    private final String[] pass = {"/", "/login", "/signin", "signup"};
+    private final String[] pass = {"/user/upload/**"};
 
     @Override
     public void configure(WebSecurity web) {
@@ -53,7 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //authenticated 必须要进行身份验证
                 .antMatchers("/user/**").authenticated()
                 .and()
-                .addFilterBefore(new JwtTokenFilter(jwtTokenUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf().disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

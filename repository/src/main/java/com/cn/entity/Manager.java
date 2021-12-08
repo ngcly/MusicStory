@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,7 +28,7 @@ import java.util.Set;
 @Entity
 @Table(name="manager")
 @JsonIgnoreProperties(value = {"handler","hibernateLazyInitializer","fieldHandler"})
-public class Manager extends AbstractDateAudit implements UserDetails {
+public class Manager extends AbstractDateAudit implements UserDetails, CredentialsContainer {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
@@ -120,5 +121,10 @@ public class Manager extends AbstractDateAudit implements UserDetails {
     @Override
     public boolean isEnabled() {
         return STATE_LOCK != state;
+    }
+
+    @Override
+    public void eraseCredentials() {
+        this.password = null;
     }
 }

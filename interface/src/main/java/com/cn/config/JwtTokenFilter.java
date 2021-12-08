@@ -8,6 +8,7 @@ import cn.hutool.log.LogFactory;
 import com.cn.entity.User;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -25,6 +26,7 @@ import java.util.Objects;
  * @since 2020/5/13 16:35
  * @version V1.0
  */
+@Component
 public class JwtTokenFilter extends OncePerRequestFilter {
     private static final Log log = LogFactory.get();
 
