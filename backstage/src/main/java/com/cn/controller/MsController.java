@@ -2,18 +2,18 @@ package com.cn.controller;
 
 import com.cn.*;
 import com.cn.entity.*;
-import com.cn.util.RestUtil;
+import com.cn.util.Result;
 import com.cn.util.UploadUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,10 +48,10 @@ public class MsController {
      */
     @ResponseBody
     @RequestMapping("/userList")
-    public ModelMap getUserList(@RequestParam(value = "page", defaultValue = "1") Integer page,
-                                @RequestParam(value = "size", defaultValue = "10") Integer size, User user) {
+    public Result<List<User>> getUserList(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                                          @RequestParam(value = "size", defaultValue = "10") Integer size, User user) {
         Page<User> userList = userService.getUserList(PageRequest.of(page - 1, size), user);
-        return RestUtil.success(userList.getTotalElements(), userList.getContent());
+        return Result.success(userList.getTotalElements(), userList.getContent());
     }
 
     /**
@@ -88,9 +88,9 @@ public class MsController {
     @PreAuthorize("hasAuthority('user:alt')")
     @ResponseBody
     @RequestMapping("/userSave")
-    public ModelMap saveUser(@Valid User user) {
+    public Result<?> saveUser(@Valid User user) {
         userService.altUser(user);
-        return RestUtil.success();
+        return Result.success();
 
     }
 
@@ -100,9 +100,9 @@ public class MsController {
     @PreAuthorize("hasAuthority('user:del')")
     @ResponseBody
     @RequestMapping("/userDel")
-    public ModelMap delUser(@RequestParam Long userId) {
+    public Result<?> delUser(@RequestParam Long userId) {
         userService.delUser(userId);
-        return RestUtil.success();
+        return Result.success();
 
     }
 
@@ -120,10 +120,10 @@ public class MsController {
      */
     @ResponseBody
     @RequestMapping("/classifyList")
-    public ModelMap getClassifyList(@RequestParam(value = "page", defaultValue = "1") Integer page,
+    public Result<List<Classify>> getClassifyList(@RequestParam(value = "page", defaultValue = "1") Integer page,
                                     @RequestParam(value = "size", defaultValue = "10") Integer size, Classify classify) {
         Page<Classify> classifyList = classifyService.getClassifyList(PageRequest.of(page - 1, size), classify);
-        return RestUtil.success(classifyList.getTotalElements(), classifyList.getContent());
+        return Result.success(classifyList.getTotalElements(), classifyList.getContent());
     }
 
     /**
@@ -145,9 +145,9 @@ public class MsController {
     @PreAuthorize("hasAnyAuthority('clazz:add','clazz:alt')")
     @ResponseBody
     @PostMapping("/saveClassify")
-    public ModelMap saveClassify(@Valid Classify classify) {
+    public Result<?> saveClassify(@Valid Classify classify) {
         classifyService.saveClassify(classify);
-        return RestUtil.success();
+        return Result.success();
 
     }
 
@@ -157,9 +157,9 @@ public class MsController {
     @PreAuthorize("hasAuthority('clazz:del')")
     @ResponseBody
     @GetMapping("/classifyDel/{id}")
-    public ModelMap delClassify(@PathVariable("id") Long id) {
+    public Result<?> delClassify(@PathVariable("id") Long id) {
         classifyService.deleteClassify(id);
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -177,10 +177,10 @@ public class MsController {
      */
     @ResponseBody
     @RequestMapping("/essayList")
-    public ModelMap getEssayList(@RequestParam(value = "page", defaultValue = "1") Integer page,
+    public Result<List<Essay>> getEssayList(@RequestParam(value = "page", defaultValue = "1") Integer page,
                                  @RequestParam(value = "size", defaultValue = "10") Integer size, Essay essay) {
         Page<Essay> essayList = essayService.getEssayList(PageRequest.of(page - 1, size, Sort.by("createdAt").descending()), essay);
-        return RestUtil.success(essayList.getTotalElements(), essayList.getContent());
+        return Result.success(essayList.getTotalElements(), essayList.getContent());
     }
 
     /**
@@ -199,9 +199,9 @@ public class MsController {
     @PreAuthorize("hasAuthority('story:alt')")
     @ResponseBody
     @PostMapping("/essaySave")
-    public ModelMap essaySave(@Valid Essay essay) {
+    public Result<?> essaySave(@Valid Essay essay) {
         essayService.altEssayState(essay);
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -218,10 +218,10 @@ public class MsController {
      */
     @ResponseBody
     @GetMapping("/noticeList")
-    public ModelMap getNoticeList(@RequestParam(value = "page", defaultValue = "1") Integer page,
+    public Result<List<Notice>> getNoticeList(@RequestParam(value = "page", defaultValue = "1") Integer page,
                                   @RequestParam(value = "size", defaultValue = "10") Integer size, Notice notice) {
         Page<Notice> notices = noticeService.getNoticeList(PageRequest.of(page - 1, size), notice);
-        return RestUtil.success(notices.getTotalElements(), notices.getContent());
+        return Result.success(notices.getTotalElements(), notices.getContent());
     }
 
     /**
@@ -243,9 +243,9 @@ public class MsController {
     @PreAuthorize("hasAnyAuthority('not:add','not:alt')")
     @ResponseBody
     @PostMapping("/saveNotice")
-    public ModelMap saveNotice(@Valid Notice notice) {
+    public Result<?> saveNotice(@Valid Notice notice) {
         noticeService.addOrUpdateNotice(notice);
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -254,9 +254,9 @@ public class MsController {
     @PreAuthorize("hasAuthority('not:del')")
     @ResponseBody
     @GetMapping("/noticeDel/{id}")
-    public ModelMap delNotice(@PathVariable("id") Long id) {
+    public Result<?> delNotice(@PathVariable("id") Long id) {
         noticeService.deleteNotice(id);
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -273,10 +273,10 @@ public class MsController {
      */
     @ResponseBody
     @GetMapping("/carouselList")
-    public ModelMap carouselList(@RequestParam(value = "page", defaultValue = "1") Integer page,
+    public Result<List<CarouselCategory>> carouselList(@RequestParam(value = "page", defaultValue = "1") Integer page,
                                  @RequestParam(value = "size", defaultValue = "10") Integer size, String name) {
         Page<CarouselCategory> carouselCategory = carouselService.getCarouselList(name, PageRequest.of(page - 1, size));
-        return RestUtil.success(carouselCategory.getTotalElements(), carouselCategory.getContent());
+        return Result.success(carouselCategory.getTotalElements(), carouselCategory.getContent());
     }
 
     /**
@@ -308,9 +308,9 @@ public class MsController {
     @PreAuthorize("hasAnyAuthority('sel:add','sel:alt')")
     @ResponseBody
     @PostMapping("/saveCarousel")
-    public ModelMap saveCarousel(@Valid CarouselCategory carouselCategory) {
+    public Result<?> saveCarousel(@Valid CarouselCategory carouselCategory) {
         carouselService.addOrUpdateCarousel(carouselCategory);
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -319,13 +319,13 @@ public class MsController {
     @PreAuthorize("hasAnyAuthority('sel:add','sel:alt')")
     @ResponseBody
     @RequestMapping("/addCarousel")
-    public ModelMap addCarousel(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id) {
+    public Result<?> addCarousel(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id) {
         if (file.isEmpty()) {
-            return RestUtil.failure(222, "文件为空");
+            return Result.failure(222, "文件为空");
         }
         String path = UploadUtil.uploadFileByAli(file, "img");
         carouselService.addCarousel(id, path);
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -334,9 +334,9 @@ public class MsController {
     @PreAuthorize("hasAuthority('sel:del')")
     @ResponseBody
     @GetMapping("/carouselDel/{id}")
-    public ModelMap delCarouselCategory(@PathVariable("id") Long id) {
+    public Result<?> delCarouselCategory(@PathVariable("id") Long id) {
         carouselService.deleteCarouselCategory(id);
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -345,9 +345,9 @@ public class MsController {
     @PreAuthorize("hasAuthority('sel:del')")
     @ResponseBody
     @GetMapping("/carouselDel")
-    public ModelMap delCarousel(@RequestParam("id") Long id, @RequestParam("url") String url) {
+    public Result<?> delCarousel(@RequestParam("id") Long id, @RequestParam("url") String url) {
         carouselService.deleteCarousel(id, url);
-        return RestUtil.success();
+        return Result.success();
     }
 
 }

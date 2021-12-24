@@ -1,7 +1,9 @@
-group 'com.cn.cly'
-version '1.0-SNAPSHOT'
-
-apply plugin: 'java'
+jar {
+    enabled = true
+}
+bootJar {
+    enabled = false
+}
 
 dependencies {
     api project(":commons")

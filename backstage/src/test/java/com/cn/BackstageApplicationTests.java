@@ -1,5 +1,7 @@
 package com.cn;
 
+import com.cn.enums.ConfigEnum;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -11,6 +13,12 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 @SpringBootTest
 public class BackstageApplicationTests {
+
+    @BeforeAll
+    static void setup(){
+        ConfigEnum configEnum = ConfigEnum.JASYPT_ENCRYPTOR;
+        System.setProperty(configEnum.getKey(),configEnum.getValue());
+    }
 
     @Test
     public void contextLoads() {

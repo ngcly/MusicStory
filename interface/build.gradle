@@ -1,18 +1,11 @@
-apply plugin: 'java'
-
 bootJar {
     archiveBaseName = "desk"
-}
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {
     implementation project(":service")
 
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation "org.springdoc:springdoc-openapi-ui:${docVersion}"
     implementation "org.springdoc:springdoc-openapi-security:${docVersion}"
     implementation "org.jsoup:jsoup:${jsoupVersion}"
 }

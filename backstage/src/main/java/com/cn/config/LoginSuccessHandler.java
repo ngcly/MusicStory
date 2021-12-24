@@ -8,7 +8,7 @@ import com.cn.LogService;
 import com.cn.entity.LoginLog;
 import com.cn.entity.Manager;
 
-import com.cn.util.RestUtil;
+import com.cn.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -36,7 +36,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         response.setContentType(ContentType.JSON.toString(UTF_8));
         try (PrintWriter printWriter = response.getWriter()) {
-            JSON json = JSONUtil.parse(RestUtil.success(), JSONConfig.create().setOrder(true)
+            JSON json = JSONUtil.parse(Result.success(), JSONConfig.create().setOrder(true)
                     .setIgnoreNullValue(false));
 
             JSONUtil.toJsonStr(json, printWriter);

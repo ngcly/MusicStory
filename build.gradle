@@ -19,8 +19,6 @@ buildscript { //构建脚本
     }
 }
 
-group = 'musicstory'
-
 subprojects {  //子项目通配
     apply plugin: 'java'
     apply plugin: 'idea'
@@ -39,11 +37,6 @@ subprojects {  //子项目通配
         maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
         mavenLocal()
         mavenCentral()
-    }
-
-    //springboot2 这里一定得要。在多模块下，不然编译失败，因为不会把依赖模块给打包。
-    jar {
-        enabled = true
     }
 
     //定义版本

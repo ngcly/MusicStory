@@ -3,10 +3,9 @@ package com.cn.config;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import com.cn.pojo.RestCode;
-import com.cn.util.RestUtil;
+import com.cn.util.Result;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -44,28 +43,28 @@ public class ExceptionHandle extends ResponseEntityExceptionHandler {
      */
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
-    public ModelMap handlerException(HttpServletRequest request, Exception e){
+    public Result<String> handlerException(HttpServletRequest request, Exception e){
         log.error(e);
         if(e instanceof BadCredentialsException) {
-            return RestUtil.failure(RestCode.USER_ERR);
+            return Result.failure(RestCode.USER_ERR);
         } else if (e instanceof AccessDeniedException) {
-            return RestUtil.failure(RestCode.UNAUTHORIZED);
+            return Result.failure(RestCode.UNAUTHORIZED);
         } else if (e instanceof HttpRequestMethodNotSupportedException) {
-            return RestUtil.failure(RestCode.METHOD_ERROR);
+            return Result.failure(RestCode.METHOD_ERROR);
         } else if (e instanceof MissingPathVariableException) {
             // 缺少路径参数
-            return RestUtil.failure(RestCode.NOT_FOUND);
+            return Result.failure(RestCode.NOT_FOUND);
         } else if (e instanceof MissingServletRequestParameterException) {
             // 缺少必须的请求参数
-            return RestUtil.failure(RestCode.PARAM_ERROR);
+            return Result.failure(RestCode.PARAM_ERROR);
         } else if (e instanceof HttpMediaTypeNotAcceptableException){
-            return RestUtil.failure(RestCode.HEAD_ERROR);
+            return Result.failure(RestCode.HEAD_ERROR);
         }else if (e instanceof GlobalException exception){
-            return RestUtil.failure(exception.getCode(),exception.getMessage());
+            return Result.failure(exception.getCode(),exception.getMessage());
         } else if (e instanceof ConstraintViolationException exception) {
             //@RequestParam 参数校验失败
             String msg = exception.getConstraintViolations().stream().map(constraint -> constraint.getInvalidValue()+":"+constraint.getMessage()).collect(Collectors.joining(";"));
-            return RestUtil.failure(400, msg);
+            return Result.failure(400, msg);
         } else if (e instanceof MethodArgumentNotValidException exception){
             StringBuilder errMsg = new StringBuilder();
             String msg = exception.getBindingResult().getAllErrors().stream().map(objectError -> {
@@ -75,9 +74,9 @@ public class ExceptionHandle extends ResponseEntityExceptionHandler {
                 errMsg.append(objectError.getDefaultMessage()==null?"":objectError.getDefaultMessage());
                 return errMsg;
             }).collect(Collectors.joining(";"));
-            return RestUtil.failure(RestCode.PARAM_ERROR.code, msg);
+            return Result.failure(RestCode.PARAM_ERROR.code, msg);
         } else {
-            return RestUtil.failure(RestCode.SERVER_ERROR);
+            return Result.failure(RestCode.SERVER_ERROR);
         }
     }
 

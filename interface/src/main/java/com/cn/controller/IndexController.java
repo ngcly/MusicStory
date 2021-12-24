@@ -6,7 +6,7 @@ import com.cn.config.JwtTokenUtil;
 import com.cn.entity.*;
 import com.cn.pojo.LogInDTO;
 import com.cn.pojo.SignUpDTO;
-import com.cn.util.RestUtil;
+import com.cn.util.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -14,19 +14,22 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -55,11 +58,11 @@ public class IndexController {
      *
      * @param request  请求request
      * @param logInDTO 登录参数
-     * @return ModelMap
+     * @return Result
      */
     @Operation(summary = "登录", description = "普通登录")
     @PostMapping("/signin")
-    public ModelMap postAccessToken(HttpServletRequest request, @Valid @RequestBody LogInDTO logInDTO) {
+    public Result<String> postAccessToken(HttpServletRequest request, @Valid @RequestBody LogInDTO logInDTO) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(logInDTO.getUsername(), logInDTO.getPassword());
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
@@ -67,20 +70,20 @@ public class IndexController {
         User user = (User) authentication.getPrincipal();
         String token = jwtTokenUtil.generateToken(user);
         logService.saveLog(user.getId(), user.getUsername(), LoginLog.USER_TYPE_CUSTOMER, request);
-        return RestUtil.success(token);
+        return Result.success(token);
     }
 
     @Operation(summary = "刷新token", description = "用户刷新token")
     @GetMapping("/signin")
-    public ModelMap getAccessToken(HttpServletRequest request) {
-        return RestUtil.success(jwtTokenUtil.refreshToken(request.getHeader(Header.AUTHORIZATION.getValue())));
+    public Result<String> getAccessToken(HttpServletRequest request) {
+        return Result.success(jwtTokenUtil.refreshToken(request.getHeader(Header.AUTHORIZATION.getValue())));
     }
 
     @Operation(summary = "登出", description = "退出登录")
     @DeleteMapping("/signout")
-    public ModelMap logout(HttpServletRequest request) {
+    public Result<?> logout(HttpServletRequest request) {
         JwtTokenUtil.getToken(request);
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -101,48 +104,48 @@ public class IndexController {
      *
      * @param source  三方类型标识
      * @param request 请求request
-     * @return ModelMap
+     * @return Result
      */
     @Operation(summary = "登录", description = "三方用户登录")
     @GetMapping("/login/{source}")
-    public ModelMap login(@PathVariable("source") String source, HttpServletRequest request) {
+    public Result<String> login(@PathVariable("source") String source, HttpServletRequest request) {
         User userDetail = userService.socialLogin(source, request.getParameter("code"), request.getParameter("state"));
         String token = jwtTokenUtil.generateToken(userDetail);
         logService.saveLog(userDetail.getId(), userDetail.getUsername(), LoginLog.USER_TYPE_CUSTOMER, request);
-        return RestUtil.success(token);
+        return Result.success(token);
     }
 
     /**
      * 解除绑定
      *
      * @param openid 三方openid
-     * @return ModelMap
+     * @return Result
      */
     @PutMapping("/revoke/{openid}")
-    public ModelMap revokeSocial(@PathVariable("openid") String openid) {
+    public Result<?> revokeSocial(@PathVariable("openid") String openid) {
         userService.revokeSocial(openid);
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
      * 注册
      *
      * @param signUpDTO 注册参数
-     * @return ModelMap 注册结果
+     * @return Result 注册结果
      */
     @Operation(summary = "注册", description = "用户注册")
     @PostMapping("/signup")
-    public ModelMap registerUser(@Valid @RequestBody SignUpDTO signUpDTO) {
+    public Result<String> registerUser(@Valid @RequestBody SignUpDTO signUpDTO) {
         signUpDTO.setPassword(passwordEncoder.encode(signUpDTO.getPassword()));
         User user = new User();
         BeanUtils.copyProperties(signUpDTO, user);
-        return RestUtil.success(userService.signUp(user));
+        return Result.success(userService.signUp(user));
     }
 
     @Operation(summary = "激活", description = "用户注册激活")
     @GetMapping("/active/{code}")
-    public ModelMap activeUser(@PathVariable("code") String code) {
-        return RestUtil.success(userService.activeUser(code));
+    public Result<String> activeUser(@PathVariable("code") String code) {
+        return Result.success(userService.activeUser(code));
     }
 
     /**
@@ -150,8 +153,8 @@ public class IndexController {
      */
     @Operation(summary = "文章列表", description = "获取首页文章简介列表")
     @GetMapping("/essay/{pageSize}/{page}")
-    public ModelMap getEssayList(@PathVariable int pageSize, @PathVariable int page) {
-        return RestUtil.success(essayService.getEssayList(page, pageSize));
+    public Result<List<Map<String,Object>>> getEssayList(@PathVariable int pageSize, @PathVariable int page) {
+        return Result.success(essayService.getEssayList(page, pageSize));
     }
 
     /**
@@ -162,9 +165,9 @@ public class IndexController {
     @Parameters({
             @Parameter(name = "id", description = "文章ID", in = ParameterIn.PATH)
     })
-    public ModelMap getEssayDetail(@PathVariable Long id) {
+    public Result<Essay> getEssayDetail(@PathVariable Long id) {
         Essay essay = essayService.getEssayDetail(id);
-        return RestUtil.success(essay);
+        return Result.success(essay);
     }
 
     @Operation(summary = "阅读文章", description = "阅读文章 阅读数+1")
@@ -172,9 +175,9 @@ public class IndexController {
     @Parameters({
             @Parameter(name = "id", description = "文章ID", in = ParameterIn.PATH)
     })
-    public ModelMap readEssay(@PathVariable Long id) {
+    public Result<?> readEssay(@PathVariable Long id) {
         essayService.readEssay(id);
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -186,14 +189,14 @@ public class IndexController {
             @Parameter(name = "id", description = "文章ID", in = ParameterIn.PATH),
             @Parameter(name = "page", description = "页数", in = ParameterIn.PATH)
     })
-    public ModelMap getEssayComment(@PathVariable Long id, @PathVariable Integer page) {
-        return RestUtil.success(essayService.getComments(id, page));
+    public Result<Page<Map<String,Object>>> getEssayComment(@PathVariable Long id, @PathVariable Integer page) {
+        return Result.success(essayService.getComments(id, page));
     }
 
     @Operation(summary = "获取分类列表", description = "获取文章分类列表")
     @GetMapping("/classify")
-    public ModelMap getClassifyList() {
-        return RestUtil.success(classifyService.getClassifyList());
+    public Result<List<Classify>> getClassifyList() {
+        return Result.success(classifyService.getClassifyList());
     }
 
     /**
@@ -201,12 +204,12 @@ public class IndexController {
      */
     @Operation(summary = "轮播图", description = "获取轮播图列表")
     @GetMapping("/carousel")
-    public ModelMap getCarousel() {
+    public Result<?> getCarousel() {
         CarouselCategory carouselCategory = carouselService.getCarouselDetail(1L);
         if (Objects.nonNull(carouselCategory)) {
-            return RestUtil.success(carouselCategory.getCarousels());
+            return Result.success(carouselCategory.getCarousels());
         }
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -214,8 +217,8 @@ public class IndexController {
      */
     @Operation(summary = "公告", description = "获取展示公告")
     @GetMapping("/notice")
-    public ModelMap getNotice() {
-        return RestUtil.success(noticeService.getNotice());
+    public Result<List<Notice>> getNotice() {
+        return Result.success(noticeService.getNotice());
     }
 
     /**
@@ -226,8 +229,8 @@ public class IndexController {
     @Parameters({
             @Parameter(name = "keyword", description = "关键字", in = ParameterIn.PATH),
     })
-    public ModelMap search(@PathVariable int pageSize, @PathVariable int page, @PathVariable("keyword") String keyword) {
-        return RestUtil.success(bookService.highLightSearchEssay(keyword, PageRequest.of(page - 1, pageSize)));
+    public Result<SearchHits<Book>> search(@PathVariable int pageSize, @PathVariable int page, @PathVariable("keyword") String keyword) {
+        return Result.success(bookService.highLightSearchEssay(keyword, PageRequest.of(page - 1, pageSize)));
     }
 
     /**
@@ -235,8 +238,8 @@ public class IndexController {
      */
     @Operation(summary = "初始化ES数据", description = "将数据库数据同步至ES 测试用")
     @GetMapping("/init/es/data")
-    public ModelMap initEsDataTest() {
+    public Result<?> initEsDataTest() {
         essayService.initBookDataTest();
-        return RestUtil.success();
+        return Result.success();
     }
 }

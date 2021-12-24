@@ -1,5 +1,3 @@
-apply plugin: 'java'
-
 bootJar {
     archiveBaseName = "backstage"
     archiveVersion =  '1.0'

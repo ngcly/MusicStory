@@ -9,7 +9,7 @@ import com.cn.entity.LoginLog;
 import com.cn.entity.Manager;
 import com.cn.entity.Permission;
 import com.cn.entity.Role;
-import com.cn.util.RestUtil;
+import com.cn.util.Result;
 import com.cn.util.UploadUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,7 +21,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -114,10 +113,10 @@ public class SystemController {
      */
     @ResponseBody
     @RequestMapping("/adminSave")
-    public ModelMap register(@Valid Manager manager) {
+    public Result<?> register(@Valid Manager manager) {
         Manager managerDetail = (Manager) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         managerService.saveManager(managerDetail, manager);
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -126,13 +125,13 @@ public class SystemController {
     @PreAuthorize("hasAuthority('admin:del')")
     @ResponseBody
     @RequestMapping("/adminDel")
-    public ModelMap delManager(@RequestParam Long managerId) {
+    public Result<?> delManager(@RequestParam Long managerId) {
         Manager managerDetail = (Manager) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (managerDetail.getId().equals(managerId) || Long.valueOf(1).equals(managerId)) {
-            return RestUtil.failure(333, "禁止删除自己和admin");
+            return Result.failure(333, "禁止删除自己和admin");
         }
         managerService.delManager(managerId);
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -150,10 +149,10 @@ public class SystemController {
      */
     @RequestMapping("/updatePwd")
     @ResponseBody
-    public ModelMap updatePassword(@RequestParam String oldPassword, @RequestParam String password) {
+    public Result<?> updatePassword(@RequestParam String oldPassword, @RequestParam String password) {
         Manager managerDetail = (Manager) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         managerService.updatePassword(managerDetail.getId(), oldPassword, password);
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -164,9 +163,9 @@ public class SystemController {
     @PreAuthorize("hasAuthority('admin:reset')")
     @ResponseBody
     @RequestMapping("/resetPwd")
-    public ModelMap resetPassword(@RequestParam Long managerId) {
+    public Result<?> resetPassword(@RequestParam Long managerId) {
         managerService.updatePassword(managerId, "123456");
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -202,9 +201,9 @@ public class SystemController {
     @PreAuthorize("hasAnyAuthority('role:add','role:alt')")
     @RequestMapping("/roleSave")
     @ResponseBody
-    public ModelMap saveRole(@Valid Role role) {
+    public Result<?> saveRole(@Valid Role role) {
         roleService.saveRole(role);
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -226,14 +225,14 @@ public class SystemController {
      *
      * @param roleId  角色id
      * @param menuIds 菜单id列表
-     * @return ModelMap
+     * @return Result
      */
     @PreAuthorize("hasAuthority('role:grant')")
     @PostMapping("/saveGrant")
     @ResponseBody
-    public ModelMap saveGrant(Long roleId, String menuIds) {
+    public Result<?> saveGrant(Long roleId, String menuIds) {
         roleService.saveGrant(roleId, menuIds);
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -242,9 +241,9 @@ public class SystemController {
     @PreAuthorize("hasAuthority('role:alt')")
     @RequestMapping("/togAvailable")
     @ResponseBody
-    public ModelMap altRole(@RequestParam long roleId) {
+    public Result<?> altRole(@RequestParam long roleId) {
         roleService.altAvailable(roleId);
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -253,9 +252,9 @@ public class SystemController {
     @PreAuthorize("hasAuthority('role:del')")
     @RequestMapping("/roleDel")
     @ResponseBody
-    public ModelMap delRole(@RequestParam long roleId) {
+    public Result<?> delRole(@RequestParam long roleId) {
         roleService.delRole(roleId);
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -301,9 +300,9 @@ public class SystemController {
     @PreAuthorize("hasAnyAuthority('menu:add','menu:alt')")
     @RequestMapping("/menuSave")
     @ResponseBody
-    public ModelMap saveMenu(@Valid Permission permission) {
+    public Result<?> saveMenu(@Valid Permission permission) {
         roleService.saveMenu(permission);
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -312,9 +311,9 @@ public class SystemController {
     @PreAuthorize("hasAuthority('menu:del')")
     @RequestMapping("/menuDel")
     @ResponseBody
-    public ModelMap delMenu(@RequestParam long menuId) {
+    public Result<?> delMenu(@RequestParam long menuId) {
         roleService.delMenu(menuId);
-        return RestUtil.success();
+        return Result.success();
     }
 
     /**
@@ -334,15 +333,15 @@ public class SystemController {
      * 头像上传
      *
      * @param file 文件
-     * @return ModelMap
+     * @return Result
      */
     @RequestMapping("/upload")
     @ResponseBody
-    public ModelMap uploadAvatar(@RequestParam("file") MultipartFile file) {
+    public Result<String> uploadAvatar(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
-            return RestUtil.failure(222, "文件为空");
+            return Result.failure(222, "文件为空");
         }
         String path = UploadUtil.uploadFileByAli(file, "avatar");
-        return RestUtil.success(path);
+        return Result.success(path);
     }
 }
