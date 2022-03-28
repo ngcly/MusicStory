@@ -58,7 +58,7 @@ public class Essay extends AbstractDateAudit {
     private Classify classify;
 
     /**文章音乐列表*/
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "essayId")
     private List<Music> musicList;
 

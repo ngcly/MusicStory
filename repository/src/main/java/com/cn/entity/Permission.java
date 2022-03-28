@@ -1,4 +1,5 @@
 package com.cn.entity;
+
 import com.cn.pojo.MenuDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
@@ -11,37 +12,50 @@ import java.util.List;
 
 /**
  * 后台资源实体类
+ *
  * @author ngcly
  * @since 2017/6/23.
  */
 @Setter
 @Entity
-@Table(name="permission")
-@JsonIgnoreProperties(value = {"handler","hibernateLazyInitializer","fieldHandler"})
+@Table(name = "permission")
+@JsonIgnoreProperties(value = {"handler", "hibernateLazyInitializer", "fieldHandler"})
 public class Permission extends MenuDTO implements Serializable {
 
-    /** 资源类型，[menu|button] */
+    /**
+     * 资源类型，[menu|button]
+     */
     private String resourceType;
 
-    /** 权限字符串,menu例子：role:*，button例子：role:create,role:update,role:delete,role:view */
+    /**
+     * 权限字符串,menu例子：role:*，button例子：role:create,role:update,role:delete,role:view
+     */
     private String purview;
 
-    /** 父级id列表 */
+    /**
+     * 父级id列表
+     */
     private String parentIds;
 
-    /** 排序号 */
+    /**
+     * 排序号
+     */
     private Integer sort;
 
-    /** 菜单与角色 多对多 */
+    /**
+     * 菜单与角色 多对多
+     */
     private List<Role> roles;
 
-    /**资源类型*/
+    /**
+     * 资源类型
+     */
     public static final String RESOURCE_MENU = "menu";
     public static final String RESOURCE_BUTTON = "button";
 
     @Override
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
@@ -80,7 +94,7 @@ public class Permission extends MenuDTO implements Serializable {
         return purview;
     }
 
-    @Column(nullable = false,length = 100)
+    @Column(nullable = false, length = 100)
     public String getParentIds() {
         return parentIds;
     }
@@ -89,8 +103,7 @@ public class Permission extends MenuDTO implements Serializable {
         return sort;
     }
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name="role_permission",joinColumns={@JoinColumn(name="permissionId")},inverseJoinColumns={@JoinColumn(name="roleId")})
+    @ManyToMany(mappedBy = "permissions")
     public List<Role> getRoles() {
         return roles;
     }
