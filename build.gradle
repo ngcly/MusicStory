@@ -29,8 +29,14 @@ subprojects {  //子项目通配
     //编译使用UTF-8
     [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
 
-    sourceCompatibility = 17
-    targetCompatibility = 17
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
 
     repositories {  //所有子项目jar包中央仓库
         maven { url 'https://maven.aliyun.com/repository/central' }
@@ -74,7 +80,7 @@ subprojects {  //子项目通配
         testImplementation 'org.springframework.security:spring-security-test'
     }
 
-    test {
+    tasks.named('test') {
         useJUnitPlatform()
     }
 }
