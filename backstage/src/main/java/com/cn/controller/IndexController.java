@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
-import java.security.Principal;
 import java.util.*;
 
 /**
@@ -45,13 +45,11 @@ public class IndexController {
      * 只有security才这样 shiro正常 原因未知
      */
     @RequestMapping("/")
-    public String index(Principal principal, Model model) {
-        Authentication authentication = (Authentication) principal;
-        Manager managerDetail = (Manager) authentication.getPrincipal();
-        Set<Role> roleList = managerDetail.getRoleList();
+    public String index(@AuthenticationPrincipal Manager manager, Model model) {
+        Set<Role> roleList = manager.getRoleList();
         boolean init = false;
         List<Permission> menuList;
-        if (Manager.ADMIN.equals(principal.getName())) {
+        if (Manager.ADMIN.equals(manager.getUsername())) {
             //管理员拥有最高权限
             menuList = roleService.getPermissionList();
             //得到当前的认证信息
@@ -69,14 +67,13 @@ public class IndexController {
             menuList = new ArrayList<>();
             roleList.forEach(role -> menuList.addAll(role.getPermissions()));
         }
-        if (managerDetail.getState() == Manager.STATE_INITIALIZE) {
+        if (manager.getState() == Manager.STATE_INITIALIZE) {
             init = true;
-            Manager manager = managerService.getManagerById(managerDetail.getId());
             manager.setState(Manager.STATE_NORMAL);
             managerService.updateManager(manager);
         }
         model.addAttribute("init", init);
-        model.addAttribute("manager", managerService.getManagerById(managerDetail.getId()));
+        model.addAttribute("manager", manager);
 
         List<MenuDTO> list = menuList.stream().filter(permission ->
                         Permission.RESOURCE_MENU.equals(permission.getResourceType()))
