@@ -8,23 +8,24 @@ import com.cn.entity.Manager;
 import com.cn.entity.Permission;
 import com.cn.entity.Role;
 import com.cn.pojo.MenuDTO;
-import com.cn.pojo.ValidateCode;
+import com.cn.pojo.VerificationCode;
 import com.cn.util.MenuUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.OutputStream;
-import java.security.Principal;
 import java.util.*;
 
 /**
@@ -45,13 +46,11 @@ public class IndexController {
      * 只有security才这样 shiro正常 原因未知
      */
     @RequestMapping("/")
-    public String index(Principal principal, Model model) {
-        Authentication authentication = (Authentication) principal;
-        Manager managerDetail = (Manager) authentication.getPrincipal();
-        Set<Role> roleList = managerDetail.getRoleList();
+    public String index(@AuthenticationPrincipal Manager manager, Model model) {
+        Set<Role> roleList = manager.getRoleList();
         boolean init = false;
         List<Permission> menuList;
-        if (Manager.ADMIN.equals(principal.getName())) {
+        if (Manager.ADMIN.equals(manager.getUsername())) {
             //管理员拥有最高权限
             menuList = roleService.getPermissionList();
             //得到当前的认证信息
@@ -69,14 +68,13 @@ public class IndexController {
             menuList = new ArrayList<>();
             roleList.forEach(role -> menuList.addAll(role.getPermissions()));
         }
-        if (managerDetail.getState() == Manager.STATE_INITIALIZE) {
+        if (manager.getState() == Manager.STATE_INITIALIZE) {
             init = true;
-            Manager manager = managerService.getManagerById(managerDetail.getId());
             manager.setState(Manager.STATE_NORMAL);
             managerService.updateManager(manager);
         }
         model.addAttribute("init", init);
-        model.addAttribute("manager", managerService.getManagerById(managerDetail.getId()));
+        model.addAttribute("manager", manager);
 
         List<MenuDTO> list = menuList.stream().filter(permission ->
                         Permission.RESOURCE_MENU.equals(permission.getResourceType()))
@@ -103,17 +101,15 @@ public class IndexController {
      * @param response 返回对象
      * @throws Exception 异常
      */
-    @RequestMapping("/kaptcha")
-    public void defaultKaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @GetMapping("/kaptcha")
+    public StreamingResponseBody defaultKaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
         //定义图形验证码的长、宽、验证码字符数、干扰元素个数
         ICaptcha captcha = CaptchaUtil.createGifCaptcha(116, 36, 4);
-        ValidateCode validateCode = new ValidateCode(captcha.getCode(), 60);
+        VerificationCode verificationCode = new VerificationCode(captcha.getCode(), 60);
         //生产验证码字符串并保存到session中
-        request.getSession().setAttribute("validateCode", validateCode);
+        request.getSession().setAttribute("validateCode", verificationCode);
         //图形验证码写出，可以写出到文件，也可以写出到流
-        try (OutputStream out = response.getOutputStream()) {
-            captcha.write(out);
-        }
+        return outputStream -> captcha.write(outputStream);
     }
 
     /**

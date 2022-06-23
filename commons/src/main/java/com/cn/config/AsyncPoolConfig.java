@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurerSupport;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -17,7 +19,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 @EnableAsync
 @Configuration
-public class AsyncPoolConfig extends AsyncConfigurerSupport {
+public class AsyncPoolConfig extends AsyncConfigurerSupport implements WebMvcConfigurer {
 
     @Bean
     public ThreadPoolTaskExecutor asyncExecutor() {
@@ -30,6 +32,12 @@ public class AsyncPoolConfig extends AsyncConfigurerSupport {
         executor.setAwaitTerminationSeconds(5);
         executor.initialize();
         return executor;
+    }
+
+
+    @Override
+    public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
+        configurer.setTaskExecutor(asyncExecutor());
     }
 
     @Override

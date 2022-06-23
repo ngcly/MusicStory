@@ -127,7 +127,7 @@ public class EssayService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void altEssayState(Essay essay){
-        Essay essay1 = essayRepository.getById(essay.getId());
+        Essay essay1 = essayRepository.getReferenceById(essay.getId());
         essay1.setState(essay.getState());
         //审核不通过
         if(EssayState.FORBIDDEN.getCode() == essay.getState()){

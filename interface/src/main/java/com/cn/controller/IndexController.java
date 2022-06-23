@@ -4,6 +4,7 @@ import cn.hutool.http.Header;
 import com.cn.*;
 import com.cn.config.JwtTokenUtil;
 import com.cn.entity.*;
+import com.cn.pojo.AuthenticationDetails;
 import com.cn.pojo.LogInDTO;
 import com.cn.pojo.SignUpDTO;
 import com.cn.util.Result;
@@ -51,7 +52,6 @@ public class IndexController {
     private final CarouselService carouselService;
     private final ClassifyService classifyService;
     private final BookService bookService;
-    private final LogService logService;
 
     /**
      * 用户登录
@@ -65,11 +65,11 @@ public class IndexController {
     public Result<String> postAccessToken(HttpServletRequest request, @Valid @RequestBody LogInDTO logInDTO) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(logInDTO.getUsername(), logInDTO.getPassword());
+        authenticationToken.setDetails(new AuthenticationDetails(request));
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         User user = (User) authentication.getPrincipal();
         String token = jwtTokenUtil.generateToken(user);
-        logService.saveLog(user.getId(), user.getUsername(), LoginLog.USER_TYPE_CUSTOMER, request);
         return Result.success(token);
     }
 
@@ -110,8 +110,11 @@ public class IndexController {
     @GetMapping("/login/{source}")
     public Result<String> login(@PathVariable("source") String source, HttpServletRequest request) {
         User userDetail = userService.socialLogin(source, request.getParameter("code"), request.getParameter("state"));
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(userDetail, null, userDetail.getAuthorities());
+        authenticationToken.setDetails(new AuthenticationDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         String token = jwtTokenUtil.generateToken(userDetail);
-        logService.saveLog(userDetail.getId(), userDetail.getUsername(), LoginLog.USER_TYPE_CUSTOMER, request);
         return Result.success(token);
     }
 

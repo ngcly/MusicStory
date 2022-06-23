@@ -51,6 +51,10 @@ public class LoginLog {
     @Column(nullable = false)
     private LocalDateTime loginTime;
 
+    /**是否登录成功*/
+    @Column(nullable = false)
+    private Boolean loginSuccess;
+
     @Transient
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime beginTime;
