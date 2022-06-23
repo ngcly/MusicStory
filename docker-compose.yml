@@ -1,0 +1,63 @@
+version: '3'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.0.2
+    container_name: elasticsearch
+    environment:
+      - "cluster.name=elasticsearch" #设置集群名称为elasticsearch
+      - "discovery.type=single-node" #以单一节点模式启动
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" #设置使用jvm内存大小
+    volumes:
+      - /Users/ngcly/dockerCompose/mydata/elasticsearch/plugins:/usr/share/elasticsearch/plugins #插件文件挂载
+      - /Users/ngcly/dockerCompose/mydata/elasticsearch/data:/usr/share/elasticsearch/data #数据文件挂载
+    ports:
+      - 9200:9200
+      - 9300:9300
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.0.2
+    container_name: kibana
+    links:
+      - elasticsearch:es #可以用es这个域名访问elasticsearch服务
+    depends_on:
+      - elasticsearch #kibana在elasticsearch启动之后再启动
+    environment:
+      - "elasticsearch.hosts=http://es:9200" #设置访问elasticsearch的地址
+    ports:
+      - 5601:5601
+
+  # logstash:
+  #   image: docker.elastic.co/logstash/logstash:7.14.1
+  #   container_name: logstash
+  #   volumes:
+  #     - /Users/chenning/dockerCompose/mydata/logstash/logstash-springboot.conf:/usr/share/logstash/pipeline/logstash.conf #挂载logstash的配置文件
+  #   depends_on:
+  #     - elasticsearch
+  #   links:
+  #     - elasticsearch:es
+  #   ports:
+  #     - 4560:4560
+
+  fluentd:
+    image: fluent/fluentd:latest
+    container_name: fluentd
+    volumes:
+      - /Users/ngcly/dockerCompose/mydata/fluentd/log:/fluentd/log
+      - /Users/ngcly/dockerCompose/mydata/fluentd/fluent.conf:/fluentd/etc/fluent.conf
+    depends_on:
+      - elasticsearch
+    links:
+      - elasticsearch:es
+    ports:
+      - 24224:24224
+
+  # filebeat:
+  #   image: docker.elastic.co/beats/filebeat:7.14.1
+  #   container_name: filebeat
+  #   links:
+  #     - elasticsearch:es
+  #   depends_on:
+  #     - elasticsearch
+  #     - kibana
+  #   environment:
+  #     - "output.elasticsearch.hosts=http://es:9200"

@@ -2,10 +2,8 @@ package com.cn.config;
 
 import com.cn.ManagerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,9 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
-
 
 /**
  * Spring Security 配置
@@ -33,40 +29,43 @@ public class WebSecurityConfig {
     private final PersistentTokenRepository persistentRepository;
     private final LoginSuccessHandler loginSuccessHandler;
     private final LoginFailureHandler loginFailureHandler;
+    private final MyAuthenticationDetailsSource myAuthenticationDetailsSource;
 
     @Bean
     public WebSecurityCustomizer ignoringCustomizer() {
         //忽略静态文件 也可以在下面忽略
-        return (web) -> web.ignoring().antMatchers("/webjars/**", "/layui/**", "/js/**", "/css/**", "/img/**", "/media/**",
-                "/**/favicon.ico", "/druid/**");
+        return (web) -> web.ignoring().antMatchers("/webjars/**", "/layui/**", "/js/**", "/css/**", "/img/**", "/media/**", "/**/favicon.ico", "/druid/**");
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        //验证码过滤器
-        ValidateCodeFilter validateCodeFilter = new ValidateCodeFilter();
-        validateCodeFilter.setLoginFailureHandler(loginFailureHandler);
-
         //设置可以iframe访问
-        http.headers()
+        http
+                .headers()
                 .frameOptions()
                 .sameOrigin();
-        http.authorizeRequests()
-                .antMatchers("/kaptcha").permitAll()
-                .anyRequest().authenticated();
-        http.addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)
+        http.
+                authorizeRequests()
+                .antMatchers("/kaptcha")
+                .permitAll()
+                .anyRequest()
+                .authenticated();
+        http
                 .formLogin()
+                .authenticationDetailsSource(myAuthenticationDetailsSource)
                 //表单登录的 登录页
                 .loginPage("/login")
                 .permitAll()
                 .successHandler(loginSuccessHandler)
                 .failureHandler(loginFailureHandler);
-        http.logout()
+        http
+                .logout()
                 //设置注销成功后跳转页面，默认是跳转到登录页面
                 .logoutSuccessUrl("/login")
                 .invalidateHttpSession(true)
                 .deleteCookies("remember-me");
-        http.rememberMe()
+        http
+                .rememberMe()
                 .userDetailsService(managerService)
                 .tokenRepository(persistentRepository)
                 .tokenValiditySeconds(60 * 60 * 24 * 7);
@@ -74,15 +73,25 @@ public class WebSecurityConfig {
         return http.build();
     }
 
-    @Autowired
-    protected void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(managerService).passwordEncoder(passwordEncoder);
+//    @Autowired
+//    protected void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.authenticationProvider(authenticationProvider())
+//                .userDetailsService(managerService)
+//                .passwordEncoder(passwordEncoder);
+//    }
+
+    @Bean
+    public MyAuthenticationProvider authenticationProvider() {
+        MyAuthenticationProvider provider = new MyAuthenticationProvider();
+        provider.setUserDetailsService(managerService);
+        provider.setPasswordEncoder(passwordEncoder);
+        return provider;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
 
 }

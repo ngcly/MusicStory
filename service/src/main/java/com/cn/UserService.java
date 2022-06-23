@@ -14,8 +14,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -151,11 +149,7 @@ public class UserService implements UserDetailsService {
             thirdUser.setUser(user);
             socialInfoRepository.save(thirdUser);
         }
-        User userDetail = socialInfo.getUser();
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(userDetail, null, userDetail.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        return userDetail;
+        return socialInfo.getUser();
     }
 
     /**
@@ -309,7 +303,7 @@ public class UserService implements UserDetailsService {
      * @param user 用户信息
      */
     public void altUser(User user) {
-        User altUser = userRepository.getById(user.getId());
+        User altUser = userRepository.getReferenceById(user.getId());
         altUser.setState(user.getState());
         Set<Role> allRole = roleRepository.getAllByAvailableIsTrueAndRoleType(Role.ROLE_TYPE_CUSTOMER);
         if (Objects.nonNull(user.getRoleIds())) {
@@ -339,7 +333,7 @@ public class UserService implements UserDetailsService {
      * @return user
      */
     public User getUserDetail(Long userId) {
-        return userRepository.getById(userId);
+        return userRepository.getReferenceById(userId);
     }
 
     /**

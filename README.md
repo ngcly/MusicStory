@@ -21,8 +21,33 @@
 | repository | 数据DAO层 |
 | service | 业务service层 |
 
-前端代码链接：https://github.com/ngcly/music-story   
-  
+前端代码链接：https://github.com/ngcly/music-story  
+
+各类组件初始化，为了方便安装各类组件，建议采用docker方式：
+1. 安装Redis:
+```
+docker pull redis:latest
+docker run -itd --name redis -p 6379:6379 redis
+```
+2. 安装RabbitMQ:
+```
+docker pull rabbitmq
+docker run -d --name rabbitmq -p 15672:15672 -p 5673:5672 rabbitmq
+```
+3. 安装RabbitMQ延时队列插件： 
+   1. 下载rabbitmq_delayed_message_exchange插件 下载地址：https://www.rabbitmq.com/community-plugins.html
+   2. 将下载的插件拷贝到容器中
+   ```
+   docker cp rabbitmq_delayed_message_exchange-3.8.0.ez  rabbitmq:/plugins
+   ```
+    3. 启动插件并重启容器
+   ```
+   rabbitmq-plugins enable rabbitmq_delayed_message_exchange
+   ```
+4. 安装ElasticSearch:  
+请参阅根目录下ELK的 docker-compose.yml文件。  
+
+
 特别鸣谢：  
 感谢JetBrains免费提供Idea开发工具对本项目的支持  
 [![JetBrains](jetbrains.svg "jetbrains")](https://www.jetbrains.com/?from=MusicStory)

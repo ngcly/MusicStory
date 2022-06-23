@@ -8,7 +8,7 @@ import com.cn.entity.Manager;
 import com.cn.entity.Permission;
 import com.cn.entity.Role;
 import com.cn.pojo.MenuDTO;
-import com.cn.pojo.ValidateCode;
+import com.cn.pojo.VerificationCode;
 import com.cn.util.MenuUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,12 +19,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.OutputStream;
 import java.util.*;
 
 /**
@@ -100,17 +101,15 @@ public class IndexController {
      * @param response 返回对象
      * @throws Exception 异常
      */
-    @RequestMapping("/kaptcha")
-    public void defaultKaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @GetMapping("/kaptcha")
+    public StreamingResponseBody defaultKaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
         //定义图形验证码的长、宽、验证码字符数、干扰元素个数
         ICaptcha captcha = CaptchaUtil.createGifCaptcha(116, 36, 4);
-        ValidateCode validateCode = new ValidateCode(captcha.getCode(), 60);
+        VerificationCode verificationCode = new VerificationCode(captcha.getCode(), 60);
         //生产验证码字符串并保存到session中
-        request.getSession().setAttribute("validateCode", validateCode);
+        request.getSession().setAttribute("validateCode", verificationCode);
         //图形验证码写出，可以写出到文件，也可以写出到流
-        try (OutputStream out = response.getOutputStream()) {
-            captcha.write(out);
-        }
+        return outputStream -> captcha.write(outputStream);
     }
 
     /**
