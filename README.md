@@ -45,7 +45,12 @@ docker run -d --name rabbitmq -p 15672:15672 -p 5673:5672 rabbitmq
    rabbitmq-plugins enable rabbitmq_delayed_message_exchange
    ```
 4. 安装ElasticSearch:  
-请参阅根目录下ELK的 docker-compose.yml文件。  
+  请参阅根目录下ELK的 docker-compose.yml文件。   
+  使用fluentd需要安装插件：
+  ```
+  docker exec -it --user root efk-fluentd /bin/sh
+  fluent-gem install fluent-plugin-elasticsearch
+  ```
 
 
 特别鸣谢：  
