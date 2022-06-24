@@ -9,6 +9,7 @@ import org.springframework.security.core.SpringSecurityCoreVersion;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -18,37 +19,37 @@ import java.io.Serializable;
 @ToString
 @EqualsAndHashCode
 public class AuthenticationDetails implements Serializable {
+    @Serial
     private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
-    private static final String verificationCodeKey = "validateCode";
-    private static final String userCodeKey = "randomcode";
+    private static final String captchaKey = "captcha";
 
-    private final VerificationCode verificationCode;
+    private final CaptchaInfo captchaInfo;
 
     private final String remoteAddress;
 
     private final String userAgent;
 
-    private final String userCode;
+    private final String userCaptcha;
 
     public AuthenticationDetails(HttpServletRequest request) {
-        this(extractVerificationCode(request), IpUtil.getIpAddress(request),
-                request.getHeader(Header.USER_AGENT.name()), request.getParameter(userCodeKey));
+        this(extractCaptchaInfo(request), IpUtil.getIpAddress(request),
+                request.getHeader(Header.USER_AGENT.getValue()), request.getParameter(captchaKey));
     }
 
-    public AuthenticationDetails(VerificationCode validateCode, String remoteAddress,
-                                 String userAgent, String userCode) {
-        this.verificationCode = validateCode;
+    public AuthenticationDetails(CaptchaInfo captchaInfo, String remoteAddress,
+                                 String userAgent, String userCaptcha) {
+        this.captchaInfo = captchaInfo;
         this.remoteAddress = remoteAddress;
         this.userAgent = userAgent;
-        this.userCode = userCode;
+        this.userCaptcha = userCaptcha;
     }
 
-    private static VerificationCode extractVerificationCode(HttpServletRequest request) {
+    private static CaptchaInfo extractCaptchaInfo(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        VerificationCode verificationCode = null;
+        CaptchaInfo verificationCode = null;
         if (session != null) {
-            verificationCode = (VerificationCode) session.getAttribute(verificationCodeKey);
-            session.removeAttribute(verificationCodeKey);
+            verificationCode = (CaptchaInfo) session.getAttribute(captchaKey);
+            session.removeAttribute(captchaKey);
         }
         return verificationCode;
     }

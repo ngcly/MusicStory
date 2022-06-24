@@ -1,7 +1,6 @@
 package com.cn.entity;
 
 import com.cn.config.AbstractDateAudit;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -62,7 +61,6 @@ public class User extends AbstractDateAudit implements UserDetails, CredentialsC
     /**
      * 生日
      */
-    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
 
     /**

@@ -7,9 +7,9 @@ import java.time.LocalDateTime;
  *
  * @author ngcly
  */
-public record VerificationCode(String code, LocalDateTime expireTime) {
+public record CaptchaInfo(String code, LocalDateTime expireTime) {
 
-    public VerificationCode(String code, int expireIn) {
+    public CaptchaInfo(String code, int expireIn) {
         this(code, LocalDateTime.now().plusSeconds(expireIn));
     }
 

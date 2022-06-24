@@ -2,7 +2,7 @@ package com.cn.config;
 
 import cn.hutool.core.util.StrUtil;
 import com.cn.pojo.AuthenticationDetails;
-import com.cn.pojo.VerificationCode;
+import com.cn.pojo.CaptchaInfo;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -21,11 +21,11 @@ public class MyAuthenticationProvider extends DaoAuthenticationProvider {
         //获取详细信息
         AuthenticationDetails details = (AuthenticationDetails) authentication.getDetails();
 
-        String userCode = details.getUserCode();
-        VerificationCode verificationCode = details.getVerificationCode();
-        if (Objects.isNull(verificationCode) || verificationCode.isExpire()
-                || !StrUtil.equalsIgnoreCase(verificationCode.code(), userCode)) {
-            throw new AuthenticationServiceException("Verification code error！");
+        String userCaptcha = details.getUserCaptcha();
+        CaptchaInfo captchaInfo = details.getCaptchaInfo();
+        if (Objects.isNull(captchaInfo) || captchaInfo.isExpire()
+                || !StrUtil.equalsIgnoreCase(captchaInfo.code(), userCaptcha)) {
+            throw new AuthenticationServiceException("Captcha error！");
         }
         super.additionalAuthenticationChecks(userDetails, authentication);
     }

@@ -44,9 +44,9 @@ public class WebSecurityConfig {
                 .headers()
                 .frameOptions()
                 .sameOrigin();
-        http.
-                authorizeRequests()
-                .antMatchers("/kaptcha")
+        http
+                .authorizeRequests()
+                .antMatchers("/captcha")
                 .permitAll()
                 .anyRequest()
                 .authenticated();
