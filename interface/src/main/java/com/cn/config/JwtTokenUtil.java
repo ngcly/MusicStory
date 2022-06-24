@@ -1,19 +1,21 @@
 package com.cn.config;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.crypto.SecureUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.http.Header;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
 import com.cn.entity.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * JWT工具类
@@ -37,10 +39,12 @@ public class JwtTokenUtil {
      */
     public String generateToken(User user) {
         final Date now = new Date();
+        ObjectMapper mapper = SpringUtil.getBean(ObjectMapper.class);
+        Map map = mapper.convertValue(user, Map.class);
         //创建jwt
         return JWT.create()
                 .setSubject(user.getUsername())
-                .addPayloads(BeanUtil.beanToMap(user))
+                .addPayloads(map)
                 .setIssuedAt(now)
                 .setExpiresAt(DateUtil.offsetSecond(now,expiration))
                 .setKey(SecureUtil.md5(secret).getBytes())
