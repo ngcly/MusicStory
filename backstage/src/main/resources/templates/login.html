@@ -27,8 +27,8 @@
             <input class="layui-input" id="password" name="password" placeholder="密码:123456" lay-verify="required" type="password" autocomplete="off" />
         </div>
         <div class="layui-form-item form_code">
-            <input class="layui-input" name="randomcode" placeholder="验证码" lay-verify="required" type="text" autocomplete="off" />
-            <div class="code"><img src="/kaptcha" onclick="random(this)" width="116" height="36" id="vdc" title="看不清,点击换一张" /></div>
+            <input class="layui-input" name="captcha" placeholder="验证码" lay-verify="required" type="text" autocomplete="off" />
+            <div class="code"><img src="/captcha" onclick="random(this)" width="116" height="36" id="vdc" title="看不清,点击换一张" /></div>
         </div>
         <button class="layui-btn login_btn" lay-submit="" lay-filter="login">登录</button>
         <input id="remember-me" name="remember-me" type="checkbox" value="true" title="记住我" />

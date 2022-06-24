@@ -8,7 +8,7 @@ import com.cn.entity.Manager;
 import com.cn.entity.Permission;
 import com.cn.entity.Role;
 import com.cn.pojo.MenuDTO;
-import com.cn.pojo.VerificationCode;
+import com.cn.pojo.CaptchaInfo;
 import com.cn.util.MenuUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
@@ -95,21 +94,19 @@ public class IndexController {
     }
 
     /**
-     * kaptcha 验证码
+     * 验证码
      *
      * @param request  请求对象
-     * @param response 返回对象
-     * @throws Exception 异常
      */
-    @GetMapping("/kaptcha")
-    public StreamingResponseBody defaultKaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @GetMapping("/captcha")
+    public StreamingResponseBody generateCaptcha(HttpServletRequest request) {
         //定义图形验证码的长、宽、验证码字符数、干扰元素个数
         ICaptcha captcha = CaptchaUtil.createGifCaptcha(116, 36, 4);
-        VerificationCode verificationCode = new VerificationCode(captcha.getCode(), 60);
+        CaptchaInfo verificationCode = new CaptchaInfo(captcha.getCode(), 60);
         //生产验证码字符串并保存到session中
-        request.getSession().setAttribute("validateCode", verificationCode);
+        request.getSession().setAttribute("captcha", verificationCode);
         //图形验证码写出，可以写出到文件，也可以写出到流
-        return outputStream -> captcha.write(outputStream);
+        return captcha::write;
     }
 
     /**
