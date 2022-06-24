@@ -32,7 +32,7 @@ public class AuthenticationDetails implements Serializable {
 
     public AuthenticationDetails(HttpServletRequest request) {
         this(extractVerificationCode(request), IpUtil.getIpAddress(request),
-                request.getHeader(Header.USER_AGENT.name()), request.getParameter(userCodeKey));
+                request.getHeader(Header.USER_AGENT.getValue()), request.getParameter(userCodeKey));
     }
 
     public AuthenticationDetails(VerificationCode validateCode, String remoteAddress,
