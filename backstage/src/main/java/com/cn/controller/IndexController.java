@@ -88,8 +88,7 @@ public class IndexController {
      * @return login.html
      */
     @RequestMapping("/login")
-    public String login(@RequestParam(required = false) String error, Model model) {
-        model.addAttribute("error", error);
+    public String login() {
         return "login";
     }
 

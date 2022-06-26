@@ -32,13 +32,13 @@ docker run -itd --name redis -p 6379:6379 redis
 2. 安装RabbitMQ:
 ```
 docker pull rabbitmq
-docker run -d --name rabbitmq -p 15672:15672 -p 5673:5672 rabbitmq
+docker run --name rabbitmq -p 15672:15672 -p 5672:5672 rabbitmq
 ```
 3. 安装RabbitMQ延时队列插件： 
    1. 下载rabbitmq_delayed_message_exchange插件 下载地址：https://www.rabbitmq.com/community-plugins.html
    2. 将下载的插件拷贝到容器中
    ```
-   docker cp rabbitmq_delayed_message_exchange-3.8.0.ez  rabbitmq:/plugins
+   docker cp rabbitmq_delayed_message_exchange-3.10.2.ez  rabbitmq:/plugins
    ```
     3. 启动插件并重启容器
    ```

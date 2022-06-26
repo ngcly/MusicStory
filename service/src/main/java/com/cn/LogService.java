@@ -13,6 +13,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.authentication.event.AbstractAuthenticationEvent;
+import org.springframework.security.authentication.event.AbstractAuthenticationFailureEvent;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -40,17 +42,16 @@ public class LogService {
     }
 
     @Async
-    @EventListener
-    public void addLog(AuthenticationSuccessEvent event) {
+    @EventListener(value = {AbstractAuthenticationFailureEvent.class, AuthenticationSuccessEvent.class})
+    public void addLog(AbstractAuthenticationEvent event) {
         Authentication authentication = event.getAuthentication();
         var principal = authentication.getPrincipal();
-        byte userType;
-        Long userId;
+        Byte userType = null;
+        Long userId = null;
         if (principal instanceof Manager manager) {
             userId = manager.getId();
             userType = LoginLog.USER_TYPE_MANAGER;
-        } else {
-            User user = (User) principal;
+        } else if(principal instanceof User user){
             userId = user.getId();
             userType = LoginLog.USER_TYPE_CUSTOMER;
         }
