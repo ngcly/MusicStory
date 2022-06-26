@@ -1,6 +1,7 @@
 package com.cn.dao;
 
 import com.cn.entity.LoginLog;
+import com.cn.enums.UserTypeEnum;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -33,7 +34,7 @@ public interface LoginLogRepository extends JpaRepository<LoginLog,Long>,JpaSpec
      * @param endTime 截止时间
      * @return Specification<LoginLog>
      */
-    static Specification<LoginLog> getLoginLogList(String userName, Byte userType, LocalDateTime beginTime, LocalDateTime endTime){
+    static Specification<LoginLog> getLoginLogList(String userName, UserTypeEnum userType, LocalDateTime beginTime, LocalDateTime endTime){
         return (Root<LoginLog> root, CriteriaQuery<?> query, CriteriaBuilder cb)->{
             List<Predicate> predicates = new ArrayList<>();
             if(StringUtils.hasLength(userName)) {

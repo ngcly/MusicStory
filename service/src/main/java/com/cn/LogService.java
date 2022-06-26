@@ -4,8 +4,8 @@ import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;
 import com.cn.dao.LoginLogRepository;
 import com.cn.entity.LoginLog;
-import com.cn.entity.Manager;
-import com.cn.entity.User;
+import com.cn.enums.LoginStatusEnum;
+import com.cn.enums.UserTypeEnum;
 import com.cn.pojo.AuthenticationDetails;
 import com.cn.util.IpUtil;
 import lombok.RequiredArgsConstructor;
@@ -38,35 +38,28 @@ public class LogService {
      * 获取登录日志列表
      */
     public Page<LoginLog> getLoginLogList(Pageable pageable, LoginLog loginLog) {
-        return loginLogRepository.findAll(LoginLogRepository.getLoginLogList(loginLog.getUserName(), loginLog.getUserType(), loginLog.getBeginTime(), loginLog.getEndTime()), pageable);
+        return loginLogRepository.findAll(LoginLogRepository.getLoginLogList(loginLog.getUserName(),
+                loginLog.getUserType(), loginLog.getBeginTime(), loginLog.getEndTime()), pageable);
     }
 
     @Async
     @EventListener(value = {AbstractAuthenticationFailureEvent.class, AuthenticationSuccessEvent.class})
     public void addLog(AbstractAuthenticationEvent event) {
         Authentication authentication = event.getAuthentication();
-        var principal = authentication.getPrincipal();
-        Byte userType = null;
-        Long userId = null;
-        if (principal instanceof Manager manager) {
-            userId = manager.getId();
-            userType = LoginLog.USER_TYPE_MANAGER;
-        } else if(principal instanceof User user){
-            userId = user.getId();
-            userType = LoginLog.USER_TYPE_CUSTOMER;
-        }
         AuthenticationDetails details = (AuthenticationDetails) event.getAuthentication().getDetails();
+        UserTypeEnum userType = details.isAdministrator() ? UserTypeEnum.administrator : UserTypeEnum.user;
         String ip = details.getRemoteAddress();
         UserAgent userAgent = UserAgentUtil.parse(details.getUserAgent());
+        LoginStatusEnum loginStatus = event instanceof AuthenticationSuccessEvent ?
+                LoginStatusEnum.success : LoginStatusEnum.failure;
 
         LoginLog loginLog = new LoginLog();
-        loginLog.setUserId(userId);
         loginLog.setUserName(authentication.getName());
         loginLog.setUserType(userType);
         loginLog.setLoginIp(ip);
         loginLog.setLoginAddress(IpUtil.getIpAddresses(ip));
         loginLog.setLoginBrowser(Objects.nonNull(userAgent) ? userAgent.getBrowser().toString() : "");
-        loginLog.setLoginSuccess(true);
+        loginLog.setLoginStatus(loginStatus);
         loginLog.setLoginTime(LocalDateTime.now());
         saveLog(loginLog);
     }

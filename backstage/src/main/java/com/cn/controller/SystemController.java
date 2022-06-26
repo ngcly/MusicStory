@@ -4,20 +4,18 @@ import cn.hutool.json.JSONUtil;
 import com.cn.LogService;
 import com.cn.ManagerService;
 import com.cn.RoleService;
+import com.cn.entity.*;
 import com.cn.pojo.MenuDTO;
-import com.cn.entity.LoginLog;
-import com.cn.entity.Manager;
-import com.cn.entity.Permission;
-import com.cn.entity.Role;
 import com.cn.util.Result;
 import com.cn.util.UploadUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,12 +55,18 @@ public class SystemController {
      */
     @PreAuthorize("hasAuthority('sys:admin')")
     @RequestMapping("/adminList")
-    public String managerList(@PageableDefault(sort = {"createdAt"}, direction = Sort.Direction.DESC)
-                                      Pageable pageable, Model model, @Valid Manager manager) {
-        Page<Manager> managerList = managerService.getManagersList(pageable, manager);
-        model.addAttribute("managerList", managerList);
-        model.addAttribute("manger", manager);
+    public String managerList() {
         return "manager/managerList";
+    }
+
+    @ResponseBody
+    @RequestMapping("/admin/list")
+    public Result<List<Manager>> getManagerList(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                                                @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                                @Valid Manager manager) {
+        Page<Manager> managerList = managerService.getManagersList(
+                PageRequest.of(page - 1, size, Sort.Direction.DESC, "createdAt"), manager);
+        return Result.success(managerList.getTotalElements(), managerList.getContent());
     }
 
     /**
@@ -80,10 +83,8 @@ public class SystemController {
      * 管理员编辑页
      */
     @RequestMapping("/adminEdit")
-    public String altManager(@RequestParam(required = false) Long managerId, Principal principal, Model model) {
+    public String altManager(@AuthenticationPrincipal Manager managerDetail, @RequestParam(required = false) Long managerId, Model model) {
         //最好是从当前授权信息里面提出角色列表来
-        Authentication authentication = (Authentication) principal;
-        Manager managerDetail = (Manager) authentication.getPrincipal();
         Set<Role> roles = managerDetail.getRoleList();
         if (Manager.ADMIN.equals(managerDetail.getUsername())) {
             roles = roleService.getAvailableRoles(Role.ROLE_TYPE_MANAGER);

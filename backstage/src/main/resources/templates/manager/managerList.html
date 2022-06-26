@@ -23,12 +23,12 @@
 </div>
 
 <div class="layui-row">
-    <form  class="layui-form" th:action="@{/sys/adminList}">
+    <form class="layui-form">
         <div class="layui-form-item search-row">
             <div class="layui-inline">
                 <label class="search-label">用户名</label>
                 <div class="search-input">
-                    <input type="text" name="username" class="layui-input" th:value="${manger.username}">
+                    <input type="text" name="username" class="layui-input">
                 </div>
             </div>
             <div class="layui-inline">
@@ -36,8 +36,8 @@
                 <div class="search-input">
                     <select name="gender">
                         <option value=""></option>
-                        <option value="1" th:selected="${manger.gender==1}">男</option>
-                        <option value="2" th:selected="${manger.gender==2}">女</option>
+                        <option value="1">男</option>
+                        <option value="2">女</option>
                     </select>
                 </div>
             </div>
@@ -46,20 +46,20 @@
                 <div class="search-input">
                     <select name="state">
                         <option value=""></option>
-                        <option value="0" th:selected="${manger.state==0}">初始化</option>
-                        <option value="1" th:selected="${manger.state==1}">正常</option>
-                        <option value="2" th:selected="${manger.state==2}">封禁</option>
+                        <option value="0">初始化</option>
+                        <option value="1">正常</option>
+                        <option value="2">封禁</option>
                     </select>
                 </div>
             </div>
             <div class="layui-inline">
                 <label class="search-label">创建时间</label>
                 <div class="date-input">
-                    <input type="text" name="beginTime" class="layui-input time-item" th:value="${#temporals.format(manger.beginTime,'yyyy-MM-dd HH:mm:ss')}" placeholder="开始时间">
+                    <input type="text" name="beginTime" class="layui-input time-item" placeholder="开始时间">
                 </div>
                 <div class="layui-form-mid">-</div>
                 <div class="date-input">
-                    <input type="text" name="endTime" class="layui-input time-item" th:value="${#temporals.format(manger.endTime,'yyyy-MM-dd HH:mm:ss')}" placeholder="截止时间">
+                    <input type="text" name="endTime" class="layui-input time-item" placeholder="截止时间">
                 </div>
             </div>
             <div class="layui-inline">
@@ -69,140 +69,120 @@
                 <a sec:authorize="hasAuthority('admin:add')" href="/sys/adminEdit" type="button" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
             </div>
         </div>
-        <input type="hidden" name="page" id="pg">
-        <input type="hidden" name="size" id="se">
     </form>
 </div>
 
-<table class="layui-table" lay-filter="managers">
-    <thead>
-    <tr>
-        <th lay-data="{field:'username', sort:true}">用户名</th>
-        <th lay-data="{field:'realName'}">真实姓名</th>
-        <th lay-data="{field:'gender',width:70}">性别</th>
-        <th lay-data="{field:'birthday',width:110}">生日</th>
-        <th lay-data="{field:'state',width:85}">状态</th>
-        <th lay-data="{field:'createdAt', sort:true}">创建时间</th>
-        <th lay-data="{field:'updatedAt', sort:true}">修改时间</th>
-        <th lay-data="{field:'opt',fixed: 'right',align:'center',width:300}">操作</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="manager:${managerList}" th:switch="${manager.state}">
-        <td th:text="${manager.username}"></td>
-        <td th:text="${manager.realName}"></td>
-        <td th:text="${#strings.equals(manager.gender,'1')?'男':'女'}"></td>
-        <td th:text="${#temporals.format(manager.birthday, 'yyyy-MM-dd')}"></td>
-        <td th:case="'0'">初始化</td><td th:case="'1'">正常</td><td th:case="'2'">封禁</td><td th:case="*"></td>
-        <td th:text="${#temporals.format(manager.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
-        <td th:text="${#temporals.format(manager.updatedAt,'yyyy-MM-dd HH:mm:ss')}"></td>
-        <td>
-            <a class="layui-btn layui-btn-xs model" th:attr="data-id=${manager.id}" href="javascript:void(0);"><i class="layui-icon iconfont icon-detail"></i>详情</a>
-            <a sec:authorize="hasAuthority('admin:alt')" class="layui-btn layui-btn-xs" th:attr="data-id=${manager.id}" th:href="@{'/sys/adminEdit/?managerId='+${manager.id}}"><i class="layui-icon">&#xe642;</i>编辑</a>
-            <a class="layui-btn layui-btn-xs pwd" th:attr="data-id=${manager.id}" href="javascript:void(0);" id="reset"><i class="layui-icon layui-icon-password"></i>重置密码</a>
-            <a class="layui-btn layui-btn-danger layui-btn-xs remove" th:attr="data-id=${manager.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
-<div id="pag"></div>
+<table class="layui-table" id="table" lay-filter="manager"></table>
+
 <script src="/webjars/layui/layui.js"></script>
 <script type="text/javascript">
     layui.use(['element','laypage','table','laydate'], function(){
-        $ = layui.jquery;
-        var table = layui.table,
-            laypage = layui.laypage,
-            laydate = layui.laydate;
+        const table = layui.table,
+            form = layui.form;
 
-        /*<![CDATA[*/
-        var ct = [[${managerList.totalElements}]];
-        var cn = [[${managerList.number+1}]];
-        var ns = [[${managerList.size}]];
-        /*]]>*/
-
-        //转换静态表格
-        table.init('managers', {
-            limit: ns //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
+        //执行渲染
+        table.render({
+            elem: '#table' //指定原始表格元素选择器（推荐id选择器）
+            ,url: '/sys/admin/list'
+            ,id: 'mg'
+            ,request: {
+                limitName: 'size' //每页数据量的参数名，默认：limit
+            }
+            ,loading:true
+            ,page: true //开启分页
+            ,cols: [
+                [{field: 'username', title: '用户名', width:'120'}
+                    ,{field: 'realName', title: '真实姓名', width:'120'}
+                    ,{field: 'gender', title: '性别', width:'100', templet:'#genderTpl'}
+                    ,{field: 'birthday', title: '生日', width:'120'}
+                    ,{field: 'state', title: '状态', width:'60', templet: '#stateTpl'}
+                    ,{field: 'createdAt', title: '创建时间', width:'180'}
+                    ,{field: 'updatedAt', title: '修改时间', width:'180'}
+                    ,{fixed: 'right', title:'操作', align:'center',width:'310', toolbar: '#bar'}]
+            ]
         });
 
-        //执行一个laypage实例
-        laypage.render({
-            elem: 'pag', //注意，这里的ID，不用加 # 号
-            count:ct, //数据总数，从服务端得到
-            groups:10,
-            limit:ns,
-            // limits:[10, 20, 30, 40, 50],
-            curr:cn,
-            layout:['prev', 'page', 'next','skip','count','limit'],
-            jump: function(obj,first){
-                if(!first){
-                    $('#pg').val(obj.curr-1);
-                    $('#se').val(obj.limit);
-                    $('form').submit();
-                    // url+="?page="+(obj.curr-1)+"&size="+obj.limit;
-                    // window.location.href=url;
+        //条件搜索
+        form.on('submit(search)', function(data){
+            var values = data.field;
+            table.reload('mg', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
                 }
+                , where: values
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool(manager)', function(obj){ //注：tool是工具条事件名，manager是table原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的DOM对象
+
+            if(layEvent === 'detail'){ //查看
+                layer.open({
+                    type: 2 //Page层类型
+                    ,skin: 'layui-layer-molv'
+                    ,area: ['600px', '450px']
+                    ,title: ['管理员信息','font-size:18px']
+                    ,shadeClose: true
+                    ,shade: 0 //遮罩透明度
+                    ,maxmin: true //允许全屏最小化
+                    ,content:'/sys/adminView?mangerId='+data.id
+                });
+            } else if(layEvent === 'del'){ //删除
+                var $ = layui.$;
+                layer.confirm('确定删除吗?',{title:'删除'}, function(index){
+                    $.getJSON('/sys/adminDel', {managerId:data.id}, function(ret){
+                        if (ret.code == 0){
+                            layer.msg(ret.msg, {icon: 1,time:600},function () {
+                                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                            });
+                        } else {
+                            layer.msg(ret.msg, {icon: 2,time:600});
+                        }
+                    });
+                    layer.close(index);
+                });
+            } else if(layEvent === 'reset'){
+                layer.confirm('重置后密码为：123456',{title:'重置密码'}, function(){
+                    $.getJSON('/sys/resetPwd', {managerId:data.id}, function(ret){
+                        if (ret.code == 0){
+                            layer.msg(ret.msg, {icon: 1,time:600});
+                        } else {
+                            layer.msg(ret.msg, {icon: 2,time:600});
+                        }
+                    });
+                });
+            } else if(layEvent === 'edit'){ //编辑
+                window.location.href='/sys/adminEdit/?managerId='+data.id;
             }
         });
-
-        //执行一个laydate实例
-        //同时绑定多个
-        lay('.time-item').each(function(){
-            laydate.render({
-                elem: this,
-                type: 'datetime',
-                max:0,
-                trigger: 'click'
-            });
-        });
-
-        //重置密码
-        $(".pwd").on('click', function () {
-            var _this = $(this);
-            layer.confirm('重置后密码为：123456',{title:'重置密码'}, function(){
-                $.getJSON('/sys/resetPwd', {managerId:_this.data('id')}, function(ret){
-                    if (ret.code == 0){
-                        layer.msg(ret.msg, {icon: 1,time:600});
-                    } else {
-                        layer.msg(ret.msg, {icon: 2,time:600});
-                    }
-                });
-            });
-        })
-
-        //删除处理
-        $(".remove").on('click', function () {
-            var _this = $(this);
-            layer.confirm('确定删除吗?',{title:'删除'}, function(){
-                $.getJSON('/sys/adminDel', {managerId:_this.data('id')}, function(ret){
-                    if (ret.code == 0){
-                        // $('#'+_this.data('id')).hide();
-                        layer.msg(ret.msg, {icon: 1,time:600},function () {
-                            location.reload();
-                        });
-                    } else {
-                        layer.msg(ret.msg, {icon: 2,time:600});
-                    }
-                });
-            });
-        })
-
-        //详情窗口
-        $('.model').on('click',function () {
-            var _this = $(this);
-            layer.open({
-                type: 2 //Page层类型
-                ,skin: 'layui-layer-molv'
-                ,area: ['600px', '450px']
-                ,title: ['管理员信息','font-size:18px']
-                ,shadeClose: true
-                ,shade: 0 //遮罩透明度
-                ,maxmin: true //允许全屏最小化
-                ,content:'/sys/adminView?mangerId='+_this.data('id')
-            });
-        });
-
     });
+</script>
+<script type="text/html" id="bar">
+    <a class="layui-btn layui-btn-xs" lay-event="detail"><i class="layui-icon iconfont icon-detail"></i>查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
+    <a class="layui-btn layui-btn-xs" lay-event="reset"><i class="layui-icon">&#xe642;</i>重置密码</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
+</script>
+
+<script type="text/html" id="stateTpl">
+    {{#  if(d.state == '0'){ }}
+    初始化
+    {{#  } else if(d.state ==  '1') {}}
+    正常
+    {{#  } else { }}
+    封禁
+    {{#  } }}
+</script>
+<script type="text/html" id="genderTpl">
+    {{#  if(d.gender == '1'){ }}
+    男
+    {{#  } else { }}
+    女
+    {{#  } }}
 </script>
 </body>
 </html>

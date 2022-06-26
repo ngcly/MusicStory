@@ -42,10 +42,10 @@ public class Permission extends MenuDTO implements Serializable {
      */
     private Integer sort;
 
-    /**
-     * 菜单与角色 多对多
-     */
-    private List<Role> roles;
+//    /**
+//     * 菜单与角色 多对多
+//     */
+//    private List<Role> roles;
 
     /**
      * 资源类型
@@ -103,8 +103,8 @@ public class Permission extends MenuDTO implements Serializable {
         return sort;
     }
 
-    @ManyToMany(mappedBy = "permissions")
-    public List<Role> getRoles() {
-        return roles;
-    }
+//    @ManyToMany(mappedBy = "permissions")
+//    public List<Role> getRoles() {
+//        return roles;
+//    }
 }

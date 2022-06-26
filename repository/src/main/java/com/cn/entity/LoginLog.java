@@ -1,5 +1,7 @@
 package com.cn.entity;
 
+import com.cn.enums.LoginStatusEnum;
+import com.cn.enums.UserTypeEnum;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -22,18 +24,13 @@ public class LoginLog {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-
-    /**登录用户ID*/
-    @Column(nullable = false)
-    private Long userId;
-
     /**登录用户名*/
     @Column(nullable = false, length = 32)
     private String userName;
 
-    /**用户类型 1-后台管理员 2-前台会员*/
+    /**用户类型*/
     @Column(nullable = false)
-    private Byte userType;
+    private UserTypeEnum userType;
 
     /**登录IP*/
     @Column(length = 20)
@@ -51,9 +48,9 @@ public class LoginLog {
     @Column(nullable = false)
     private LocalDateTime loginTime;
 
-    /**是否登录成功*/
+    /**登录状态*/
     @Column(nullable = false)
-    private Boolean loginSuccess;
+    private LoginStatusEnum loginStatus;
 
     @Transient
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -61,9 +58,5 @@ public class LoginLog {
     @Transient
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
-
-    /**用户类型*/
-    public static final byte USER_TYPE_MANAGER = 1;
-    public static final byte USER_TYPE_CUSTOMER = 2;
 
 }

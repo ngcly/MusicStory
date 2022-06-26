@@ -38,8 +38,8 @@
                 <div class="search-input">
                     <select name="userType">
                         <option value=""></option>
-                        <option value="1" th:selected="${log.userType==1}">后台管理员</option>
-                        <option value="2" th:selected="${log.userType==2}">前台会员</option>
+                        <option value="administrator" th:selected="${#strings.equals(log.userType,'administrator')}">后台管理员</option>
+                        <option value="user" th:selected="${#strings.equals(log.userType,'user')}">前台会员</option>
                     </select>
                 </div>
             </div>
@@ -70,16 +70,18 @@
         <th lay-data="{field:'loginIp'}">IP</th>
         <th lay-data="{field:'loginAddress'}">地区</th>
         <th lay-data="{field:'loginBrowser'}">登录浏览器</th>
+        <th lay-data="{field:'loginStatus'}">登录状态</th>
         <th lay-data="{field:'loginTime', sort:true}">登录时间</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="log:${logList}">
         <td th:text="${log.userName}"></td>
-        <td th:text="${#strings.equals(log.userType,'1')?'后台管理员':'前台会员'}"></td>
+        <td th:text="${#strings.equals(log.userType,'administrator')?'后台管理员':'前台会员'}"></td>
         <td th:text="${log.loginIp}"></td>
         <td th:text="${log.loginAddress}"></td>
-        <td th:text="${log.loginBrowser}">
+        <td th:text="${log.loginBrowser}"></td>
+        <td th:text="${#strings.equals(log.loginStatus,'success')?'登录成功':'登录失败'}"></td>
         <td th:text="${#temporals.format(log.loginTime,'yyyy-MM-dd HH:mm:ss')}"></td>
     </tr>
     </tbody>

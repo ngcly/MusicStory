@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author chenning
@@ -52,5 +53,9 @@ public class AuthenticationDetails implements Serializable {
             session.removeAttribute(captchaKey);
         }
         return verificationCode;
+    }
+
+    public boolean isAdministrator() {
+        return Objects.nonNull(captchaInfo);
     }
 }
