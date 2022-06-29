@@ -153,7 +153,7 @@
             $(".hideMenu").on("click",function(){
                 $('#LAY_app_flexible').removeClass("layui-icon-shrink-right");
                 $('#LAY_app_flexible').addClass("layui-icon-spread-left");
-                var oClass=$(".layui-side").hasClass("mini");
+                const oClass = $(".layui-side").hasClass("mini");
                 if(!oClass){
                     $(".layui-side").animate({
                         width:"50px"
@@ -183,7 +183,7 @@
             //mini 模式下添加 tips
             $('.layui-nav-tree a').hover(function(){
                 if($(".layui-side").hasClass('mini')){
-                    var tipText = $(this).find('cite').text();
+                    const tipText = $(this).find('cite').text();
                     layer.tips(tipText, this);
                 }
             },function(){

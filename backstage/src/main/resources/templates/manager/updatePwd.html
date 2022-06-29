@@ -46,7 +46,7 @@
 <script type="text/javascript">
     layui.use(['element','form'], function(){
         $ = layui.jquery;
-        var form = layui.form;
+        const form = layui.form;
         //表单校验
         form.verify({
             // 校验原始密码
@@ -55,7 +55,7 @@
                 ,'密码必须6到12位，且不能出现空格'
             ],
             repass:function(value){
-                var pass = $('#np').val();
+                const pass = $('#np').val();
                 if(value != pass){
                     return '两次密码不一致';
                 }
@@ -63,7 +63,7 @@
         });
         //监听提交
         form.on('submit(altPwd)', function(data){
-            var headers = {};
+            const headers = {};
             headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
             $.ajax({
                 url:data.form.action,

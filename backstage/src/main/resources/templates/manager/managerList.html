@@ -54,12 +54,14 @@
             </div>
             <div class="layui-inline">
                 <label class="search-label">创建时间</label>
-                <div class="date-input">
-                    <input type="text" name="beginTime" class="layui-input time-item" placeholder="开始时间">
-                </div>
-                <div class="layui-form-mid">-</div>
-                <div class="date-input">
-                    <input type="text" name="endTime" class="layui-input time-item" placeholder="截止时间">
+                <div class="layui-inline" id="time-range">
+                    <div class="layui-input-inline">
+                        <input type="text" autocomplete="off" id="startTime" name="beginTime" class="layui-input" placeholder="开始时间">
+                    </div>
+                    <div class="layui-form-mid">-</div>
+                    <div class="layui-input-inline">
+                        <input type="text" autocomplete="off" id="endTime" name="endTime" class="layui-input" placeholder="截止时间">
+                    </div>
                 </div>
             </div>
             <div class="layui-inline">
@@ -76,8 +78,9 @@
 
 <script src="/webjars/layui/layui.js"></script>
 <script type="text/javascript">
-    layui.use(['element','laypage','table','laydate'], function(){
+    layui.use(['element','table','laydate'], function(){
         const table = layui.table,
+            laydate = layui.laydate,
             form = layui.form;
 
         //执行渲染
@@ -91,20 +94,20 @@
             ,loading:true
             ,page: true //开启分页
             ,cols: [
-                [{field: 'username', title: '用户名', width:'120'}
-                    ,{field: 'realName', title: '真实姓名', width:'120'}
-                    ,{field: 'gender', title: '性别', width:'100', templet:'#genderTpl'}
-                    ,{field: 'birthday', title: '生日', width:'120'}
-                    ,{field: 'state', title: '状态', width:'60', templet: '#stateTpl'}
-                    ,{field: 'createdAt', title: '创建时间', width:'180'}
-                    ,{field: 'updatedAt', title: '修改时间', width:'180'}
+                [{field: 'username', title: '用户名'}
+                    ,{field: 'realName', title: '真实姓名'}
+                    ,{field: 'gender', title: '性别', templet:'#genderTpl'}
+                    ,{field: 'birthday', title: '生日'}
+                    ,{field: 'state', title: '状态', templet: '#stateTpl'}
+                    ,{field: 'createdAt', title: '创建时间'}
+                    ,{field: 'updatedAt', title: '修改时间'}
                     ,{fixed: 'right', title:'操作', align:'center',width:'310', toolbar: '#bar'}]
             ]
         });
 
         //条件搜索
         form.on('submit(search)', function(data){
-            var values = data.field;
+            const values = data.field;
             table.reload('mg', {
                 page: {
                     curr: 1 //重新从第 1 页开始
@@ -114,11 +117,20 @@
             return false;
         });
 
+        //时间选择器
+        laydate.render({
+            elem: '#time-range', //开始时间和结束时间所在 input 框的父选择器
+            type: 'datetime',
+            //设置开始日期、日期日期的 input 选择器
+            range: ['#startTime', '#endTime'],
+        });
+
         //监听工具条
-        table.on('tool(manager)', function(obj){ //注：tool是工具条事件名，manager是table原始容器的属性 lay-filter="对应的值"
-            var data = obj.data; //获得当前行数据
-            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-            var tr = obj.tr; //获得当前行 tr 的DOM对象
+        table.on('tool(manager)', function(obj){  //删除
+            const $ = layui.$;
+            //注：tool是工具条事件名，manager是table原始容器的属性 lay-filter="对应的值"
+            const data = obj.data; //获得当前行数据
+            const layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
 
             if(layEvent === 'detail'){ //查看
                 layer.open({
@@ -131,8 +143,7 @@
                     ,maxmin: true //允许全屏最小化
                     ,content:'/sys/adminView?mangerId='+data.id
                 });
-            } else if(layEvent === 'del'){ //删除
-                var $ = layui.$;
+            } else if(layEvent === 'del'){
                 layer.confirm('确定删除吗?',{title:'删除'}, function(index){
                     $.getJSON('/sys/adminDel', {managerId:data.id}, function(ret){
                         if (ret.code == 0){

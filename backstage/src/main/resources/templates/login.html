@@ -38,12 +38,12 @@
 <script>
     layui.use(['element','form','layer'],function(){
         $ = layui.jquery;
-        var form = layui.form,
+        const form = layui.form,
             layer = layui.layer;
 
         form.on('submit(login)', function (data) {
-            var index = layer.load(0);
-            var headers = {};
+            const index = layer.load(0);
+            const headers = {};
             headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
             $.ajax({
                 url:data.form.action,

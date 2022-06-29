@@ -24,28 +24,28 @@
 <script src="/webjars/jquery/dist/jquery.min.js"></script>
 <script src="/js/jquery.ztree.all.min.js"></script>
 <script type="text/javascript">
-    var zNodes =JSON.parse($('#menus').val());
-    var setting = {
+    const zNodes = JSON.parse($('#menus').val());
+    const setting = {
         view: {
             selectedMulti: false
         },
         check: {
             enable: true,
-            chkboxType: { "Y": "p", "N": "s" }
+            chkboxType: {"Y": "p", "N": "s"}
         },
     };
     layui.use(['element','layer'], function(){
         $ = layui.jquery;
-        var layer = layui.layer;
+        const layer = layui.layer;
 
         $.fn.zTree.init($("#menuTree"), setting, zNodes);
-        var treeObj=$.fn.zTree.getZTreeObj("menuTree");
+        const treeObj = $.fn.zTree.getZTreeObj("menuTree");
         treeObj.expandAll(true);
         $("button.save").on('click', function () {
-            var roleId = $(this).data('id');
-            var nodes = treeObj.getCheckedNodes(true);
-            var checkNodes="";
-            for(var i=0;i<nodes.length;i++){
+            const roleId = $(this).data('id');
+            const nodes = treeObj.getCheckedNodes(true);
+            let checkNodes = "";
+            for(let i=0; i<nodes.length; i++){
 //                if(!nodes[i].getCheckStatus().half){
                 checkNodes += nodes[i].id+",";
 //                }
@@ -63,7 +63,7 @@
             })
         });
         $("button.cancel").on('click', function () {
-            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            const index = parent.layer.getFrameIndex(window.name); //获取窗口索引
             parent.layer.close(index);
         });
     });

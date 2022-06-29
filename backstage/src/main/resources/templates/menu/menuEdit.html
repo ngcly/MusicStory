@@ -85,7 +85,7 @@
 <script type="text/javascript">
     layui.use(['element','form'], function(){
         $ = layui.jquery;
-        var form = layui.form;
+        const form = layui.form;
 
         //表单校验
         form.verify({
@@ -97,7 +97,7 @@
         });
         //监听提交
         form.on('submit(save)', function(data){
-            var headers = {};
+            const headers = {};
             headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
             $.ajax({
                 url:data.form.action,

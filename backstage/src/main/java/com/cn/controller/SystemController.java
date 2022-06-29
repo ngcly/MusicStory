@@ -322,12 +322,18 @@ public class SystemController {
      */
     @PreAuthorize("hasAuthority('sys:log')")
     @RequestMapping("/loginLogs")
-    public String loginLogList(@PageableDefault(sort = {"loginTime"}, direction = Sort.Direction.DESC)
-                                       Pageable pageable, @Valid LoginLog loginLog, Model model) {
-        Page<LoginLog> logs = logService.getLoginLogList(pageable, loginLog);
-        model.addAttribute("logList", logs);
-        model.addAttribute("log", loginLog);
+    public String loginLogList() {
         return "system/logList";
+    }
+
+    @ResponseBody
+    @GetMapping("/logs")
+    public Result<List<LoginLog>> getLogList(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                                                @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                                @Valid LoginLog loginLog) {
+        Page<LoginLog> logList = logService.getLoginLogList(
+                PageRequest.of(page - 1, size, Sort.Direction.DESC, "loginTime"), loginLog);
+        return Result.success(logList.getTotalElements(), logList.getContent());
     }
 
     /**

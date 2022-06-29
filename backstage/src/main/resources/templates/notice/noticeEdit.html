@@ -50,12 +50,12 @@
 <script type="text/javascript">
     layui.use(['element','form','laydate'], function(){
         $ = layui.jquery;
-        var form = layui.form,
+        const form = layui.form,
             laydate = layui.laydate;
 
         //监听提交
         form.on('submit(save)', function(data){
-            var headers = {};
+            const headers = {};
             headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
             $.ajax({
                 url:data.form.action,
@@ -92,7 +92,7 @@
         });
 
         $("button.close").on('click', function () {
-            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            const index = parent.layer.getFrameIndex(window.name); //获取窗口索引
             parent.layer.close(index);
         });
     });

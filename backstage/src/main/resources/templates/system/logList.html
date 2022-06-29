@@ -25,12 +25,12 @@
 </div>
 
 <div class="layui-row">
-    <form  class="layui-form" th:action="@{/sys/loginLogs}">
+    <form  class="layui-form">
         <div class="layui-form-item search-row">
             <div class="layui-inline">
                 <label class="search-label">用户名</label>
                 <div class="search-input">
-                    <input type="text" name="userName" class="layui-input" th:value="${log.userName}">
+                    <input type="text" name="userName" class="layui-input">
                 </div>
             </div>
             <div class="layui-inline">
@@ -38,103 +38,97 @@
                 <div class="search-input">
                     <select name="userType">
                         <option value=""></option>
-                        <option value="administrator" th:selected="${#strings.equals(log.userType,'administrator')}">后台管理员</option>
-                        <option value="user" th:selected="${#strings.equals(log.userType,'user')}">前台会员</option>
+                        <option value="administrator">后台管理员</option>
+                        <option value="user">前台会员</option>
                     </select>
                 </div>
             </div>
             <div class="layui-inline">
                 <label class="search-label">登入时间</label>
-                <div class="date-input">
-                    <input type="text" name="beginTime" class="layui-input time-item" th:value="${#temporals.format(log.beginTime,'yyyy-MM-dd HH:mm:ss')}" placeholder="开始时间">
-                </div>
-                <div class="layui-form-mid">-</div>
-                <div class="date-input">
-                    <input type="text" name="endTime" class="layui-input time-item" th:value="${#temporals.format(log.endTime,'yyyy-MM-dd HH:mm:ss')}" placeholder="截止时间">
+                <div class="layui-inline" id="time-range">
+                    <div class="layui-input-inline">
+                        <input type="text" autocomplete="off" id="startTime" name="beginTime" class="layui-input" placeholder="开始时间">
+                    </div>
+                    <div class="layui-form-mid">-</div>
+                    <div class="layui-input-inline">
+                        <input type="text" autocomplete="off" id="endTime" name="endTime" class="layui-input" placeholder="截止时间">
+                    </div>
                 </div>
             </div>
             <div class="layui-inline">
                 <button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
             </div>
         </div>
-        <input type="hidden" name="page" id="pg">
-        <input type="hidden" name="size" id="se">
     </form>
 </div>
 
-<table class="layui-table" lay-filter="managers">
-    <thead>
-    <tr>
-        <th lay-data="{field:'userName', sort:true}">用户名</th>
-        <th lay-data="{field:'userType'}">用户类型</th>
-        <th lay-data="{field:'loginIp'}">IP</th>
-        <th lay-data="{field:'loginAddress'}">地区</th>
-        <th lay-data="{field:'loginBrowser'}">登录浏览器</th>
-        <th lay-data="{field:'loginStatus'}">登录状态</th>
-        <th lay-data="{field:'loginTime', sort:true}">登录时间</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="log:${logList}">
-        <td th:text="${log.userName}"></td>
-        <td th:text="${#strings.equals(log.userType,'administrator')?'后台管理员':'前台会员'}"></td>
-        <td th:text="${log.loginIp}"></td>
-        <td th:text="${log.loginAddress}"></td>
-        <td th:text="${log.loginBrowser}"></td>
-        <td th:text="${#strings.equals(log.loginStatus,'success')?'登录成功':'登录失败'}"></td>
-        <td th:text="${#temporals.format(log.loginTime,'yyyy-MM-dd HH:mm:ss')}"></td>
-    </tr>
-    </tbody>
-</table>
-<div id="pag"></div>
+<table class="layui-table" id="table" lay-filter="logs"></table>
+
 <script src="/webjars/layui/layui.js"></script>
 <script type="text/javascript">
-    layui.use(['element','laypage','table','laydate'], function(){
-        $ = layui.jquery;
+    layui.use(['element','table','laydate'], function(){
+        const table = layui.table,
+            form = layui.form,
+            laydate = layui.laydate,
+            $ = layui.jquery;
 
-        /*<![CDATA[*/
-        var ct = [[${logList.totalElements}]];
-        var cn = [[${logList.number+1}]];
-        var ns = [[${logList.size}]];
-        /*]]>*/
-
-        var table = layui.table;
-        //转换静态表格
-        table.init('managers', {
-            limit: ns //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
-        });
-
-        var laypage = layui.laypage;
-        //执行一个laypage实例
-        laypage.render({
-            elem: 'pag', //注意，这里的ID，不用加 # 号
-            count:ct, //数据总数，从服务端得到
-            groups:10,
-            limit:ns,
-            // limits:[10, 20, 30, 40, 50],
-            curr:cn,
-            layout:['prev', 'page', 'next','skip','count','limit'],
-            jump: function(obj,first){
-                if(!first){
-                    $('#pg').val(obj.curr-1);
-                    $('#se').val(obj.limit);
-                    $('form').submit();
-                }
+        //执行渲染
+        table.render({
+            elem: '#table' //指定原始表格元素选择器（推荐id选择器）
+            ,url: '/sys/logs'
+            ,id: 'lg'
+            ,request: {
+                limitName: 'size' //每页数据量的参数名，默认：limit
             }
+            ,loading:true
+            ,page: true //开启分页
+            ,cols: [
+                [{field: 'userName', title: '用户名'}
+                    ,{field: 'userType', title: '用户类型', templet:'#userTypeTpl'}
+                    ,{field: 'loginIp', title: 'IP'}
+                    ,{field: 'loginAddress', title: '地区'}
+                    ,{field: 'loginBrowser', title: '登录浏览器'}
+                    ,{field: 'loginStatus', title: '登录状态', templet:'#loginStatusTpl'}
+                    ,{field: 'loginTime', title: '登录时间'}]
+            ]
         });
 
-        var laydate = layui.laydate;
-        //执行一个laydate实例
-        //同时绑定多个
-        lay('.time-item').each(function(){
-            laydate.render({
-                elem: this,
-                type: 'datetime',
-                max:0,
-                trigger: 'click'
+        //条件搜索
+        form.on('submit(search)', function(data){
+            const values = data.field;
+            table.reload('lg', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+                , where: values
             });
+            return false;
         });
+
+        //时间选择器
+        laydate.render({
+            elem: '#time-range', //开始时间和结束时间所在 input 框的父选择器
+            type: 'datetime',
+            //设置开始日期、日期日期的 input 选择器
+            range: ['#startTime', '#endTime'],
+        });
+
     });
+</script>
+
+<script type="text/html" id="userTypeTpl">
+    {{#  if(d.userType == 'administrator'){ }}
+    后台管理员
+    {{#  } else { }}
+    前台会员
+    {{#  } }}
+</script>
+<script type="text/html" id="loginStatusTpl">
+    {{#  if(d.loginStatus == 'success'){ }}
+    登录成功
+    {{#  } else { }}
+    登录失败
+    {{#  } }}
 </script>
 </body>
 </html>

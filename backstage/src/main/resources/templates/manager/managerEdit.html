@@ -99,7 +99,7 @@
 <script type="text/javascript">
     layui.use(['element','form','laydate','upload'], function(){
         $ = layui.jquery;
-        var form = layui.form,
+        const form = layui.form,
             laydate = layui.laydate,
             upload = layui.upload;
 
@@ -141,7 +141,7 @@
 
         //监听提交
         form.on('submit(save)', function(data){
-            var headers = {};
+            const headers = {};
             headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
             $.ajax({
                 url:data.form.action,

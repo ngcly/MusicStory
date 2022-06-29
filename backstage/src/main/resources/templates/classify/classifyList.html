@@ -67,7 +67,7 @@
 
         //条件搜索
         form.on('submit(search)', function(data){
-            var values = data.field;
+            const values = data.field;
             table.reload('cs', {
                 page: {
                     curr: 1 //重新从第 1 页开始
@@ -79,8 +79,8 @@
 
         //监听工具条
         table.on('tool(clazz)', function(obj){
-            var data = obj.data; //获得当前行数据
-            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            const data = obj.data; //获得当前行数据
+            const layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
             if(layEvent === 'del'){ //删除
                 layer.confirm('确定删除吗？',{title:'删除'}, function(index){
                     //向服务端发送删除指令
