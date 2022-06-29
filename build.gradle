@@ -54,7 +54,7 @@ subprojects {  //子项目通配
         hutoolVersion = '5.8.3'
         guavaVersion = '31.1-jre'
         aliOssVersion = '3.15.0'
-        druidVersion = '1.2.9'
+        druidVersion = '1.2.11'
         dialectVersion = '3.1.0'
         extrasVersion = '3.0.4.RELEASE'
         locatorVersion = '0.50'
