@@ -1,5 +1,6 @@
 bootJar {
-    archiveBaseName = "desk"
+    archiveBaseName = "interface"
+    archiveVersion =  '1.0'
 }
 
 dependencies {
