@@ -53,7 +53,7 @@
             $.post('/sys/saveGrant',{'[[${_csrf.parameterName}]]':'[[${_csrf.token}]]',roleId: roleId , menuIds: checkNodes},function (data) {
                 if(data.code == 0){
                     layer.msg(data.msg, {icon: 1,time:600}, function () {
-                        var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                        const index = parent.layer.getFrameIndex(window.name); //获取窗口索引
                         parent.location.reload();
                         parent.layer.close(index);
                     });

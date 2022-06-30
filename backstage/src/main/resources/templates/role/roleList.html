@@ -17,12 +17,12 @@
 </div>
 
 <div class="layui-row">
-    <form  class="layui-form" th:action="@{/sys/roleList}">
+    <form  class="layui-form">
         <div class="layui-form-item search-row">
             <div class="layui-inline">
                 <label class="search-label">角色名</label>
                 <div class="search-input">
-                    <input type="text" name="roleName" class="layui-input" th:value="${roleRt.roleName}">
+                    <input type="text" name="roleName" class="layui-input">
                 </div>
             </div>
             <div class="layui-inline">
@@ -30,8 +30,8 @@
                 <div class="search-input">
                     <select name="roleType">
                         <option value=""></option>
-                        <option value="1" th:selected="${roleRt.roleType==1}">后台角色</option>
-                        <option value="2" th:selected="${roleRt.roleType==2}">前台角色</option>
+                        <option value="1">后台角色</option>
+                        <option value="2">前台角色</option>
                     </select>
                 </div>
             </div>
@@ -40,8 +40,8 @@
                 <div class="search-input">
                     <select name="available">
                         <option value=""></option>
-                        <option value="0" th:selected="${#strings.equals(roleRt.available,'false')}">停用</option>
-                        <option value="1" th:selected="${#bools.isTrue(roleRt.available)}">正常</option>
+                        <option value="0">停用</option>
+                        <option value="1">正常</option>
                     </select>
                 </div>
             </div>
@@ -52,81 +52,111 @@
                 <a sec:authorize="hasAuthority('role:add')" href="javascript:void(0)" type="button" id="add" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
             </div>
         </div>
-        <input type="hidden" name="page" id="pg">
-        <input type="hidden" name="size" id="se">
     </form>
 </div>
 
-<table class="layui-table" lay-filter="roles">
-    <thead>
-    <tr>
-        <th lay-data="{field:'roleName', sort:true}">角色名</th>
-        <th lay-data="{field:'roleCode'}">标识符</th>
-        <th lay-data="{field:'description'}">角色描述</th>
-        <th lay-data="{field:'roleType'}">角色类型</th>
-        <th lay-data="{field:'available'}">是否可用</th>
-        <th lay-data="{field:'opt',fixed: 'right',align:'center',width:290}">操作</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="role:${roleList}">
-        <td th:text="${role.roleName}"></td>
-        <td th:text="${role.roleCode}">
-        <td th:text="${role.description}"></td>
-        <td th:text="${#strings.equals(role.roleType,'1')?'后台角色':'前台角色'}"></td>
-        <td>
-            <input type="checkbox" checked="" name="available" lay-skin="switch" lay-text="启用|停用" lay-filter="switchTest" th:checked="${#bools.isTrue(role.available)}" th:attr="data-id=${role.id}">
-        </td>
-        <td>
-            <a class="layui-btn layui-btn-xs view" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon iconfont icon-view"></i>查看</a>
-            <a class="layui-btn layui-btn-xs model" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon layui-icon-auz"></i>授权</a>
-            <a sec:authorize="hasAuthority('role:alt')" class="layui-btn layui-btn-xs alt" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe642;</i>编辑</a>
-            <a class="layui-btn layui-btn-danger layui-btn-xs remove" th:attr="data-id=${role.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
-<div id="pag"></div>
+<table class="layui-table" id="table" lay-filter="roles"></table>
+
 <script src="/webjars/layui/layui.js"></script>
 <script type="text/javascript">
-    layui.use(['element','laypage','table','form'], function(){
+    layui.use(['table','form'], function(){
         $ = layui.jquery;
         var form = layui.form,
-            table= layui.table,
-            laypage = layui.laypage;
-        /*<![CDATA[*/
-        var ct = [[${roleList.totalElements}]];
-        var cn = [[${roleList.number+1}]];
-        var ns = [[${roleList.size}]];
-        /*]]>*/
+            table= layui.table;
 
-        //转换静态表格
-        table.init('roles', {
-            limit: ns //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
+        //执行渲染
+        table.render({
+            elem: '#table' //指定原始表格元素选择器（推荐id选择器）
+            ,url: '/sys/role/list'
+            ,id: 're'
+            ,request: {
+                limitName: 'size' //每页数据量的参数名，默认：limit
+            }
+            ,loading:true
+            ,page: true //开启分页
+            ,cols: [
+                [{field: 'roleName', title: '角色名'}
+                    ,{field: 'roleCode', title: '标识符'}
+                    ,{field: 'description', title: '角色描述'}
+                    ,{field: 'roleType', title: '角色类型', templet: '#typeTpl'}
+                    ,{field: 'available', title: '是否可用', templet: '#stateTpl'}
+                    ,{fixed: 'right', title:'操作', align:'center',width:'310', toolbar: '#bar'}]
+            ]
         });
 
-        //执行一个laypage实例
-        laypage.render({
-            elem: 'pag', //注意，这里的ID，不用加 # 号
-            count:ct, //数据总数，从服务端得到
-            groups:10,
-            limit:ns,
-            // limits:[10, 20, 30, 40, 50],
-            curr:cn,
-            layout:['prev', 'page', 'next','skip','count','limit'],
-            jump: function(obj,first){
-                if(!first){
-                    $('#pg').val(obj.curr-1);
-                    $('#se').val(obj.limit);
-                    $('form').submit();
+        //条件搜索
+        form.on('submit(search)', function(data){
+            const values = data.field;
+            table.reload('re', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
                 }
+                , where: values
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool(roles)', function(obj){  //删除
+            const $ = layui.$;
+            //注：tool是工具条事件名，manager是table原始容器的属性 lay-filter="对应的值"
+            const data = obj.data; //获得当前行数据
+            const layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+
+            if(layEvent === 'detail'){ //查看
+                layer.open({
+                    type: 2 //Page层类型
+                    ,skin: 'layui-layer-molv'
+                    ,area: ['400px', '500px']
+                    ,title: ['角色权限','font-size:18px']
+                    ,shadeClose: true
+                    ,shade: 0 //遮罩透明度
+                    ,maxmin: true //允许全屏最小化
+                    ,content:'/sys/grant?roleId='+data.id+'&type=1'
+                });
+            } else if(layEvent === 'del'){
+                layer.confirm('确定删除吗?',{title:'删除'}, function(){
+                    $.getJSON('/sys/roleDel', {roleId:data.id}, function(ret){
+                        if (ret.code == 0){
+                            layer.msg(ret.msg, {icon: 1,time:600},function () {
+                                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                            });
+                        } else {
+                            layer.msg(ret.msg, {icon: 2,time:600});
+                        }
+                    });
+                });
+            } else if(layEvent === 'grant'){
+                layer.open({
+                    type: 2 //Page层类型
+                    ,skin: 'layui-layer-molv'
+                    ,area: ['400px', '500px']
+                    ,title: ['角色授权','font-size:18px']
+                    ,shadeClose: true
+                    ,shade: 0 //遮罩透明度
+                    ,maxmin: true //允许全屏最小化
+                    ,content:'/sys/grant?roleId='+data.id+'&type=2'
+                });
+            } else if(layEvent === 'edit'){ //编辑
+                layer.open({
+                    type: 2 //Page层类型
+                    ,skin: 'layui-layer-molv'
+                    ,area: ['500px', '455px']
+                    ,title: ['角色信息','font-size:18px']
+                    ,shadeClose: true
+                    ,shade: 0 //遮罩透明度
+                    ,maxmin: true //允许全屏最小化
+                    ,content:'/sys/roleEdit?roleId='+data.id
+                });
             }
         });
 
         //监听是否启用
-        form.on('switch(switchTest)', function(data){
-            var _this = $(this);
-            $.getJSON('/sys/togAvailable', {roleId:_this.data('id')}, function(ret){
+        form.on('switch(switch)', function(obj){
+            const id = $(this).attr('data-id');
+            const _this = $(this);
+
+            $.getJSON('/sys/togAvailable', {roleId:id}, function(ret){
                 if (ret.code == 0){
                     layer.msg(ret.msg, {icon: 1,time:600});
                 } else {
@@ -145,67 +175,6 @@
             });
         });
 
-        //删除处理
-        $(".remove").on('click', function () {
-            var _this = $(this);
-            layer.confirm('确定删除吗?',{title:'删除'}, function(){
-                $.getJSON('/sys/roleDel', {roleId:_this.data('id')}, function(ret){
-                    if (ret.code == 0){
-                        $('#'+_this.data('id')).hide();
-                        layer.msg(ret.msg, {icon: 1,time:600},function () {
-                            location.reload();
-                        });
-                    } else {
-                        layer.msg(ret.msg, {icon: 2,time:600});
-                    }
-                });
-            });
-        })
-
-        $('.view').on('click',function () {
-            var _this = $(this);
-            layer.open({
-                type: 2 //Page层类型
-                ,skin: 'layui-layer-molv'
-                ,area: ['400px', '500px']
-                ,title: ['角色权限','font-size:18px']
-                ,shadeClose: true
-                ,shade: 0 //遮罩透明度
-                ,maxmin: true //允许全屏最小化
-                ,content:'/sys/grant?roleId='+_this.data('id')+'&type=1'
-            });
-        });
-
-        //授权窗口
-        $('.model').on('click',function () {
-            var _this = $(this);
-            layer.open({
-                type: 2 //Page层类型
-                ,skin: 'layui-layer-molv'
-                ,area: ['400px', '500px']
-                ,title: ['角色授权','font-size:18px']
-                ,shadeClose: true
-                ,shade: 0 //遮罩透明度
-                ,maxmin: true //允许全屏最小化
-                ,content:'/sys/grant?roleId='+_this.data('id')+'&type=2'
-            });
-        });
-
-        //修改角色窗口
-        $('.alt').on('click',function () {
-            var _this = $(this);
-            layer.open({
-                type: 2 //Page层类型
-                ,skin: 'layui-layer-molv'
-                ,area: ['500px', '455px']
-                ,title: ['角色信息','font-size:18px']
-                ,shadeClose: true
-                ,shade: 0 //遮罩透明度
-                ,maxmin: true //允许全屏最小化
-                ,content:'/sys/roleEdit?roleId='+_this.data('id')
-            });
-        });
-
         //新增角色窗口
         $('#add').on('click',function () {
             layer.open({
@@ -221,6 +190,23 @@
         });
 
     });
+</script>
+<script type="text/html" id="bar">
+    <a class="layui-btn layui-btn-xs" lay-event="detail"><i class="layui-icon iconfont icon-view"></i>查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="grant" ><i class="layui-icon layui-icon-auz"></i>授权</a>
+    <a sec:authorize="hasAuthority('role:alt')" class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
+</script>
+
+<script type="text/html" id="typeTpl">
+    {{#  if(d.roleType == 'administrator'){ }}
+    后台角色
+    {{#  } else { }}
+    前台角色
+    {{#  } }}
+</script>
+<script type="text/html" id="stateTpl">
+    <input type="checkbox" name="available" value="{{d.available}}" lay-skin="switch" lay-text="启用|停用" data-id={{d.id}} lay-filter="switch" {{ d.available ? 'checked' : '' }}>
 </script>
 </body>
 </html>

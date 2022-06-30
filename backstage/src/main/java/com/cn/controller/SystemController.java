@@ -174,12 +174,26 @@ public class SystemController {
      */
     @PreAuthorize("hasAuthority('role:view')")
     @RequestMapping("/roleList")
-    public String roleList(@PageableDefault(sort = {"roleName"}, direction = Sort.Direction.DESC)
-                                   Pageable pageable, @Valid Role role, Model model) {
-        Page<Role> roleList = roleService.getRoleList(pageable, role);
-        model.addAttribute("roleList", roleList);
-        model.addAttribute("roleRt", role);
+    public String roleList() {
         return "role/roleList";
+    }
+
+    /**
+     * 角色数据
+     * @param page 当前页
+     * @param size 总页数
+     * @param role 条件数据
+     * @return
+     */
+    @GetMapping("/role/list")
+    @ResponseBody
+    public Result<List<Role>> roleList(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                                       @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                       @Valid Role role) {
+        Page<Role> roleList = roleService.getRoleList(
+                PageRequest.of(page - 1, size, Sort.Direction.DESC, "roleName"), role);
+
+        return Result.success(roleList.getTotalElements(), roleList.getContent());
     }
 
     /**

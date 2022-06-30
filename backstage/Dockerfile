@@ -5,6 +5,6 @@ VOLUME /tmp
 
 ARG PROJECT_NAME=backstage
 ARG JAR_FILE=build/libs/${PROJECT_NAME}-*.jar
-ENV APP_JAR=mustic-story-${PROJECT_NAME}.jar
+ENV APP_JAR=${PROJECT_NAME}-ms.jar
 COPY ${JAR_FILE} ${APP_JAR}
 ENTRYPOINT java -jar ${APP_JAR}
