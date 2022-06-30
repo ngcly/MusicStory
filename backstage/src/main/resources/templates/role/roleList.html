@@ -59,10 +59,10 @@
 
 <script src="/webjars/layui/layui.js"></script>
 <script type="text/javascript">
-    layui.use(['table','form'], function(){
+    layui.use('table', function(){
         $ = layui.jquery;
-        var form = layui.form,
-            table= layui.table;
+        const form = layui.form,
+            table = layui.table;
 
         //执行渲染
         table.render({
@@ -75,7 +75,7 @@
             ,loading:true
             ,page: true //开启分页
             ,cols: [
-                [{field: 'roleName', title: '角色名'}
+                [{field: 'roleName', title: '角色名', sort: true}
                     ,{field: 'roleCode', title: '标识符'}
                     ,{field: 'description', title: '角色描述'}
                     ,{field: 'roleType', title: '角色类型', templet: '#typeTpl'}

@@ -21,7 +21,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,7 +45,6 @@ public class IndexController {
      */
     @RequestMapping("/")
     public String index(@AuthenticationPrincipal Manager manager, Model model) {
-        Set<Role> roleList = manager.getRoleList();
         boolean init = false;
         List<Permission> menuList;
         if (Manager.ADMIN.equals(manager.getUsername())) {
@@ -64,6 +62,7 @@ public class IndexController {
             // 重置认证信息
             SecurityContextHolder.getContext().setAuthentication(newAuth);
         } else {
+            Set<Role> roleList = managerService.getManagerById(manager.getId()).getRoleList();
             menuList = new ArrayList<>();
             roleList.forEach(role -> menuList.addAll(role.getPermissions()));
         }
@@ -99,12 +98,9 @@ public class IndexController {
      */
     @GetMapping("/captcha")
     public StreamingResponseBody generateCaptcha(HttpServletRequest request) {
-        //定义图形验证码的长、宽、验证码字符数、干扰元素个数
         ICaptcha captcha = CaptchaUtil.createGifCaptcha(116, 36, 4);
-        CaptchaInfo verificationCode = new CaptchaInfo(captcha.getCode(), 60);
-        //生产验证码字符串并保存到session中
-        request.getSession().setAttribute("captcha", verificationCode);
-        //图形验证码写出，可以写出到文件，也可以写出到流
+        CaptchaInfo captchaInfo = new CaptchaInfo(captcha.getCode(), 60);
+        request.getSession().setAttribute("captcha", captchaInfo);
         return captcha::write;
     }
 

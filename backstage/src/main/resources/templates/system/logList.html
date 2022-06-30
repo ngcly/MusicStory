@@ -66,7 +66,7 @@
 
 <script src="/webjars/layui/layui.js"></script>
 <script type="text/javascript">
-    layui.use(['element','table','laydate'], function(){
+    layui.use(['table','laydate'], function(){
         const table = layui.table,
             form = layui.form,
             laydate = layui.laydate,
@@ -83,13 +83,13 @@
             ,loading:true
             ,page: true //开启分页
             ,cols: [
-                [{field: 'userName', title: '用户名'}
-                    ,{field: 'userType', title: '用户类型', templet:'#userTypeTpl'}
+                [{field: 'userName', title: '用户名', sort: true}
+                    ,{field: 'userType', title: '用户类型', templet: '#userTypeTpl'}
                     ,{field: 'loginIp', title: 'IP'}
                     ,{field: 'loginAddress', title: '地区'}
                     ,{field: 'loginBrowser', title: '登录浏览器'}
-                    ,{field: 'loginStatus', title: '登录状态', templet:'#loginStatusTpl'}
-                    ,{field: 'loginTime', title: '登录时间'}]
+                    ,{field: 'loginStatus', title: '登录状态', templet: '#loginStatusTpl'}
+                    ,{field: 'loginTime', title: '登录时间', sort: true}]
             ]
         });
 

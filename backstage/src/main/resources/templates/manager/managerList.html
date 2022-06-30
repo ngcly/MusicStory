@@ -78,7 +78,7 @@
 
 <script src="/webjars/layui/layui.js"></script>
 <script type="text/javascript">
-    layui.use(['element','table','laydate'], function(){
+    layui.use(['table','laydate'], function(){
         const table = layui.table,
             laydate = layui.laydate,
             form = layui.form;
@@ -99,8 +99,8 @@
                     ,{field: 'gender', title: '性别', templet:'#genderTpl'}
                     ,{field: 'birthday', title: '生日'}
                     ,{field: 'state', title: '状态', templet: '#stateTpl'}
-                    ,{field: 'createdAt', title: '创建时间'}
-                    ,{field: 'updatedAt', title: '修改时间'}
+                    ,{field: 'createdAt', title: '创建时间', sort: true}
+                    ,{field: 'updatedAt', title: '修改时间', sort: true}
                     ,{fixed: 'right', title:'操作', align:'center',width:'310', toolbar: '#bar'}]
             ]
         });

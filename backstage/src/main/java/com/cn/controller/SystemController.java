@@ -10,7 +10,6 @@ import com.cn.util.Result;
 import com.cn.util.UploadUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -61,11 +60,10 @@ public class SystemController {
 
     @ResponseBody
     @RequestMapping("/admin/list")
-    public Result<List<Manager>> getManagerList(@RequestParam(value = "page", defaultValue = "1") Integer page,
-                                                @RequestParam(value = "size", defaultValue = "10") Integer size,
+    public Result<List<Manager>> getManagerList(@PageableDefault(sort = {"createdAt"}, direction = Sort.Direction.DESC)Pageable pageable,
                                                 @Valid Manager manager) {
         Page<Manager> managerList = managerService.getManagersList(
-                PageRequest.of(page - 1, size, Sort.Direction.DESC, "createdAt"), manager);
+                pageable.withPage(pageable.getPageNumber()-1), manager);
         return Result.success(managerList.getTotalElements(), managerList.getContent());
     }
 
@@ -180,18 +178,16 @@ public class SystemController {
 
     /**
      * 角色数据
-     * @param page 当前页
-     * @param size 总页数
+     * @param pageable 分页
      * @param role 条件数据
-     * @return
+     * @return List<Role>
      */
     @GetMapping("/role/list")
     @ResponseBody
-    public Result<List<Role>> roleList(@RequestParam(value = "page", defaultValue = "1") Integer page,
-                                       @RequestParam(value = "size", defaultValue = "10") Integer size,
+    public Result<List<Role>> roleList(@PageableDefault(sort = {"roleName"}, direction = Sort.Direction.DESC)Pageable pageable,
                                        @Valid Role role) {
         Page<Role> roleList = roleService.getRoleList(
-                PageRequest.of(page - 1, size, Sort.Direction.DESC, "roleName"), role);
+                pageable.withPage(pageable.getPageNumber()-1), role);
 
         return Result.success(roleList.getTotalElements(), roleList.getContent());
     }
@@ -342,11 +338,11 @@ public class SystemController {
 
     @ResponseBody
     @GetMapping("/logs")
-    public Result<List<LoginLog>> getLogList(@RequestParam(value = "page", defaultValue = "1") Integer page,
-                                                @RequestParam(value = "size", defaultValue = "10") Integer size,
-                                                @Valid LoginLog loginLog) {
+    public Result<List<LoginLog>> getLogList(@PageableDefault(sort = {"loginTime"}, direction = Sort.Direction.DESC)Pageable pageable,
+                                             @Valid LoginLog loginLog) {
+
         Page<LoginLog> logList = logService.getLoginLogList(
-                PageRequest.of(page - 1, size, Sort.Direction.DESC, "loginTime"), loginLog);
+                pageable.withPage(pageable.getPageNumber()-1), loginLog);
         return Result.success(logList.getTotalElements(), logList.getContent());
     }
 
