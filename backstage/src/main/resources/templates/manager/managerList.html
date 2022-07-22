@@ -86,7 +86,9 @@
         //执行渲染
         table.render({
             elem: '#table' //指定原始表格元素选择器（推荐id选择器）
-            ,url: '/sys/admin/list'
+            ,url: '/sys/manager'
+            ,method: 'post'
+            ,contentType: 'application/json'
             ,id: 'mg'
             ,request: {
                 limitName: 'size' //每页数据量的参数名，默认：limit
@@ -141,7 +143,7 @@
                     ,shadeClose: true
                     ,shade: 0 //遮罩透明度
                     ,maxmin: true //允许全屏最小化
-                    ,content:'/sys/adminView?mangerId='+data.id
+                    ,content:'/sys/manager/'+data.id
                 });
             } else if(layEvent === 'del'){
                 layer.confirm('确定删除吗?',{title:'删除'}, function(index){

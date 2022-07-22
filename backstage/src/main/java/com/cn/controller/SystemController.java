@@ -1,6 +1,5 @@
 package com.cn.controller;
 
-import cn.hutool.json.JSONUtil;
 import com.cn.LogService;
 import com.cn.ManagerService;
 import com.cn.RoleService;
@@ -8,12 +7,13 @@ import com.cn.entity.*;
 import com.cn.pojo.MenuDTO;
 import com.cn.util.Result;
 import com.cn.util.UploadUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -38,30 +38,30 @@ public class SystemController {
     private final ManagerService managerService;
     private final RoleService roleService;
     private final LogService logService;
-
-    /*
-      下面两个底层实现一样  唯一区别就是hasRole默认添加 ROLE_ 前缀
-      @PreAuthorize("hasAuthority('ROLE_admin')")
-      @PreAuthorize("hasRole('admin')") 方法调用前判断是否有权限
-      @PreAuthorize("hasPermission('','sys:user')") 判断自定义权限标识符
-      @PostAuthorize("returnObject.id%2==0") 方法调用完后判断 若为false则无权限  基本用不上
-      @PostFilter("filterObject.id%2==0") 对返回结果进行过滤  filterObject内置为返回对象
-      @PreFilter(filterTarget="ids", value="filterObject%2==0") 对方法参数进行过滤 如有多参则指定参数 ids为其中一个参数
-     */
+    private final ObjectMapper objectMapper;
 
     /**
+     * 权限注解说明
+     * 下面两个权限注解底层实现一样  唯一区别就是hasRole默认添加 ROLE_ 前缀
+     * @PreAuthorize("hasAuthority('ROLE_admin')")
+     * @PreAuthorize("hasRole('admin')") 方法调用前判断是否有权限
+     * @PreAuthorize("hasPermission('sys','created')") 自定义判断权限标识符
+     * @PostAuthorize("returnObject.id%2==0") 方法调用完后判断 若为false则无权限  基本用不上
+     * @PostFilter("filterObject.id%2==0") 对返回结果进行过滤  filterObject内置为返回对象
+     * @PreFilter(filterTarget="ids", value="filterObject%2==0") 对方法参数进行过滤 如有多参则指定参数 ids为其中一个参数
+     * 上述注解方式属于静态鉴权 由于本项目采用了动态鉴权模式:@link MyAuthorizationManager .所以上述注解并未使用到
+     *
      * 管理员列表页
      */
-    @PreAuthorize("hasAuthority('sys:admin')")
-    @RequestMapping("/adminList")
+    @GetMapping("/manager")
     public String managerList() {
         return "manager/managerList";
     }
 
     @ResponseBody
-    @RequestMapping("/admin/list")
+    @PostMapping("/manager")
     public Result<List<Manager>> getManagerList(@PageableDefault(sort = {"createdAt"}, direction = Sort.Direction.DESC)Pageable pageable,
-                                                @Valid Manager manager) {
+                                                @Valid @RequestBody Manager manager) {
         Page<Manager> managerList = managerService.getManagersList(
                 pageable.withPage(pageable.getPageNumber()-1), manager);
         return Result.success(managerList.getTotalElements(), managerList.getContent());
@@ -70,8 +70,8 @@ public class SystemController {
     /**
      * 管理员详情页
      */
-    @RequestMapping("/adminView")
-    public String managerDetail(@RequestParam Long mangerId, Model model) {
+    @GetMapping("/manager/{managerId}")
+    public String managerDetail(@PathVariable Long mangerId, Model model) {
         Manager manager = managerService.getManagerById(mangerId);
         model.addAttribute("manager", manager);
         return "manager/managerDetail";
@@ -121,7 +121,6 @@ public class SystemController {
     /**
      * 删除管理员
      */
-    @PreAuthorize("hasAuthority('admin:del')")
     @ResponseBody
     @RequestMapping("/adminDel")
     public Result<?> delManager(@RequestParam Long managerId) {
@@ -159,7 +158,6 @@ public class SystemController {
      *
      * @param managerId 管理员id
      */
-    @PreAuthorize("hasAuthority('admin:reset')")
     @ResponseBody
     @RequestMapping("/resetPwd")
     public Result<?> resetPassword(@RequestParam Long managerId) {
@@ -170,7 +168,6 @@ public class SystemController {
     /**
      * 角色列表页
      */
-    @PreAuthorize("hasAuthority('role:view')")
     @RequestMapping("/roleList")
     public String roleList() {
         return "role/roleList";
@@ -195,7 +192,6 @@ public class SystemController {
     /**
      * 新增或修改角色页面
      */
-    @PreAuthorize("hasAnyAuthority('role:add','role:alt')")
     @RequestMapping("/roleEdit")
     public String roleEdit(@RequestParam(required = false) Long roleId, Model model) {
         Role role = new Role();
@@ -209,7 +205,6 @@ public class SystemController {
     /**
      * 保存角色
      */
-    @PreAuthorize("hasAnyAuthority('role:add','role:alt')")
     @RequestMapping("/roleSave")
     @ResponseBody
     public Result<?> saveRole(@Valid Role role) {
@@ -220,11 +215,10 @@ public class SystemController {
     /**
      * 角色授权页面
      */
-    @PreAuthorize("hasAnyAuthority('role:grant','role:view')")
     @RequestMapping("/grant")
-    public String grantForm(@RequestParam long roleId, @RequestParam String type, Model model) {
+    public String grantForm(@RequestParam long roleId, @RequestParam String type, Model model) throws JsonProcessingException {
         Set<MenuDTO> menuSet = roleService.getMenuListWithChecked(roleId);
-        String menuList = JSONUtil.toJsonStr(menuSet);
+        String menuList = objectMapper.writeValueAsString(menuSet);
         model.addAttribute("type", type);
         model.addAttribute("roleId", roleId);
         model.addAttribute("menuList", menuList);
@@ -238,7 +232,6 @@ public class SystemController {
      * @param menuIds 菜单id列表
      * @return Result
      */
-    @PreAuthorize("hasAuthority('role:grant')")
     @PostMapping("/saveGrant")
     @ResponseBody
     public Result<?> saveGrant(Long roleId, String menuIds) {
@@ -249,7 +242,6 @@ public class SystemController {
     /**
      * 是否停用角色
      */
-    @PreAuthorize("hasAuthority('role:alt')")
     @RequestMapping("/togAvailable")
     @ResponseBody
     public Result<?> altRole(@RequestParam long roleId) {
@@ -260,7 +252,6 @@ public class SystemController {
     /**
      * 删除角色
      */
-    @PreAuthorize("hasAuthority('role:del')")
     @RequestMapping("/roleDel")
     @ResponseBody
     public Result<?> delRole(@RequestParam long roleId) {
@@ -271,7 +262,6 @@ public class SystemController {
     /**
      * 菜单列表页
      */
-    @PreAuthorize("hasAuthority('menu:view')")
     @RequestMapping("/menuList")
     public String menuList(Model model) {
         List<Permission> menuList = roleService.getMenuList();
@@ -282,7 +272,6 @@ public class SystemController {
     /**
      * 新增或修改菜单页
      */
-    @PreAuthorize("hasAnyAuthority('menu:add','menu:alt')")
     @RequestMapping("/menuEdit")
     public String menuEdit(@RequestParam(required = false) Long menuId, @RequestParam(required = false) Long parentId, Model model) {
         Permission permission = new Permission();
@@ -308,7 +297,6 @@ public class SystemController {
     /**
      * 保存菜单
      */
-    @PreAuthorize("hasAnyAuthority('menu:add','menu:alt')")
     @RequestMapping("/menuSave")
     @ResponseBody
     public Result<?> saveMenu(@Valid Permission permission) {
@@ -319,7 +307,6 @@ public class SystemController {
     /**
      * 删除菜单
      */
-    @PreAuthorize("hasAuthority('menu:del')")
     @RequestMapping("/menuDel")
     @ResponseBody
     public Result<?> delMenu(@RequestParam long menuId) {
@@ -330,7 +317,6 @@ public class SystemController {
     /**
      * 登录日志列表页
      */
-    @PreAuthorize("hasAuthority('sys:log')")
     @RequestMapping("/loginLogs")
     public String loginLogList() {
         return "system/logList";
@@ -352,8 +338,8 @@ public class SystemController {
      * @param file 文件
      * @return Result
      */
-    @RequestMapping("/upload")
     @ResponseBody
+    @RequestMapping("/upload")
     public Result<String> uploadAvatar(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return Result.failure(222, "文件为空");

@@ -5,10 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
@@ -18,11 +17,11 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
  * EnableGlobalMethodSecurity(prePostEnabled = true) 开启security注解
  *
  * @author ngcly
- * @date 2018-01-02 17:32
+ * @since 2018-01-02 17:32
  */
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final ManagerService managerService;
@@ -31,11 +30,8 @@ public class WebSecurityConfig {
     private final LoginFailureHandler loginFailureHandler;
     private final MyAuthenticationDetailsSource myAuthenticationDetailsSource;
 
-    @Bean
-    public WebSecurityCustomizer ignoringCustomizer() {
-        //忽略静态文件 也可以在下面忽略
-        return (web) -> web.ignoring().antMatchers("/webjars/**", "/layui/**", "/js/**", "/css/**", "/img/**", "/media/**", "/**/favicon.ico", "/druid/**");
-    }
+    private static final String[] ignoringUrls = new String[]{"/captcha", "/webjars/**", "/layui/**", "/js/**", "/css/**",
+            "/img/**", "/media/**", "/**/favicon.ico", "/druid/**"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -44,12 +40,14 @@ public class WebSecurityConfig {
                 .headers()
                 .frameOptions()
                 .sameOrigin();
+
         http
-                .authorizeRequests()
-                .antMatchers("/captcha")
+                .authorizeHttpRequests()
+                .antMatchers(ignoringUrls)
                 .permitAll()
                 .anyRequest()
-                .authenticated();
+                .access(new MyAuthorizationManager(managerService));
+
         http
                 .formLogin()
                 .authenticationDetailsSource(myAuthenticationDetailsSource)
@@ -93,5 +91,11 @@ public class WebSecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+//    @Bean
+//    public RoleHierarchy roleHierarchy() {
+//        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+//        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_STAFF \n ROLE_STAFF > ROLE_USER");
+//        return roleHierarchy;
+//    }
 
 }

@@ -111,7 +111,7 @@
         <!-- 底部固定区域 -->
         © admin.ngcly.cn
         <button class="layui-btn layui-btn-danger layui-btn-xs" style="margin-left: 20px">捐赠作者</button>
-        <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=531237716&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:531237716:51" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>
+        <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=531237716&site=qq&menu=yes"><img src="http://wpa.qq.com/pa?p=2:531237716:51" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>
     </div>
 </div>
 <script src="/webjars/layui/layui.js"></script>
@@ -206,8 +206,8 @@
             });
         });
 
-        var init = [[${init}]];
-        if(init==true){
+        const init = [[${init}]];
+        if(init === true){
             layer.open({
                 type: 1
                 ,title: false //不显示标题栏
@@ -231,10 +231,10 @@
                 area: ["330px", "350px"],
                 tab: [{
                     title: "支付宝",
-                    content: "<img src='/img/zfb.jpg' width='200' height='300' style='margin-left: 60px'>"
+                    content: "<img src='/img/zfb.jpg' width='200' height='300' style='margin-left: 60px' alt='alipay'>"
                 }, {
                     title: "微信",
-                    content: "<img src='/img/wx.jpg' width='200' height='300' style='margin-left: 60px'>"
+                    content: "<img src='/img/wx.jpg' width='200' height='300' style='margin-left: 60px' alt='wechat'>"
                 }]
             });
         });

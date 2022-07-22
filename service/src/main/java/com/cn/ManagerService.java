@@ -2,7 +2,6 @@ package com.cn;
 
 import com.cn.config.GlobalException;
 import com.cn.dao.ManagerRepository;
-import com.cn.dao.RoleRepository;
 import com.cn.entity.Manager;
 import com.cn.entity.Role;
 
@@ -29,7 +28,7 @@ import java.util.*;
 @AllArgsConstructor
 public class ManagerService implements UserDetailsService {
     private final ManagerRepository managerRepository;
-    private final RoleRepository roleRepository;
+    private final RoleService roleService;
 
     /**
      * 根据用户名获取用户
@@ -50,7 +49,7 @@ public class ManagerService implements UserDetailsService {
      * @return Manager
      */
     public Manager getManagerById(Long managerId) {
-        return managerRepository.getById(managerId);
+        return managerRepository.getReferenceById(managerId);
     }
 
     /**
@@ -74,14 +73,14 @@ public class ManagerService implements UserDetailsService {
     public void saveManager(Manager curManager, Manager updateManager) {
         Set<Role> roleList = curManager.getRoleList();
         if (Manager.ADMIN.equals(curManager.getUsername())) {
-            roleList = roleRepository.getAllByAvailableIsTrueAndRoleType(Role.ROLE_TYPE_MANAGER);
+            roleList = roleService.getAvailableRoles(Role.ROLE_TYPE_MANAGER);
         }
         //获取被修改人之前的角色-当前人的角色=必存角色 最后结果为必存角色+回传角色
         Set<Role> allRole = new HashSet<>(roleList);
 
         Set<Role> roles = new HashSet<>();
         if (Objects.nonNull(updateManager.getId())) {
-            Manager manager = managerRepository.getById(updateManager.getId());
+            Manager manager = managerRepository.getReferenceById(updateManager.getId());
             //判断是否当前人在改自己的信息
             if (!curManager.getId().equals(updateManager.getId())) {
                 updateManager.setUsername(manager.getUsername());
@@ -135,7 +134,7 @@ public class ManagerService implements UserDetailsService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void updatePassword(Long managerId, String oldPassword, String password) {
-        Manager manager = managerRepository.getById(managerId);
+        Manager manager = managerRepository.getReferenceById(managerId);
         BCryptPasswordEncoder bc = new BCryptPasswordEncoder(4);
         if (!bc.matches(oldPassword, manager.getPassword())) {
             throw new GlobalException(333, "原密码错误");
@@ -151,9 +150,17 @@ public class ManagerService implements UserDetailsService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void updatePassword(Long managerId, String password) {
-        Manager manager = managerRepository.getById(managerId);
+        Manager manager = managerRepository.getReferenceById(managerId);
         BCryptPasswordEncoder bc = new BCryptPasswordEncoder(4);
         manager.setPassword(bc.encode(password));
     }
 
+
+    /**
+     * 获取资源角色映射关系数据
+     * @return Map<String, List<String>>
+     */
+    public Map<String, Set<String>> getAuthorizationMetaMap() {
+        return roleService.getUrlRoleMap();
+    }
 }

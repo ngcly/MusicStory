@@ -11,12 +11,7 @@ import com.cn.pojo.MenuDTO;
 import com.cn.pojo.CaptchaInfo;
 import com.cn.util.MenuUtil;
 import lombok.AllArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +20,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 后台首页控制器
@@ -39,33 +35,27 @@ public class IndexController {
     private final RoleService roleService;
 
     /**
-     * 若加载了data rest包 则默认根目录为 所有接口link
-     * 这里必须得配置个 / 不然所有静态文件全部不起作用
-     * 只有security才这样 shiro正常 原因未知
+     * 首页控制台
      */
     @RequestMapping("/")
     public String index(@AuthenticationPrincipal Manager manager, Model model) {
         boolean init = false;
-        List<Permission> menuList;
+        Collection<Role> roleList;
         if (Manager.ADMIN.equals(manager.getUsername())) {
             //管理员拥有最高权限
-            menuList = roleService.getPermissionList();
-            //得到当前的认证信息
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            //生成当前的所有授权
-            Collection<GrantedAuthority> updatedAuthorities = new HashSet<>(auth.getAuthorities());
-            // 添加 授权
-            roleService.getAllRole().forEach(role -> updatedAuthorities.add(new SimpleGrantedAuthority(role.getRoleCode())));
-            menuList.forEach(permission -> updatedAuthorities.add(new SimpleGrantedAuthority(permission.getPurview())));
-            // 生成新的认证信息
-            Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials(), updatedAuthorities);
-            // 重置认证信息
-            SecurityContextHolder.getContext().setAuthentication(newAuth);
+            roleList = roleService.getAllRole();
         } else {
-            Set<Role> roleList = managerService.getManagerById(manager.getId()).getRoleList();
-            menuList = new ArrayList<>();
-            roleList.forEach(role -> menuList.addAll(role.getPermissions()));
+            roleList = managerService.getManagerById(manager.getId()).getRoleList();
         }
+        List<MenuDTO> menuList = roleList.parallelStream()
+                .map(Role::getPermissions)
+                .flatMap(Collection::parallelStream)
+                .filter(permission -> Permission.RESOURCE_MENU.equals(permission.getResourceType()))
+                .distinct()
+                .sorted(Comparator.comparing(Permission::getSort))
+                .map(permission -> (MenuDTO) permission)
+                .toList();
+
         if (manager.getState() == Manager.STATE_INITIALIZE) {
             init = true;
             manager.setState(Manager.STATE_NORMAL);
@@ -73,11 +63,7 @@ public class IndexController {
         }
         model.addAttribute("init", init);
         model.addAttribute("manager", manager);
-
-        List<MenuDTO> list = menuList.stream().filter(permission ->
-                        Permission.RESOURCE_MENU.equals(permission.getResourceType()))
-                .map(permission -> (MenuDTO) permission).toList();
-        model.addAttribute("menuList", MenuUtil.makeMenuToTree(list));
+        model.addAttribute("menuList", MenuUtil.makeMenuToTree(menuList));
         return "index";
     }
 

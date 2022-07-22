@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 角色权限service
@@ -30,7 +31,7 @@ public class RoleService {
      * 根据ID获取角色
      */
     public Role findRole(long roleId) {
-        return roleRepository.getById(roleId);
+        return roleRepository.getReferenceById(roleId);
     }
 
     /**
@@ -62,7 +63,7 @@ public class RoleService {
         if (role.getId() == null) {
             roleRepository.save(role);
         } else {
-            Role role1 = roleRepository.getById(role.getId());
+            Role role1 = roleRepository.getReferenceById(role.getId());
             role1.setRoleName(role.getRoleName());
             role1.setRoleCode(role.getRoleCode());
             role1.setRoleType(role.getRoleType());
@@ -76,7 +77,7 @@ public class RoleService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void saveGrant(long roleId, String menuIds) {
-        Role role = roleRepository.getById(roleId);
+        Role role = roleRepository.getReferenceById(roleId);
         List<Permission> permissions = permissionRepository.findMenuList();
         List<Permission> permissionList = new ArrayList<>();
         String[] permissionIds = menuIds.split(",");
@@ -95,7 +96,7 @@ public class RoleService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void altAvailable(long roleId) {
-        Role role = roleRepository.getById(roleId);
+        Role role = roleRepository.getReferenceById(roleId);
         role.setAvailable(!role.getAvailable());
     }
 
@@ -111,7 +112,7 @@ public class RoleService {
      * 根据ID获取菜单
      */
     public Permission getPermissionById(long menuId) {
-        return permissionRepository.getById(menuId);
+        return permissionRepository.getReferenceById(menuId);
     }
 
     /**
@@ -137,7 +138,7 @@ public class RoleService {
      */
     public Set<MenuDTO> getMenuListWithChecked(long roleId){
         List<Permission> permissions = permissionRepository.findMenuList();
-        List<Permission> rolePermissions = roleRepository.getById(roleId).getPermissions();
+        List<Permission> rolePermissions = roleRepository.getReferenceById(roleId).getPermissions();
         return MenuUtil.checkMenuSelected(permissions,rolePermissions);
     }
 
@@ -148,10 +149,10 @@ public class RoleService {
     public void saveMenu(Permission permission) {
         Permission pms = new Permission();
         if (permission.getId() != null) {
-            pms = permissionRepository.getById(permission.getId());
+            pms = permissionRepository.getReferenceById(permission.getId());
         } else {
             if (!MenuDTO.rootId.equals(permission.getParentId())) {
-                Permission parentPermission = permissionRepository.getById(permission.getParentId());
+                Permission parentPermission = permissionRepository.getReferenceById(permission.getParentId());
                 pms.setParentId(parentPermission.getId());
                 pms.setParentIds(parentPermission.getParentIds() + "/" + parentPermission.getId());
             } else {
@@ -173,9 +174,21 @@ public class RoleService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void delMenu(long menuId) {
-        Permission permission = permissionRepository.getById(menuId);
+        Permission permission = permissionRepository.getReferenceById(menuId);
         permissionRepository.deletePermissionByParentIdsStartingWith(permission.getParentIds() + "/" + permission.getId());
         permissionRepository.delete(permission);
+    }
+
+    /**
+     * 菜单url与角色映射关系元数据
+     * @return Map<String, List<String>>
+     */
+    @Transactional(readOnly = true)
+    public Map<String, Set<String>> getUrlRoleMap() {
+        List<Permission> permissions = permissionRepository.findAllByResourceType(Permission.RESOURCE_MENU);
+        Map<String, Set<String>> urlRoleMap = permissions.stream().collect(Collectors.toMap(Permission::getUrl,
+                permission -> permission.getRoles().stream().map(Role::getRoleCode).collect(Collectors.toSet())));
+        return urlRoleMap;
     }
 
 }

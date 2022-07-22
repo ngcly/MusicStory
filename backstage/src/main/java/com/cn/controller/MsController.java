@@ -37,7 +37,6 @@ public class MsController {
     /**
      * 用户列表页
      */
-    @PreAuthorize("hasAuthority('user:view')")
     @RequestMapping("/user")
     public String userList() {
         return "user/userList";
@@ -85,7 +84,6 @@ public class MsController {
     /**
      * 修改用户
      */
-    @PreAuthorize("hasAuthority('user:alt')")
     @ResponseBody
     @RequestMapping("/userSave")
     public Result<?> saveUser(@Valid User user) {
@@ -97,19 +95,16 @@ public class MsController {
     /**
      * 删除用户
      */
-    @PreAuthorize("hasAuthority('user:del')")
     @ResponseBody
     @RequestMapping("/userDel")
     public Result<?> delUser(@RequestParam Long userId) {
         userService.delUser(userId);
         return Result.success();
-
     }
 
     /**
      * 分类列表页
      */
-    @PreAuthorize("hasAuthority('clazz:view')")
     @RequestMapping("/classify")
     public String classifyList() {
         return "classify/classifyList";
@@ -142,7 +137,6 @@ public class MsController {
     /**
      * 保存分类
      */
-    @PreAuthorize("hasAnyAuthority('clazz:add','clazz:alt')")
     @ResponseBody
     @PostMapping("/saveClassify")
     public Result<?> saveClassify(@Valid Classify classify) {
@@ -154,7 +148,6 @@ public class MsController {
     /**
      * 删除分类
      */
-    @PreAuthorize("hasAuthority('clazz:del')")
     @ResponseBody
     @GetMapping("/classifyDel/{id}")
     public Result<?> delClassify(@PathVariable("id") Long id) {
@@ -165,7 +158,6 @@ public class MsController {
     /**
      * 文章列表页
      */
-    @PreAuthorize("hasAuthority('story:view')")
     @RequestMapping("/essay")
     public String essayList(Model model) {
         model.addAttribute("classifyList", classifyService.getClassifyList());
@@ -196,7 +188,6 @@ public class MsController {
     /**
      * 文章审查
      */
-    @PreAuthorize("hasAuthority('story:alt')")
     @ResponseBody
     @PostMapping("/essaySave")
     public Result<?> essaySave(@Valid Essay essay) {
@@ -207,7 +198,6 @@ public class MsController {
     /**
      * 公告列表页
      */
-    @PreAuthorize("hasAuthority('not:view')")
     @RequestMapping("/notice")
     public String noticeList() {
         return "notice/noticeList";
@@ -240,7 +230,6 @@ public class MsController {
     /**
      * 保存公告
      */
-    @PreAuthorize("hasAnyAuthority('not:add','not:alt')")
     @ResponseBody
     @PostMapping("/saveNotice")
     public Result<?> saveNotice(@Valid Notice notice) {
@@ -251,7 +240,6 @@ public class MsController {
     /**
      * 删除公告
      */
-    @PreAuthorize("hasAuthority('not:del')")
     @ResponseBody
     @GetMapping("/noticeDel/{id}")
     public Result<?> delNotice(@PathVariable("id") Long id) {
@@ -262,7 +250,6 @@ public class MsController {
     /**
      * 轮播图页
      */
-    @PreAuthorize("hasAuthority('sel:view')")
     @RequestMapping("/carousel")
     public String carouselList() {
         return "carousel/carouselList";
@@ -305,7 +292,6 @@ public class MsController {
     /**
      * 保存轮播图
      */
-    @PreAuthorize("hasAnyAuthority('sel:add','sel:alt')")
     @ResponseBody
     @PostMapping("/saveCarousel")
     public Result<?> saveCarousel(@Valid CarouselCategory carouselCategory) {
@@ -316,7 +302,6 @@ public class MsController {
     /**
      * 添加轮播图
      */
-    @PreAuthorize("hasAnyAuthority('sel:add','sel:alt')")
     @ResponseBody
     @RequestMapping("/addCarousel")
     public Result<?> addCarousel(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id) {
@@ -331,7 +316,6 @@ public class MsController {
     /**
      * 删除轮播分类
      */
-    @PreAuthorize("hasAuthority('sel:del')")
     @ResponseBody
     @GetMapping("/carouselDel/{id}")
     public Result<?> delCarouselCategory(@PathVariable("id") Long id) {
@@ -342,7 +326,6 @@ public class MsController {
     /**
      * 删除轮播图
      */
-    @PreAuthorize("hasAuthority('sel:del')")
     @ResponseBody
     @GetMapping("/carouselDel")
     public Result<?> delCarousel(@RequestParam("id") Long id, @RequestParam("url") String url) {

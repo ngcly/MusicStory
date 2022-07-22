@@ -1,16 +1,17 @@
 package com.cn.pojo;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 /**
  * 树数据封装类
  *
- * @author chen
- * @date 2018-01-02 17:56
+ * @author ngcly
  */
-@Data
+@Getter
+@Setter
 public class MenuDTO {
     public static Long rootId = 0L;
 

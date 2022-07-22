@@ -2,25 +2,21 @@ package com.cn.entity;
 
 import com.cn.pojo.MenuDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.List;
-
 
 /**
  * 后台资源实体类
  *
  * @author ngcly
- * @since 2017/6/23.
  */
 @Setter
 @Entity
 @Table(name = "permission")
-@JsonIgnoreProperties(value = {"handler", "hibernateLazyInitializer", "fieldHandler"})
-public class Permission extends MenuDTO implements Serializable {
+@JsonIgnoreProperties(value = {"roles", "handler", "hibernateLazyInitializer", "fieldHandler"})
+public class Permission extends MenuDTO {
 
     /**
      * 资源类型，[menu|button]
@@ -42,10 +38,10 @@ public class Permission extends MenuDTO implements Serializable {
      */
     private Integer sort;
 
-//    /**
-//     * 菜单与角色 多对多
-//     */
-//    private List<Role> roles;
+    /**
+     * 菜单与角色 多对多
+     */
+    private List<Role> roles;
 
     /**
      * 资源类型
@@ -103,8 +99,9 @@ public class Permission extends MenuDTO implements Serializable {
         return sort;
     }
 
-//    @ManyToMany(mappedBy = "permissions")
-//    public List<Role> getRoles() {
-//        return roles;
-//    }
+    @ManyToMany(mappedBy = "permissions")
+    public List<Role> getRoles() {
+        return roles;
+    }
+
 }

@@ -2,7 +2,9 @@ package com.cn.entity;
 
 import com.cn.config.AbstractUserDateAudit;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.List;
@@ -14,11 +16,12 @@ import java.util.Objects;
  * @author ngcly
  * @date 2017/6/23
  */
-@Data
+@Setter
+@Getter
 @Entity
 @Table(name = "role", uniqueConstraints = @UniqueConstraint(columnNames = {"roleCode", "roleType"}))
-@JsonIgnoreProperties(value = {"handler", "hibernateLazyInitializer", "fieldHandler"})
-public class Role extends AbstractUserDateAudit {
+@JsonIgnoreProperties(value = {"userInfoList", "managers", "handler", "hibernateLazyInitializer", "fieldHandler"})
+public class Role extends AbstractUserDateAudit implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,11 +63,11 @@ public class Role extends AbstractUserDateAudit {
     @ManyToMany(mappedBy = "roleList")
     private List<User> userInfoList;
 
-//    /**
-//     * 管理员 - 角色关系定义; 管理员-角色 多对多
-//     */
-//    @ManyToMany(mappedBy = "roleList")
-//    private List<Manager> managers;
+    /**
+     * 管理员 - 角色关系定义; 管理员-角色 多对多
+     */
+    @ManyToMany(mappedBy = "roleList")
+    private List<Manager> managers;
 
     /**
      * 角色 -- 权限关系：多对多关系;
@@ -105,4 +108,8 @@ public class Role extends AbstractUserDateAudit {
     public static final byte ROLE_TYPE_MANAGER = 1;
     public static final byte ROLE_TYPE_CUSTOMER = 2;
 
+    @Override
+    public String getAuthority() {
+        return roleCode;
+    }
 }

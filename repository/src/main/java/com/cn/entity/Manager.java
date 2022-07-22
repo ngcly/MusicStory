@@ -8,14 +8,12 @@ import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -28,7 +26,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "manager")
-@JsonIgnoreProperties(value = {"handler", "hibernateLazyInitializer", "fieldHandler"})
+@JsonIgnoreProperties(value = {"roleList", "handler", "hibernateLazyInitializer", "fieldHandler"})
 public class Manager extends AbstractDateAudit implements UserDetails, CredentialsContainer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -110,17 +108,7 @@ public class Manager extends AbstractDateAudit implements UserDetails, Credentia
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> authorities = new HashSet<>();
-        SimpleGrantedAuthority authority;
-        for (Role role : this.getRoleList()) {
-            authority = new SimpleGrantedAuthority(role.getRoleCode());
-            authorities.add(authority);
-            for (Permission permission : role.getPermissions()) {
-                authority = new SimpleGrantedAuthority(permission.getPurview());
-                authorities.add(authority);
-            }
-        }
-        return authorities;
+        return this.roleList;
     }
 
     @Override

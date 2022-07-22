@@ -229,8 +229,8 @@ CREATE TABLE `manager` (
 /*Data for the table `manager` */
 
 insert  into `manager`(`id`,`created_at`,`updated_at`,`avatar`,`birthday`,`gender`,`password`,`real_name`,`state`,`username`) values
-                                                                                                                                  (1,'2018-12-26 11:56:00','2019-07-10 01:25:07','https://oss.ngcly.cn/avatar/1562739913060.jpg?Expires=1878099905&OSSAccessKeyId=LTAI6bpHNc1Fjfb7&Signature=ziTxlOD3Ohb5nzrKj2bJXN%2FlvA8%3D','1992-09-21',1,'$2a$04$a90t7tmpIjJl6Ic9PZTHgeJDqN4iRwk45s8AVmN10v9cZ3jYl0qk6','陈林',1,'admin'),
-                                                                                                                                  (2,'2018-12-26 11:56:48','2020-05-30 14:11:33','https://oss.ngcly.cn/avatar/1590865896562.png?Expires=1906225888&OSSAccessKeyId=LTAI6bpHNc1Fjfb7&Signature=FdU5jwB4f3mJ66HbIxTv4aQKQhU%3D','2018-03-18',1,'$2a$04$6y1tJwU0WgqL6bnXC7Q2t.gfwhqI1lrSOBy9dLuBhrnNnXFFV88LC','睿智',1,'vip');
+                                                                                                                                  (1,'2018-12-26 11:56:00','2019-07-10 01:25:07','https://music-story.oss-cn-hongkong.aliyuncs.com/uPic/beautify.png','1992-09-21',1,'$2a$04$a90t7tmpIjJl6Ic9PZTHgeJDqN4iRwk45s8AVmN10v9cZ3jYl0qk6','陈林',1,'admin'),
+                                                                                                                                  (2,'2018-12-26 11:56:48','2020-05-30 14:11:33','https://music-story.oss-cn-hongkong.aliyuncs.com/uPic/cute.png','2018-03-18',1,'$2a$04$6y1tJwU0WgqL6bnXC7Q2t.gfwhqI1lrSOBy9dLuBhrnNnXFFV88LC','睿智',1,'vip');
 
 /*Table structure for table `manager_role` */
 
