@@ -157,10 +157,11 @@ public class ManagerService implements UserDetailsService {
 
 
     /**
-     * 获取资源角色映射关系数据
-     * @return Map<String, List<String>>
+     * 获取url权限元数据
+     * @return List<String>
      */
-    public Map<String, Set<String>> getAuthorizationMetaMap() {
-        return roleService.getUrlRoleMap();
+    public List<String> getUrlPermissionMetadata() {
+        //TODO 此处需要做缓存
+        return roleService.getUrlPermission();
     }
 }

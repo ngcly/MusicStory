@@ -10,7 +10,7 @@
 <div class="child-nav">
     <span class="layui-breadcrumb">
          <a>系统设置</a>
-         <a href="/sys/menuList">菜单列表</a>
+         <a href="/sys/menu">菜单列表</a>
         <a><cite th:text="${#strings.equals(menu.id,null)?'新增菜单':'修改菜单'}"></cite></a>
     </span>
     <a class="layui-btn layui-btn-sm" href="javascript:location.replace(location.href);" title="刷新" style="float:right;margin-top: 3px"><i class="layui-icon layui-icon-refresh-3"></i></a>
@@ -19,7 +19,7 @@
     <div class="layui-card">
         <div class="layui-card-header" th:text="${#strings.equals(menu.id,null)?'新增菜单':'修改菜单'}"></div>
         <div class="layui-card-body">
-            <form class="layui-form" action="/sys/menuSave" method="post">
+            <form class="layui-form" action="/sys/menu" method="post">
                 <input type="hidden" name="id" id="mid" th:value="${menu.id}">
                 <input type="hidden" name="parentId" th:value="${menu.parentId}" />
                 <div class="layui-form-item">
@@ -29,11 +29,11 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">权限标识</label>
+                    <label class="layui-form-label">请求方法</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="purview" lay-verify="required" lay-vertype="tips" th:value="${menu.purview}" autocomplete="off" class="layui-input">
+                        <input type="text" name="httpMethod" lay-verify="required" lay-vertype="tips" th:value="${menu.httpMethod}" autocomplete="off" class="layui-input">
                     </div>
-                    <div class="layui-form-mid layui-word-aux">规则：模块名+:功能名 例：sys:add</div>
+                    <div class="layui-form-mid layui-word-aux">GET|POST|PUT|DELETE</div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">资源类型</label>
@@ -73,7 +73,7 @@
                 <div class="layui-form-item">
                     <div class="layui-input-block">
                         <button class="layui-btn" id="save" lay-submit lay-filter="save" th:text="${#strings.equals(menu.id,null)?'保存':'修改'}"></button>
-                        <a href="/sys/menuList" type="button" class="layui-btn layui-btn-primary">返回</a>
+                        <a href="/sys/menu.html" type="button" class="layui-btn layui-btn-primary">返回</a>
                     </div>
                 </div>
             </form>
@@ -99,9 +99,10 @@
         form.on('submit(save)', function(data){
             const headers = {};
             headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
+            const methodType = $('#id').val() === null?'post':'put';
             $.ajax({
                 url:data.form.action,
-                type:data.form.method,
+                type:methodType,
                 headers: headers,
                 data:data.field,
                 dataType:'json',
@@ -111,7 +112,7 @@
                 success:function(data){
                     if(data.code == 0){
                         layer.msg(data.msg, {icon: 1,time:600}, function () {
-                            location.href="/sys/menuList";
+                            location.href="/sys/menu.html";
                         });
                     }else{
                         layer.msg(data.msg,{time:1000});

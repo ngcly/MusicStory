@@ -50,7 +50,7 @@
                 checkNodes += nodes[i].id+",";
 //                }
             }
-            $.post('/sys/saveGrant',{'[[${_csrf.parameterName}]]':'[[${_csrf.token}]]',roleId: roleId , menuIds: checkNodes},function (data) {
+            $.post('/sys/role/grant',{'[[${_csrf.parameterName}]]':'[[${_csrf.token}]]',roleId: roleId , menuIds: checkNodes},function (data) {
                 if(data.code == 0){
                     layer.msg(data.msg, {icon: 1,time:600}, function () {
                         const index = parent.layer.getFrameIndex(window.name); //获取窗口索引

@@ -49,6 +49,10 @@ public class WebSecurityConfig {
                 .access(new MyAuthorizationManager(managerService));
 
         http
+                .csrf()
+                .ignoringAntMatchers(ignoringUrls);
+
+        http
                 .formLogin()
                 .authenticationDetailsSource(myAuthenticationDetailsSource)
                 //表单登录的 登录页

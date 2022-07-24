@@ -75,7 +75,7 @@
         //执行渲染
         table.render({
             elem: '#table' //指定原始表格元素选择器（推荐id选择器）
-            ,url: '/ms/essayList'
+            ,url: '/ms/essay'
             ,id: 'cs'
             ,request: {
                 limitName: 'size' //每页数据量的参数名，默认：limit
@@ -119,7 +119,7 @@
                     ,shadeClose: true
                     ,shade: 0 //遮罩透明度
                     ,maxmin: true //允许全屏最小化
-                    ,content:'/ms/essayAlt?id='+data.id
+                    ,content:'/ms/essay/edit.html?id='+data.id
                 });
             }
         });

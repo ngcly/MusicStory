@@ -35,7 +35,7 @@
                 <button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
             </div>
             <div class="layui-inline">
-                <a sec:authorize="hasAuthority('sel:add')" href="javascript:void(0)" type="button" id="add" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
+                <a sec:authorize="hasAuthority('POST_/ms/carousel')" href="javascript:void(0)" type="button" id="add" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
             </div>
         </div>
     </form>
@@ -55,7 +55,7 @@
         //执行渲染
         table.render({
             elem: '#table' //指定原始表格元素选择器（推荐id选择器）
-            ,url: '/ms/carouselList'
+            ,url: '/ms/carousel'
             ,id: 'cs'
             ,request: {
                 limitName: 'size' //每页数据量的参数名，默认：limit
@@ -87,22 +87,31 @@
         table.on('tool(carousel)', function(obj){
             const data = obj.data; //获得当前行数据
             const layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            const headers = {};
+            headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
             if(layEvent === 'del'){ //删除
                 layer.confirm('确定删除吗？',{title:'删除'}, function(index){
                     //向服务端发送删除指令
-                    $.getJSON('/ms/carouselDel/'+data.id, function(ret){
-                        if (ret.code == 0){
-                            layer.msg(ret.msg, {icon: 1,time:600},function () {
-                                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                            });
-                        } else {
-                            layer.msg(ret.msg, {icon: 2,time:600});
+                    $.ajax({
+                        url: '/ms/carousel',
+                        type: 'delete',
+                        headers: headers,
+                        data: {id: data.id},
+                        dataType: 'json',
+                        success: function(res) {
+                            if (res.code == 0){
+                                layer.msg(res.msg, {icon: 1,time:600},function () {
+                                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                                });
+                            } else {
+                                layer.msg(res.msg, {icon: 2,time:600});
+                            }
+                            layer.close(index);
                         }
-                    });
-                    layer.close(index);
+                    })
                 });
             } else if(layEvent === 'edit'){ //编辑
-                window.location.href='/ms/carouselAlt?id='+data.id;
+                window.location.href='/ms/carousel/edit.html?id='+data.id;
             }
         });
 
@@ -116,7 +125,7 @@
                 ,shadeClose: true
                 ,shade: 0 //遮罩透明度
                 ,maxmin: true //允许全屏最小化
-                ,content:'/ms/carouselCategoryAlt'
+                ,content:'/ms/carousel/category/edit.html'
             });
         });
 

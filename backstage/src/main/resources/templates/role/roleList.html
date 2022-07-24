@@ -49,7 +49,7 @@
                 <button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
             </div>
             <div class="layui-inline">
-                <a sec:authorize="hasAuthority('role:add')" href="javascript:void(0)" type="button" id="add" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
+                <a sec:authorize="hasAuthority('POST_/sys/role')" href="javascript:void(0)" type="button" id="add" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
             </div>
         </div>
     </form>
@@ -67,7 +67,7 @@
         //执行渲染
         table.render({
             elem: '#table' //指定原始表格元素选择器（推荐id选择器）
-            ,url: '/sys/role/list'
+            ,url: '/sys/role'
             ,id: 're'
             ,request: {
                 limitName: 'size' //每页数据量的参数名，默认：limit
@@ -102,6 +102,8 @@
             //注：tool是工具条事件名，manager是table原始容器的属性 lay-filter="对应的值"
             const data = obj.data; //获得当前行数据
             const layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            const headers = {};
+            headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
 
             if(layEvent === 'detail'){ //查看
                 layer.open({
@@ -112,30 +114,38 @@
                     ,shadeClose: true
                     ,shade: 0 //遮罩透明度
                     ,maxmin: true //允许全屏最小化
-                    ,content:'/sys/grant?roleId='+data.id+'&type=1'
+                    ,content:'/sys/role/grant.html?roleId='+data.id+'&type=1'
                 });
             } else if(layEvent === 'del'){
                 layer.confirm('确定删除吗?',{title:'删除'}, function(){
-                    $.getJSON('/sys/roleDel', {roleId:data.id}, function(ret){
-                        if (ret.code == 0){
-                            layer.msg(ret.msg, {icon: 1,time:600},function () {
-                                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                            });
-                        } else {
-                            layer.msg(ret.msg, {icon: 2,time:600});
+                    $.ajax({
+                        url: '/sys/role',
+                        type: 'delete',
+                        headers: headers,
+                        data: {roleId: data.id},
+                        dataType: 'json',
+                        success: function(res) {
+                            if (res.code == 0){
+                                layer.msg(res.msg, {icon: 1,time:600},function () {
+                                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                                });
+                            } else {
+                                layer.msg(res.msg, {icon: 2,time:600});
+                            }
+                            layer.close(index);
                         }
-                    });
+                    })
                 });
             } else if(layEvent === 'grant'){
                 layer.open({
                     type: 2 //Page层类型
                     ,skin: 'layui-layer-molv'
-                    ,area: ['400px', '500px']
+                    ,area: ['400px', '510px']
                     ,title: ['角色授权','font-size:18px']
                     ,shadeClose: true
                     ,shade: 0 //遮罩透明度
                     ,maxmin: true //允许全屏最小化
-                    ,content:'/sys/grant?roleId='+data.id+'&type=2'
+                    ,content:'/sys/role/grant.html?roleId='+data.id+'&type=2'
                 });
             } else if(layEvent === 'edit'){ //编辑
                 layer.open({
@@ -146,7 +156,7 @@
                     ,shadeClose: true
                     ,shade: 0 //遮罩透明度
                     ,maxmin: true //允许全屏最小化
-                    ,content:'/sys/roleEdit?roleId='+data.id
+                    ,content:'/sys/role/edit.html?roleId='+data.id
                 });
             }
         });
@@ -156,7 +166,7 @@
             const id = $(this).attr('data-id');
             const _this = $(this);
 
-            $.getJSON('/sys/togAvailable', {roleId:id}, function(ret){
+            $.getJSON('/sys/role/toggle', {roleId:id}, function(ret){
                 if (ret.code == 0){
                     layer.msg(ret.msg, {icon: 1,time:600});
                 } else {
@@ -185,7 +195,7 @@
                 ,shadeClose: true
                 ,shade: 0 //遮罩透明度
                 ,maxmin: true //允许全屏最小化
-                ,content:'/sys/roleEdit'
+                ,content:'/sys/role/edit.html'
             });
         });
 
@@ -194,7 +204,7 @@
 <script type="text/html" id="bar">
     <a class="layui-btn layui-btn-xs" lay-event="detail"><i class="layui-icon iconfont icon-view"></i>查看</a>
     <a class="layui-btn layui-btn-xs" lay-event="grant" ><i class="layui-icon layui-icon-auz"></i>授权</a>
-    <a sec:authorize="hasAuthority('role:alt')" class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
 </script>
 

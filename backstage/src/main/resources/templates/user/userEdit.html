@@ -18,7 +18,7 @@
 <div class="layui-col-md12">
     <div class="layui-card">
         <div class="layui-card-body">
-            <form class="layui-form" action="/ms/userSave" method="post">
+            <form class="layui-form" action="/ms/user" method="put">
                 <input type="hidden" id="altId" name="id" th:value="${user.id}">
                 <div class="layui-form-item">
                     <label class="layui-form-label">用户名</label>
@@ -113,7 +113,7 @@
                 success:function(result){
                     if(result.code == 0){
                         layer.msg(result.msg, {icon: 1,time:600}, function () {
-                            location.href="/ms/user";
+                            location.href="/ms/user.html";
                         });
                     }else{
                         layer.msg(result.msg,{time:1000});

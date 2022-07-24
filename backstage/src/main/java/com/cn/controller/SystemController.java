@@ -53,15 +53,15 @@ public class SystemController {
      *
      * 管理员列表页
      */
-    @GetMapping("/manager")
+    @GetMapping("/manager.html")
     public String managerList() {
         return "manager/managerList";
     }
 
     @ResponseBody
-    @PostMapping("/manager")
+    @GetMapping("/manager")
     public Result<List<Manager>> getManagerList(@PageableDefault(sort = {"createdAt"}, direction = Sort.Direction.DESC)Pageable pageable,
-                                                @Valid @RequestBody Manager manager) {
+                                                @Valid Manager manager) {
         Page<Manager> managerList = managerService.getManagersList(
                 pageable.withPage(pageable.getPageNumber()-1), manager);
         return Result.success(managerList.getTotalElements(), managerList.getContent());
@@ -71,8 +71,8 @@ public class SystemController {
      * 管理员详情页
      */
     @GetMapping("/manager/{managerId}")
-    public String managerDetail(@PathVariable Long mangerId, Model model) {
-        Manager manager = managerService.getManagerById(mangerId);
+    public String managerDetail(@PathVariable Long managerId, Model model) {
+        Manager manager = managerService.getManagerById(managerId);
         model.addAttribute("manager", manager);
         return "manager/managerDetail";
     }
@@ -80,7 +80,7 @@ public class SystemController {
     /**
      * 管理员编辑页
      */
-    @RequestMapping("/adminEdit")
+    @GetMapping("/manager/edit.html")
     public String altManager(@AuthenticationPrincipal Manager managerDetail, @RequestParam(required = false) Long managerId, Model model) {
         //最好是从当前授权信息里面提出角色列表来
         Set<Role> roles = managerDetail.getRoleList();
@@ -111,8 +111,16 @@ public class SystemController {
      * 新增或修改管理员信息
      */
     @ResponseBody
-    @RequestMapping("/adminSave")
-    public Result<?> register(@Valid Manager manager) {
+    @PostMapping("/manager")
+    public Result<?> addManager(@Valid Manager manager) {
+        Manager managerDetail = (Manager) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        managerService.saveManager(managerDetail, manager);
+        return Result.success();
+    }
+
+    @ResponseBody
+    @PutMapping("/manager")
+    public Result<?> updateManager(@Valid Manager manager) {
         Manager managerDetail = (Manager) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         managerService.saveManager(managerDetail, manager);
         return Result.success();
@@ -122,8 +130,8 @@ public class SystemController {
      * 删除管理员
      */
     @ResponseBody
-    @RequestMapping("/adminDel")
-    public Result<?> delManager(@RequestParam Long managerId) {
+    @DeleteMapping("/manager")
+    public Result<?> deleteManager(@RequestParam Long managerId) {
         Manager managerDetail = (Manager) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (managerDetail.getId().equals(managerId) || Long.valueOf(1).equals(managerId)) {
             return Result.failure(333, "禁止删除自己和admin");
@@ -137,7 +145,7 @@ public class SystemController {
      *
      * @return String
      */
-    @RequestMapping("/altPwd")
+    @GetMapping("/manager/pwd.html")
     public String altPwd() {
         return "manager/updatePwd";
     }
@@ -145,11 +153,11 @@ public class SystemController {
     /**
      * 修改密码
      */
-    @RequestMapping("/updatePwd")
     @ResponseBody
-    public Result<?> updatePassword(@RequestParam String oldPassword, @RequestParam String password) {
-        Manager managerDetail = (Manager) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        managerService.updatePassword(managerDetail.getId(), oldPassword, password);
+    @PutMapping("/manager/pwd")
+    public Result<?> updatePassword(@AuthenticationPrincipal Manager manager, @RequestParam String oldPassword,
+                                    @RequestParam String password) {
+        managerService.updatePassword(manager.getId(), oldPassword, password);
         return Result.success();
     }
 
@@ -159,7 +167,7 @@ public class SystemController {
      * @param managerId 管理员id
      */
     @ResponseBody
-    @RequestMapping("/resetPwd")
+    @PostMapping("/manager/pwd")
     public Result<?> resetPassword(@RequestParam Long managerId) {
         managerService.updatePassword(managerId, "123456");
         return Result.success();
@@ -168,7 +176,7 @@ public class SystemController {
     /**
      * 角色列表页
      */
-    @RequestMapping("/roleList")
+    @GetMapping("/role.html")
     public String roleList() {
         return "role/roleList";
     }
@@ -179,7 +187,7 @@ public class SystemController {
      * @param role 条件数据
      * @return List<Role>
      */
-    @GetMapping("/role/list")
+    @GetMapping("/role")
     @ResponseBody
     public Result<List<Role>> roleList(@PageableDefault(sort = {"roleName"}, direction = Sort.Direction.DESC)Pageable pageable,
                                        @Valid Role role) {
@@ -192,7 +200,7 @@ public class SystemController {
     /**
      * 新增或修改角色页面
      */
-    @RequestMapping("/roleEdit")
+    @RequestMapping("/role/edit.html")
     public String roleEdit(@RequestParam(required = false) Long roleId, Model model) {
         Role role = new Role();
         if (roleId != null) {
@@ -203,11 +211,22 @@ public class SystemController {
     }
 
     /**
-     * 保存角色
+     * 新增角色
      */
-    @RequestMapping("/roleSave")
     @ResponseBody
-    public Result<?> saveRole(@Valid Role role) {
+    @PostMapping("/role")
+    public Result<?> addRole(@Valid Role role) {
+        roleService.saveRole(role);
+        return Result.success();
+    }
+
+    /**
+     * 修改角色
+     * @param role 修改内容
+     */
+    @ResponseBody
+    @PutMapping("/role")
+    public Result<?> updateRole(@Valid Role role) {
         roleService.saveRole(role);
         return Result.success();
     }
@@ -215,7 +234,7 @@ public class SystemController {
     /**
      * 角色授权页面
      */
-    @RequestMapping("/grant")
+    @GetMapping("/role/grant.html")
     public String grantForm(@RequestParam long roleId, @RequestParam String type, Model model) throws JsonProcessingException {
         Set<MenuDTO> menuSet = roleService.getMenuListWithChecked(roleId);
         String menuList = objectMapper.writeValueAsString(menuSet);
@@ -232,7 +251,7 @@ public class SystemController {
      * @param menuIds 菜单id列表
      * @return Result
      */
-    @PostMapping("/saveGrant")
+    @PostMapping("/role/grant")
     @ResponseBody
     public Result<?> saveGrant(Long roleId, String menuIds) {
         roleService.saveGrant(roleId, menuIds);
@@ -242,7 +261,7 @@ public class SystemController {
     /**
      * 是否停用角色
      */
-    @RequestMapping("/togAvailable")
+    @GetMapping("/role/toggle")
     @ResponseBody
     public Result<?> altRole(@RequestParam long roleId) {
         roleService.altAvailable(roleId);
@@ -252,8 +271,8 @@ public class SystemController {
     /**
      * 删除角色
      */
-    @RequestMapping("/roleDel")
     @ResponseBody
+    @DeleteMapping("/role")
     public Result<?> delRole(@RequestParam long roleId) {
         roleService.delRole(roleId);
         return Result.success();
@@ -262,7 +281,7 @@ public class SystemController {
     /**
      * 菜单列表页
      */
-    @RequestMapping("/menuList")
+    @GetMapping("/menu.html")
     public String menuList(Model model) {
         List<Permission> menuList = roleService.getMenuList();
         model.addAttribute("menuList", menuList);
@@ -272,7 +291,7 @@ public class SystemController {
     /**
      * 新增或修改菜单页
      */
-    @RequestMapping("/menuEdit")
+    @GetMapping("/menu/edit.html")
     public String menuEdit(@RequestParam(required = false) Long menuId, @RequestParam(required = false) Long parentId, Model model) {
         Permission permission = new Permission();
         permission.setSort(0);
@@ -295,11 +314,21 @@ public class SystemController {
     }
 
     /**
-     * 保存菜单
+     * 新增菜单
      */
-    @RequestMapping("/menuSave")
     @ResponseBody
-    public Result<?> saveMenu(@Valid Permission permission) {
+    @PostMapping("/menu")
+    public Result<?> addMenu(@Valid Permission permission) {
+        roleService.saveMenu(permission);
+        return Result.success();
+    }
+
+    /**
+     * 修改菜单
+     */
+    @ResponseBody
+    @PutMapping("/menu")
+    public Result<?> updateMenu(@Valid Permission permission) {
         roleService.saveMenu(permission);
         return Result.success();
     }
@@ -307,9 +336,9 @@ public class SystemController {
     /**
      * 删除菜单
      */
-    @RequestMapping("/menuDel")
     @ResponseBody
-    public Result<?> delMenu(@RequestParam long menuId) {
+    @DeleteMapping("/menu")
+    public Result<?> deleteMenu(@RequestParam long menuId) {
         roleService.delMenu(menuId);
         return Result.success();
     }
@@ -317,7 +346,7 @@ public class SystemController {
     /**
      * 登录日志列表页
      */
-    @RequestMapping("/loginLogs")
+    @GetMapping("/logs.html")
     public String loginLogList() {
         return "system/logList";
     }

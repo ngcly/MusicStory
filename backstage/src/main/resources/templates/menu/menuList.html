@@ -22,7 +22,7 @@
     <div class="layui-form">
         <div class="layui-form-item search-row">
             <div class="layui-inline">
-                <a sec:authorize="hasAuthority('menu:add')" th:href="@{/sys/menuEdit}" type="button" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增菜单</a>
+                <a sec:authorize="hasAuthority('POST_/sys/menu')" th:href="@{/sys/menu/edit.html}" type="button" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增菜单</a>
             </div>
         </div>
     </div>
@@ -43,14 +43,14 @@
     <tbody>
     <tr th:each="menu:${menuList}" th:class="${#strings.equals(menu.parentId,'0')?'treegrid-'+menu.id : 'treegrid-'+menu.id+' treegrid-parent-'+menu.parentId}">
         <td th:text="${menu.name}"></td>
-        <td th:text="${menu.purview}"></td>
+        <td th:text="${menu.httpMethod}"></td>
         <td th:text="${menu.url}"></td>
         <td th:text="${#strings.equals(menu.resourceType,'menu')?'菜单':'按钮'}"></td>
         <td><i class="layui-icon" th:utext="${menu.icon}"></i></td>
         <td th:text="${menu.sort}"></td>
         <td>
-            <a sec:authorize="hasAuthority('menu:add')" class="layui-btn layui-btn-xs" th:href="@{'/sys/menuEdit?parentId='+${menu.id}}" th:unless="${#strings.equals(menu.resourceType,'button')}"><i class="layui-icon">&#xe61f;</i>添加子菜单</a>
-            <a sec:authorize="hasAuthority('menu:alt')" class="layui-btn layui-btn-xs" th:href="@{'/sys/menuEdit?menuId='+${menu.id}}"><i class="layui-icon">&#xe642;</i>编辑</a>
+            <a sec:authorize="hasAuthority('POST_/sys/menu')" class="layui-btn layui-btn-xs" th:href="@{'/sys/menu/edit.html?parentId='+${menu.id}}" th:unless="${#strings.equals(menu.resourceType,'button')}"><i class="layui-icon">&#xe61f;</i>添加子菜单</a>
+            <a sec:authorize="hasAuthority('PUT_/sys/menu')" class="layui-btn layui-btn-xs" th:href="@{'/sys/menu/edit.html?menuId='+${menu.id}}"><i class="layui-icon">&#xe642;</i>编辑</a>
             <a class="layui-btn layui-btn-danger layui-btn-xs remove" th:attr="data-id=${menu.id}" href="javascript:void(0);"><i class="layui-icon">&#xe640;</i>删除</a>
         </td>
     </tr>
@@ -72,16 +72,26 @@
         //删除处理
         $(".remove").on('click', function () {
             const _this = $(this);
+            const headers = {};
+            headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
             layer.confirm('确定删除吗?',{title:'若有下级菜单则也会被删除'}, function(){
-                $.getJSON('/sys/menuDel', {menuId:_this.data('id')}, function(ret){
-                    if (ret.code == 0){
-                        layer.msg(ret.msg, {icon: 1,time:600},function () {
-                            location.reload();
-                        });
-                    } else {
-                        layer.msg(ret.msg, {icon: 2,time:600});
+                $.ajax({
+                    url: '/sys/menu',
+                    type: 'delete',
+                    headers: headers,
+                    data: {menuId: _this.data('id')},
+                    dataType: 'json',
+                    success: function(res) {
+                        if (res.code == 0){
+                            layer.msg(res.msg, {icon: 1,time:600},function () {
+                                location.reload();
+                            });
+                        } else {
+                            layer.msg(res.msg, {icon: 2,time:600});
+                        }
+                        layer.close(index);
                     }
-                });
+                })
             });
         })
 

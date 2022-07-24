@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -164,7 +165,7 @@ public class RoleService {
         pms.setUrl(permission.getUrl());
         pms.setResourceType(permission.getResourceType());
         pms.setSort(permission.getSort());
-        pms.setPurview(permission.getPurview());
+        pms.setHttpMethod(permission.getHttpMethod());
         pms.setIcon(permission.getIcon());
         permissionRepository.save(pms);
     }
@@ -180,15 +181,14 @@ public class RoleService {
     }
 
     /**
-     * 菜单url与角色映射关系元数据
-     * @return Map<String, List<String>>
+     * 菜单url权限元数据
      */
     @Transactional(readOnly = true)
-    public Map<String, Set<String>> getUrlRoleMap() {
+    public List<String> getUrlPermission() {
         List<Permission> permissions = permissionRepository.findAllByResourceType(Permission.RESOURCE_MENU);
-        Map<String, Set<String>> urlRoleMap = permissions.stream().collect(Collectors.toMap(Permission::getUrl,
-                permission -> permission.getRoles().stream().map(Role::getRoleCode).collect(Collectors.toSet())));
-        return urlRoleMap;
+        return permissions.stream().filter(permission -> StringUtils.hasLength(permission.getUrl()))
+                .map(permission -> String.join("_", permission.getHttpMethod(), permission.getUrl()))
+                .collect(Collectors.toList());
     }
 
 }

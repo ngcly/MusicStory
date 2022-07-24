@@ -59,7 +59,7 @@
                 success:function(result){
                     if(result.code == 0){
                         layer.msg(result.msg, {icon: 1,time:600}, function () {
-                            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                            const index = parent.layer.getFrameIndex(window.name); //获取窗口索引
                             parent.location.reload();
                             parent.layer.close(index);
                         });

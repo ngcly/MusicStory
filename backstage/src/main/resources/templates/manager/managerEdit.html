@@ -20,7 +20,7 @@
     <div class="layui-card">
         <div class="layui-card-header" th:text="${#strings.equals(manager.id,null)?'新增管理员':'修改管理员'}"></div>
         <div class="layui-card-body">
-            <form class="layui-form" action="/sys/adminSave" method="post">
+            <form class="layui-form" action="/sys/manager">
                 <input type="hidden" id="altId" name="id" th:value="${manager.id}">
                 <div class="layui-form-item">
                     <label class="layui-form-label">用户名</label>
@@ -143,9 +143,10 @@
         form.on('submit(save)', function(data){
             const headers = {};
             headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
+            const methodType = $('#id').val() === null?'post':'put';
             $.ajax({
                 url:data.form.action,
-                type:data.form.method,
+                type:methodType,
                 headers: headers,
                 data:data.field,
                 dataType:'json',

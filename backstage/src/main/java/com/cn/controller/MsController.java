@@ -6,7 +6,6 @@ import com.cn.util.Result;
 import com.cn.util.UploadUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.*;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +36,7 @@ public class MsController {
     /**
      * 用户列表页
      */
-    @RequestMapping("/user")
+    @GetMapping("/user.html")
     public String userList() {
         return "user/userList";
     }
@@ -46,7 +45,7 @@ public class MsController {
      * 获取用户列表信息
      */
     @ResponseBody
-    @RequestMapping("/userList")
+    @GetMapping("/user")
     public Result<List<User>> getUserList(@RequestParam(value = "page", defaultValue = "1") Integer page,
                                           @RequestParam(value = "size", defaultValue = "10") Integer size, User user) {
         Page<User> userList = userService.getUserList(PageRequest.of(page - 1, size), user);
@@ -56,7 +55,7 @@ public class MsController {
     /**
      * 用户编辑页
      */
-    @RequestMapping("/userEdit")
+    @GetMapping("/user/edit.html")
     public String userEdit(@RequestParam Long userId, Model model) {
         User user = userService.getUserDetail(userId);
         Set<Role> roles = roleService.getAvailableRoles(Role.ROLE_TYPE_CUSTOMER);
@@ -74,8 +73,8 @@ public class MsController {
     /**
      * 用户详情页
      */
-    @RequestMapping("/userDetail")
-    public String userDetail(@RequestParam Long userId, Model model) {
+    @GetMapping("/user/{userId}")
+    public String userDetail(@PathVariable Long userId, Model model) {
         User user = userService.getUserDetail(userId);
         model.addAttribute(user);
         return "user/userDetail";
@@ -85,18 +84,17 @@ public class MsController {
      * 修改用户
      */
     @ResponseBody
-    @RequestMapping("/userSave")
-    public Result<?> saveUser(@Valid User user) {
+    @PutMapping("/user")
+    public Result<?> saveUser(@Valid @RequestBody User user) {
         userService.altUser(user);
         return Result.success();
-
     }
 
     /**
      * 删除用户
      */
     @ResponseBody
-    @RequestMapping("/userDel")
+    @DeleteMapping("/user")
     public Result<?> delUser(@RequestParam Long userId) {
         userService.delUser(userId);
         return Result.success();
@@ -105,7 +103,7 @@ public class MsController {
     /**
      * 分类列表页
      */
-    @RequestMapping("/classify")
+    @GetMapping("/classify.html")
     public String classifyList() {
         return "classify/classifyList";
     }
@@ -114,7 +112,7 @@ public class MsController {
      * 获取分类列表
      */
     @ResponseBody
-    @RequestMapping("/classifyList")
+    @GetMapping("/classify")
     public Result<List<Classify>> getClassifyList(@RequestParam(value = "page", defaultValue = "1") Integer page,
                                     @RequestParam(value = "size", defaultValue = "10") Integer size, Classify classify) {
         Page<Classify> classifyList = classifyService.getClassifyList(PageRequest.of(page - 1, size), classify);
@@ -124,7 +122,7 @@ public class MsController {
     /**
      * 修改分类页
      */
-    @RequestMapping("/classifyAlt")
+    @RequestMapping("/classify/edit.html")
     public String altClassify(@RequestParam(required = false) Long id, Model model) {
         Classify classify = new Classify();
         if (id != null) {
@@ -135,22 +133,31 @@ public class MsController {
     }
 
     /**
-     * 保存分类
+     * 新增分类
      */
     @ResponseBody
-    @PostMapping("/saveClassify")
-    public Result<?> saveClassify(@Valid Classify classify) {
+    @PostMapping("/classify")
+    public Result<?> addClassify(@Valid Classify classify) {
         classifyService.saveClassify(classify);
         return Result.success();
+    }
 
+    /**
+     * 修改分类
+     */
+    @ResponseBody
+    @PutMapping("/classify")
+    public Result<?> updateClassify(@Valid Classify classify) {
+        classifyService.saveClassify(classify);
+        return Result.success();
     }
 
     /**
      * 删除分类
      */
     @ResponseBody
-    @GetMapping("/classifyDel/{id}")
-    public Result<?> delClassify(@PathVariable("id") Long id) {
+    @DeleteMapping("/classify")
+    public Result<?> delClassify(@RequestParam("id") Long id) {
         classifyService.deleteClassify(id);
         return Result.success();
     }
@@ -158,7 +165,7 @@ public class MsController {
     /**
      * 文章列表页
      */
-    @RequestMapping("/essay")
+    @GetMapping("/essay.html")
     public String essayList(Model model) {
         model.addAttribute("classifyList", classifyService.getClassifyList());
         return "essay/essayList";
@@ -168,7 +175,7 @@ public class MsController {
      * 获取文章列表
      */
     @ResponseBody
-    @RequestMapping("/essayList")
+    @GetMapping("/essay")
     public Result<List<Essay>> getEssayList(@RequestParam(value = "page", defaultValue = "1") Integer page,
                                  @RequestParam(value = "size", defaultValue = "10") Integer size, Essay essay) {
         Page<Essay> essayList = essayService.getEssayList(PageRequest.of(page - 1, size, Sort.by("createdAt").descending()), essay);
@@ -178,7 +185,7 @@ public class MsController {
     /**
      * 文章审查页
      */
-    @RequestMapping("/essayAlt")
+    @GetMapping("/essay/edit.html")
     public String essayAlt(@RequestParam Long id, Model model) {
         Essay essay = essayService.getEssayDetail(id);
         model.addAttribute(essay);
@@ -189,7 +196,7 @@ public class MsController {
      * 文章审查
      */
     @ResponseBody
-    @PostMapping("/essaySave")
+    @PostMapping("/essay")
     public Result<?> essaySave(@Valid Essay essay) {
         essayService.altEssayState(essay);
         return Result.success();
@@ -198,7 +205,7 @@ public class MsController {
     /**
      * 公告列表页
      */
-    @RequestMapping("/notice")
+    @GetMapping("/notice.html")
     public String noticeList() {
         return "notice/noticeList";
     }
@@ -207,7 +214,7 @@ public class MsController {
      * 获取公告列表
      */
     @ResponseBody
-    @GetMapping("/noticeList")
+    @GetMapping("/notice")
     public Result<List<Notice>> getNoticeList(@RequestParam(value = "page", defaultValue = "1") Integer page,
                                   @RequestParam(value = "size", defaultValue = "10") Integer size, Notice notice) {
         Page<Notice> notices = noticeService.getNoticeList(PageRequest.of(page - 1, size), notice);
@@ -217,7 +224,7 @@ public class MsController {
     /**
      * 修改公告页
      */
-    @RequestMapping("/noticeAlt")
+    @GetMapping("/notice/edit.html")
     public String altNotice(@RequestParam(required = false) Long id, Model model) {
         Notice notice = new Notice();
         if (id != null) {
@@ -231,8 +238,18 @@ public class MsController {
      * 保存公告
      */
     @ResponseBody
-    @PostMapping("/saveNotice")
-    public Result<?> saveNotice(@Valid Notice notice) {
+    @PostMapping("/notice")
+    public Result<?> addNotice(@Valid Notice notice) {
+        noticeService.addOrUpdateNotice(notice);
+        return Result.success();
+    }
+
+    /**
+     * 修改公告
+     */
+    @ResponseBody
+    @PutMapping("/notice")
+    public Result<?> updateNotice(@Valid Notice notice) {
         noticeService.addOrUpdateNotice(notice);
         return Result.success();
     }
@@ -241,8 +258,8 @@ public class MsController {
      * 删除公告
      */
     @ResponseBody
-    @GetMapping("/noticeDel/{id}")
-    public Result<?> delNotice(@PathVariable("id") Long id) {
+    @DeleteMapping("/notice")
+    public Result<?> delNotice(@RequestParam Long id) {
         noticeService.deleteNotice(id);
         return Result.success();
     }
@@ -250,7 +267,7 @@ public class MsController {
     /**
      * 轮播图页
      */
-    @RequestMapping("/carousel")
+    @GetMapping("/carousel.html")
     public String carouselList() {
         return "carousel/carouselList";
     }
@@ -259,7 +276,7 @@ public class MsController {
      * 获取轮播图列表
      */
     @ResponseBody
-    @GetMapping("/carouselList")
+    @GetMapping("/carousel")
     public Result<List<CarouselCategory>> carouselList(@RequestParam(value = "page", defaultValue = "1") Integer page,
                                  @RequestParam(value = "size", defaultValue = "10") Integer size, String name) {
         Page<CarouselCategory> carouselCategory = carouselService.getCarouselList(name, PageRequest.of(page - 1, size));
@@ -269,7 +286,7 @@ public class MsController {
     /**
      * 修改轮播分类页
      */
-    @RequestMapping("/carouselCategoryAlt")
+    @GetMapping("/carousel/category/edit.html")
     public String altCarouselCategory(@RequestParam(required = false) Long id, Model model) {
         CarouselCategory carouselCategory = new CarouselCategory();
         if (id != null) {
@@ -282,7 +299,7 @@ public class MsController {
     /**
      * 修改轮播图页
      */
-    @RequestMapping("/carouselAlt")
+    @RequestMapping("/carousel/edit.html")
     public String altCarousel(@RequestParam Long id, Model model) {
         CarouselCategory carouselCategory = carouselService.getCarouselDetail(id);
         model.addAttribute(carouselCategory);
@@ -293,7 +310,7 @@ public class MsController {
      * 保存轮播图
      */
     @ResponseBody
-    @PostMapping("/saveCarousel")
+    @PostMapping("/carousel")
     public Result<?> saveCarousel(@Valid CarouselCategory carouselCategory) {
         carouselService.addOrUpdateCarousel(carouselCategory);
         return Result.success();
@@ -303,7 +320,7 @@ public class MsController {
      * 添加轮播图
      */
     @ResponseBody
-    @RequestMapping("/addCarousel")
+    @PutMapping("/carousel")
     public Result<?> addCarousel(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id) {
         if (file.isEmpty()) {
             return Result.failure(222, "文件为空");
@@ -317,7 +334,7 @@ public class MsController {
      * 删除轮播分类
      */
     @ResponseBody
-    @GetMapping("/carouselDel/{id}")
+    @DeleteMapping("/carousel/{id}")
     public Result<?> delCarouselCategory(@PathVariable("id") Long id) {
         carouselService.deleteCarouselCategory(id);
         return Result.success();

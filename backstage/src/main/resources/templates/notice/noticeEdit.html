@@ -10,7 +10,7 @@
     <div class="layui-card">
         <div class="layui-card-header" th:text="${#strings.equals(notice.id,null)?'新增公告':'修改公告'}"></div>
         <div class="layui-card-body">
-            <form class="layui-form" action="/ms/saveNotice" method="post">
+            <form class="layui-form" action="/ms/saveNotice">
                 <input type="hidden" name="id" th:value="${notice.id}">
                 <div class="layui-form-item">
                     <label class="layui-form-label">开始时间</label>
@@ -57,9 +57,10 @@
         form.on('submit(save)', function(data){
             const headers = {};
             headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
+            const methodType = $('#id').val() === null?'post':'put';
             $.ajax({
                 url:data.form.action,
-                type:data.form.method,
+                type:methodType,
                 headers: headers,
                 data:data.field,
                 dataType:'json',

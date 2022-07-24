@@ -18,7 +18,7 @@
 </div>
 
 <div class="layui-row">
-    <form class="layui-form" action="/ms/saveCarousel" method="post">
+    <form class="layui-form" action="/ms/carousel" method="post">
         <div class="layui-form-item">
             <label class="layui-form-label">标识符</label>
             <div class="layui-input-inline">
@@ -80,7 +80,8 @@
         //上传文件
         upload.render({
             elem: '#clg'
-            ,url: '/ms/addCarousel'
+            ,url: '/ms/carousel'
+            ,type: 'put'
             ,size: 600 //限制文件大小，单位 KB
             ,accept: 'images' //普通文件
             ,exts: 'jpg|jpeg|png' //只允许上传图片
@@ -124,16 +125,26 @@
         //删除处理
         $(".remove").on('click', function () {
             const _this = $(this);
+            const headers = {};
+            headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
             layer.confirm('确定删除吗?',{title:'删除'}, function(){
-                $.getJSON('/ms/carouselDel', {id:_this.data('id'),url:_this.data('url')}, function(ret){
-                    if (ret.code == 0){
-                        layer.msg(ret.msg, {icon: 1,time:600},function () {
-                            location.reload();
-                        });
-                    } else {
-                        layer.msg(ret.msg, {icon: 2,time:600});
+                $.ajax({
+                    url: '/ms/carousel',
+                    type: 'delete',
+                    headers: headers,
+                    data: {id: _this.data('id')},
+                    dataType: 'json',
+                    success: function(res) {
+                        if (res.code == 0){
+                            layer.msg(res.msg, {icon: 1,time:600},function () {
+                                location.reload();
+                            });
+                        } else {
+                            layer.msg(res.msg, {icon: 2,time:600});
+                        }
+                        layer.close(index);
                     }
-                });
+                })
             });
         })
 

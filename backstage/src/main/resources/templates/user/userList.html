@@ -78,7 +78,7 @@
         //执行渲染
         table.render({
             elem: '#table' //指定原始表格元素选择器（推荐id选择器）
-            ,url: '/ms/userList'
+            ,url: '/ms/user'
             ,id: 'us'
             ,request: {
                 limitName: 'size' //每页数据量的参数名，默认：limit
@@ -113,7 +113,8 @@
         table.on('tool(user)', function(obj){ //注：tool是工具条事件名，user是table原始容器的属性 lay-filter="对应的值"
             const data = obj.data; //获得当前行数据
             const layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-            const tr = obj.tr; //获得当前行 tr 的DOM对象
+            const headers = {};
+            headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
 
             if(layEvent === 'detail'){ //查看
                 layer.open({
@@ -124,25 +125,35 @@
                     ,shadeClose: true
                     ,shade: 0 //遮罩透明度
                     ,maxmin: true //允许全屏最小化
-                    ,content:'/ms/userDetail?userId='+data.id
+                    ,content:'/ms/user/'+data.id
                 });
             } else if(layEvent === 'del'){ //删除
                 const $ = layui.$;
                 layer.confirm('确定删除吗？',{title:'删除'}, function(index){
                     //向服务端发送删除指令
-                    $.getJSON('/ms/userDel', {userId:data.id}, function(ret){
-                        if (ret.code == 0){
-                            layer.msg(ret.msg, {icon: 1,time:600},function () {
-                                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                            });
-                        } else {
-                            layer.msg(ret.msg, {icon: 2,time:600});
+                    $.ajax({
+                        url: '/ms/user',
+                        type: 'DELETE',
+                        headers: headers,
+                        data: {
+                            userId:data.id
+                        },
+                        dataType: 'JSON',
+                        success:function (res){
+                            console.log(res)
+                            if (res.code == 0){
+                                layer.msg(res.msg, {icon: 1,time:600},function () {
+                                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                                });
+                            } else {
+                                layer.msg(res.msg, {icon: 2,time:600});
+                            }
+                            layer.close(index);
                         }
-                    });
-                    layer.close(index);
+                    })
                 });
             } else if(layEvent === 'edit'){ //编辑
-                window.location.href='/ms/userEdit?userId='+data.id;
+                window.location.href='/ms/user/edit.html?userId='+data.id;
             }
         });
     });

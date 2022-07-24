@@ -68,7 +68,7 @@
                 <button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
             </div>
             <div class="layui-inline">
-                <a sec:authorize="hasAuthority('admin:add')" href="/sys/adminEdit" type="button" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
+                <a sec:authorize="hasAuthority('POST_/sys/manager')" href="/sys/manager/edit.html" type="button" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
             </div>
         </div>
     </form>
@@ -87,8 +87,6 @@
         table.render({
             elem: '#table' //指定原始表格元素选择器（推荐id选择器）
             ,url: '/sys/manager'
-            ,method: 'post'
-            ,contentType: 'application/json'
             ,id: 'mg'
             ,request: {
                 limitName: 'size' //每页数据量的参数名，默认：limit
@@ -147,20 +145,25 @@
                 });
             } else if(layEvent === 'del'){
                 layer.confirm('确定删除吗?',{title:'删除'}, function(index){
-                    $.getJSON('/sys/adminDel', {managerId:data.id}, function(ret){
-                        if (ret.code == 0){
-                            layer.msg(ret.msg, {icon: 1,time:600},function () {
-                                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                            });
-                        } else {
-                            layer.msg(ret.msg, {icon: 2,time:600});
+                    $.ajax({
+                        url: '/sys/manager',
+                        type: 'delete',
+                        data: {managerId: data.id},
+                        success: function(res) {
+                            if (res.code == 0){
+                                layer.msg(res.msg, {icon: 1,time:600},function () {
+                                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                                });
+                            } else {
+                                layer.msg(res.msg, {icon: 2,time:600});
+                            }
                         }
-                    });
+                    })
                     layer.close(index);
                 });
             } else if(layEvent === 'reset'){
                 layer.confirm('重置后密码为：123456',{title:'重置密码'}, function(){
-                    $.getJSON('/sys/resetPwd', {managerId:data.id}, function(ret){
+                    $.getJSON('/sys/manager/pwd', {managerId:data.id}, function(ret){
                         if (ret.code == 0){
                             layer.msg(ret.msg, {icon: 1,time:600});
                         } else {
@@ -169,7 +172,7 @@
                     });
                 });
             } else if(layEvent === 'edit'){ //编辑
-                window.location.href='/sys/adminEdit/?managerId='+data.id;
+                window.location.href='/sys/manager/edit.html?managerId='+data.id;
             }
         });
     });

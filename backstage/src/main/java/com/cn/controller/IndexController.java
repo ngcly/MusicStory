@@ -42,14 +42,14 @@ public class IndexController {
         boolean init = false;
         Collection<Role> roleList;
         if (Manager.ADMIN.equals(manager.getUsername())) {
-            //管理员拥有最高权限
+            //admin账户 直接开挂加载所有
             roleList = roleService.getAllRole();
         } else {
             roleList = managerService.getManagerById(manager.getId()).getRoleList();
         }
         List<MenuDTO> menuList = roleList.parallelStream()
                 .map(Role::getPermissions)
-                .flatMap(Collection::parallelStream)
+                .flatMap(Collection::stream)
                 .filter(permission -> Permission.RESOURCE_MENU.equals(permission.getResourceType()))
                 .distinct()
                 .sorted(Comparator.comparing(Permission::getSort))

@@ -24,9 +24,9 @@ public class Permission extends MenuDTO {
     private String resourceType;
 
     /**
-     * 权限字符串,menu例子：role:*，button例子：role:create,role:update,role:delete,role:view
+     * 请求方式
      */
-    private String purview;
+    private String httpMethod;
 
     /**
      * 父级id列表
@@ -86,8 +86,8 @@ public class Permission extends MenuDTO {
     }
 
     @Column(length = 32)
-    public String getPurview() {
-        return purview;
+    public String getHttpMethod() {
+        return httpMethod;
     }
 
     @Column(nullable = false, length = 100)

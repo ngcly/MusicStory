@@ -4,7 +4,6 @@ import com.cn.config.AbstractUserDateAudit;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.List;
@@ -21,7 +20,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "role", uniqueConstraints = @UniqueConstraint(columnNames = {"roleCode", "roleType"}))
 @JsonIgnoreProperties(value = {"userInfoList", "managers", "handler", "hibernateLazyInitializer", "fieldHandler"})
-public class Role extends AbstractUserDateAudit implements GrantedAuthority {
+public class Role extends AbstractUserDateAudit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -107,9 +106,4 @@ public class Role extends AbstractUserDateAudit implements GrantedAuthority {
      */
     public static final byte ROLE_TYPE_MANAGER = 1;
     public static final byte ROLE_TYPE_CUSTOMER = 2;
-
-    @Override
-    public String getAuthority() {
-        return roleCode;
-    }
 }
