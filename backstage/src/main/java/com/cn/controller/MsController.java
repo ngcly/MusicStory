@@ -85,7 +85,7 @@ public class MsController {
      */
     @ResponseBody
     @PutMapping("/user")
-    public Result<?> saveUser(@Valid @RequestBody User user) {
+    public Result<?> saveUser(User user) {
         userService.altUser(user);
         return Result.success();
     }
@@ -310,7 +310,7 @@ public class MsController {
      * 保存轮播图
      */
     @ResponseBody
-    @PostMapping("/carousel")
+    @PostMapping("/carousel/category")
     public Result<?> saveCarousel(@Valid CarouselCategory carouselCategory) {
         carouselService.addOrUpdateCarousel(carouselCategory);
         return Result.success();
@@ -320,7 +320,7 @@ public class MsController {
      * 添加轮播图
      */
     @ResponseBody
-    @PutMapping("/carousel")
+    @PostMapping("/carousel")
     public Result<?> addCarousel(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id) {
         if (file.isEmpty()) {
             return Result.failure(222, "文件为空");
@@ -334,8 +334,8 @@ public class MsController {
      * 删除轮播分类
      */
     @ResponseBody
-    @DeleteMapping("/carousel/{id}")
-    public Result<?> delCarouselCategory(@PathVariable("id") Long id) {
+    @DeleteMapping("/carousel/category")
+    public Result<?> delCarouselCategory(@RequestParam Long id) {
         carouselService.deleteCarouselCategory(id);
         return Result.success();
     }
@@ -344,7 +344,7 @@ public class MsController {
      * 删除轮播图
      */
     @ResponseBody
-    @GetMapping("/carouselDel")
+    @DeleteMapping("/carousel")
     public Result<?> delCarousel(@RequestParam("id") Long id, @RequestParam("url") String url) {
         carouselService.deleteCarousel(id, url);
         return Result.success();

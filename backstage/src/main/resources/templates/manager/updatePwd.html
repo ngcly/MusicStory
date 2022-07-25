@@ -12,7 +12,7 @@
         <div class="layui-card">
             <div class="layui-card-header"><span sec:authentication="name"></span></div>
             <div class="layui-card-body">
-                <form class="layui-form" action="/sys/updatePwd" method="post">
+                <form class="layui-form" action="/sys/updatePwd" method="put">
                     <div class="layui-form-item">
                         <label class="layui-form-label">当前密码</label>
                         <div class="layui-input-inline">
@@ -51,7 +51,7 @@
         form.verify({
             // 校验原始密码
             pass:[
-                /^[\S]{6,12}$/
+                /^\S{6,12}$/
                 ,'密码必须6到12位，且不能出现空格'
             ],
             repass:function(value){
@@ -75,7 +75,6 @@
                     if(data.code == 0){
                         layer.msg(data.msg, {icon: 1,time:600}, function () {
                             const index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-                            parent.location.reload();
                             parent.layer.close(index);
                         });
                     }else{

@@ -66,6 +66,7 @@
             </div>
             <div class="layui-inline">
                 <button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
+                <button class="layui-btn" type="reset"><i class="layui-icon layui-icon-refresh"></i>重置</button>
             </div>
             <div class="layui-inline">
                 <a sec:authorize="hasAuthority('POST_/sys/manager')" href="/sys/manager/edit.html" type="button" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
@@ -131,6 +132,8 @@
             //注：tool是工具条事件名，manager是table原始容器的属性 lay-filter="对应的值"
             const data = obj.data; //获得当前行数据
             const layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            const headers = {};
+            headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
 
             if(layEvent === 'detail'){ //查看
                 layer.open({
@@ -147,7 +150,8 @@
                 layer.confirm('确定删除吗?',{title:'删除'}, function(index){
                     $.ajax({
                         url: '/sys/manager',
-                        type: 'delete',
+                        type: 'DELETE',
+                        headers: headers,
                         data: {managerId: data.id},
                         success: function(res) {
                             if (res.code == 0){
@@ -163,13 +167,13 @@
                 });
             } else if(layEvent === 'reset'){
                 layer.confirm('重置后密码为：123456',{title:'重置密码'}, function(){
-                    $.getJSON('/sys/manager/pwd', {managerId:data.id}, function(ret){
-                        if (ret.code == 0){
-                            layer.msg(ret.msg, {icon: 1,time:600});
+                    $.post('/sys/manager/pwd',{'[[${_csrf.parameterName}]]':'[[${_csrf.token}]]', managerId: data.id},function (data) {
+                        if (data.code == 0){
+                            layer.msg(data.msg, {icon: 1,time:600});
                         } else {
-                            layer.msg(ret.msg, {icon: 2,time:600});
+                            layer.msg(data.msg, {icon: 2,time:600});
                         }
-                    });
+                    })
                 });
             } else if(layEvent === 'edit'){ //编辑
                 window.location.href='/sys/manager/edit.html?managerId='+data.id;

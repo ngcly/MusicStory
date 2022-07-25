@@ -18,7 +18,7 @@
 <div class="layui-col-md12">
     <div class="layui-card">
         <div class="layui-card-body">
-            <form class="layui-form" action="/ms/user" method="put">
+            <form class="layui-form" action="/ms/user">
                 <input type="hidden" id="altId" name="id" th:value="${user.id}">
                 <div class="layui-form-item">
                     <label class="layui-form-label">用户名</label>
@@ -106,7 +106,7 @@
             headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
             $.ajax({
                 url:data.form.action,
-                type:data.form.method,
+                type:'put',
                 headers: headers,
                 data:data.field,
                 dataType:'json',

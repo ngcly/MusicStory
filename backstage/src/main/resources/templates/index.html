@@ -65,7 +65,7 @@
                     <span sec:authentication="name" id="my-name"></span><!--&lt;!&ndash; 获得当前用户的用户名 &ndash;&gt;-->
                 </a>
                 <dl class="layui-nav-child">
-                    <dd><a th:href="@{'/sys/adminEdit/?managerId='+${manager.id}}" target="content">基本资料</a></dd>
+                    <dd><a th:href="@{'/sys/manager/edit.html?managerId='+${manager.id}}" target="content">基本资料</a></dd>
                     <dd><a href="javascript:void(0);" id="model">安全设置</a></dd>
                 </dl>
             </li>
@@ -202,7 +202,7 @@
                 ,shadeClose: true
                 ,shade: 0 //遮罩透明度
                 ,maxmin: true //允许全屏最小化
-                ,content:'/sys/altPwd'
+                ,content:'/sys/manager/pwd.html'
             });
         });
 

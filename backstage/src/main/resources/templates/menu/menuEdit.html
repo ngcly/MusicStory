@@ -91,7 +91,7 @@
         form.verify({
             // 校验原始密码
             sort:[
-                /^(?:0|[1-9][0-9]*)$/
+                /^(?:0|[1-9]\d*)$/
                 ,'排序号必须是大于等于0的整数'
             ],
         });
@@ -99,7 +99,7 @@
         form.on('submit(save)', function(data){
             const headers = {};
             headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
-            const methodType = $('#id').val() === null?'post':'put';
+            const methodType = $('#id').val() == undefined || $('#id').val() == ''?'post':'put';
             $.ajax({
                 url:data.form.action,
                 type:methodType,

@@ -18,7 +18,7 @@
 </div>
 
 <div class="layui-row">
-    <form class="layui-form" action="/ms/carousel" method="post">
+    <form class="layui-form" action="/ms/carousel/category" method="post">
         <div class="layui-form-item">
             <label class="layui-form-label">标识符</label>
             <div class="layui-input-inline">
@@ -81,7 +81,7 @@
         upload.render({
             elem: '#clg'
             ,url: '/ms/carousel'
-            ,type: 'put'
+            ,type: 'post'
             ,size: 600 //限制文件大小，单位 KB
             ,accept: 'images' //普通文件
             ,exts: 'jpg|jpeg|png' //只允许上传图片
@@ -112,7 +112,7 @@
                 success:function(result){
                     if(result.code == 0){
                         layer.msg(result.msg, {icon: 1,time:600}, function () {
-                            location.href="/ms/carousel";
+                            location.href="/ms/carousel.html";
                         });
                     }else{
                         layer.msg(result.msg,{time:1000});
@@ -142,7 +142,6 @@
                         } else {
                             layer.msg(res.msg, {icon: 2,time:600});
                         }
-                        layer.close(index);
                     }
                 })
             });

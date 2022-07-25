@@ -54,7 +54,6 @@
                 if(data.code == 0){
                     layer.msg(data.msg, {icon: 1,time:600}, function () {
                         const index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-                        parent.location.reload();
                         parent.layer.close(index);
                     });
                 }else{

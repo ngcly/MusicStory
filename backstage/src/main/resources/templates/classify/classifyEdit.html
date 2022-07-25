@@ -11,7 +11,7 @@
         <div class="layui-card-header" th:text="${#strings.equals(classify.id,null)?'新增分类':'修改分类'}"></div>
         <div class="layui-card-body">
             <form class="layui-form" action="/ms/classify">
-                <input type="hidden" name="id" th:value="${classify.id}">
+                <input type="hidden" id="id" name="id" th:value="${classify.id}">
                 <div class="layui-form-item">
                     <label class="layui-form-label">分类名</label>
                     <div class="layui-input-inline">
@@ -44,7 +44,7 @@
         form.on('submit(save)', function(data){
             const headers = {};
             headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
-            const methodType = $('#id').val() === null?'post':'put';
+            const methodType = $('#id').val() == undefined || $('#id').val() == ''?'post':'put';
             $.ajax({
                 url:data.form.action,
                 type:methodType,
@@ -58,7 +58,9 @@
                     if(data.code == 0){
                         layer.msg(data.msg, {icon: 1,time:600}, function () {
                             const index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-                            parent.location.reload();
+                            if(methodType === 'post') {
+                                parent.location.reload();
+                            }
                             parent.layer.close(index);
                         });
                     }else{

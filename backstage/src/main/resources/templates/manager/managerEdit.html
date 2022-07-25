@@ -143,7 +143,7 @@
         form.on('submit(save)', function(data){
             const headers = {};
             headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
-            const methodType = $('#id').val() === null?'post':'put';
+            const methodType = $('#id').val() == undefined || $('#id').val() == ''?'post':'put';
             $.ajax({
                 url:data.form.action,
                 type:methodType,
@@ -160,7 +160,7 @@
                                 parent.$('#my-avatar').attr('src',data.field.avatar);
                                 parent.$('#my-name').html(data.field.username);
                             }
-                            location.href="/sys/adminList";
+                            location.href="/sys/manager.html";
                         });
                     }else{
                         layer.msg(result.msg,{time:1000});

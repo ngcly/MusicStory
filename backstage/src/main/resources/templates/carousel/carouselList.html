@@ -33,6 +33,7 @@
             </div>
             <div class="layui-inline">
                 <button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
+                <button class="layui-btn" type="reset"><i class="layui-icon layui-icon-refresh"></i>重置</button>
             </div>
             <div class="layui-inline">
                 <a sec:authorize="hasAuthority('POST_/ms/carousel')" href="javascript:void(0)" type="button" id="add" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
@@ -93,7 +94,7 @@
                 layer.confirm('确定删除吗？',{title:'删除'}, function(index){
                     //向服务端发送删除指令
                     $.ajax({
-                        url: '/ms/carousel',
+                        url: '/ms/carousel/category',
                         type: 'delete',
                         headers: headers,
                         data: {id: data.id},
@@ -106,7 +107,6 @@
                             } else {
                                 layer.msg(res.msg, {icon: 2,time:600});
                             }
-                            layer.close(index);
                         }
                     })
                 });
@@ -120,7 +120,7 @@
             layer.open({
                 type: 2 //Page层类型
                 ,skin: 'layui-layer-molv'
-                ,area: ['430px', '280px']
+                ,area: ['430px', '320px']
                 ,title: ['轮播分类','font-size:18px']
                 ,shadeClose: true
                 ,shade: 0 //遮罩透明度

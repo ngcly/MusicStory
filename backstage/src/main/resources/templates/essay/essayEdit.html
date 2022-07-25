@@ -8,7 +8,7 @@
 <body>
 <div class="layui-col-md12">
     <div class="layui-card-body">
-        <form class="layui-form" action="/ms/essaySave" method="post">
+        <form class="layui-form" action="/ms/essay" method="post">
             <input type="hidden" name="id" th:value="${essay.id}">
             <div class="layui-form-item">
                 <label class="layui-form-label">文章标题</label>
@@ -79,7 +79,6 @@
                     if(data.code == 0){
                         layer.msg(data.msg, {icon: 1,time:600}, function () {
                             const index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-                            parent.location.reload();
                             parent.layer.close(index);
                         });
                     }else{

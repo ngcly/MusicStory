@@ -65,7 +65,8 @@
         form.on('submit(save)', function(data){
             const headers = {};
             headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
-            const methodType = $('#id').val() === null?'post':'put';
+            const v = $('#id').val();
+            const methodType = v == undefined || v == '' ?'post':'put';
             $.ajax({
                 url: data.form.action,
                 type: methodType,
@@ -79,7 +80,9 @@
                     if(data.code == 0){
                         layer.msg(data.msg, {icon: 1,time:600}, function () {
                             const index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-                            parent.location.reload();
+                            if(methodType === 'post') {
+                                parent.location.reload();
+                            }
                             parent.layer.close(index);
                         });
                     }else{

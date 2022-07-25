@@ -27,6 +27,7 @@
             </div>
             <div class="layui-inline">
                 <button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
+                <button class="layui-btn" type="reset"><i class="layui-icon layui-icon-refresh"></i>重置</button>
             </div>
             <div class="layui-inline">
                 <a sec:authorize="hasAuthority('POST_/ms/classify')" href="javascript:void(0)" type="button" id="add" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
@@ -101,7 +102,6 @@
                             } else {
                                 layer.msg(res.msg, {icon: 2,time:600});
                             }
-                            layer.close(index);
                         }
                     })
                 });
@@ -109,7 +109,7 @@
                 layer.open({
                     type: 2 //Page层类型
                     ,skin: 'layui-layer-molv'
-                    ,area: ['380px', '270px']
+                    ,area: ['380px', '300px']
                     ,title: ['分类信息','font-size:18px']
                     ,shadeClose: true
                     ,shade: 0 //遮罩透明度
@@ -124,7 +124,7 @@
             layer.open({
                 type: 2 //Page层类型
                 ,skin: 'layui-layer-molv'
-                ,area: ['380px', '270px']
+                ,area: ['380px', '300px']
                 ,title: ['分类信息','font-size:18px']
                 ,shadeClose: true
                 ,shade: 0 //遮罩透明度
