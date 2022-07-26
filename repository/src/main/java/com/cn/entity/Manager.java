@@ -77,6 +77,7 @@ public class Manager extends AbstractDateAudit implements UserDetails, Credentia
     /**
      * 一个用户具有多个角色
      * 立即从数据库中进行加载数据;
+     * todo 此处有个bug 会出现多条重复数据
      */
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
