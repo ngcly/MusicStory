@@ -21,7 +21,7 @@ public final class MenuUtil {
      * @param originMenus 原菜单
      * @param roleMenus   角色对应菜单
      */
-    public static <T extends MenuDTO> Set<MenuDTO> checkMenuSelected(List<T> originMenus, List<T> roleMenus) {
+    public static <T extends MenuDTO> Collection<MenuDTO> checkMenuSelected(Collection<T> originMenus, Collection<T> roleMenus) {
         List<MenuDTO> menuList = new ArrayList<>();
         originMenus.forEach(t -> {
             t.setChecked(roleMenus.contains(t));
@@ -33,7 +33,7 @@ public final class MenuUtil {
     /**
      * 将菜单list转换成树状
      */
-    public static Set<MenuDTO> makeMenuToTree(List<MenuDTO> menuList) {
+    public static Collection<MenuDTO> makeMenuToTree(Collection<MenuDTO> menuList) {
         Set<MenuDTO> rootTrees = new HashSet<>();
         menuList.forEach(menu -> {
             if(MenuDTO.rootId.equals(menu.getParentId())){
@@ -49,25 +49,24 @@ public final class MenuUtil {
                 }
             });
         });
-        return rootTrees;
+        return menuTreeSort(rootTrees);
     }
 
     /**
      * 将菜单进行树状排序
      */
-    public static <T extends MenuDTO> List<T> menuTreeSort(List<T> list) {
+    public static <T extends MenuDTO> List<T> menuTreeSort(Collection<T> list) {
         List<T> resultList = new ArrayList<>();
         sortList(list, MenuDTO.rootId, resultList);
         return resultList;
     }
 
-    public static <T extends MenuDTO> void sortList(List<T> list, long id,List<T> resultList) {
-        for (int i = 0, j = list.size(); i < j; i++) {
-            T menu = list.get(i);
-            if (menu.getParentId() == id) {
+    public static <T extends MenuDTO> void sortList(Collection<T> list, Long id, Collection<T> resultList) {
+        list.forEach(menu -> {
+            if(id.equals(menu.getParentId())) {
                 resultList.add(menu);
                 sortList(list, menu.getId(),resultList);
             }
-        }
+        });
     }
 }

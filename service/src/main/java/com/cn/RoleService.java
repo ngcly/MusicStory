@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 角色权限service
@@ -139,7 +138,7 @@ public class RoleService {
      * @param roleId 角色id
      * @return Set<MenuDTO>
      */
-    public Set<MenuDTO> getMenuListWithChecked(long roleId){
+    public Collection<MenuDTO> getMenuListWithChecked(long roleId){
         List<Permission> permissions = permissionRepository.findMenuList();
         List<Permission> rolePermissions = roleRepository.getReferenceById(roleId).getPermissions();
         return MenuUtil.checkMenuSelected(permissions,rolePermissions);
@@ -193,7 +192,7 @@ public class RoleService {
         List<Permission> permissions = permissionRepository.findAllByResourceType(Permission.RESOURCE_MENU);
         return permissions.stream().filter(permission -> StringUtils.hasLength(permission.getUrl()))
                 .map(permission -> String.join("_", permission.getHttpMethod(), permission.getUrl()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }

@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 系统设置 控制类
@@ -83,20 +84,26 @@ public class SystemController {
     @GetMapping("/manager/edit.html")
     public String altManager(@AuthenticationPrincipal Manager managerDetail, @RequestParam(required = false) Long managerId, Model model) {
         //最好是从当前授权信息里面提出角色列表来
-        var roles = managerDetail.getRoleList();
-        String optRole = roles.stream().map(role -> role.getId().toString()).collect(Collectors.joining(","));
-        Manager manager = new Manager();
-        String checkRoleIds = "";
+        List<Role> currentManagerRoles = managerDetail.getRoleList();
+        String optRole = currentManagerRoles.stream().map(role -> role.getId().toString()).collect(Collectors.joining(","));
+
+        Manager manager;
+        String checkRoleIds;
+        List<Role> beSelectedRoles;
         if (managerId != null) {
             manager = managerService.getManagerById(managerId);
             checkRoleIds = manager.getRoleList().stream().map(role ->
                     role.getId().toString()).collect(Collectors.joining(","));
-            roles.addAll(manager.getRoleList());
+            beSelectedRoles = Stream.concat(currentManagerRoles.stream(), manager.getRoleList().stream()).toList();
+        } else {
+            manager = new Manager();
+            checkRoleIds = "";
+            beSelectedRoles = Collections.unmodifiableList(currentManagerRoles);
         }
         model.addAttribute("currentId", managerDetail.getId());
         model.addAttribute("manager", manager);
         //待选角色列表
-        model.addAttribute("roles", roles);
+        model.addAttribute("roles", beSelectedRoles);
         //已勾选角色ID
         model.addAttribute("checkRoleId", checkRoleIds);
         //可授权角色ID
@@ -115,6 +122,9 @@ public class SystemController {
         return Result.success();
     }
 
+    /**
+     * 获取管理员列表数据
+     */
     @ResponseBody
     @PutMapping("/manager")
     public Result<?> updateManager(@Valid Manager manager) {
@@ -233,7 +243,7 @@ public class SystemController {
      */
     @GetMapping("/role/grant.html")
     public String grantForm(@RequestParam long roleId, @RequestParam String type, Model model) throws JsonProcessingException {
-        Set<MenuDTO> menuSet = roleService.getMenuListWithChecked(roleId);
+        Collection<MenuDTO> menuSet = roleService.getMenuListWithChecked(roleId);
         String menuList = objectMapper.writeValueAsString(menuSet);
         model.addAttribute("type", type);
         model.addAttribute("roleId", roleId);

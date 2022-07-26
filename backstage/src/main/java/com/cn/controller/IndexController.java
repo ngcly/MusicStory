@@ -25,7 +25,7 @@ import java.util.*;
  * 后台首页控制器
  *
  * @author ngcly
- * @date 2018-01-02 17:26
+ * @since 2018-01-02 17:26
  */
 @Controller
 @AllArgsConstructor
@@ -48,10 +48,9 @@ public class IndexController {
         }
         List<MenuDTO> menuList = roleList.parallelStream()
                 .map(Role::getPermissions)
-                .flatMap(Collection::stream)
+                .flatMap(Collection::parallelStream)
                 .filter(permission -> Permission.RESOURCE_MENU.equals(permission.getResourceType()))
                 .distinct()
-                .sorted(Comparator.comparing(Permission::getSort))
                 .map(permission -> (MenuDTO) permission)
                 .toList();
 

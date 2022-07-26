@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 树数据封装类
@@ -35,4 +36,20 @@ public class MenuDTO {
     /** 子菜单 */
     protected List<MenuDTO> children;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        MenuDTO menuDTO = (MenuDTO) o;
+        return id.equals(menuDTO.id) && name.equals(menuDTO.name) && parentId.equals(menuDTO.parentId) && url.equals(menuDTO.url);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, parentId, url);
+    }
 }
