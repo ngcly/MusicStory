@@ -57,7 +57,7 @@ public final class MenuUtil {
      */
     public static <T extends MenuDTO> List<T> menuTreeSort(List<T> list) {
         List<T> resultList = new ArrayList<>();
-        sortList(list, MenuDTO.rootId,resultList);
+        sortList(list, MenuDTO.rootId, resultList);
         return resultList;
     }
 

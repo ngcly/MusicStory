@@ -3,7 +3,7 @@ package com.cn;
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONObject;
-import com.cn.config.GlobalException;
+import com.cn.exception.GlobalException;
 import com.cn.config.RabbitConfig;
 import com.cn.dao.*;
 import com.cn.entity.*;
@@ -24,7 +24,6 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.Resource;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -305,7 +304,7 @@ public class UserService implements UserDetailsService {
     public void altUser(User user) {
         User altUser = userRepository.getReferenceById(user.getId());
         altUser.setState(user.getState());
-        Set<Role> allRole = roleRepository.getAllByAvailableIsTrueAndRoleType(Role.ROLE_TYPE_CUSTOMER);
+        var allRole = roleRepository.getAllByAvailableIsTrueAndRoleType(Role.ROLE_TYPE_CUSTOMER);
         if (Objects.nonNull(user.getRoleIds())) {
             for (Long roleId : user.getRoleIds()) {
                 allRole.stream().filter(role -> role.getId().equals(roleId)).forEach(altUser.getRoleList()::add);

@@ -83,10 +83,7 @@ public class SystemController {
     @GetMapping("/manager/edit.html")
     public String altManager(@AuthenticationPrincipal Manager managerDetail, @RequestParam(required = false) Long managerId, Model model) {
         //最好是从当前授权信息里面提出角色列表来
-        Set<Role> roles = managerDetail.getRoleList();
-        if (Manager.ADMIN.equals(managerDetail.getUsername())) {
-            roles = roleService.getAvailableRoles(Role.ROLE_TYPE_MANAGER);
-        }
+        var roles = managerDetail.getRoleList();
         String optRole = roles.stream().map(role -> role.getId().toString()).collect(Collectors.joining(","));
         Manager manager = new Manager();
         String checkRoleIds = "";

@@ -20,7 +20,6 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 后台首页控制器
@@ -43,7 +42,7 @@ public class IndexController {
         Collection<Role> roleList;
         if (Manager.ADMIN.equals(manager.getUsername())) {
             //admin账户 直接开挂加载所有
-            roleList = roleService.getAllRole();
+            roleList = roleService.getAvailableRoles(Role.ROLE_TYPE_MANAGER);
         } else {
             roleList = managerService.getManagerById(manager.getId()).getRoleList();
         }

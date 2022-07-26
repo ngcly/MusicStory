@@ -7,6 +7,8 @@ import com.cn.entity.Role;
 import com.cn.pojo.MenuDTO;
 import com.cn.util.MenuUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +54,7 @@ public class RoleService {
     /**
      * 获取可用角色
      */
-    public Set<Role> getAvailableRoles(byte type) {
+    public List<Role> getAvailableRoles(byte type) {
         return roleRepository.getAllByAvailableIsTrueAndRoleType(type);
     }
 
@@ -146,6 +148,7 @@ public class RoleService {
     /**
      * 保存菜单
      */
+    @CacheEvict(value = "permission_metadata")
     @Transactional(rollbackFor = Exception.class)
     public void saveMenu(Permission permission) {
         Permission pms = new Permission();
@@ -173,6 +176,7 @@ public class RoleService {
     /**
      * 删除菜单
      */
+    @CacheEvict(value = "permission_metadata")
     @Transactional(rollbackFor = Exception.class)
     public void delMenu(long menuId) {
         Permission permission = permissionRepository.getReferenceById(menuId);
@@ -183,6 +187,7 @@ public class RoleService {
     /**
      * 菜单url权限元数据
      */
+    @Cacheable(value = "permission_metadata")
     @Transactional(readOnly = true)
     public List<String> getUrlPermission() {
         List<Permission> permissions = permissionRepository.findAllByResourceType(Permission.RESOURCE_MENU);

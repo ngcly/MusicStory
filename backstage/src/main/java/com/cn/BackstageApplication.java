@@ -3,6 +3,7 @@ package com.cn;
 import com.cn.enums.ConfigEnum;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 
 /**
  * 后台主启动类
@@ -14,6 +15,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 //springboot 扫描包默认是以启动类所在的包 从上往下扫描
 //要解决这个可以使用：basePackageClasses={},basePackages={}
 //@ComponentScan(basePackages={"com.cn"})
+@EnableCaching
 @SpringBootApplication
 public class BackstageApplication {
     public static void main(String[] args) {

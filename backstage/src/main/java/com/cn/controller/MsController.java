@@ -13,9 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
-
 
 /**
  * 音书管理 控制类
@@ -58,7 +56,7 @@ public class MsController {
     @GetMapping("/user/edit.html")
     public String userEdit(@RequestParam Long userId, Model model) {
         User user = userService.getUserDetail(userId);
-        Set<Role> roles = roleService.getAvailableRoles(Role.ROLE_TYPE_CUSTOMER);
+        var roles = roleService.getAvailableRoles(Role.ROLE_TYPE_CUSTOMER);
         roles.addAll(user.getRoleList());
         String checkRoleIds = user.getRoleList().stream().map(role ->
                 role.getId().toString()).collect(Collectors.joining(","));

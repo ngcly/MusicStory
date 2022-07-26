@@ -1,6 +1,6 @@
 package com.cn;
 
-import com.cn.config.GlobalException;
+import com.cn.exception.GlobalException;
 import com.cn.dao.ManagerRepository;
 import com.cn.entity.Manager;
 import com.cn.entity.Role;
@@ -39,7 +39,12 @@ public class ManagerService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return managerRepository.findManagerByUsername(username).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
+        Manager manager = managerRepository.findManagerByUsername(username).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
+        if(Manager.ADMIN.equals(manager.getUsername())) {
+            //admin 直接开挂加载所有
+            manager.setRoleList(roleService.getAvailableRoles(Role.ROLE_TYPE_MANAGER));
+        }
+        return manager;
     }
 
     /**
@@ -71,14 +76,11 @@ public class ManagerService implements UserDetailsService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void saveManager(Manager curManager, Manager updateManager) {
-        Set<Role> roleList = curManager.getRoleList();
-        if (Manager.ADMIN.equals(curManager.getUsername())) {
-            roleList = roleService.getAvailableRoles(Role.ROLE_TYPE_MANAGER);
-        }
+        List<Role> roleList = curManager.getRoleList();
         //获取被修改人之前的角色-当前人的角色=必存角色 最后结果为必存角色+回传角色
         Set<Role> allRole = new HashSet<>(roleList);
 
-        Set<Role> roles = new HashSet<>();
+        List<Role> roles = new ArrayList<>();
         if (Objects.nonNull(updateManager.getId())) {
             Manager manager = managerRepository.getReferenceById(updateManager.getId());
             //判断是否当前人在改自己的信息
@@ -161,7 +163,6 @@ public class ManagerService implements UserDetailsService {
      * @return List<String>
      */
     public List<String> getUrlPermissionMetadata() {
-        //TODO 此处需要做缓存
         return roleService.getUrlPermission();
     }
 }

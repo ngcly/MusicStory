@@ -1,4 +1,4 @@
-package com.cn.config;
+package com.cn.exception;
 
 import com.cn.pojo.RestCode;
 

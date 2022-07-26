@@ -86,9 +86,13 @@ jwt:
   expiration: 3600
 
 #私人密钥配置
-upload:
-  accessKey: ENC(BFmGqMfhERt8BVG81BuQFAI4L165TxyjahwvlTGx9QnjkKAWytNvhhtfiajw1mhsGTLh5JErMOFrjltogIkOUg==)
-  secretKey: ENC(Ng+yTJPV6RPseJCbuVbk2vqwElnl5fdddl22TAYCvyOVoHSjINi9Tk01j+8CLmozS/ysp3gWFbU5Ock4znKENw==)
+oss:
+  config:
+    host: https://oss-cn-hongkong-internal.aliyuncs.com
+    bucketName: music-story
+    accessKey: ENC(BFmGqMfhERt8BVG81BuQFAI4L165TxyjahwvlTGx9QnjkKAWytNvhhtfiajw1mhsGTLh5JErMOFrjltogIkOUg==)
+    secretKey: ENC(Ng+yTJPV6RPseJCbuVbk2vqwElnl5fdddl22TAYCvyOVoHSjINi9Tk01j+8CLmozS/ysp3gWFbU5Ock4znKENw==)
+    endpoint: oss.ngcly.cn
 
 springdoc:
   packagesToScan: com.cn.controller

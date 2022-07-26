@@ -4,6 +4,7 @@ import cn.hutool.http.ContentType;
 import cn.hutool.http.Header;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import com.cn.exception.GlobalException;
 import com.cn.pojo.RestCode;
 import com.cn.util.Result;
 import org.springframework.dao.DataIntegrityViolationException;

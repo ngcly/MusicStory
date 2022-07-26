@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * 客服管理员实体
@@ -85,7 +85,7 @@ public class Manager extends AbstractDateAudit implements UserDetails, Credentia
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     @Where(clause = "available=true")
-    private Set<Role> roleList;
+    private List<Role> roleList;
 
     @Transient
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

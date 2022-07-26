@@ -14,7 +14,6 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author ngcly
@@ -28,7 +27,7 @@ public interface RoleRepository extends JpaRepository<Role,Long>,JpaSpecificatio
      * @param type 角色类型
      * @return Set<Role>
      */
-    Set<Role> getAllByAvailableIsTrueAndRoleType(byte type);
+    List<Role> getAllByAvailableIsTrueAndRoleType(byte type);
 
     /**
      * 自定义条件查询
@@ -52,7 +51,7 @@ public interface RoleRepository extends JpaRepository<Role,Long>,JpaSpecificatio
                 predicates.add(cb.equal(root.get("roleType"), roleType));
             }
 
-            return query.where(cb.and(predicates.toArray(new Predicate[predicates.size()]))).getRestriction();
+            return query.where(cb.and(predicates.toArray(new Predicate[0]))).getRestriction();
         };
     }
 }
