@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * 角色实体
@@ -60,13 +60,13 @@ public class Role extends AbstractUserDateAudit {
      * 用户 - 角色关系定义; 用户-角色 多对多
      */
     @ManyToMany(mappedBy = "roleList")
-    private List<User> userInfoList;
+    private Set<User> userInfoList;
 
     /**
      * 管理员 - 角色关系定义; 管理员-角色 多对多
      */
     @ManyToMany(mappedBy = "roleList")
-    private List<Manager> managers;
+    private Set<Manager> managers;
 
     /**
      * 角色 -- 权限关系：多对多关系;
@@ -78,7 +78,7 @@ public class Role extends AbstractUserDateAudit {
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
     @OrderBy("sort asc")
-    private List<Permission> permissions;
+    private Set<Permission> permissions;
 
 
     @Override

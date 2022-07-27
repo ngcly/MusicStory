@@ -42,7 +42,7 @@ public class ManagerService implements UserDetailsService {
         Manager manager = managerRepository.findManagerByUsername(username).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
         if(Manager.ADMIN.equals(manager.getUsername())) {
             //admin 直接开挂加载所有
-            manager.setRoleList(roleService.getAvailableRoles(Role.ROLE_TYPE_MANAGER));
+            manager.setRoleList(new HashSet<>(roleService.getAvailableRoles(Role.ROLE_TYPE_MANAGER)));
         }
         return manager;
     }
@@ -54,7 +54,7 @@ public class ManagerService implements UserDetailsService {
      * @return Manager
      */
     public Manager getManagerById(Long managerId) {
-        return managerRepository.getReferenceById(managerId);
+        return managerRepository.findById(managerId).orElseThrow();
     }
 
     /**
@@ -76,11 +76,11 @@ public class ManagerService implements UserDetailsService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void saveManager(Manager curManager, Manager updateManager) {
-        List<Role> roleList = curManager.getRoleList();
+        Set<Role> roleList = curManager.getRoleList();
         //获取被修改人之前的角色-当前人的角色=必存角色 最后结果为必存角色+回传角色
-        Set<Role> allRole = new HashSet<>(roleList);
+        Set<Role> allRole = new HashSet<>(curManager.getRoleList());
 
-        List<Role> roles = new ArrayList<>();
+        Set<Role> roles = new HashSet<>();
         if (Objects.nonNull(updateManager.getId())) {
             Manager manager = managerRepository.getReferenceById(updateManager.getId());
             //判断是否当前人在改自己的信息

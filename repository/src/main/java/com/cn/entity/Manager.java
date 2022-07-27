@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Set;
 
 /**
  * 客服管理员实体
@@ -77,7 +77,8 @@ public class Manager extends AbstractDateAudit implements UserDetails, Credentia
     /**
      * 一个用户具有多个角色
      * 立即从数据库中进行加载数据;
-     * todo 此处有个bug 会出现多条重复数据
+     * 此处使用set 会比list 性能好 同时也能避免一些重复数据的坑
+     * jpa官方也建议使用set 因为list在一对多、多对多 等场景下有很多各种各样的坑
      */
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -86,7 +87,7 @@ public class Manager extends AbstractDateAudit implements UserDetails, Credentia
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     @Where(clause = "available=true")
-    private List<Role> roleList;
+    private Set<Role> roleList;
 
     @Transient
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -113,7 +114,7 @@ public class Manager extends AbstractDateAudit implements UserDetails, Credentia
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new HashSet<>();
         SimpleGrantedAuthority authority;
-        for (Role role : this.getRoleList()) {
+        for (Role role : roleList) {
             authority = new SimpleGrantedAuthority(String.join("_","ROLE", role.getRoleCode()));
             authorities.add(authority);
             for (Permission permission : role.getPermissions()) {

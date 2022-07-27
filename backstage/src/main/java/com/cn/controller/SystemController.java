@@ -84,21 +84,21 @@ public class SystemController {
     @GetMapping("/manager/edit.html")
     public String altManager(@AuthenticationPrincipal Manager managerDetail, @RequestParam(required = false) Long managerId, Model model) {
         //最好是从当前授权信息里面提出角色列表来
-        List<Role> currentManagerRoles = managerDetail.getRoleList();
+        Set<Role> currentManagerRoles = managerDetail.getRoleList();
         String optRole = currentManagerRoles.stream().map(role -> role.getId().toString()).collect(Collectors.joining(","));
 
         Manager manager;
         String checkRoleIds;
-        List<Role> beSelectedRoles;
+        Set<Role> beSelectedRoles;
         if (managerId != null) {
             manager = managerService.getManagerById(managerId);
             checkRoleIds = manager.getRoleList().stream().map(role ->
                     role.getId().toString()).collect(Collectors.joining(","));
-            beSelectedRoles = Stream.concat(currentManagerRoles.stream(), manager.getRoleList().stream()).toList();
+            beSelectedRoles = Stream.concat(currentManagerRoles.stream(), manager.getRoleList().stream()).collect(Collectors.toSet());
         } else {
             manager = new Manager();
             checkRoleIds = "";
-            beSelectedRoles = Collections.unmodifiableList(currentManagerRoles);
+            beSelectedRoles = Collections.unmodifiableSet(currentManagerRoles);
         }
         model.addAttribute("currentId", managerDetail.getId());
         model.addAttribute("manager", manager);

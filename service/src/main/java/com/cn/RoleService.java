@@ -80,17 +80,9 @@ public class RoleService {
     @Transactional(rollbackFor = Exception.class)
     public void saveGrant(long roleId, String menuIds) {
         Role role = roleRepository.getReferenceById(roleId);
-        List<Permission> permissions = permissionRepository.findMenuList();
-        List<Permission> permissionList = new ArrayList<>();
-        String[] permissionIds = menuIds.split(",");
-        for (String permissionId : permissionIds) {
-            for (Permission permission : permissions) {
-                if (permissionId.equals(permission.getId().toString())) {
-                    permissionList.add(permission);
-                }
-            }
-        }
-        role.setPermissions(permissionList);
+        List<Long> ids = Arrays.stream(menuIds.split(",")).map(Long::valueOf).toList();
+        List<Permission> permissionList = permissionRepository.findAllById(ids);
+        role.setPermissions(new HashSet<>(permissionList));
     }
 
     /**
@@ -126,6 +118,7 @@ public class RoleService {
 
     /**
      * 获取菜单列表
+     *
      * @return List<MenuDTO>
      */
     public List<Permission> getMenuList() {
@@ -135,13 +128,14 @@ public class RoleService {
 
     /**
      * 获取带有勾选状态的 菜单列表
+     *
      * @param roleId 角色id
      * @return Set<MenuDTO>
      */
-    public Collection<MenuDTO> getMenuListWithChecked(long roleId){
+    public Collection<MenuDTO> getMenuListWithChecked(long roleId) {
         List<Permission> permissions = permissionRepository.findMenuList();
-        List<Permission> rolePermissions = roleRepository.getReferenceById(roleId).getPermissions();
-        return MenuUtil.checkMenuSelected(permissions,rolePermissions);
+        Set<Permission> rolePermissions = roleRepository.getReferenceById(roleId).getPermissions();
+        return MenuUtil.checkMenuSelected(permissions, rolePermissions);
     }
 
     /**

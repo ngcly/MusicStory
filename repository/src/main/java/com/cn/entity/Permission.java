@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 /**
  * 后台资源实体类
@@ -41,7 +41,7 @@ public class Permission extends MenuDTO {
     /**
      * 菜单与角色 多对多
      */
-    private List<Role> roles;
+    private Set<Role> roles;
 
     /**
      * 资源类型
@@ -100,7 +100,7 @@ public class Permission extends MenuDTO {
     }
 
     @ManyToMany(mappedBy = "permissions")
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
