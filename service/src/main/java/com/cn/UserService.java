@@ -2,7 +2,6 @@ package com.cn;
 
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.RandomUtil;
-import cn.hutool.json.JSONObject;
 import com.cn.exception.GlobalException;
 import com.cn.config.RabbitConfig;
 import com.cn.dao.*;
@@ -10,6 +9,7 @@ import com.cn.entity.*;
 import com.cn.enums.SocialEnum;
 import com.cn.enums.SocialParamEnum;
 import com.cn.util.MailUtil;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -183,42 +183,42 @@ public class UserService implements UserDetailsService {
             //通过Authorization Code获取Access Token
             String url = String.format("https://graph.qq.com/oauth2.0/token" +
                     "?grant_type=authorization_code&client_id=%s&client_secret=%s&code=%s&redirect_uri=%s", socialEnum.getAppId(), socialEnum.getAppSecret(), authCode, SocialEnum.APP_REDIRECT + socialEnum.getSource());
-            JSONObject tokenResult = restTemplate.getForObject(url, JSONObject.class);
+            JsonNode tokenResult = restTemplate.getForObject(url, JsonNode.class);
             if (Objects.isNull(tokenResult)) {
                 throw new GlobalException("QQ获取access_token失败");
             }
-            if (Objects.nonNull(tokenResult.getInt(SocialParamEnum.code.name()))) {
-                throw new GlobalException(tokenResult.getInt(SocialParamEnum.code.name()), tokenResult.getStr(SocialParamEnum.msg.name()));
+            if (Objects.nonNull(tokenResult.get(SocialParamEnum.code.name()))) {
+                throw new GlobalException(tokenResult.get(SocialParamEnum.code.name()).asInt(), tokenResult.get(SocialParamEnum.msg.name()).asText());
             }
-            social.setAccessToken(tokenResult.getStr(SocialParamEnum.access_token.name()));
-            social.setExpireIn(tokenResult.getInt(SocialParamEnum.expires_in.name()));
-            social.setRefreshToken(tokenResult.getStr(SocialParamEnum.refresh_token.name()));
+            social.setAccessToken(tokenResult.get(SocialParamEnum.access_token.name()).asText());
+            social.setExpireIn(tokenResult.get(SocialParamEnum.expires_in.name()).asInt());
+            social.setRefreshToken(tokenResult.get(SocialParamEnum.refresh_token.name()).asText());
 
             //获取回调后的 openid 值
             url = String.format("https://graph.qq.com/oauth2.0/me?access_token=%s", social.getAccessToken());
-            JSONObject openidResult = restTemplate.getForObject(url, JSONObject.class);
+            JsonNode openidResult = restTemplate.getForObject(url, JsonNode.class);
             if (Objects.isNull(openidResult)) {
                 throw new GlobalException("QQ获取openid失败");
             }
-            if (Objects.nonNull(openidResult.getInt(SocialParamEnum.code.name()))) {
-                throw new GlobalException(openidResult.getInt(SocialParamEnum.code.name()), openidResult.getStr(SocialParamEnum.msg.name()));
+            if (Objects.nonNull(openidResult.get(SocialParamEnum.code.name()))) {
+                throw new GlobalException(openidResult.get(SocialParamEnum.code.name()).asInt(), openidResult.get(SocialParamEnum.msg.name()).asText());
             }
-            String openid = openidResult.getStr(SocialParamEnum.openid.name());
+            String openid = openidResult.get(SocialParamEnum.openid.name()).asText();
             social.setOpenId(openid);
         } else {
             //微信 通过code获取access_token
             String wechatUrl = String.format("https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code", socialEnum.getAppId(), socialEnum.getAppSecret(), authCode);
-            JSONObject json = restTemplate.getForObject(wechatUrl, JSONObject.class);
+            JsonNode json = restTemplate.getForObject(wechatUrl, JsonNode.class);
             if (Objects.isNull(json)) {
                 throw new GlobalException("微信获取access_token失败");
             }
-            if (Objects.nonNull(json.getInt(SocialParamEnum.errcode.name()))) {
-                throw new GlobalException(json.getInt(SocialParamEnum.errcode.name()), json.getStr(SocialParamEnum.errmsg.name()));
+            if (Objects.nonNull(json.get(SocialParamEnum.errcode.name()))) {
+                throw new GlobalException(json.get(SocialParamEnum.errcode.name()).asInt(), json.get(SocialParamEnum.errmsg.name()).asText());
             }
-            social.setAccessToken(json.getStr(SocialParamEnum.access_token.name()));
-            social.setExpireIn(json.getInt(SocialParamEnum.expires_in.name()));
-            social.setOpenId(json.getStr(SocialParamEnum.openid.name()));
-            social.setScope(json.getStr(SocialParamEnum.scope.name()));
+            social.setAccessToken(json.get(SocialParamEnum.access_token.name()).asText());
+            social.setExpireIn(json.get(SocialParamEnum.expires_in.name()).asInt());
+            social.setOpenId(json.get(SocialParamEnum.openid.name()).asText());
+            social.setScope(json.get(SocialParamEnum.scope.name()).asText( ));
         }
         return social;
     }
@@ -234,36 +234,38 @@ public class UserService implements UserDetailsService {
         User user = new User();
         user.setState(User.STATE_NORMAL);
         String userInfoUrl;
-        JSONObject userInfo;
+        JsonNode userInfo;
         if (SocialEnum.QQ.equals(socialEnum)) {
             //获取QQ用户信息
             userInfoUrl = String.format("https://graph.qq.com/user/get_user_info?access_token=%s&oauth_consumer_key=%s&openid=%s", social.getAccessToken(), socialEnum.getAppId(), social.getOpenId());
-            userInfo = restTemplate.getForObject(userInfoUrl, JSONObject.class);
+            userInfo = restTemplate.getForObject(userInfoUrl, JsonNode.class);
             if (Objects.isNull(userInfo)) {
                 throw new GlobalException("获取QQ用户信息失败");
             }
-            if (userInfo.getInt(SocialParamEnum.ret.name()) != 0) {
-                throw new GlobalException(userInfo.getInt(SocialParamEnum.ret.name()), userInfo.getStr(SocialParamEnum.msg.name()));
+            if (userInfo.get(SocialParamEnum.ret.name()).asInt() != 0) {
+                throw new GlobalException(userInfo.get(SocialParamEnum.ret.name()).asInt(), userInfo.get(SocialParamEnum.msg.name()).asText());
             }
-            user.setNickName(userInfo.getStr(SocialParamEnum.nickname.name()));
-            user.setAvatar(userInfo.getStr(SocialParamEnum.figureurl_qq_1.name()));
-            user.setGender(userInfo.getByte(SocialParamEnum.gender.name()));
+            user.setNickName(userInfo.get(SocialParamEnum.nickname.name()).asText());
+            user.setAvatar(userInfo.get(SocialParamEnum.figureurl_qq_1.name()).asText());
+            user.setGender(userInfo.get(SocialParamEnum.gender.name()).numberValue().byteValue());
         } else {
             //获取微信用户信息
             userInfoUrl = String.format("https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s", social.getAccessToken(), social.getOpenId());
-            userInfo = restTemplate.getForObject(userInfoUrl, JSONObject.class);
+            userInfo = restTemplate.getForObject(userInfoUrl, JsonNode.class);
             if (Objects.isNull(userInfo)) {
                 throw new GlobalException("获取微信用户信息失败");
             }
-            if (Objects.nonNull(userInfo.getInt(SocialParamEnum.errcode.name()))) {
-                throw new GlobalException(userInfo.getInt(SocialParamEnum.errcode.name()), userInfo.getStr(SocialParamEnum.errmsg.name()));
+            if (Objects.nonNull(userInfo.get(SocialParamEnum.errcode.name()))) {
+                throw new GlobalException(userInfo.get(SocialParamEnum.errcode.name()).asInt(), userInfo.get(SocialParamEnum.errmsg.name()).asText());
             }
-            social.setUnionId(userInfo.getStr(SocialParamEnum.unionid.name()));
+            social.setUnionId(userInfo.get(SocialParamEnum.unionid.name()).asText());
 
-            user.setNickName(userInfo.getStr(SocialParamEnum.nickname.name()));
-            user.setGender(userInfo.getByte(SocialParamEnum.sex.name()));
-            user.setAvatar(userInfo.getStr(SocialParamEnum.headimgurl.name()));
-            user.setAddress(userInfo.getStr(SocialParamEnum.country.name()) + userInfo.getStr(SocialParamEnum.province.name()) + userInfo.getStr(SocialParamEnum.city.name()));
+            user.setNickName(userInfo.get(SocialParamEnum.nickname.name()).asText());
+            user.setGender(userInfo.get(SocialParamEnum.sex.name()).numberValue().byteValue());
+            user.setAvatar(userInfo.get(SocialParamEnum.headimgurl.name()).asText());
+            user.setAddress(userInfo.get(SocialParamEnum.country.name()).asText()
+                    + userInfo.get(SocialParamEnum.province.name()).asText()
+                    + userInfo.get(SocialParamEnum.city.name()).asText());
         }
         return user;
     }

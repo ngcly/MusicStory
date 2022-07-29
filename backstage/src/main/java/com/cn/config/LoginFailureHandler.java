@@ -1,10 +1,8 @@
 package com.cn.config;
 
 import cn.hutool.http.ContentType;
-import cn.hutool.json.JSON;
-import cn.hutool.json.JSONConfig;
-import cn.hutool.json.JSONUtil;
 import com.cn.pojo.RestCode;
+import com.cn.util.JacksonUtil;
 import com.cn.util.Result;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.AuthenticationException;
@@ -46,9 +44,8 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
             restCode = RestCode.UNAUTHORIZED;
         }
         try (PrintWriter printWriter = response.getWriter()) {
-            JSON json = JSONUtil.parse(Result.failure(restCode), JSONConfig.create().setOrder(true)
-                    .setIgnoreNullValue(false));
-            JSONUtil.toJsonStr(json, printWriter);
+            String jsonStr = JacksonUtil.stringify(Result.failure(restCode));
+            printWriter.write(jsonStr);
         }
     }
 }

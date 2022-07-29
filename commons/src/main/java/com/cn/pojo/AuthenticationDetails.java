@@ -1,10 +1,10 @@
 package com.cn.pojo;
 
-import cn.hutool.http.Header;
 import com.cn.util.IpUtil;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import org.apache.http.HttpHeaders;
 import org.springframework.security.core.SpringSecurityCoreVersion;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +34,7 @@ public class AuthenticationDetails implements Serializable {
 
     public AuthenticationDetails(HttpServletRequest request) {
         this(extractCaptchaInfo(request), IpUtil.getIpAddress(request),
-                request.getHeader(Header.USER_AGENT.getValue()), request.getParameter(captchaKey));
+                request.getHeader(HttpHeaders.USER_AGENT), request.getParameter(captchaKey));
     }
 
     public AuthenticationDetails(CaptchaInfo captchaInfo, String remoteAddress,

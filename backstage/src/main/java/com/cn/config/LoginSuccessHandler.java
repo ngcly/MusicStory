@@ -1,10 +1,8 @@
 package com.cn.config;
 
 import cn.hutool.http.ContentType;
-import cn.hutool.json.JSON;
-import cn.hutool.json.JSONConfig;
-import cn.hutool.json.JSONUtil;
 
+import com.cn.util.JacksonUtil;
 import com.cn.util.Result;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -30,9 +28,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         response.setContentType(ContentType.JSON.toString(UTF_8));
         try (PrintWriter printWriter = response.getWriter()) {
-            JSON json = JSONUtil.parse(Result.success(), JSONConfig.create().setIgnoreNullValue(false));
-
-            JSONUtil.toJsonStr(json, printWriter);
+            String jsonStr = JacksonUtil.stringify(Result.success());
+            printWriter.write(jsonStr);
         }
     }
 

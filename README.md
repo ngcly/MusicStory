@@ -52,7 +52,6 @@ docker run --name rabbitmq -p 15672:15672 -p 5672:5672 rabbitmq
   fluent-gem install fluent-plugin-elasticsearch
   ```
 
-
 特别鸣谢：  
 感谢JetBrains免费提供Idea开发工具对本项目的支持  
 [![JetBrains](jetbrains.svg "jetbrains")](https://www.jetbrains.com/?from=MusicStory)

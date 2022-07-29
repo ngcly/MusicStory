@@ -10,8 +10,12 @@ dependencies {
     api 'org.springframework.boot:spring-boot-starter-amqp'
     api 'org.springframework.boot:spring-boot-starter-websocket'
     api "org.springdoc:springdoc-openapi-ui:${docVersion}"
-    api "cn.hutool:hutool-all:${hutoolVersion}"
     api "com.google.guava:guava:${guavaVersion}"
+    api "cn.hutool:hutool-core:${hutoolVersion}"
+    api "cn.hutool:hutool-extra:${hutoolVersion}"
+    api "cn.hutool:hutool-http:${hutoolVersion}"
+    api "cn.hutool:hutool-captcha:${hutoolVersion}"
+    api "cn.hutool:hutool-jwt:${hutoolVersion}"
     implementation "com.aliyun.oss:aliyun-sdk-oss:${aliOssVersion}"
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 }

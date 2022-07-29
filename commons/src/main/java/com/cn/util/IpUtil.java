@@ -1,8 +1,7 @@
 package com.cn.util;
 
 import cn.hutool.extra.spring.SpringUtil;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -44,7 +43,7 @@ public final class IpUtil {
     private static final String COMMA = ",";
     private static final String UNKNOWN = "unknown";
     private static final String EMPTY = "";
-    private static final String IP_ADDRESS_URL = "http://whois.pconline.com.cn/ipJson.jsp?json=true&ip=%s";
+    private static final String IP_ADDRESS_URL = "https://whois.pconline.com.cn/ipJson.jsp?json=true&ip=%s";
     private static final String ADDRESS_KEY = "addr";
 
     /**
@@ -128,8 +127,8 @@ public final class IpUtil {
         }
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            JSONObject json = JSONUtil.parseObj(responseEntity.getBody());
-            return json.getStr(ADDRESS_KEY);
+            JsonNode jsonNode = JacksonUtil.convertValue(responseEntity.getBody(), JsonNode.class);
+            return jsonNode.get(ADDRESS_KEY).asText();
         }
         return null;
     }
