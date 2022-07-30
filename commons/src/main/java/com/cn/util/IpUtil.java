@@ -127,7 +127,7 @@ public final class IpUtil {
         }
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            JsonNode jsonNode = JacksonUtil.convertValue(responseEntity.getBody(), JsonNode.class);
+            JsonNode jsonNode = JacksonUtil.toObject(responseEntity.getBody(), JsonNode.class);
             return jsonNode.get(ADDRESS_KEY).asText();
         }
         return null;

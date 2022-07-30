@@ -183,7 +183,7 @@ public class RoleService {
     @Cacheable(value = "permission_metadata")
     @Transactional(readOnly = true)
     public List<String> getUrlPermission() {
-        List<Permission> permissions = permissionRepository.findAllByResourceType(Permission.RESOURCE_MENU);
+        List<Permission> permissions = permissionRepository.findMenuList();
         return permissions.stream().filter(permission -> StringUtils.hasLength(permission.getUrl()))
                 .map(permission -> String.join("_", permission.getHttpMethod(), permission.getUrl()))
                 .toList();
