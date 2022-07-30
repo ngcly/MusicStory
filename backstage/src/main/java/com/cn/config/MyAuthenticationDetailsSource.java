@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @author chenning
+ * @author ngcly
  */
 @Component
 public class MyAuthenticationDetailsSource implements AuthenticationDetailsSource<HttpServletRequest, AuthenticationDetails> {
