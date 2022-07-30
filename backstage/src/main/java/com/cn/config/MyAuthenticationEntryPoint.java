@@ -1,0 +1,33 @@
+package com.cn.config;
+
+import com.cn.pojo.RestCode;
+import com.cn.util.JacksonUtil;
+import com.cn.util.Result;
+import org.apache.http.entity.ContentType;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.stereotype.Component;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+/**
+ * 认证异常处理
+ *
+ * @author ngcly
+ * @version V1.0
+ * @since 2022/7/30 19:09
+ */
+@Component
+public class MyAuthenticationEntryPoint implements AuthenticationEntryPoint {
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        response.setContentType(ContentType.APPLICATION_JSON.toString());
+        try (PrintWriter printWriter = response.getWriter()) {
+            printWriter.write(JacksonUtil.stringify(Result.failure(RestCode.NOT_LOGIN)));
+        }
+    }
+}

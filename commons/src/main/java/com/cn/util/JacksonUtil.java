@@ -43,11 +43,11 @@ public class JacksonUtil {
             //初始化
             initMapper();
             //配置序列化级别
-            configPropertyInclusion();
+//            configPropertyInclusion();
             //配置JSON缩进支持
-            configIndentOutput();
+//            configIndentOutput();
             //配置普通属性
-            configCommon();
+//            configCommon();
             //配置特殊属性
             configSpecial();
         } catch (Exception e) {

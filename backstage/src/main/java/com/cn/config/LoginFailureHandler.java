@@ -1,9 +1,9 @@
 package com.cn.config;
 
-import cn.hutool.http.ContentType;
 import com.cn.pojo.RestCode;
 import com.cn.util.JacksonUtil;
 import com.cn.util.Result;
+import org.apache.http.entity.ContentType;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,8 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 /**
  * @author ngcly
  * @date 2018/3/24 下午7:43
@@ -25,7 +23,7 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException {
-        response.setContentType(ContentType.JSON.toString(UTF_8));
+        response.setContentType(ContentType.APPLICATION_JSON.toString());
         RestCode restCode;
         if (exception instanceof BadCredentialsException ||
                 exception instanceof UsernameNotFoundException) {

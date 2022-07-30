@@ -24,7 +24,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/music_story?serverTimezone=UTC&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: 12345678
+    password: 123456
     driverClassName: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     # 下面为连接池的补充设置，应用到上面所有数据源中
@@ -90,8 +90,8 @@ oss:
   config:
     host: https://oss-cn-hongkong-internal.aliyuncs.com
     bucketName: music-story
-    accessKey: ENC(BFmGqMfhERt8BVG81BuQFAI4L165TxyjahwvlTGx9QnjkKAWytNvhhtfiajw1mhsGTLh5JErMOFrjltogIkOUg==)
-    secretKey: ENC(Ng+yTJPV6RPseJCbuVbk2vqwElnl5fdddl22TAYCvyOVoHSjINi9Tk01j+8CLmozS/ysp3gWFbU5Ock4znKENw==)
+    accessKeyId: ENC(BFmGqMfhERt8BVG81BuQFAI4L165TxyjahwvlTGx9QnjkKAWytNvhhtfiajw1mhsGTLh5JErMOFrjltogIkOUg==)
+    accessKeySecret: ENC(Ng+yTJPV6RPseJCbuVbk2vqwElnl5fdddl22TAYCvyOVoHSjINi9Tk01j+8CLmozS/ysp3gWFbU5Ock4znKENw==)
     endpoint: oss.ngcly.cn
 
 springdoc:

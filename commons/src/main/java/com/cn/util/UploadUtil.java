@@ -1,15 +1,18 @@
 package com.cn.util;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
+import com.cn.config.OssConfigProperties;
 import com.cn.exception.FileUploadException;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Random;
@@ -19,49 +22,20 @@ import java.util.Random;
  *
  * @author ngcly
  */
-@Component
-@ConfigurationProperties(prefix = "oss.config")
-public class UploadUtil {
+public final class UploadUtil {
+    private final static OssConfigProperties ossProperties;
+    private final static Random rand;
 
-    /**
-     * oss域名
-     */
-    private static String host;
-    /**
-     * 端点
-     */
-    private static String endpoint;
-    /**
-     * 访问秘钥id
-     */
-    private static String accessKeyId;
-    /**
-     * 访问秘钥密码
-     */
-    private static String accessKeySecret;
-    /**
-     * 存储桶名称
-     */
-    private static String bucketName;
-
-    public static void setHost(String host) {
-        UploadUtil.host = host;
+    private UploadUtil() {
     }
 
-    public static void setEndpoint(String endpoint) {
-        UploadUtil.endpoint = endpoint;
-    }
-
-    public static void setAccessKeyId(String accessKeyId) {
-        UploadUtil.accessKeyId = accessKeyId;
-    }
-
-    public static void setAccessKeySecret(String accessKeySecret) {
-        UploadUtil.accessKeySecret = accessKeySecret;
-    }
-
-    public static void setBucketName(String bucketName) {
-        UploadUtil.bucketName = bucketName;
+    static {
+        ossProperties = SpringUtil.getBean("ossConfigProperties");
+        try {
+            rand = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -71,23 +45,22 @@ public class UploadUtil {
      * @param cloudDir 上传至服务器目录
      * @return String 访问路径
      */
-    public static String uploadFileByAli(MultipartFile file, String cloudDir) {
+    public static String uploadFileByAli(@Nonnull MultipartFile file, String cloudDir) {
         try {
-            OSS ossClient = new OSSClientBuilder().build(host, accessKeyId, accessKeySecret);
+            OSS ossClient = new OSSClientBuilder().build(ossProperties.getHost(), ossProperties.getAccessKeyId(), ossProperties.getAccessKeySecret());
             // 上传内容到指定的存储空间（bucketName）并保存为指定的文件名称（objectName）。
-            String suffix = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename()
-                    .lastIndexOf(".")).toLowerCase();
-            Random random = new Random();
-            String fileName = random.nextInt(10000) + System.currentTimeMillis() + suffix;
+            String suffix = Objects.requireNonNull(file.getOriginalFilename())
+                    .substring(file.getOriginalFilename().lastIndexOf(".")).toLowerCase();
+            String fileName = rand.nextInt(10000) + System.currentTimeMillis() + suffix;
             String fileKey = cloudDir + "/" + fileName;
-            ossClient.putObject(bucketName, fileKey, new ByteArrayInputStream(file.getBytes()));
+            ossClient.putObject(ossProperties.getBucketName(), fileKey, new ByteArrayInputStream(file.getBytes()));
             // 设置URL过期时间为10年 3600l* 1000*24*365*10
             Date expiration = new Date(System.currentTimeMillis() + 3600L * 1000 * 24 * 365 * 10);
             // 生成URL
-            URL url = ossClient.generatePresignedUrl(bucketName, fileKey, expiration);
+            URL url = ossClient.generatePresignedUrl(ossProperties.getBucketName(), fileKey, expiration);
             // 关闭OSSClient
             ossClient.shutdown();
-            return url.toString().replace("music-story.oss-cn-hongkong-internal.aliyuncs.com", endpoint);
+            return url.toString().replace("music-story.oss-cn-hongkong-internal.aliyuncs.com", ossProperties.getEndpoint());
         } catch (IOException e) {
             throw new FileUploadException();
         }
@@ -100,10 +73,10 @@ public class UploadUtil {
      */
     public static void deleteFileByAli(String url) {
         // 创建OSSClient实例。
-        OSS ossClient = new OSSClientBuilder().build(host, accessKeyId, accessKeySecret);
+        OSS ossClient = new OSSClientBuilder().build(ossProperties.getHost(), ossProperties.getAccessKeyId(), ossProperties.getAccessKeySecret());
         // 删除文件。
-        String fileName = url.replace(endpoint, "");
-        ossClient.deleteObject(bucketName, fileName.substring(fileName.lastIndexOf(":/"), fileName.indexOf("?")));
+        String fileName = url.replace(ossProperties.getEndpoint(), "");
+        ossClient.deleteObject(ossProperties.getBucketName(), fileName.substring(fileName.lastIndexOf(":/"), fileName.indexOf("?")));
         // 关闭OSSClient。
         ossClient.shutdown();
     }

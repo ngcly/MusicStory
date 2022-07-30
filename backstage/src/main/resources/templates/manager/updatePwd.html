@@ -12,7 +12,7 @@
         <div class="layui-card">
             <div class="layui-card-header"><span sec:authentication="name"></span></div>
             <div class="layui-card-body">
-                <form class="layui-form" action="/sys/updatePwd" method="put">
+                <form class="layui-form" action="/sys/manager/pwd">
                     <div class="layui-form-item">
                         <label class="layui-form-label">当前密码</label>
                         <div class="layui-input-inline">
@@ -67,7 +67,7 @@
             headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
             $.ajax({
                 url:data.form.action,
-                type:data.form.method,
+                type:'put',
                 headers: headers,
                 data:data.field,
                 dataType:'json',

@@ -1,12 +1,12 @@
 package com.cn.config;
 
-import cn.hutool.http.ContentType;
-import cn.hutool.http.Header;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import com.cn.exception.GlobalException;
 import com.cn.pojo.RestCode;
 import com.cn.util.Result;
+import org.apache.http.HttpHeaders;
+import org.apache.http.entity.ContentType;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
@@ -34,9 +34,9 @@ public class ExceptionHandle {
 
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
-    public Result<String> handlerException(HttpServletRequest request, Exception e) throws Exception{
+    public Result<String> handlerException(HttpServletRequest request, Exception e) throws Exception {
         log.error(e);
-        if (request.getHeader(Header.ACCEPT.toString()).contains(ContentType.JSON.toString())
+        if (request.getHeader(HttpHeaders.ACCEPT).contains(ContentType.APPLICATION_JSON.getMimeType())
                 ||  "XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
             return getResult(e);
         }else{
@@ -59,17 +59,18 @@ public class ExceptionHandle {
             return Result.failure(RestCode.PARAM_ERROR);
         } else if (e instanceof HttpMediaTypeNotAcceptableException){
             return Result.failure(RestCode.HEAD_ERROR);
-        }  else if (e instanceof GlobalException){
-            return Result.failure(((GlobalException) e).getCode(),e.getMessage());
+        }  else if (e instanceof GlobalException globalException){
+            return Result.failure(globalException.getCode(), globalException.getMessage());
         } else if (e instanceof ConstraintViolationException exception) {
             //@RequestParam 参数校验失败
-            String msg = exception.getConstraintViolations().stream().map(constraint -> constraint.getInvalidValue()+":"+constraint.getMessage()).collect(Collectors.joining(";"));
+            String msg = exception.getConstraintViolations().stream().map(constraint ->
+                    constraint.getInvalidValue()+":"+constraint.getMessage()).collect(Collectors.joining(";"));
             return Result.failure(RestCode.PARAM_ERROR.code, msg);
         } else if (e instanceof MethodArgumentNotValidException exception){
             StringBuilder errMsg = new StringBuilder();
             String msg = exception.getBindingResult().getAllErrors().stream().map(objectError -> {
-                if(objectError instanceof FieldError){
-                    errMsg.append(((FieldError) objectError).getField()).append(":");
+                if(objectError instanceof FieldError fieldError){
+                    errMsg.append(fieldError.getField()).append(":");
                 }
                 errMsg.append(objectError.getDefaultMessage()==null?"":objectError.getDefaultMessage());
                 return errMsg;
