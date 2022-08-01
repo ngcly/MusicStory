@@ -24,12 +24,10 @@ import java.util.Scanner;
 public class IndexControllerTest {
 
     @Test
-    void defaultKaptcha() {
+    void defaultCaptcha() {
         ICaptcha captcha = CaptchaUtil.createGifCaptcha(116, 36, 4);
         try (FileOutputStream out = new FileOutputStream("d:/gif.gif")){
             captcha.write(out);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
