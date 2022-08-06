@@ -11,7 +11,7 @@
 <div class="row">
     <input type="hidden" id="menus" th:value="${menuList}">
     <div class="row" th:style="${#strings.equals(type,'2')?'height:406px;overflow-y: auto;overflow-x: hidden;':''}+'padding-left: 60px'">
-        <div class="zTreeDemoBackground left">
+        <div class="zTreeContent left">
             <ul id="menuTree" class="ztree"></ul>
         </div>
     </div>
@@ -22,7 +22,8 @@
 </div>
 <script src="/webjars/layui/layui.js"></script>
 <script src="/webjars/jquery/dist/jquery.min.js"></script>
-<script src="/js/jquery.ztree.all.min.js"></script>
+<script src="/js/jquery.ztree.core.min.js"></script>
+<script src="/js/jquery.ztree.excheck.min.js"></script>
 <script type="text/javascript">
     const zNodes = JSON.parse($('#menus').val());
     const setting = {
@@ -33,6 +34,11 @@
             enable: true,
             chkboxType: {"Y": "p", "N": "s"}
         },
+        data: {
+            key: {
+                url: "xUrl"
+            }
+        }
     };
     layui.use(['element','layer'], function(){
         $ = layui.jquery;
