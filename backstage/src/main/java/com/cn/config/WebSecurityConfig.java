@@ -6,12 +6,15 @@ import com.cn.util.JacksonUtil;
 import com.cn.util.Result;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.entity.ContentType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
@@ -84,17 +87,37 @@ public class WebSecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public MyAuthenticationProvider authenticationProvider() {
-        MyAuthenticationProvider provider = new MyAuthenticationProvider();
-        provider.setUserDetailsService(managerService);
-        provider.setPasswordEncoder(passwordEncoder);
-        return provider;
-    }
+//    @Bean
+//    public MyAuthenticationProvider authenticationProvider() {
+//        MyAuthenticationProvider provider = new MyAuthenticationProvider();
+//        provider.setUserDetailsService(managerService);
+//        provider.setPasswordEncoder(passwordEncoder);
+//        return provider;
+//    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Autowired
+    protected void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        MyAuthenticationProvider provider = new MyAuthenticationProvider();
+        provider.setUserDetailsService(managerService);
+        provider.setPasswordEncoder(passwordEncoder);
+
+        auth.authenticationProvider(provider);
+
+        MyAuthenticationProvider provider2 = new MyAuthenticationProvider();
+        provider2.setUserDetailsService(username -> {
+            if(username.equals("administrator")){
+                return managerService.getAdministrator();
+            }else{
+                throw new UsernameNotFoundException(username);
+            }
+        });
+        provider2.setPasswordEncoder(passwordEncoder);
+        auth.authenticationProvider(provider2);
     }
 
 //    @Bean

@@ -11,11 +11,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -29,6 +30,7 @@ import java.util.*;
 public class ManagerService implements UserDetailsService {
     private final ManagerRepository managerRepository;
     private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * 根据用户名获取用户
@@ -39,12 +41,7 @@ public class ManagerService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Manager manager = managerRepository.findManagerByUsername(username).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
-        if(Manager.ADMIN.equals(manager.getUsername())) {
-            //admin 直接开挂加载所有
-            manager.setRoleList(new HashSet<>(roleService.getAvailableRoles(Role.ROLE_TYPE_MANAGER)));
-        }
-        return manager;
+        return managerRepository.findManagerByUsername(username).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
     }
 
     /**
@@ -54,6 +51,9 @@ public class ManagerService implements UserDetailsService {
      * @return Manager
      */
     public Manager getManagerById(Long managerId) {
+        if(managerId == 0){
+            return getAdministrator();
+        }
         return managerRepository.findById(managerId).orElseThrow();
     }
 
@@ -93,8 +93,7 @@ public class ManagerService implements UserDetailsService {
             //加上必存角色 防止越权篡改数据
             roles.addAll(manager.getRoleList());
         } else {
-            BCryptPasswordEncoder bc = new BCryptPasswordEncoder(4);
-            updateManager.setPassword(bc.encode("123456"));
+            updateManager.setPassword(passwordEncoder.encode("123456"));
             updateManager.setState(Manager.STATE_INITIALIZE);
         }
         if (!StringUtils.hasText(updateManager.getUsername())) {
@@ -137,11 +136,10 @@ public class ManagerService implements UserDetailsService {
     @Transactional(rollbackFor = Exception.class)
     public void updatePassword(Long managerId, String oldPassword, String password) {
         Manager manager = managerRepository.getReferenceById(managerId);
-        BCryptPasswordEncoder bc = new BCryptPasswordEncoder(4);
-        if (!bc.matches(oldPassword, manager.getPassword())) {
+        if (!passwordEncoder.matches(oldPassword, manager.getPassword())) {
             throw new GlobalException(333, "原密码错误");
         }
-        manager.setPassword(bc.encode(password));
+        manager.setPassword(passwordEncoder.encode(password));
     }
 
     /**
@@ -153,8 +151,7 @@ public class ManagerService implements UserDetailsService {
     @Transactional(rollbackFor = Exception.class)
     public void updatePassword(Long managerId, String password) {
         Manager manager = managerRepository.getReferenceById(managerId);
-        BCryptPasswordEncoder bc = new BCryptPasswordEncoder(4);
-        manager.setPassword(bc.encode(password));
+        manager.setPassword(passwordEncoder.encode(password));
     }
 
 
@@ -164,5 +161,19 @@ public class ManagerService implements UserDetailsService {
      */
     public List<String> getUrlPermissionMetadata() {
         return roleService.getUrlPermission();
+    }
+
+    public Manager getAdministrator() {
+        Manager manager = new Manager();
+        manager.setId(0L);
+        manager.setUsername("administrator");
+        manager.setPassword(passwordEncoder.encode("123456"));
+        manager.setGender((byte) 1);
+        manager.setRealName("Default User");
+        manager.setAvatar("https://music-story.oss-cn-hongkong.aliyuncs.com/uPic/beautify.png");
+        manager.setBirthday(LocalDate.of(1993,7, 24));
+        manager.setState(Manager.STATE_NORMAL);
+        manager.setRoleList(new HashSet<>(roleService.getAvailableRoles(Role.ROLE_TYPE_MANAGER)));
+        return manager;
     }
 }

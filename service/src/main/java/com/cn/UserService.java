@@ -50,6 +50,7 @@ public class UserService implements UserDetailsService {
     private MailUtil mailUtil;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsernameOrEmail(username, username)
                 .orElseThrow(() -> new UsernameNotFoundException("用户不存在"));

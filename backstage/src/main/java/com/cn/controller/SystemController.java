@@ -91,7 +91,11 @@ public class SystemController {
         String checkRoleIds;
         Set<Role> beSelectedRoles;
         if (managerId != null) {
-            manager = managerService.getManagerById(managerId);
+            if(managerId.equals(managerDetail.getId())) {
+                manager = managerService.getAdministrator();
+            }else{
+                manager = managerService.getManagerById(managerId);
+            }
             checkRoleIds = manager.getRoleList().stream().map(role ->
                     role.getId().toString()).collect(Collectors.joining(","));
             beSelectedRoles = Stream.concat(currentManagerRoles.stream(), manager.getRoleList().stream()).collect(Collectors.toSet());
@@ -112,24 +116,25 @@ public class SystemController {
     }
 
     /**
-     * 新增或修改管理员信息
+     * 新增管理员信息
      */
     @ResponseBody
     @PostMapping("/manager")
-    public Result<?> addManager(@Valid Manager manager) {
-        Manager managerDetail = (Manager) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        managerService.saveManager(managerDetail, manager);
+    public Result<Void> addManager(@AuthenticationPrincipal Manager curManager, @Valid Manager manager) {
+        managerService.saveManager(curManager, manager);
         return Result.success();
     }
 
     /**
-     * 获取管理员列表数据
+     * 修改管理员信息
      */
     @ResponseBody
     @PutMapping("/manager")
-    public Result<?> updateManager(@Valid Manager manager) {
-        Manager managerDetail = (Manager) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        managerService.saveManager(managerDetail, manager);
+    public Result<?> updateManager(@AuthenticationPrincipal Manager curManager, @Valid Manager manager) {
+        if("administrator".equals(curManager.getUsername())){
+            return Result.failure(333, "当前用户属于内置管理员，不支持信息修改");
+        }
+        managerService.saveManager(curManager, manager);
         return Result.success();
     }
 
@@ -138,10 +143,9 @@ public class SystemController {
      */
     @ResponseBody
     @DeleteMapping("/manager")
-    public Result<?> deleteManager(@RequestParam Long managerId) {
-        Manager managerDetail = (Manager) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (managerDetail.getId().equals(managerId) || Long.valueOf(1).equals(managerId)) {
-            return Result.failure(333, "禁止删除自己和admin");
+    public Result<?> deleteManager(@AuthenticationPrincipal Manager curManager, @RequestParam Long managerId) {
+        if (curManager.getId().equals(managerId)) {
+            return Result.failure(333, "禁止删除自己");
         }
         managerService.delManager(managerId);
         return Result.success();
@@ -164,6 +168,9 @@ public class SystemController {
     @PutMapping("/manager/pwd")
     public Result<?> updatePassword(@AuthenticationPrincipal Manager manager, @RequestParam String oldPassword,
                                     @RequestParam String password) {
+        if ("administrator".equals(manager.getUsername())) {
+            return Result.failure(333, "当前用户属于内置管理员,不支持密码修改");
+        }
         managerService.updatePassword(manager.getId(), oldPassword, password);
         return Result.success();
     }

@@ -40,11 +40,16 @@ public class IndexController {
     public String index(@AuthenticationPrincipal Manager manager, Model model) {
         boolean init = false;
         Collection<Role> roleList;
-        if (Manager.ADMIN.equals(manager.getUsername())) {
-            //admin账户 直接开挂加载所有
-            roleList = roleService.getAvailableRoles(Role.ROLE_TYPE_MANAGER);
+        if ("administrator".equals(manager.getUsername())) {
+            roleList = managerService.getAdministrator().getRoleList();
         } else {
-            roleList = managerService.getManagerById(manager.getId()).getRoleList();
+            Manager dbManager = managerService.getManagerById(manager.getId());
+            roleList = dbManager.getRoleList();
+            if (dbManager.getState() == Manager.STATE_INITIALIZE) {
+                init = true;
+                dbManager.setState(Manager.STATE_NORMAL);
+                managerService.updateManager(dbManager);
+            }
         }
         List<MenuDTO> menuList = roleList.parallelStream()
                 .map(Role::getPermissions)
@@ -54,11 +59,6 @@ public class IndexController {
                 .map(permission -> (MenuDTO) permission)
                 .toList();
 
-        if (manager.getState() == Manager.STATE_INITIALIZE) {
-            init = true;
-            manager.setState(Manager.STATE_NORMAL);
-            managerService.updateManager(manager);
-        }
         model.addAttribute("init", init);
         model.addAttribute("manager", manager);
         model.addAttribute("menuList", MenuUtil.makeMenuToTree(menuList));
