@@ -3,7 +3,6 @@ package com.cn.controller;
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.ICaptcha;
 import com.cn.ManagerService;
-import com.cn.RoleService;
 import com.cn.entity.Manager;
 import com.cn.entity.Permission;
 import com.cn.entity.Role;
@@ -31,7 +30,6 @@ import java.util.*;
 @AllArgsConstructor
 public class IndexController {
     private final ManagerService managerService;
-    private final RoleService roleService;
 
     /**
      * 首页控制台

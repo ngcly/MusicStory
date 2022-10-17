@@ -54,7 +54,7 @@ public class UserController {
      * @param request 请求request
      * @return ModelMap
      */
-    @Operation(summary = "登录", description = "三方用户登录")
+    @Operation(summary = "绑定账号", description = "用户绑定三方账号")
     @GetMapping("/binding/{source}")
     public Result<?> bindingSocial(@AuthenticationPrincipal User user, @PathVariable("source") String source,
                                   HttpServletRequest request){

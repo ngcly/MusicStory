@@ -6,7 +6,7 @@ version '1.0-SNAPSHOT'
 buildscript { //构建脚本
     //定义版本号
     ext {
-        springBootVersion = '2.7.2'
+        springBootVersion = '2.7.4'
     }
     repositories {//jar包仓库
         maven { url 'https://maven.aliyun.com/repository/central' }
@@ -46,12 +46,12 @@ subprojects {  //子项目通配
     //定义版本
     ext {
         ulisesVersion = '3.0.4'
-        docVersion = '1.6.9'
+        docVersion = '1.6.11'
         jsoupVersion = '1.14.3'
         nekohtmlVersion = '1.9.22'
-        hutoolVersion = '5.8.3'
+        hutoolVersion = '5.8.5'
         guavaVersion = '31.1-jre'
-        aliOssVersion = '3.15.0'
+        aliOssVersion = '3.15.1'
         druidVersion = '1.2.11'
         dialectVersion = '3.1.0'
         extrasVersion = '3.0.4.RELEASE'

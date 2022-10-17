@@ -31,7 +31,7 @@ public class CarouselCategory extends AbstractUserDateAudit {
     private String remark;
 
     /**轮播图列表*/
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "categoryId")
     private List<Carousel> carousels;
 

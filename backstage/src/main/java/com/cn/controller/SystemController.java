@@ -15,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +32,7 @@ import java.util.stream.Stream;
  * @date 2018-01-02 18:25
  */
 @Controller
-@RequestMapping("/sys")
+@RequestMapping(value = "/sys", name = "系统设置")
 @AllArgsConstructor
 public class SystemController {
     private final ManagerService managerService;
@@ -214,7 +213,7 @@ public class SystemController {
     /**
      * 新增或修改角色页面
      */
-    @RequestMapping("/role/edit.html")
+    @GetMapping("/role/edit.html")
     public String roleEdit(@RequestParam(required = false) Long roleId, Model model) {
         Role role = new Role();
         if (roleId != null) {
@@ -382,7 +381,7 @@ public class SystemController {
      * @return Result
      */
     @ResponseBody
-    @RequestMapping("/upload")
+    @PostMapping("/upload")
     public Result<String> uploadAvatar(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return Result.failure(222, "文件为空");
