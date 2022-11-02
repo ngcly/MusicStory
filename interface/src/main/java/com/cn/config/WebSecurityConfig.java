@@ -1,14 +1,14 @@
 package com.cn.config;
 
 import com.cn.UserService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.*;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -23,13 +23,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * @author ngcly
  * @date 2018-02-28 16:23
  */
-@Configuration
 @EnableWebSecurity
-@AllArgsConstructor
+@EnableMethodSecurity
+@RequiredArgsConstructor
 public class WebSecurityConfig {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenFilter jwtTokenFilter;
+    private final JwtTokenUtil jwtTokenUtil;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     /**
@@ -44,7 +44,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authManager) throws Exception {
         http
                 .authorizeHttpRequests((authorize) -> authorize
                         .antMatchers(pass).permitAll()
@@ -53,14 +53,14 @@ public class WebSecurityConfig {
                 )
                 .cors()
                 .and()
-                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf()
 //                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .disable()
+                .addFilterBefore(new JwtLoginFilter(authManager, jwtTokenUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilter(new JwtVerifyFilter(authManager, jwtTokenUtil))
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling((exceptions) -> exceptions
-                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                );
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint);
 
         return http.build();
     }
@@ -68,6 +68,7 @@ public class WebSecurityConfig {
     @Autowired
     protected void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
+        auth.authenticationProvider(new MyAuthenticationProvider(userService));
     }
 
     @Bean
@@ -75,4 +76,5 @@ public class WebSecurityConfig {
             AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
 }

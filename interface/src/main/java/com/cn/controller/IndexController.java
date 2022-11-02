@@ -3,6 +3,7 @@ package com.cn.controller;
 import cn.hutool.http.Header;
 import com.cn.*;
 import com.cn.config.JwtTokenUtil;
+import com.cn.config.MyAuthenticationToken;
 import com.cn.entity.*;
 import com.cn.pojo.AuthenticationDetails;
 import com.cn.pojo.LogInDTO;
@@ -10,7 +11,6 @@ import com.cn.pojo.SignUpDTO;
 import com.cn.util.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +18,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,9 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -62,15 +64,24 @@ public class IndexController {
      */
     @Operation(summary = "登录", description = "普通登录")
     @PostMapping("/signin")
-    public Result<String> postAccessToken(HttpServletRequest request, @Valid @RequestBody LogInDTO logInDTO) {
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(logInDTO.getUsername(), logInDTO.getPassword());
+    public ResponseEntity<Result<User>> postAccessToken(HttpServletRequest request, @Valid @RequestBody LogInDTO logInDTO) {
+        AbstractAuthenticationToken authenticationToken;
+        if (logInDTO instanceof LogInDTO.SocialLoginDTO dto) {
+            authenticationToken = new MyAuthenticationToken(dto.getLoginType().name(), dto.getCode(), dto.getState());
+        } else {
+            LogInDTO.UserNameLoginDTO dto = (LogInDTO.UserNameLoginDTO) logInDTO;
+            authenticationToken = new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
+        }
+
         authenticationToken.setDetails(new AuthenticationDetails(request));
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         User user = (User) authentication.getPrincipal();
         String token = jwtTokenUtil.generateToken(user);
-        return Result.success(token);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .body(Result.success(user));
     }
 
     @Operation(summary = "刷新token", description = "用户刷新token")
@@ -81,8 +92,7 @@ public class IndexController {
 
     @Operation(summary = "登出", description = "退出登录")
     @DeleteMapping("/signout")
-    public Result<?> logout(HttpServletRequest request) {
-        JwtTokenUtil.getToken(request);
+    public Result<Void> logout() {
         return Result.success();
     }
 
@@ -90,32 +100,14 @@ public class IndexController {
      * 请求跳转到授权页
      *
      * @param source   三方标识
-     * @param response 请求response
-     * @throws IOException IO异常
      */
     @Operation(summary = "跳转三方授权页", description = "请求跳转到三方授权页")
     @GetMapping("/render/{source}")
-    public void renderAuth(@PathVariable("source") String source, HttpServletResponse response) throws IOException {
-        response.sendRedirect(userService.getSocialRedirectUrl(source));
-    }
-
-    /**
-     * 第三方回调前端后 前端再调这个 进行登录
-     *
-     * @param source  三方类型标识
-     * @param request 请求request
-     * @return Result
-     */
-    @Operation(summary = "登录", description = "三方用户登录")
-    @GetMapping("/login/{source}")
-    public Result<String> login(@PathVariable("source") String source, HttpServletRequest request) {
-        User userDetail = userService.socialLogin(source, request.getParameter("code"), request.getParameter("state"));
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(userDetail, null, userDetail.getAuthorities());
-        authenticationToken.setDetails(new AuthenticationDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        String token = jwtTokenUtil.generateToken(userDetail);
-        return Result.success(token);
+    public ResponseEntity<Void> renderAuth(@Valid @PathVariable("source") String source) {
+        return ResponseEntity
+                .status(HttpStatus.TEMPORARY_REDIRECT)
+                .header(HttpHeaders.LOCATION, userService.getSocialRedirectUrl(source))
+                .build();
     }
 
     /**
@@ -125,7 +117,7 @@ public class IndexController {
      * @return Result
      */
     @PutMapping("/revoke/{openid}")
-    public Result<?> revokeSocial(@PathVariable("openid") String openid) {
+    public Result<Void> revokeSocial(@PathVariable("openid") String openid) {
         userService.revokeSocial(openid);
         return Result.success();
     }
@@ -165,9 +157,7 @@ public class IndexController {
      */
     @Operation(summary = "文章详情", description = "根据文章Id获取文章详情")
     @GetMapping("/essay/{id}")
-    @Parameters({
-            @Parameter(name = "id", description = "文章ID", in = ParameterIn.PATH)
-    })
+    @Parameter(name = "id", description = "文章ID", in = ParameterIn.PATH)
     public Result<Essay> getEssayDetail(@PathVariable Long id) {
         Essay essay = essayService.getEssayDetail(id);
         return Result.success(essay);
@@ -175,10 +165,8 @@ public class IndexController {
 
     @Operation(summary = "阅读文章", description = "阅读文章 阅读数+1")
     @PutMapping("/essay/{id}")
-    @Parameters({
-            @Parameter(name = "id", description = "文章ID", in = ParameterIn.PATH)
-    })
-    public Result<?> readEssay(@PathVariable Long id) {
+    @Parameter(name = "id", description = "文章ID", in = ParameterIn.PATH)
+    public Result<Void> readEssay(@PathVariable Long id) {
         essayService.readEssay(id);
         return Result.success();
     }
@@ -188,10 +176,8 @@ public class IndexController {
      */
     @Operation(summary = "获取文章评论", description = "根据文章Id和页数获取评论")
     @GetMapping("/comments/{id}/{page}")
-    @Parameters({
-            @Parameter(name = "id", description = "文章ID", in = ParameterIn.PATH),
-            @Parameter(name = "page", description = "页数", in = ParameterIn.PATH)
-    })
+    @Parameter(name = "id", description = "文章ID", in = ParameterIn.PATH)
+    @Parameter(name = "page", description = "页数", in = ParameterIn.PATH)
     public Result<Page<Map<String,Object>>> getEssayComment(@PathVariable Long id, @PathVariable Integer page) {
         return Result.success(essayService.getComments(id, page));
     }
@@ -207,7 +193,7 @@ public class IndexController {
      */
     @Operation(summary = "轮播图", description = "获取轮播图列表")
     @GetMapping("/carousel")
-    public Result<?> getCarousel() {
+    public Result<List<Carousel>> getCarousel() {
         CarouselCategory carouselCategory = carouselService.getCarouselDetail(1L);
         if (Objects.nonNull(carouselCategory)) {
             return Result.success(carouselCategory.getCarousels());
@@ -229,9 +215,7 @@ public class IndexController {
      */
     @Operation(summary = "搜索", description = "文章搜索")
     @GetMapping("/search/{pageSize}/{page}/{keyword}")
-    @Parameters({
-            @Parameter(name = "keyword", description = "关键字", in = ParameterIn.PATH),
-    })
+    @Parameter(name = "keyword", description = "关键字", in = ParameterIn.PATH)
     public Result<SearchHits<Book>> search(@PathVariable int pageSize, @PathVariable int page, @PathVariable("keyword") String keyword) {
         return Result.success(bookService.highLightSearchEssay(keyword, PageRequest.of(page - 1, pageSize)));
     }
@@ -241,7 +225,7 @@ public class IndexController {
      */
     @Operation(summary = "初始化ES数据", description = "将数据库数据同步至ES 测试用")
     @GetMapping("/init/es/data")
-    public Result<?> initEsDataTest() {
+    public Result<Void> initEsDataTest() {
         essayService.initBookDataTest();
         return Result.success();
     }

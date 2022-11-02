@@ -8,8 +8,10 @@ import com.cn.dao.*;
 import com.cn.entity.*;
 import com.cn.enums.SocialEnum;
 import com.cn.enums.SocialParamEnum;
+import com.cn.pojo.RestCode;
 import com.cn.util.MailUtil;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.commons.lang3.EnumUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -278,16 +280,17 @@ public class UserService implements UserDetailsService {
      * @return String url地址
      */
     public String getSocialRedirectUrl(String source) {
-        SocialEnum socialEnum = SocialEnum.valueOf(source.toUpperCase());
-        String url;
-        if (SocialEnum.QQ.equals(socialEnum)) {
-            url = String.format("https://graph.qq.com/oauth2.0/authorize?" +
-                    "response_type=code&client_id=%s&redirect_uri=%s&state=%s", socialEnum.getAppId(), SocialEnum.APP_REDIRECT + source, SocialEnum.STATE);
-        } else {
-            url = String.format("https://open.weixin.qq.com/connect/qrconnect?" +
-                    "appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_login&state=%s", socialEnum.getAppId(), SocialEnum.APP_REDIRECT + source, SocialEnum.STATE);
+        if(!EnumUtils.isValidEnumIgnoreCase(SocialEnum.class, source)){
+            throw new GlobalException(RestCode.PARAM_ERROR);
         }
-        return url;
+        SocialEnum socialEnum = SocialEnum.valueOf(source.toUpperCase());
+        String urlTemplate;
+        if (SocialEnum.QQ.equals(socialEnum)) {
+            urlTemplate = "https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=%s&redirect_uri=%s&state=%s";
+        } else {
+            urlTemplate = "https://open.weixin.qq.com/connect/qrconnect?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_login&state=%s";
+        }
+        return String.format(urlTemplate, socialEnum.getAppId(), SocialEnum.APP_REDIRECT, SocialEnum.STATE);
     }
 
     /**
