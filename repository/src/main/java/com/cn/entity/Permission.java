@@ -4,7 +4,7 @@ import com.cn.pojo.MenuDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Setter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Set;
 
 /**

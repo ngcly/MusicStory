@@ -3,6 +3,7 @@ package com.cn.pojo;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,8 +14,8 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-public class MenuDTO {
-    public static Long rootId = 0L;
+public class MenuDTO implements Serializable {
+    public static final Long rootId = 0L;
 
     protected Long id;
 

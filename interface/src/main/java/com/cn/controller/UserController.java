@@ -20,8 +20,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -81,7 +81,7 @@ public class UserController {
 
     @Operation(summary = "发表文章", description = "用户发表文章")
     @PutMapping("/essay")
-    public Result<?> updateEssay(@AuthenticationPrincipal User user, @Valid @RequestBody EssayDTO essayDTO) {
+    public Result<Void> updateEssay(@AuthenticationPrincipal User user, @Valid @RequestBody EssayDTO essayDTO) {
         Essay essay = new Essay();
         BeanUtils.copyProperties(essayDTO,essay);
         essay.setUser(user);

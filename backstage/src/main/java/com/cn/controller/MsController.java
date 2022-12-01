@@ -11,7 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,7 +83,7 @@ public class MsController {
      */
     @ResponseBody
     @PutMapping("/user")
-    public Result<?> saveUser(User user) {
+    public Result<Void> saveUser(User user) {
         userService.altUser(user);
         return Result.success();
     }
@@ -93,7 +93,7 @@ public class MsController {
      */
     @ResponseBody
     @DeleteMapping("/user")
-    public Result<?> delUser(@RequestParam Long userId) {
+    public Result<Void> delUser(@RequestParam Long userId) {
         userService.delUser(userId);
         return Result.success();
     }
@@ -135,7 +135,7 @@ public class MsController {
      */
     @ResponseBody
     @PostMapping("/classify")
-    public Result<?> addClassify(@Valid Classify classify) {
+    public Result<Void> addClassify(@Valid Classify classify) {
         classifyService.saveClassify(classify);
         return Result.success();
     }
@@ -145,7 +145,7 @@ public class MsController {
      */
     @ResponseBody
     @PutMapping("/classify")
-    public Result<?> updateClassify(@Valid Classify classify) {
+    public Result<Void> updateClassify(@Valid Classify classify) {
         classifyService.saveClassify(classify);
         return Result.success();
     }
@@ -155,7 +155,7 @@ public class MsController {
      */
     @ResponseBody
     @DeleteMapping("/classify")
-    public Result<?> delClassify(@RequestParam("id") Long id) {
+    public Result<Void> delClassify(@RequestParam("id") Long id) {
         classifyService.deleteClassify(id);
         return Result.success();
     }
@@ -195,7 +195,7 @@ public class MsController {
      */
     @ResponseBody
     @PostMapping("/essay")
-    public Result<?> essaySave(@Valid Essay essay) {
+    public Result<Void> essaySave(@Valid Essay essay) {
         essayService.altEssayState(essay);
         return Result.success();
     }
@@ -237,7 +237,7 @@ public class MsController {
      */
     @ResponseBody
     @PostMapping("/notice")
-    public Result<?> addNotice(@Valid Notice notice) {
+    public Result<Void> addNotice(@Valid Notice notice) {
         noticeService.addOrUpdateNotice(notice);
         return Result.success();
     }
@@ -247,7 +247,7 @@ public class MsController {
      */
     @ResponseBody
     @PutMapping("/notice")
-    public Result<?> updateNotice(@Valid Notice notice) {
+    public Result<Void> updateNotice(@Valid Notice notice) {
         noticeService.addOrUpdateNotice(notice);
         return Result.success();
     }
@@ -257,7 +257,7 @@ public class MsController {
      */
     @ResponseBody
     @DeleteMapping("/notice")
-    public Result<?> delNotice(@RequestParam Long id) {
+    public Result<Void> delNotice(@RequestParam Long id) {
         noticeService.deleteNotice(id);
         return Result.success();
     }
@@ -309,7 +309,7 @@ public class MsController {
      */
     @ResponseBody
     @PostMapping("/carousel/category")
-    public Result<?> saveCarousel(@Valid CarouselCategory carouselCategory) {
+    public Result<Void> saveCarousel(@Valid CarouselCategory carouselCategory) {
         carouselService.addOrUpdateCarousel(carouselCategory);
         return Result.success();
     }
@@ -319,7 +319,7 @@ public class MsController {
      */
     @ResponseBody
     @PostMapping("/carousel")
-    public Result<?> addCarousel(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id) {
+    public Result<Void> addCarousel(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id) {
         if (file.isEmpty()) {
             return Result.failure(222, "文件为空");
         }
@@ -333,7 +333,7 @@ public class MsController {
      */
     @ResponseBody
     @DeleteMapping("/carousel/category")
-    public Result<?> delCarouselCategory(@RequestParam Long id) {
+    public Result<Void> delCarouselCategory(@RequestParam Long id) {
         carouselService.deleteCarouselCategory(id);
         return Result.success();
     }
@@ -343,7 +343,7 @@ public class MsController {
      */
     @ResponseBody
     @DeleteMapping("/carousel")
-    public Result<?> delCarousel(@RequestParam("id") Long id, @RequestParam("url") String url) {
+    public Result<Void> delCarousel(@RequestParam("id") Long id, @RequestParam("url") String url) {
         carouselService.deleteCarousel(id, url);
         return Result.success();
     }

@@ -62,7 +62,7 @@ public class EssayService {
      * @return Essay
      */
     public Essay getEssayDetail(Long id){
-        return essayRepository.getById(id);
+        return essayRepository.getReferenceById(id);
     }
 
     /**
@@ -80,7 +80,7 @@ public class EssayService {
      */
     @Transactional(rollbackFor = Exception.class)
     public Long createEssay(Long classifyId, Essay essay){
-        Classify classify = classifyRepository.getById(classifyId);
+        Classify classify = classifyRepository.getReferenceById(classifyId);
         essay.setClassify(classify);
         essay.setReadNum(0);
         essay.setState(EssayState.DRAFT.getCode());
@@ -94,7 +94,7 @@ public class EssayService {
     @Transactional(rollbackFor = Exception.class)
     public void updateEssay(Long classifyId, Essay essay){
         essay.setState(EssayState.PENDING.getCode());
-        Classify classify = classifyRepository.getById(classifyId);
+        Classify classify = classifyRepository.getReferenceById(classifyId);
         essay.setClassify(classify);
         essay.setReadNum(0);
         essayRepository.save(essay);

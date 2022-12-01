@@ -1,6 +1,6 @@
 package com.cn.util;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import com.cn.pojo.MenuDTO;
 
 import java.util.*;
@@ -42,7 +42,7 @@ public final class MenuUtil {
             menuList.forEach(menuDTO -> {
                 if(menu.getId().equals(menuDTO.getParentId())){
                     if(menu.getChildren()==null){
-                        menu.setChildren(CollectionUtil.newArrayList(menuDTO));
+                        menu.setChildren(CollUtil.newArrayList(menuDTO));
                     }else{
                         menu.getChildren().add(menuDTO);
                     }

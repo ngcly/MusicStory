@@ -1,14 +1,14 @@
 package com.cn.pojo;
 
 import com.cn.util.IpUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import org.apache.http.HttpHeaders;
 import org.springframework.security.core.SpringSecurityCoreVersion;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
@@ -22,7 +22,7 @@ import java.util.Objects;
 public class AuthenticationDetails implements Serializable {
     @Serial
     private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
-    private static final String captchaKey = "captcha";
+    private static final String CAPTCHA_KEY = "captcha";
 
     private final CaptchaInfo captchaInfo;
 
@@ -34,7 +34,7 @@ public class AuthenticationDetails implements Serializable {
 
     public AuthenticationDetails(HttpServletRequest request) {
         this(extractCaptchaInfo(request), IpUtil.getIpAddress(request),
-                request.getHeader(HttpHeaders.USER_AGENT), request.getParameter(captchaKey));
+                request.getHeader(HttpHeaders.USER_AGENT), request.getParameter(CAPTCHA_KEY));
     }
 
     public AuthenticationDetails(CaptchaInfo captchaInfo, String remoteAddress,
@@ -49,8 +49,8 @@ public class AuthenticationDetails implements Serializable {
         HttpSession session = request.getSession(false);
         CaptchaInfo verificationCode = null;
         if (session != null) {
-            verificationCode = (CaptchaInfo) session.getAttribute(captchaKey);
-            session.removeAttribute(captchaKey);
+            verificationCode = (CaptchaInfo) session.getAttribute(CAPTCHA_KEY);
+            session.removeAttribute(CAPTCHA_KEY);
         }
         return verificationCode;
     }

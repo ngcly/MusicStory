@@ -42,7 +42,7 @@ public class NoticeService {
      * @return Notice
      */
     public Notice getNoticeDetail(long id){
-        return noticeRepository.getById(id);
+        return noticeRepository.getReferenceById(id);
     }
 
     /**

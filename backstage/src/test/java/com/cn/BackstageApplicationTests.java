@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @date 2018-03-15 12:46
  */
 @SpringBootTest
-public class BackstageApplicationTests {
+class BackstageApplicationTests {
 
     @BeforeAll
     static void setup(){
@@ -21,7 +21,7 @@ public class BackstageApplicationTests {
     }
 
     @Test
-    public void contextLoads() {
+    void contextLoads() {
 
     }
 }

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -54,7 +54,7 @@ public class IndexController {
                 .flatMap(Collection::parallelStream)
                 .filter(permission -> Permission.RESOURCE_MENU.equals(permission.getResourceType()))
                 .distinct()
-                .map(permission -> (MenuDTO) permission)
+                .map(MenuDTO.class::cast)
                 .toList();
 
         model.addAttribute("init", init);

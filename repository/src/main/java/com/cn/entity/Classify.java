@@ -2,10 +2,9 @@ package com.cn.entity;
 
 import com.cn.config.AbstractUserDateAudit;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.persistence.*;
 
 /**
  * 分类表实体

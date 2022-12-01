@@ -6,7 +6,6 @@ import com.cn.util.JacksonUtil;
 import com.cn.util.Result;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.entity.ContentType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -51,7 +50,7 @@ public class WebSecurityConfig {
                 .sameOrigin();
         http
                 .authorizeHttpRequests()
-                .antMatchers(IGNORING_URLS)
+                .requestMatchers(IGNORING_URLS)
                 .permitAll()
                 .anyRequest()
                 .access(new MyAuthorizationManager(managerService));
@@ -65,7 +64,7 @@ public class WebSecurityConfig {
                 });
         http
                 .csrf()
-                .ignoringAntMatchers(IGNORING_URLS);
+                .ignoringRequestMatchers(IGNORING_URLS);
         http
                 .formLogin()
                 .authenticationDetailsSource(myAuthenticationDetailsSource)
@@ -100,8 +99,8 @@ public class WebSecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Autowired
-    protected void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+   @Bean
+    protected void configureGlobal(AuthenticationManagerBuilder auth) {
         MyAuthenticationProvider provider = new MyAuthenticationProvider();
         provider.setUserDetailsService(managerService);
         provider.setPasswordEncoder(passwordEncoder);

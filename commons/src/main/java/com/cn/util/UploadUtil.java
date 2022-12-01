@@ -7,7 +7,7 @@ import com.cn.config.OssConfigProperties;
 import com.cn.exception.FileUploadException;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -23,8 +23,8 @@ import java.util.Random;
  * @author ngcly
  */
 public final class UploadUtil {
-    private final static OssConfigProperties ossProperties;
-    private final static Random rand;
+    private static final OssConfigProperties ossProperties;
+    private static final Random rand;
 
     private UploadUtil() {
     }

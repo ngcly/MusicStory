@@ -48,7 +48,7 @@ public class CarouselService {
      * @param url 图片路径
      */
     public void addCarousel(Long id,String url){
-        CarouselCategory carouselCategory = carouselRepository.getById(id);
+        CarouselCategory carouselCategory = carouselRepository.getReferenceById(id);
         Carousel carousel = new Carousel();
         carousel.setImageUrl(url);
         carousel.setSort(carouselCategory.getCarousels().size()+1);
@@ -62,7 +62,7 @@ public class CarouselService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void deleteCarouselCategory(Long id){
-        CarouselCategory carouselCategory = carouselRepository.getById(id);
+        CarouselCategory carouselCategory = carouselRepository.getReferenceById(id);
         try {
             for(Carousel carousel:carouselCategory.getCarousels()){
                 UploadUtil.deleteFileByAli(carousel.getImageUrl());

@@ -1,15 +1,15 @@
 package com.cn.dao;
 
-import org.hibernate.query.internal.NativeQueryImpl;
+import org.hibernate.query.sql.internal.NativeQueryImpl;
 import org.hibernate.transform.Transformers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
@@ -84,8 +84,7 @@ public class CustomizeRepository {
     public <T> Page<T> nativePageQueryList(String nativeSql, Pageable pageable, Object... params) {
         Query q = createPageNativeQuery(nativeSql, pageable, params);
         q.unwrap(NativeQueryImpl.class).setResultTransformer(Transformers.TO_LIST);
-        Page<T> page = new PageImpl<T>(q.getResultList(), pageable, countPageQuery("select count(*) from ("+nativeSql+") tall",params).intValue());
-        return page;
+        return new PageImpl<T>(q.getResultList(), pageable, countPageQuery("select count(*) from ("+nativeSql+") tall",params).intValue());
     }
 
     public <T> List<T> nativeQueryListModel(Class<T> resultClass,
@@ -109,7 +108,7 @@ public class CustomizeRepository {
         return q.getResultList();
     }
 
-    public Page<Map<String,Object>> nativePageQueryListMap(String nativeSql, Pageable pageable, Object... params) { ;
+    public Page<Map<String,Object>> nativePageQueryListMap(String nativeSql, Pageable pageable, Object... params) {
         Query q = createNativeQuery(nativeSql, params);
         q.unwrap(NativeQueryImpl.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
         Page<Map<String,Object>> page = new PageImpl<Map<String,Object>>(q.getResultList(), pageable,

@@ -7,9 +7,9 @@ import org.springframework.core.env.StandardEnvironment;
 /**
  * @author ngcly
  */
-public class JasyptTest {
+class JasyptTest {
     @Test
-    public void encode(){
+    void encode(){
         System.setProperty("jasypt.encryptor.password","test_salt");
         StringEncryptor encryptor = new DefaultLazyEncryptor(new StandardEnvironment());
         String password = "password_test";

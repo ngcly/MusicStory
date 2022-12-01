@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -35,22 +34,16 @@ public class WebSecurityConfig {
     /**
      * 放行接口
      */
-    private final String[] pass = {"/user/upload/**"};
-
-    @Bean
-    public WebSecurityCustomizer ignoringCustomizer() {
-        return (web) -> web.ignoring()
-                .antMatchers("/webjars/**", "/swagger-ui/**", "/swagger-resources/**", "/v2/**");
-    }
+    private final String[] pass = {"/webjars/**", "/swagger-ui/**", "/swagger-resources/**", "/v2/**", "/user/upload/**"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authManager) throws Exception {
         http
-                .authorizeHttpRequests((authorize) -> authorize
-                        .antMatchers(pass).permitAll()
-                        .antMatchers(HttpMethod.OPTIONS).permitAll()
-                        .antMatchers("/user/**").authenticated()
-                )
+                .authorizeRequests()
+                .antMatchers(pass).permitAll()
+                .antMatchers(HttpMethod.OPTIONS).permitAll()
+                .antMatchers("/user/**").authenticated()
+                .and()
                 .cors()
                 .and()
                 .csrf()
@@ -58,7 +51,8 @@ public class WebSecurityConfig {
                 .disable()
                 .addFilterBefore(new JwtLoginFilter(authManager, jwtTokenUtil), UsernamePasswordAuthenticationFilter.class)
                 .addFilter(new JwtVerifyFilter(authManager, jwtTokenUtil))
-                .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint);
 

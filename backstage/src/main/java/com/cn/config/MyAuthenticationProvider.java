@@ -1,6 +1,6 @@
 package com.cn.config;
 
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.text.CharSequenceUtil;
 import com.cn.pojo.AuthenticationDetails;
 import com.cn.pojo.CaptchaInfo;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -24,7 +24,7 @@ public class MyAuthenticationProvider extends DaoAuthenticationProvider {
         String userCaptcha = details.getUserCaptcha();
         CaptchaInfo captchaInfo = details.getCaptchaInfo();
         if (Objects.isNull(captchaInfo) || captchaInfo.isExpire()
-                || !StrUtil.equalsIgnoreCase(captchaInfo.code(), userCaptcha)) {
+                || !CharSequenceUtil.equalsIgnoreCase(captchaInfo.code(), userCaptcha)) {
             throw new AuthenticationServiceException("Captcha error！");
         }
         super.additionalAuthenticationChecks(userDetails, authentication);

@@ -43,11 +43,12 @@ public class LogService {
     }
 
     @Async
+    @Transactional(rollbackFor = Exception.class)
     @EventListener(value = {AbstractAuthenticationFailureEvent.class, AuthenticationSuccessEvent.class})
     public void addLog(AbstractAuthenticationEvent event) {
         Authentication authentication = event.getAuthentication();
         AuthenticationDetails details = (AuthenticationDetails) event.getAuthentication().getDetails();
-        UserTypeEnum userType = details.isAdministrator() ? UserTypeEnum.administrator : UserTypeEnum.user;
+        UserTypeEnum userType = details.isAdministrator() ? UserTypeEnum.ADMIN : UserTypeEnum.USER;
         String ip = details.getRemoteAddress();
         UserAgent userAgent = UserAgentUtil.parse(details.getUserAgent());
         LoginStatusEnum loginStatus = event instanceof AuthenticationSuccessEvent ?

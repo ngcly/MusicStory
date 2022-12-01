@@ -8,6 +8,7 @@ import cn.hutool.core.lang.Assert;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -21,7 +22,7 @@ import java.util.Scanner;
  * @version V1.0
  * @since 2021/8/14 18:48
  */
-public class IndexControllerTest {
+class IndexControllerTest {
 
     @Test
     void defaultCaptcha() {
@@ -63,6 +64,7 @@ public class IndexControllerTest {
 
         ByteArrayOutputStream writer = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(new ByteArrayOutputStream());
+        Assertions.assertNotNull(scanner);
         if(scanner.hasNext()){
             String s= scanner.next();
             writer.write(s.getBytes());

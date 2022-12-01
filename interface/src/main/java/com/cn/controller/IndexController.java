@@ -29,8 +29,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -216,8 +216,8 @@ public class IndexController {
     @Operation(summary = "搜索", description = "文章搜索")
     @GetMapping("/search/{pageSize}/{page}/{keyword}")
     @Parameter(name = "keyword", description = "关键字", in = ParameterIn.PATH)
-    public Result<SearchHits<Book>> search(@PathVariable int pageSize, @PathVariable int page, @PathVariable("keyword") String keyword) {
-        return Result.success(bookService.highLightSearchEssay(keyword, PageRequest.of(page - 1, pageSize)));
+    public Result<Page<SearchHits<Book>>> search(@PathVariable int pageSize, @PathVariable int page, @PathVariable("keyword") String keyword) {
+        return Result.success(bookService.findBook(keyword, keyword, PageRequest.of(page - 1, pageSize)));
     }
 
     /**

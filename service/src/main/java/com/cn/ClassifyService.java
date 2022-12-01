@@ -42,7 +42,7 @@ public class ClassifyService {
      * @return Classify
      */
     public Classify getClassifyDetail(Long id){
-        return classifyRepository.getById(id);
+        return classifyRepository.getReferenceById(id);
     }
 
     /**

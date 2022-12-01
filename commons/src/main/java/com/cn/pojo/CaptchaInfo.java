@@ -1,5 +1,6 @@
 package com.cn.pojo;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -7,7 +8,7 @@ import java.time.LocalDateTime;
  *
  * @author ngcly
  */
-public record CaptchaInfo(String code, LocalDateTime expireTime) {
+public record CaptchaInfo(String code, LocalDateTime expireTime) implements Serializable {
 
     public CaptchaInfo(String code, int expireIn) {
         this(code, LocalDateTime.now().plusSeconds(expireIn));
