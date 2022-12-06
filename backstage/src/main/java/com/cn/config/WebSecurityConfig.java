@@ -7,9 +7,9 @@ import com.cn.util.Result;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.entity.ContentType;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,11 +27,11 @@ import java.io.PrintWriter;
  * @author ngcly
  * @since 2018-01-02 17:32
  */
+@Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
-    private final PasswordEncoder passwordEncoder;
     private final ManagerService managerService;
     private final PersistentTokenRepository persistentRepository;
     private final LoginSuccessHandler loginSuccessHandler;
@@ -86,26 +86,11 @@ public class WebSecurityConfig {
         return http.build();
     }
 
-//    @Bean
-//    public MyAuthenticationProvider authenticationProvider() {
-//        MyAuthenticationProvider provider = new MyAuthenticationProvider();
-//        provider.setUserDetailsService(managerService);
-//        provider.setPasswordEncoder(passwordEncoder);
-//        return provider;
-//    }
-
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-
-   @Bean
-    protected void configureGlobal(AuthenticationManagerBuilder auth) {
+    public AuthenticationManager authenticationManager(HttpSecurity http, ManagerService managerService, PasswordEncoder passwordEncoder) throws Exception {
         MyAuthenticationProvider provider = new MyAuthenticationProvider();
         provider.setUserDetailsService(managerService);
         provider.setPasswordEncoder(passwordEncoder);
-
-        auth.authenticationProvider(provider);
 
         MyAuthenticationProvider provider2 = new MyAuthenticationProvider();
         provider2.setUserDetailsService(username -> {
@@ -116,7 +101,11 @@ public class WebSecurityConfig {
             }
         });
         provider2.setPasswordEncoder(passwordEncoder);
-        auth.authenticationProvider(provider2);
+
+        return http.getSharedObject(AuthenticationManagerBuilder.class)
+                .authenticationProvider(provider)
+                .authenticationProvider(provider2)
+                .build();
     }
 
 //    @Bean

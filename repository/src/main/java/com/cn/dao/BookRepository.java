@@ -24,7 +24,8 @@ public interface BookRepository extends ElasticsearchRepository<Book, String> {
      */
     @Highlight(
             fields = {
-                    @HighlightField(name = "*")
+                    @HighlightField(name = "title"),
+                    @HighlightField(name = "content")
             },
             parameters = @HighlightParameters(
                     preTags = "<span style='color:red'>",

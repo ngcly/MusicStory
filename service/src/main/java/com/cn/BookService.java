@@ -42,7 +42,7 @@ public class BookService {
      */
     public SearchResponse<Book> highLightSearchEssay(String keyword, Pageable pageable) throws IOException {
         return elasticsearchClient.search(queryBuilder ->
-                queryBuilder.from(pageable.getPageNumber())
+                queryBuilder.from(pageable.getPageNumber() + pageable.getPageSize())
                         .size(pageable.getPageSize())
                         .query(query -> query.multiMatch(multiMatchQueryBuilder->
                                 multiMatchQueryBuilder.fields("title","content").query(keyword).operator(Operator.Or)))

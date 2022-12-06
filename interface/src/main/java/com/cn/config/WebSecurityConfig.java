@@ -2,16 +2,16 @@ package com.cn.config;
 
 import com.cn.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.*;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -22,12 +22,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * @author ngcly
  * @date 2018-02-28 16:23
  */
+@Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
 @RequiredArgsConstructor
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class WebSecurityConfig {
-    private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenUtil;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
@@ -40,9 +39,9 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authManager) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers(pass).permitAll()
-                .antMatchers(HttpMethod.OPTIONS).permitAll()
-                .antMatchers("/user/**").authenticated()
+                .requestMatchers(pass).permitAll()
+                .requestMatchers(HttpMethod.OPTIONS).permitAll()
+                .requestMatchers("/user/**").authenticated()
                 .and()
                 .cors()
                 .and()
@@ -59,16 +58,19 @@ public class WebSecurityConfig {
         return http.build();
     }
 
-    @Autowired
-    protected void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
-        auth.authenticationProvider(new MyAuthenticationProvider(userService));
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(HttpSecurity http, UserService userService, PasswordEncoder passwordEncoder) throws Exception {
+        return http.getSharedObject(AuthenticationManagerBuilder.class)
+                .userDetailsService(userService)
+                .passwordEncoder(passwordEncoder)
+                .and()
+                .authenticationProvider(new MyAuthenticationProvider(userService))
+                .build();
     }
 
 }

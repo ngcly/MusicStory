@@ -8,9 +8,6 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: update
-      naming:
-        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
 
   jackson:
     date-format: 'yyyy-MM-dd HH:mm:ss'
