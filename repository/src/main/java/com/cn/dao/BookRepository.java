@@ -1,13 +1,14 @@
 package com.cn.dao;
 
 import com.cn.entity.Book;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.annotations.Highlight;
 import org.springframework.data.elasticsearch.annotations.HighlightField;
 import org.springframework.data.elasticsearch.annotations.HighlightParameters;
-import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+
+import java.util.List;
 
 /**
  * @author ngcly
@@ -32,6 +33,6 @@ public interface BookRepository extends ElasticsearchRepository<Book, String> {
                     postTags = "</span>"
             )
     )
-    Page<SearchHits<Book>> findBooksByTitleOrContent(String title, String content, Pageable pageable);
+    List<SearchHit<Book>> findBooksByTitleOrContent(String title, String content, Pageable pageable);
 
 }
