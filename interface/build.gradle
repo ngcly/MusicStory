@@ -7,5 +7,5 @@ dependencies {
     implementation project(":service")
 
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation "org.springdoc:springdoc-openapi-security:${docVersion}"
+    implementation "org.springdoc:springdoc-openapi-starter-common:${docVersion}"
 }

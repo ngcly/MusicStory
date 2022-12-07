@@ -46,7 +46,7 @@ subprojects {  //子项目通配
     //定义版本
     ext {
         ulisesVersion = '3.0.4'
-        docVersion = '1.6.11'
+        docVersion = '2.0.0'
         jsoupVersion = '1.14.3'
         nekohtmlVersion = '1.9.22'
         hutoolVersion = '5.8.5'
