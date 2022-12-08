@@ -1,8 +1,13 @@
 package com.cn.enums;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author chenning
  */
 public enum LoginStatusEnum {
-    success, failure
+    @JsonProperty("success")
+    SUCCESS,
+    @JsonProperty("failure")
+    FAILURE
 }

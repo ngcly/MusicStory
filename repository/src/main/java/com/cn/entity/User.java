@@ -1,6 +1,7 @@
 package com.cn.entity;
 
 import com.cn.config.AbstractDateAudit;
+import com.cn.enums.GenderEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -66,7 +67,7 @@ public class User extends AbstractDateAudit implements UserDetails, CredentialsC
     /**
      * 性别
      */
-    private Byte gender;
+    private GenderEnum gender;
 
     /**
      * 地址

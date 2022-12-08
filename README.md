@@ -1,6 +1,6 @@
 # MusicStory
 一个用来听歌看书的网站   
-- 基本框架：springboot2.0全家桶 ，gradle构建  
+- 基本框架：springboot3.0全家桶 ，gradle构建  
 - 没弄微服务分布式，麻烦，用不上
 - 后台页面采用 thymeleaf 模板   
 - 以layui框架为页面布局主题   

@@ -4,8 +4,8 @@ import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.ICaptcha;
 import com.cn.ManagerService;
 import com.cn.entity.Manager;
-import com.cn.entity.Permission;
 import com.cn.entity.Role;
+import com.cn.enums.ResourceEnum;
 import com.cn.pojo.MenuDTO;
 import com.cn.pojo.CaptchaInfo;
 import com.cn.util.MenuUtil;
@@ -52,7 +52,7 @@ public class IndexController {
         List<MenuDTO> menuList = roleList.parallelStream()
                 .map(Role::getPermissions)
                 .flatMap(Collection::parallelStream)
-                .filter(permission -> Permission.RESOURCE_MENU.equals(permission.getResourceType()))
+                .filter(permission -> ResourceEnum.MENU == permission.getResourceType())
                 .distinct()
                 .map(MenuDTO.class::cast)
                 .toList();

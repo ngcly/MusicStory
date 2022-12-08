@@ -52,7 +52,7 @@ public class LogService {
         String ip = details.getRemoteAddress();
         UserAgent userAgent = UserAgentUtil.parse(details.getUserAgent());
         LoginStatusEnum loginStatus = event instanceof AuthenticationSuccessEvent ?
-                LoginStatusEnum.success : LoginStatusEnum.failure;
+                LoginStatusEnum.SUCCESS : LoginStatusEnum.FAILURE;
 
         LoginLog loginLog = new LoginLog();
         loginLog.setUserName(authentication.getName());

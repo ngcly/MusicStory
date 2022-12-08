@@ -1,6 +1,7 @@
 package com.cn.entity;
 
 import com.cn.config.AbstractUserDateAudit;
+import com.cn.enums.UserTypeEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,10 +40,10 @@ public class Role extends AbstractUserDateAudit {
     private String roleCode;
 
     /**
-     * 角色类型  1-后台角色 2-前台角色
+     * 角色类型
      */
     @Column(nullable = false)
-    private Byte roleType;
+    private UserTypeEnum roleType;
 
     /**
      * 角色描述
@@ -100,10 +101,4 @@ public class Role extends AbstractUserDateAudit {
         return Objects.hash(id, roleName, roleType);
     }
 
-
-    /**
-     * 角色类型
-     */
-    public static final byte ROLE_TYPE_MANAGER = 1;
-    public static final byte ROLE_TYPE_CUSTOMER = 2;
 }

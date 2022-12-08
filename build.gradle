@@ -66,8 +66,8 @@ subprojects {  //子项目通配
         implementation 'org.springframework.boot:spring-boot-starter'
         implementation 'org.springframework.boot:spring-boot-starter-actuator'
         implementation 'org.springframework.boot:spring-boot-starter-web'
-        implementation 'org.springframework.boot:spring-boot-starter-jersey'
         implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation 'org.springframework.boot:spring-boot-starter-validation'
         implementation "com.github.ulisesbocchio:jasypt-spring-boot-starter:${ulisesVersion}"
         implementation "net.logstash.logback:logstash-logback-encoder:${logstashVersion}"
 

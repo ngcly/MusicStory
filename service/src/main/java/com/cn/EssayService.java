@@ -83,7 +83,7 @@ public class EssayService {
         Classify classify = classifyRepository.getReferenceById(classifyId);
         essay.setClassify(classify);
         essay.setReadNum(0);
-        essay.setState(EssayState.DRAFT.getCode());
+        essay.setState(EssayState.DRAFT);
         return essayRepository.save(essay).getId();
     }
 
@@ -93,7 +93,7 @@ public class EssayService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void updateEssay(Long classifyId, Essay essay){
-        essay.setState(EssayState.PENDING.getCode());
+        essay.setState(EssayState.PENDING);
         Classify classify = classifyRepository.getReferenceById(classifyId);
         essay.setClassify(classify);
         essay.setReadNum(0);
@@ -130,7 +130,7 @@ public class EssayService {
         Essay essay1 = essayRepository.getReferenceById(essay.getId());
         essay1.setState(essay.getState());
         //审核不通过
-        if(EssayState.FORBIDDEN.getCode() == essay.getState()){
+        if(EssayState.FORBIDDEN == essay.getState()){
             essay1.setRemark(essay.getRemark());
             News news = new News();
             news.setUserId(essay1.getUser().getId());

@@ -38,8 +38,8 @@ public class WebSecurityConfig {
     private final LoginFailureHandler loginFailureHandler;
     private final MyAuthenticationDetailsSource myAuthenticationDetailsSource;
 
-    private static final String[] IGNORING_URLS = new String[]{"/captcha", "/webjars/**", "/layui/**", "/js/**", "/css/**",
-            "/img/**", "/media/**", "/**/favicon.ico", "/druid/**"};
+    private static final String[] IGNORING_URLS = new String[]{"/captcha", "/webjars/*", "/layui/*", "/js/*", "/css/*",
+            "/img/*", "/media/*", "/*/favicon.ico", "/druid/*"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

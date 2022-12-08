@@ -4,6 +4,7 @@ import com.cn.dao.PermissionRepository;
 import com.cn.dao.RoleRepository;
 import com.cn.entity.Permission;
 import com.cn.entity.Role;
+import com.cn.enums.UserTypeEnum;
 import com.cn.pojo.MenuDTO;
 import com.cn.util.MenuUtil;
 import lombok.AllArgsConstructor;
@@ -53,7 +54,7 @@ public class RoleService {
     /**
      * 获取可用角色
      */
-    public List<Role> getAvailableRoles(byte type) {
+    public List<Role> getAvailableRoles(UserTypeEnum type) {
         return roleRepository.getAllByAvailableIsTrueAndRoleType(type);
     }
 

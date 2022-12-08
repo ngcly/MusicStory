@@ -1,6 +1,7 @@
 package com.cn.entity;
 
 import com.cn.config.AbstractDateAudit;
+import com.cn.enums.EssayState;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,7 +43,7 @@ public class Essay extends AbstractDateAudit {
 
     /**0-草稿 1-待审核 2-审核不通过 3-正常 4-推荐*/
     @Column(nullable = false)
-    private Byte state;
+    private EssayState state;
 
     /**审核不通过原由*/
     private String remark;

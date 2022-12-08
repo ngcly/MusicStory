@@ -1,5 +1,6 @@
 package com.cn.entity;
 
+import com.cn.enums.ResourceEnum;
 import com.cn.pojo.MenuDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Setter;
@@ -19,9 +20,9 @@ import java.util.Set;
 public class Permission extends MenuDTO {
 
     /**
-     * 资源类型，[menu|button]
+     * 资源类型
      */
-    private String resourceType;
+    private ResourceEnum resourceType;
 
     /**
      * 请求方式
@@ -42,12 +43,6 @@ public class Permission extends MenuDTO {
      * 菜单与角色 多对多
      */
     private Set<Role> roles;
-
-    /**
-     * 资源类型
-     */
-    public static final String RESOURCE_MENU = "menu";
-    public static final String RESOURCE_BUTTON = "button";
 
     @Override
     @Id
@@ -80,8 +75,9 @@ public class Permission extends MenuDTO {
         return parentId;
     }
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
-    public String getResourceType() {
+    public ResourceEnum getResourceType() {
         return resourceType;
     }
 

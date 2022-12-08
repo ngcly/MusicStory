@@ -1,6 +1,7 @@
 package com.cn.dao;
 
 import com.cn.entity.Role;
+import com.cn.enums.UserTypeEnum;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -27,7 +28,7 @@ public interface RoleRepository extends JpaRepository<Role,Long>,JpaSpecificatio
      * @param type 角色类型
      * @return Set<Role>
      */
-    List<Role> getAllByAvailableIsTrueAndRoleType(byte type);
+    List<Role> getAllByAvailableIsTrueAndRoleType(UserTypeEnum type);
 
     /**
      * 自定义条件查询
@@ -36,7 +37,7 @@ public interface RoleRepository extends JpaRepository<Role,Long>,JpaSpecificatio
      * @param roleType 角色类型
      * @return Specification<Role>
      */
-    static Specification<Role> getRoleList(String roleName, Boolean available, Byte roleType) {
+    static Specification<Role> getRoleList(String roleName, Boolean available, UserTypeEnum roleType) {
         return (Root<Role> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (StringUtils.hasLength(roleName)) {

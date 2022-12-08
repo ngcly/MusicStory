@@ -2,6 +2,8 @@ package com.cn;
 
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.RandomUtil;
+import com.cn.enums.GenderEnum;
+import com.cn.enums.UserTypeEnum;
 import com.cn.exception.GlobalException;
 import com.cn.config.RabbitConfig;
 import com.cn.dao.*;
@@ -250,7 +252,7 @@ public class UserService implements UserDetailsService {
             }
             user.setNickName(userInfo.get(SocialParamEnum.nickname.name()).asText());
             user.setAvatar(userInfo.get(SocialParamEnum.figureurl_qq_1.name()).asText());
-            user.setGender(userInfo.get(SocialParamEnum.gender.name()).numberValue().byteValue());
+            user.setGender(GenderEnum.valueOf(userInfo.get(SocialParamEnum.gender.name()).textValue()));
         } else {
             //获取微信用户信息
             userInfoUrl = String.format("https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s", social.getAccessToken(), social.getOpenId());
@@ -264,7 +266,7 @@ public class UserService implements UserDetailsService {
             social.setUnionId(userInfo.get(SocialParamEnum.unionid.name()).asText());
 
             user.setNickName(userInfo.get(SocialParamEnum.nickname.name()).asText());
-            user.setGender(userInfo.get(SocialParamEnum.sex.name()).numberValue().byteValue());
+            user.setGender(GenderEnum.valueOf(userInfo.get(SocialParamEnum.sex.name()).textValue()));
             user.setAvatar(userInfo.get(SocialParamEnum.headimgurl.name()).asText());
             user.setAddress(userInfo.get(SocialParamEnum.country.name()).asText()
                     + userInfo.get(SocialParamEnum.province.name()).asText()
@@ -310,7 +312,7 @@ public class UserService implements UserDetailsService {
     public void altUser(User user) {
         User altUser = userRepository.getReferenceById(user.getId());
         altUser.setState(user.getState());
-        var allRole = roleRepository.getAllByAvailableIsTrueAndRoleType(Role.ROLE_TYPE_CUSTOMER);
+        var allRole = roleRepository.getAllByAvailableIsTrueAndRoleType(UserTypeEnum.USER);
         if (Objects.nonNull(user.getRoleIds())) {
             for (Long roleId : user.getRoleIds()) {
                 allRole.stream().filter(role -> role.getId().equals(roleId)).forEach(altUser.getRoleList()::add);

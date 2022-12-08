@@ -1,5 +1,6 @@
 package com.cn;
 
+import com.cn.enums.UserTypeEnum;
 import com.cn.exception.GlobalException;
 import com.cn.dao.ManagerRepository;
 import com.cn.entity.Manager;
@@ -173,7 +174,7 @@ public class ManagerService implements UserDetailsService {
         manager.setAvatar("https://music-story.oss-cn-hongkong.aliyuncs.com/uPic/beautify.png");
         manager.setBirthday(LocalDate.of(1993,7, 24));
         manager.setState(Manager.STATE_NORMAL);
-        manager.setRoleList(new HashSet<>(roleService.getAvailableRoles(Role.ROLE_TYPE_MANAGER)));
+        manager.setRoleList(new HashSet<>(roleService.getAvailableRoles(UserTypeEnum.ADMIN)));
         return manager;
     }
 }

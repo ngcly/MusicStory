@@ -1,34 +1,10 @@
-/*
-SQLyog Ultimate v13.1.1 (64 bit)
-MySQL - 8.0.23 : Database - music_story
-*********************************************************************
-*/
-
-/*!40101 SET NAMES utf8 */;
-
-/*!40101 SET SQL_MODE=''*/;
-
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`music_story` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-
-USE `music_story`;
-
-/*Data for the table `carousel` */
-
 insert  into `carousel`(`id`,`created_at`,`updated_at`,`created_by`,`updated_by`,`forward_url`,`image_tip`,`image_url`,`sort`,`category_id`) values
 (1,'2017-08-24 10:22:28','2021-08-24 10:22:36','admin','admin','www.baidu.com','第一张','https://oss.ngcly.cn/img/1551088500425.jpg?Expires=1866448493&OSSAccessKeyId=LTAI6bpHNc1Fjfb7&Signature=TPlBdlhpDX7nSVTVJnPE2JN2hPg%3D',1,1),
 (2,'2021-08-24 10:53:07','2021-08-24 10:53:09','admin','admin','https://ngcly.cn','第二张','https://oss.ngcly.cn/img/1551088526951.jpg?Expires=1866448525&OSSAccessKeyId=LTAI6bpHNc1Fjfb7&Signature=fhiONy7Tmk9GwkHNDNzh%2B28uDLw%3D',2,1),
 (3,'2021-08-24 10:53:43','2021-08-24 10:53:41','admin','admin','xxx','第三张','https://oss.ngcly.cn/img/1551890475084.jpg?Expires=1867250475&OSSAccessKeyId=LTAI6bpHNc1Fjfb7&Signature=xnYdW%2BKMUh0fI89jOq%2Fjs%2FIlcbY%3D',3,1);
 
-/*Data for the table `carousel_category` */
-
 insert  into `carousel_category`(`id`,`created_at`,`updated_at`,`created_by`,`updated_by`,`remark`,`title`) values
 (1,'2019-01-19 11:50:40','2019-02-19 17:53:56','admin','admin','首页展示用','首页轮播图');
-
-/*Data for the table `classify` */
 
 insert  into `classify`(`id`,`created_at`,`updated_at`,`created_by`,`updated_by`,`introduction`,`name`) values
 (1,'2018-12-29 14:52:53','2018-12-29 14:56:16','admin','admin','感情记录方面','情感实录'),
@@ -43,14 +19,8 @@ insert  into `classify`(`id`,`created_at`,`updated_at`,`created_by`,`updated_by`
 (10,'2018-12-29 15:46:30','2018-12-29 15:46:30','admin','admin','隔壁有光，红袖添香','诗词沉香'),
 (11,'2018-12-29 15:47:54','2018-12-29 15:47:54','admin','admin','人在旅途，遍地芬芳','旅途之光');
 
-/*Data for the table `comment` */
-
 insert  into `comment`(`id`,`created_at`,`updated_at`,`content`,`essay_id`,`reply_comment_id`,`reply_user_id`,`user_id`) values
 (1,'2019-12-12 17:40:08','2019-12-12 17:40:08','写的真棒',3,NULL,NULL,1);
-
-/*Data for the table `daily` */
-
-/*Data for the table `essay` */
 
 insert  into `essay`(`id`,`created_at`,`updated_at`,`content`,`read_num`,`remark`,`state`,`synopsis`,`title`,`classify_id`,`user_id`) values
 (1,'2019-02-22 17:47:04','2019-12-11 01:58:09','那年微风掠过你的额头，卷起你的秀发，如画中而出的仙姿，我痴痴的看了许久。\',\'那年微风掠过你的额头，卷起你的秀发，如画中而出的仙姿，我痴痴的看了许久。',4,'3',3,'微风拂过','黄昏下的容颜',1,4),
@@ -66,79 +36,61 @@ insert  into `essay`(`id`,`created_at`,`updated_at`,`content`,`read_num`,`remark
 (12,'2019-12-12 17:56:30','2019-12-12 17:56:32','我轻轻地将那泛黄的书卷翻开犹如推开一扇古老的门千年的尘埃在阳光与阴影的间隙飞舞那是遗忘与遮蔽在无情岁月中的沉积我轻轻地将书页上的旧尘拂去辉煌的大厅\',\'<p><b>一</b></p><p>我轻轻地</p><p>将那泛黄的书卷翻开</p><p>犹如推开一扇古老的门</p><p>千年的尘埃</p><p>在阳光与阴影的间隙飞舞</p><p>那是遗忘与遮蔽</p><p>在无情岁月中的沉积</p><p><br></p><p>我轻轻地</p><p>将书页上的旧尘拂去</p><p>辉煌的大厅</p><p>美丽的穿廊</p><p>坚实的台阶</p><p>时光无法磨损的欢乐与痛苦</p><p>都在心灵的眼眸中敞开</p><p><br></p><p>我静静地</p><p>读你曾经写下的诗句</p><p>闪光的词语</p><p>沉睡的公主</p><p>不老的容颜</p><p>光洁和不朽的记忆与存在</p><p>痛苦中深藏着最热切的希望</p><p><br></p><p><b>二</b></p><p>我来了</p><p>轻轻地推开</p><p>尘封的门扉</p><p>阳光穿过古老的尘埃</p><p>清风吻醒沉睡的公主</p><p><br></p><p>我来了</p><p>轻轻地走进</p><p>词语的庙宇</p><p>感受你的孤独和等待</p><p>触摸你曾熄灭的希望</p><p><br></p><p>三</p><p>我静静的来了</p><p>这里盘桓许久</p><p>你的世界给我家的亲切</p><p>但却不是我自己的故乡</p><p>国王啊</p><p>可你的女儿</p><p>被我唤醒的遗忘与记忆</p><p>却牵着我的手</p><p>一同离开了</p><p><br></p><p>我幸福地</p><p>从此有了一位新娘</p><p>你曾用希望、爱和痛苦孕育的女儿</p><p><br></p><p>从此我有了新的生命</p><p>而那是你精神的产儿</p><p>给予我灵魂的礼物</p><p><br></p><p>当我翻开你的诗句</p><p>收获了许许多多的昨天</p><p>你留给我们今天的礼物</p>',3,NULL,3,'书海泛个什么舟','苏醒',10,4);
 
 
-/*Data for the table `manager` */
-
 insert  into `manager`(`id`,`created_at`,`updated_at`,`avatar`,`birthday`,`gender`,`password`,`real_name`,`state`,`username`) values
 (1,'2018-12-26 11:56:00','2019-07-10 01:25:07','https://music-story.oss-cn-hongkong.aliyuncs.com/uPic/beautify.png','1992-09-21',1,'$2a$04$a90t7tmpIjJl6Ic9PZTHgeJDqN4iRwk45s8AVmN10v9cZ3jYl0qk6','陈林',1,'admin'),
 (2,'2018-12-26 11:56:48','2020-05-30 14:11:33','https://music-story.oss-cn-hongkong.aliyuncs.com/uPic/cute.png','2018-03-18',1,'$2a$04$6y1tJwU0WgqL6bnXC7Q2t.gfwhqI1lrSOBy9dLuBhrnNnXFFV88LC','睿智',1,'vip');
 
-/*Data for the table `manager_role` */
 
 insert  into `manager_role`(`role_id`,`manager_id`) values
 (1,1),
 (2,2);
 
-/*Data for the table `music` */
-
-/*Data for the table `news` */
-
-/*Data for the table `notice` */
 
 insert  into `notice`(`id`,`created_at`,`updated_at`,`created_by`,`updated_by`,`begin_time`,`content`,`end_time`,`notice_type`,`title`) values
 (1,'2019-01-08 17:54:55','2020-06-07 21:19:26','ngcly','ngcly','2020-05-18 01:00:00','连雨不知春去，一晴方觉夏深。韶华易逝，流年易失。(⊙o⊙)…','2021-10-01 23:19:12','message','测试一条');
 
-/*Data for the table `permission` */
 
 insert  into `permission`(`id`,`icon`,`name`,`parent_id`,`parent_ids`,`http_method`,`resource_type`,`sort`,`url`) values
-(1,'&#xe614;','系统设置',0,'0','GET','menu',0,'/'),
-(2,'&#xe612;','管理员列表',1,'0/1','GET','menu',1,'/sys/manager.html'),
-(3,'&#xe663;','菜单列表',1,'0/1','GET','menu',3,'/sys/menu.html'),
-(4,'&#xe617;','数据监控',1,'0/1','GET','menu',5,'/druid/index.html'),
-(5,'&#xe629;','日志列表',1,'0/1','GET','menu',4,'/sys/logs.html'),
-(6,'&#xe613;','角色列表',1,'0/1','GET','menu',2,'/sys/role.html'),
-(7,'&#xe653;','音书管理',0,'0','GET','menu',1,''),
-(8,'&#xe60e;','公告列表',7,'0/7','GET','menu',3,'/ms/notice.html'),
-(9,'&#xe66f;','用户列表',7,'0/7','GET','menu',0,'/ms/user.html'),
-(10,'&#xe705;','文章列表',7,'0/7','GET','menu',1,'/ms/essay.html'),
-(11,'&#xe60a;','分类列表',7,'0/7','GET','menu',2,'/ms/classify.html'),
-(12,'&#xe634;','轮播图',7,'0/7','GET','menu',4,'/ms/carousel.html'),
-(13,'','新增',2,'0/1/2','POST','button',1,'/sys/manager'),
-(14,'','删除',2,'0/1/2','DELETE','button',3,'/sys/manager'),
-(15,'','新增',3,'0/1/3','POST','button',1,'/sys/menu'),
-(16,'','删除',3,'0/1/3','DELETE','button',3,'/sys/menu'),
-(17,'','修改',6,'0/1/6','PUT','button',2,'/sys/role'),
-(18,'','删除',6,'0/1/6','DELETE','button',3,'/sys/role'),
-(19,'','重置密码',2,'0/1/2','POST','button',4,'/sys/manager/pwd'),
-(20,'','修改',2,'0/1/2','PUT','button',2,'/sys/manager'),
-(21,'','授权',6,'0/1/6','POST','button',4,'/sys/role/grant'),
-(22,'','修改',3,'0/1/3','PUT','button',2,'/sys/menu'),
-(23,'','新增',6,'0/1/6','POST','button',1,'/sys/role'),
-(24,'','删除',9,'0/7/9','DELETE','button',1,'/ms/user'),
-(25,'','修改',9,'0/7/9','PUT','button',0,'/ms/user'),
-(26,'','新增',23,'0/7/23','POST','button',0,'/ms/classify'),
-(27,'','修改',23,'0/7/23','PUT','button',1,'/ms/classify'),
-(28,'','删除',23,'0/7/23','DELETE','button',2,'/ms/classify'),
-(29,'','新增',8,'0/7/8','POST','button',0,'/ms/notice'),
-(30,'','修改',8,'0/7/8','PUT','button',1,'/ms/notice'),
-(31,'','删除',8,'0/7/8','DELETE','button',2,'/ms/notice'),
-(32,'','新增',12,'0/7/12','POST','button',0,'/ms/carousel'),
-(33,'','修改',12,'0/7/12','PUT','button',1,'/ms/carousel'),
-(34,'','删除',12,'0/7/12','DELETE','button',2,'/ms/carousel'),
-(35,'','审核',10,'0/7/10','POST','button',0,'/ms/essay');
-
-/*Data for the table `persistent_logins` */
-
-insert  into `persistent_logins`(`username`,`series`,`token`,`last_used`) values
-('admin','jzZf+1GmOICk3LSv9eW4sQ==','m4X6e1QkNYLlPiIW1xsuWg==','2022-07-24 14:06:44');
-
-/*Data for the table `role` */
+(1,'&#xe614;','系统设置',0,'0','GET','MENU',0,'/'),
+(2,'&#xe612;','管理员列表',1,'0/1','GET','MENU',1,'/sys/manager.html'),
+(3,'&#xe663;','菜单列表',1,'0/1','GET','MENU',3,'/sys/menu.html'),
+(4,'&#xe617;','数据监控',1,'0/1','GET','MENU',5,'/druid/index.html'),
+(5,'&#xe629;','日志列表',1,'0/1','GET','MENU',4,'/sys/logs.html'),
+(6,'&#xe613;','角色列表',1,'0/1','GET','MENU',2,'/sys/role.html'),
+(7,'&#xe653;','音书管理',0,'0','GET','MENU',1,''),
+(8,'&#xe60e;','公告列表',7,'0/7','GET','MENU',3,'/ms/notice.html'),
+(9,'&#xe66f;','用户列表',7,'0/7','GET','MENU',0,'/ms/user.html'),
+(10,'&#xe705;','文章列表',7,'0/7','GET','MENU',1,'/ms/essay.html'),
+(11,'&#xe60a;','分类列表',7,'0/7','GET','MENU',2,'/ms/classify.html'),
+(12,'&#xe634;','轮播图',7,'0/7','GET','MENU',4,'/ms/carousel.html'),
+(13,'','新增',2,'0/1/2','POST','BUTTON',1,'/sys/manager'),
+(14,'','删除',2,'0/1/2','DELETE','BUTTON',3,'/sys/manager'),
+(15,'','新增',3,'0/1/3','POST','BUTTON',1,'/sys/menu'),
+(16,'','删除',3,'0/1/3','DELETE','BUTTON',3,'/sys/menu'),
+(17,'','修改',6,'0/1/6','PUT','BUTTON',2,'/sys/role'),
+(18,'','删除',6,'0/1/6','DELETE','BUTTON',3,'/sys/role'),
+(19,'','重置密码',2,'0/1/2','POST','BUTTON',4,'/sys/manager/pwd'),
+(20,'','修改',2,'0/1/2','PUT','BUTTON',2,'/sys/manager'),
+(21,'','授权',6,'0/1/6','POST','BUTTON',4,'/sys/role/grant'),
+(22,'','修改',3,'0/1/3','PUT','BUTTON',2,'/sys/menu'),
+(23,'','新增',6,'0/1/6','POST','BUTTON',1,'/sys/role'),
+(24,'','删除',9,'0/7/9','DELETE','BUTTON',1,'/ms/user'),
+(25,'','修改',9,'0/7/9','PUT','BUTTON',0,'/ms/user'),
+(26,'','新增',23,'0/7/23','POST','BUTTON',0,'/ms/classify'),
+(27,'','修改',23,'0/7/23','PUT','BUTTON',1,'/ms/classify'),
+(28,'','删除',23,'0/7/23','DELETE','BUTTON',2,'/ms/classify'),
+(29,'','新增',8,'0/7/8','POST','BUTTON',0,'/ms/notice'),
+(30,'','修改',8,'0/7/8','PUT','BUTTON',1,'/ms/notice'),
+(31,'','删除',8,'0/7/8','DELETE','BUTTON',2,'/ms/notice'),
+(32,'','新增',12,'0/7/12','POST','BUTTON',0,'/ms/carousel'),
+(33,'','修改',12,'0/7/12','PUT','BUTTON',1,'/ms/carousel'),
+(34,'','删除',12,'0/7/12','DELETE','BUTTON',2,'/ms/carousel'),
+(35,'','审核',10,'0/7/10','POST','BUTTON',0,'/ms/essay');
 
 insert  into `role`(`id`,`created_at`,`updated_at`,`created_by`,`updated_by`,`available`,`description`,`role_code`,`role_name`,`role_type`) values
-(1,'2021-08-24 12:43:52','2022-07-22 14:17:04','system','admin',1,'最牛逼的人,拥有毁天灭地的能力，一不小心就把自己玩死了','admin','超管',1),
-(2,'2021-08-24 14:38:18','2021-08-24 14:38:21','admin','admin',1,'这个是你们VIP用户的角色，请勿动它','manger','管理员',1),
-(3,'2021-08-24 14:39:39','2022-07-22 14:31:57','system','admin',1,'前台管理员角色','vip','前台管理员',2);
-
-/*Data for the table `role_permission` */
+(1,'2021-08-24 12:43:52','2022-07-22 14:17:04','system','admin',1,'最牛逼的人,拥有毁天灭地的能力，一不小心就把自己玩死了','admin','超管',0),
+(2,'2021-08-24 14:38:18','2021-08-24 14:38:21','admin','admin',1,'这个是你们VIP用户的角色，请勿动它','manger','管理员',0),
+(3,'2021-08-24 14:39:39','2022-07-22 14:31:57','system','admin',1,'前台管理员角色','vip','前台管理员',1);
 
 insert  into `role_permission`(`role_id`,`permission_id`) values
 (1,7),
@@ -202,23 +154,9 @@ insert  into `role_permission`(`role_id`,`permission_id`) values
 (2,6),
 (2,21);
 
-/*Data for the table `social_info` */
-
-/*Data for the table `user` */
 
 insert  into `user`(`id`,`created_at`,`updated_at`,`address`,`avatar`,`balance`,`birthday`,`credit`,`email`,`gender`,`level`,`nick_name`,`password`,`person_desc`,`phone`,`pwd_alt`,`real_name`,`signature`,`state`,`username`) values
-(1,'2019-11-23 09:45:40','2019-11-27 18:05:58',NULL,'https://music-story.oss-cn-hongkong.aliyuncs.com/uPic/cute.png',NULL,NULL,NULL,'965315004@qq.com',1,NULL,'cly','{bcrypt}$2a$10$CXnnVeyyZGCjnFw9F1dR9eC8cnKBlDqsly1d2XEWxMyIaaSk5ny0W',NULL,NULL,NULL,NULL,NULL,1,'ngcly'),
-(2,'2019-11-26 04:34:06','2019-11-26 04:45:52',NULL,NULL,NULL,NULL,NULL,'cly002@icloud.com',2,NULL,'ningxiner','{bcrypt}$2a$10$QVSpv0ayuEXqPPUt.Go2IOi1pQPa36/0ihjfXcjOD7jtaADFUDj1O',NULL,NULL,NULL,NULL,NULL,1,'ningxiner'),
-(3,'2020-03-26 09:12:33','2020-03-26 04:13:18',NULL,'https://music-story.oss-cn-hongkong.aliyuncs.com/uPic/small.jpg',NULL,NULL,NULL,'188@169.com',1,NULL,'noname','{bcrypt}$2a$10$LughQMwQUzt0AKE9r99B0.W8xDQnDxGJy3Jrfick7N/OnSMJsD52q',NULL,NULL,NULL,NULL,NULL,1,'1111'),
-(4,'2018-12-26 14:22:38','2018-12-28 17:33:06','湖北省武汉市','https://music-story.oss-cn-hongkong.aliyuncs.com/uPic/beautify.png',NULL,'2018-12-27',NULL,'53123775@qq.com',1,NULL,'风神','{bcrypt}$2a$10$zt3xDTDmnFFZdzaTZSPUhu.ZhvQYijtGpj4y5BrkBn/6lKi/SQQZ2','我从那里来，要到哪里去','1507886554',NULL,'王八蛋的','无个性不签名',1,'hehe');
-
-/*Data for the table `user_faves` */
-
-/*Data for the table `user_follow` */
-
-/*Data for the table `user_role` */
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+(1,'2019-11-23 09:45:40','2019-11-27 18:05:58',NULL,'https://music-story.oss-cn-hongkong.aliyuncs.com/uPic/cute.png',NULL,NULL,NULL,'965315004@qq.com',0,NULL,'cly','{bcrypt}$2a$10$CXnnVeyyZGCjnFw9F1dR9eC8cnKBlDqsly1d2XEWxMyIaaSk5ny0W',NULL,NULL,NULL,NULL,NULL,1,'ngcly'),
+(2,'2019-11-26 04:34:06','2019-11-26 04:45:52',NULL,NULL,NULL,NULL,NULL,'cly002@icloud.com',1,NULL,'ningxiner','{bcrypt}$2a$10$QVSpv0ayuEXqPPUt.Go2IOi1pQPa36/0ihjfXcjOD7jtaADFUDj1O',NULL,NULL,NULL,NULL,NULL,1,'ningxiner'),
+(3,'2020-03-26 09:12:33','2020-03-26 04:13:18',NULL,'https://music-story.oss-cn-hongkong.aliyuncs.com/uPic/small.jpg',NULL,NULL,NULL,'188@169.com',0,NULL,'noname','{bcrypt}$2a$10$LughQMwQUzt0AKE9r99B0.W8xDQnDxGJy3Jrfick7N/OnSMJsD52q',NULL,NULL,NULL,NULL,NULL,1,'1111'),
+(4,'2018-12-26 14:22:38','2018-12-28 17:33:06','湖北省武汉市','https://music-story.oss-cn-hongkong.aliyuncs.com/uPic/beautify.png',NULL,'2018-12-27',NULL,'53123775@qq.com',0,NULL,'风神','{bcrypt}$2a$10$zt3xDTDmnFFZdzaTZSPUhu.ZhvQYijtGpj4y5BrkBn/6lKi/SQQZ2','我从那里来，要到哪里去','1507886554',NULL,'王八蛋的','无个性不签名',1,'hehe');

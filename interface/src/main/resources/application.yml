@@ -3,9 +3,6 @@ server:
   # 开启 gzip 压缩
   compression:
     enabled: true
-    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
-    # 超过 1KB 即开启压缩
-    min-response-size: 1024
   # 开启 http2 支持 只在https下起作用
   http2:
     enabled: true
@@ -17,14 +14,12 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: update
-      naming:
-        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
   #数据源
   datasource:
     url: jdbc:mysql://localhost:3306/music_story?serverTimezone=UTC&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: 123456
+    password: 12345678
     driverClassName: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     # 下面为连接池的补充设置，应用到上面所有数据源中
@@ -35,14 +30,7 @@ spring:
       maxActive: 20
       # 配置获取连接等待超时的时间
       maxWait: 60000
-      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
-      timeBetweenEvictionRunsMillis: 60000
-      # 配置一个连接在池中最小生存的时间，单位是毫秒
-      minEvictableIdleTimeMillis: 300000
       validationQuery: SELECT 1
-      testWhileIdle: true
-      testOnBorrow: false
-      testOnReturn: false
       # 打开PSCache，并且指定每个连接上PSCache的大小
       poolPreparedStatements: true
       maxPoolPreparedStatementPerConnectionSize: 20
@@ -52,12 +40,10 @@ spring:
           merge-sql: true
           db-type: mysql
           slow-sql-millis: 1000
-          enabled: true
           log-slow-sql: true
         #配置 wall filter
         wall:
           db-type: mysql
-          enabled: true
       # 合并多个DruidDataSource的监控数据
       useGlobalDataSourceStat: true
 
@@ -67,19 +53,19 @@ spring:
   #邮件配置
   mail:
     host: smtp.qq.com
+    port: 465
     username: 531237716@qq.com
     password: ENC(i4zMO8N0ihz2sXZtcCMoDXId6gEW2xH4uv6p01hPxtCYm+aCZIfD9I26MQKkB2tIZiRGXg5aiP+slVPS+rMKhg==)
-    default-encoding: UTF-8
     properties:
       mail:
         smtp:
+          port: 465
           auth: true
           starttls:
             enable: true
             required: true
           socketFactory:
             class: javax.net.ssl.SSLSocketFactory
-            port: 465
 
 jwt:
   secret: ngcly
@@ -97,5 +83,6 @@ oss:
 springdoc:
   packagesToScan: com.cn.controller
   pathsToMatch: /**
+  show-actuator: true
   swagger-ui:
     enabled: true
