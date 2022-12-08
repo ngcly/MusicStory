@@ -13,7 +13,7 @@ dependencies {
     implementation "net.sourceforge.nekohtml:nekohtml:${nekohtmlVersion}"
     //thymeleaf 扩展
     implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity5:${extrasVersion}"
-    implementation "org.thymeleaf.extras:thymeleaf-extras-java8time:${extrasVersion}"
+//    implementation "org.thymeleaf.extras:thymeleaf-extras-java8time:${extrasVersion}"
     implementation "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${dialectVersion}"
     //js包
     implementation "org.webjars:webjars-locator-core:${locatorVersion}"
