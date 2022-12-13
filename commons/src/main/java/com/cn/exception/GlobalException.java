@@ -8,8 +8,8 @@ import com.cn.pojo.RestCode;
  * @since 2019/5/18 11:58
  */
 public class GlobalException extends RuntimeException {
-    private int code;
-    private String message;
+    private final int code;
+    private final String message;
 
     public GlobalException(RestCode restCode){
         this(restCode.code,restCode.msg);
@@ -21,24 +21,17 @@ public class GlobalException extends RuntimeException {
 
     public GlobalException(int code, String msg) {
         super(msg);
-        this.setCode(code);
-        this.setMessage(msg);
+        this.code = code;
+        this.message = msg;
     }
 
     public int getCode() {
         return code;
     }
 
-    public void setCode(int code) {
-        this.code = code;
-    }
 
     @Override
     public String getMessage() {
         return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 }

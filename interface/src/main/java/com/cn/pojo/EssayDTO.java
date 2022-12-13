@@ -18,18 +18,18 @@ public class EssayDTO {
     @Schema(title="主键")
     private String id;
 
-    @Schema(title="标题", required = true)
+    @Schema(title="标题", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "标题不可为空")
     private String title;
 
-    @Schema(title="分类", required = true)
+    @Schema(title="分类", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "分类不可为空")
     private Long classifyId;
 
-    @Schema(title="简介", required = true)
+    @Schema(title="简介", requiredMode = Schema.RequiredMode.REQUIRED)
     private String synopsis;
 
-    @Schema(title="内容", required = true)
+    @Schema(title="内容", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "内容不可为空")
     private String content;
 

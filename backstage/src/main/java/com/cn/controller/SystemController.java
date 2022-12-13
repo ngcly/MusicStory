@@ -129,7 +129,7 @@ public class SystemController {
      */
     @ResponseBody
     @PutMapping("/manager")
-    public Result<?> updateManager(@AuthenticationPrincipal Manager curManager, @Valid Manager manager) {
+    public Result<Void> updateManager(@AuthenticationPrincipal Manager curManager, @Valid Manager manager) {
         if("administrator".equals(curManager.getUsername())){
             return Result.failure(333, "当前用户属于内置管理员，不支持信息修改");
         }
@@ -142,7 +142,7 @@ public class SystemController {
      */
     @ResponseBody
     @DeleteMapping("/manager")
-    public Result<?> deleteManager(@AuthenticationPrincipal Manager curManager, @RequestParam Long managerId) {
+    public Result<Void> deleteManager(@AuthenticationPrincipal Manager curManager, @RequestParam Long managerId) {
         if (curManager.getId().equals(managerId)) {
             return Result.failure(333, "禁止删除自己");
         }
@@ -165,7 +165,7 @@ public class SystemController {
      */
     @ResponseBody
     @PutMapping("/manager/pwd")
-    public Result<?> updatePassword(@AuthenticationPrincipal Manager manager, @RequestParam String oldPassword,
+    public Result<Void> updatePassword(@AuthenticationPrincipal Manager manager, @RequestParam String oldPassword,
                                     @RequestParam String password) {
         if ("administrator".equals(manager.getUsername())) {
             return Result.failure(333, "当前用户属于内置管理员,不支持密码修改");
@@ -181,7 +181,7 @@ public class SystemController {
      */
     @ResponseBody
     @PostMapping("/manager/pwd")
-    public Result<?> resetPassword(@RequestParam Long managerId) {
+    public Result<Void> resetPassword(@RequestParam Long managerId) {
         managerService.updatePassword(managerId, "123456");
         return Result.success();
     }
@@ -224,22 +224,12 @@ public class SystemController {
     }
 
     /**
-     * 新增角色
-     */
-    @ResponseBody
-    @PostMapping("/role")
-    public Result<?> addRole(@Valid Role role) {
-        roleService.saveRole(role);
-        return Result.success();
-    }
-
-    /**
-     * 修改角色
+     * 新增/修改 角色
      * @param role 修改内容
      */
     @ResponseBody
-    @PutMapping("/role")
-    public Result<?> updateRole(@Valid Role role) {
+    @RequestMapping(value = "/role", method = {RequestMethod.POST, RequestMethod.PUT})
+    public Result<Void> addRole(@Valid Role role) {
         roleService.saveRole(role);
         return Result.success();
     }
@@ -266,7 +256,7 @@ public class SystemController {
      */
     @PostMapping("/role/grant")
     @ResponseBody
-    public Result<?> saveGrant(Long roleId, String menuIds) {
+    public Result<Void> saveGrant(Long roleId, String menuIds) {
         roleService.saveGrant(roleId, menuIds);
         return Result.success();
     }
@@ -276,7 +266,7 @@ public class SystemController {
      */
     @GetMapping("/role/toggle")
     @ResponseBody
-    public Result<?> altRole(@RequestParam long roleId) {
+    public Result<Void> altRole(@RequestParam long roleId) {
         roleService.altAvailable(roleId);
         return Result.success();
     }
@@ -286,7 +276,7 @@ public class SystemController {
      */
     @ResponseBody
     @DeleteMapping("/role")
-    public Result<?> delRole(@RequestParam long roleId) {
+    public Result<Void> delRole(@RequestParam long roleId) {
         roleService.delRole(roleId);
         return Result.success();
     }
@@ -327,21 +317,11 @@ public class SystemController {
     }
 
     /**
-     * 新增菜单
+     * 新增/修改 菜单
      */
     @ResponseBody
-    @PostMapping("/menu")
-    public Result<?> addMenu(@Valid Permission permission) {
-        roleService.saveMenu(permission);
-        return Result.success();
-    }
-
-    /**
-     * 修改菜单
-     */
-    @ResponseBody
-    @PutMapping("/menu")
-    public Result<?> updateMenu(@Valid Permission permission) {
+    @RequestMapping(value = "/menu", method = {RequestMethod.POST, RequestMethod.PUT})
+    public Result<Void> saveMenu(@Valid Permission permission) {
         roleService.saveMenu(permission);
         return Result.success();
     }
@@ -351,7 +331,7 @@ public class SystemController {
      */
     @ResponseBody
     @DeleteMapping("/menu")
-    public Result<?> deleteMenu(@RequestParam long menuId) {
+    public Result<Void> deleteMenu(@RequestParam long menuId) {
         roleService.delMenu(menuId);
         return Result.success();
     }

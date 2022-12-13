@@ -40,7 +40,7 @@ public class JwtTokenUtil {
     public String generateToken(User user) {
         final Date now = new Date();
         ObjectMapper mapper = SpringUtil.getBean(ObjectMapper.class);
-        Map map = mapper.convertValue(user, Map.class);
+        Map<String, ?> map = mapper.convertValue(user, Map.class);
         //创建jwt
         return JWT.create()
                 .setSubject(user.getUsername())

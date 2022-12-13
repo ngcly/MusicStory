@@ -27,7 +27,7 @@ import jakarta.validation.constraints.NotNull;
         @JsonSubTypes.Type(value = LogInDTO.SocialLoginDTO.class, names = {"qq", "wechat"})
 })
 public abstract class LogInDTO {
-    @Schema(title="登录类型", required = true)
+    @Schema(title="登录类型", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "登录类型不可为空")
     @Setter(AccessLevel.PROTECTED)
     private LoginType loginType;
@@ -36,11 +36,11 @@ public abstract class LogInDTO {
     @Getter
     @Setter
     public static class UserNameLoginDTO extends LogInDTO {
-        @Schema(title="用户名", required = true)
+        @Schema(title="用户名", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotBlank(message = "用户名不可为空")
         private String username;
 
-        @Schema(title="密码", required = true)
+        @Schema(title="密码", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotBlank(message = "密码不可为空")
         private String password;
     }
@@ -49,10 +49,10 @@ public abstract class LogInDTO {
     @Getter
     @Setter
     public static class SocialLoginDTO extends LogInDTO {
-        @Schema(title="授权码", required = true)
+        @Schema(title="授权码", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotBlank(message = "授权码不可为空")
         private String code;
-        @Schema(title="csrf值", required = true)
+        @Schema(title="csrf值", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotBlank(message = "csrf值不可为空")
         private String state;
     }

@@ -16,12 +16,12 @@ import jakarta.validation.constraints.Size;
 @Schema(title="注册", description = "注册参数")
 public class SignUpDTO {
 
-    @Schema(title="用户名", required = true)
+    @Schema(title="用户名", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank
     @Size(min = 3, max = 15)
     private String username;
 
-    @Schema(title="邮箱", required = true)
+    @Schema(title="邮箱", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank
     @Size(max = 40)
     @Email
@@ -30,7 +30,7 @@ public class SignUpDTO {
     @Schema(title="手机号")
     private String phone;
 
-    @Schema(title="密码", required = true)
+    @Schema(title="密码", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank
     @Size(min = 6, max = 32)
     private String password;

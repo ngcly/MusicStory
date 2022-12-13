@@ -132,21 +132,11 @@ public class MsController {
     }
 
     /**
-     * 新增分类
+     * 新增/修改 分类
      */
     @ResponseBody
-    @PostMapping("/classify")
+    @RequestMapping(value = "/classify", method = {RequestMethod.POST, RequestMethod.PUT})
     public Result<Void> addClassify(@Valid Classify classify) {
-        classifyService.saveClassify(classify);
-        return Result.success();
-    }
-
-    /**
-     * 修改分类
-     */
-    @ResponseBody
-    @PutMapping("/classify")
-    public Result<Void> updateClassify(@Valid Classify classify) {
         classifyService.saveClassify(classify);
         return Result.success();
     }
@@ -237,18 +227,8 @@ public class MsController {
      * 保存公告
      */
     @ResponseBody
-    @PostMapping("/notice")
-    public Result<Void> addNotice(@Valid Notice notice) {
-        noticeService.addOrUpdateNotice(notice);
-        return Result.success();
-    }
-
-    /**
-     * 修改公告
-     */
-    @ResponseBody
-    @PutMapping("/notice")
-    public Result<Void> updateNotice(@Valid Notice notice) {
+    @RequestMapping(value = "/notice", method = {RequestMethod.POST, RequestMethod.PUT})
+    public Result<Void> addOrUpdateNotice(@Valid Notice notice) {
         noticeService.addOrUpdateNotice(notice);
         return Result.success();
     }

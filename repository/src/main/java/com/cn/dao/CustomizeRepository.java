@@ -77,42 +77,53 @@ public class CustomizeRepository {
 
     public <T> List<T> nativeQueryList(String nativeSql, Object... params) {
         Query q = createNativeQuery(nativeSql, params);
-        q.unwrap(NativeQueryImpl.class).setResultTransformer(Transformers.TO_LIST);
+        q.unwrap(NativeQueryImpl.class)
+                .setTupleTransformer(Transformers.TO_LIST)
+                .setResultListTransformer(Transformers.TO_LIST);
         return q.getResultList();
     }
 
     public <T> Page<T> nativePageQueryList(String nativeSql, Pageable pageable, Object... params) {
         Query q = createPageNativeQuery(nativeSql, pageable, params);
-        q.unwrap(NativeQueryImpl.class).setResultTransformer(Transformers.TO_LIST);
+        q.unwrap(NativeQueryImpl.class)
+                .setTupleTransformer(Transformers.TO_LIST)
+                .setResultListTransformer(Transformers.TO_LIST);
         return new PageImpl<T>(q.getResultList(), pageable, countPageQuery("select count(*) from ("+nativeSql+") tall",params).intValue());
     }
 
     public <T> List<T> nativeQueryListModel(Class<T> resultClass,
                                             String nativeSql, Object... params) {
         Query q = createNativeQuery(nativeSql, params);
-        q.unwrap(NativeQueryImpl.class).setResultTransformer(Transformers.aliasToBean(resultClass));
+        q.unwrap(NativeQueryImpl.class)
+                .setTupleTransformer(Transformers.aliasToBean(resultClass))
+                .setResultListTransformer(Transformers.aliasToBean(resultClass));
         return q.getResultList();
     }
 
     public <T> Page<T> nativePageQueryListModel(Class<T> resultClass, Pageable pageable,
                                             String nativeSql, Object... params) {
         Query q = createPageNativeQuery(nativeSql, pageable, params);
-        q.unwrap(NativeQueryImpl.class).setResultTransformer(Transformers.aliasToBean(resultClass));
+        q.unwrap(NativeQueryImpl.class)
+                .setTupleTransformer(Transformers.aliasToBean(resultClass))
+                .setResultListTransformer(Transformers.aliasToBean(resultClass));
         Page<T> page = new PageImpl<T>(q.getResultList(), pageable, countPageQuery("select count(*) from ("+nativeSql+") tall",params).intValue());
         return page;
     }
 
     public List<Map<String,Object>> nativeQueryListMap(String nativeSql, Object... params) {
         Query q = createNativeQuery(nativeSql, params);
-        q.unwrap(NativeQueryImpl.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        q.unwrap(NativeQueryImpl.class)
+                .setTupleTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
+                .setResultListTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
         return q.getResultList();
     }
 
     public Page<Map<String,Object>> nativePageQueryListMap(String nativeSql, Pageable pageable, Object... params) {
         Query q = createNativeQuery(nativeSql, params);
-        q.unwrap(NativeQueryImpl.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-        Page<Map<String,Object>> page = new PageImpl<Map<String,Object>>(q.getResultList(), pageable,
+        q.unwrap(NativeQueryImpl.class)
+                .setTupleTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
+                .setResultListTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        return new PageImpl<Map<String,Object>>(q.getResultList(), pageable,
                 countPageQuery("select count(*) from ("+nativeSql+") tall",params).intValue());
-        return page;
     }
 }
