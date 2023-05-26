@@ -66,7 +66,7 @@ public class WebSecurityConfig {
                 .authenticationProvider(new MyAuthenticationProvider(userService))
                 .userDetailsService(userService)
                 .passwordEncoder(passwordEncoder)
-                .init()
+                .and()
                 .build();
     }
 
