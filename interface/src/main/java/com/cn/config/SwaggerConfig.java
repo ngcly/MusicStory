@@ -7,6 +7,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,6 +30,14 @@ public class SwaggerConfig {
                 .externalDocs(new ExternalDocumentation()
                         .description("Music Story Wiki Documentation")
                         .url("https://ngcly.cn"));
+    }
+
+    @Bean
+    public GroupedOpenApi defaultApi(){
+        return GroupedOpenApi.builder()
+                .group("Default")
+                .packagesToScan("com.cn.controller")
+                .build();
     }
 
 }

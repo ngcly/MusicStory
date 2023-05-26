@@ -6,10 +6,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.*;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,28 +35,23 @@ public class WebSecurityConfig {
     /**
      * 放行接口
      */
-    private final String[] pass = {"/webjars/**", "/swagger-ui/**", "/swagger-resources/**", "/v2/**", "/user/upload/**"};
+    private final String[] pass = {"/webjars/**", "swagger-ui.html", "/swagger-ui/**", "/swagger-resources/**", "/v3/**", "/user/upload/**"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authManager) throws Exception {
         http
-                .authorizeHttpRequests()
-                .requestMatchers(pass).permitAll()
-                .requestMatchers(HttpMethod.OPTIONS).permitAll()
-                .requestMatchers("/user/**").authenticated()
-                .and()
-                .cors()
-                .and()
-                .csrf()
+                .authorizeHttpRequests(authorizeHttpRequests ->
+                        authorizeHttpRequests
+                                .requestMatchers(pass).permitAll()
+                                .requestMatchers(HttpMethod.OPTIONS).permitAll()
+                                .requestMatchers("/user/**").authenticated())
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
 //                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .disable()
                 .addFilterBefore(new JwtLoginFilter(authManager, jwtTokenUtil), UsernamePasswordAuthenticationFilter.class)
                 .addFilter(new JwtVerifyFilter(authManager, jwtTokenUtil))
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint);
-
+                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint));
         return http.build();
     }
 
@@ -66,10 +63,10 @@ public class WebSecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http, UserService userService, PasswordEncoder passwordEncoder) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
+                .authenticationProvider(new MyAuthenticationProvider(userService))
                 .userDetailsService(userService)
                 .passwordEncoder(passwordEncoder)
-                .and()
-                .authenticationProvider(new MyAuthenticationProvider(userService))
+                .init()
                 .build();
     }
 

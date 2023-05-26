@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -29,6 +30,13 @@ import java.util.Set;
 @Entity
 @Table(name = "manager")
 @JsonIgnoreProperties(value = {"roleList", "handler", "hibernateLazyInitializer", "fieldHandler"})
+@NamedEntityGraph(name = "Role.Graph", attributeNodes = {
+        @NamedAttributeNode(value = "roleList", subgraph = "Permission.Graph")
+},
+        subgraphs = {@NamedSubgraph(name = "Permission.Graph", attributeNodes = {
+                @NamedAttributeNode("permissions")
+        })}
+)
 public class Manager extends AbstractDateAudit implements UserDetails, CredentialsContainer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -115,10 +123,11 @@ public class Manager extends AbstractDateAudit implements UserDetails, Credentia
         Collection<GrantedAuthority> authorities = new HashSet<>();
         SimpleGrantedAuthority authority;
         for (Role role : roleList) {
-            authority = new SimpleGrantedAuthority(String.join("_","ROLE", role.getRoleCode()));
+            authority = new SimpleGrantedAuthority(String.join("_", "ROLE", role.getRoleCode()));
             authorities.add(authority);
             for (Permission permission : role.getPermissions()) {
-                authority = new SimpleGrantedAuthority(String.join("_", permission.getHttpMethod(), permission.getUrl()));
+                authority = new SimpleGrantedAuthority(String.join("_", permission.getHttpMethod(),
+                        permission.getUrl()));
                 authorities.add(authority);
             }
         }

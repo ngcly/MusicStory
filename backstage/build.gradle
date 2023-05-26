@@ -12,7 +12,7 @@ dependencies {
     //弱化 thymeleaf 校验
     implementation "net.sourceforge.nekohtml:nekohtml:${nekohtmlVersion}"
     //thymeleaf 扩展
-    implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity5:${extrasVersion}"
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 //    implementation "org.thymeleaf.extras:thymeleaf-extras-java8time:${extrasVersion}"
     implementation "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${dialectVersion}"
     //js包
