@@ -60,7 +60,7 @@ public class Essay extends AbstractDateAudit {
 
     /**文章音乐列表*/
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "essay_id", referencedColumnName = "id")
+    @JoinColumn(name = "essayId", referencedColumnName = "id")
     private List<Music> musicList;
 
 }
