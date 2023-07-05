@@ -9,8 +9,8 @@ buildscript { //构建脚本
         springBootVersion = '3.1.1'
     }
     repositories {//jar包仓库
-        maven { url 'https://maven.aliyun.com/repository/central' }
-        maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
+//        maven { url 'https://maven.aliyun.com/repository/central' }
+//        maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
         mavenCentral()
     }
     dependencies {
@@ -45,19 +45,19 @@ subprojects {  //子项目通配
 
     //定义版本
     ext {
-        ulisesVersion = '3.0.4'
+        ulisesVersion = '3.0.5'
         docVersion = '2.1.0'
         jsoupVersion = '1.14.3'
         nekohtmlVersion = '1.9.22'
-        hutoolVersion = '5.8.16'
-        guavaVersion = '31.1-jre'
-        aliOssVersion = '3.15.1'
-        druidVersion = '1.2.17'
+        hutoolVersion = '5.8.19'
+        guavaVersion = '32.0.0-jre'
+        aliOssVersion = '3.16.3'
+        druidVersion = '1.2.18'
         dialectVersion = '3.1.0'
         locatorVersion = '0.52'
-        layuiVersion = '2.7.6'
+        layuiVersion = '2.8.8'
         treegridVersion = '0.3.0'
-        logstashVersion = '7.2'
+        logstashVersion = '7.3'
         jacksonVersion = '2.13.3'
     }
 

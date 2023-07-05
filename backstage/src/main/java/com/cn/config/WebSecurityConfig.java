@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -45,58 +46,63 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //设置可以iframe访问
         http
-                .headers()
-                .frameOptions()
-                .sameOrigin();
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
         http
-                .authorizeHttpRequests()
-                .requestMatchers(IGNORING_URLS)
-                .permitAll()
-                .anyRequest()
-                .access(new MyAuthorizationManager(managerService));
+                .authorizeHttpRequests(authorizeHttpRequests ->
+                        authorizeHttpRequests
+                                .requestMatchers(IGNORING_URLS).permitAll()
+                                .anyRequest().access(new MyAuthorizationManager(managerService))
+                );
+
         http
-                .exceptionHandling()
-                .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    response.setContentType(ContentType.APPLICATION_JSON.toString());
-                    try (PrintWriter printWriter = response.getWriter()) {
-                        printWriter.write(JacksonUtil.stringify(Result.failure(RestCode.UNAUTHORIZED)));
-                    }
-                });
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling.accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setContentType(ContentType.APPLICATION_JSON.toString());
+                            try (PrintWriter printWriter = response.getWriter()) {
+                                printWriter.write(JacksonUtil.stringify(Result.failure(RestCode.UNAUTHORIZED)));
+                            }
+                        })
+                );
+
         http
-                .csrf()
-                .ignoringRequestMatchers(IGNORING_URLS);
+                .csrf(csrf -> csrf.ignoringRequestMatchers(IGNORING_URLS));
         http
-                .formLogin()
-                .authenticationDetailsSource(myAuthenticationDetailsSource)
-                .loginPage("/login")
-                .permitAll()
-                .successHandler(loginSuccessHandler)
-                .failureHandler(loginFailureHandler);
+                .formLogin(formLogin -> formLogin
+                        .authenticationDetailsSource(myAuthenticationDetailsSource)
+                        .loginPage("/login")
+                        .permitAll()
+                        .successHandler(loginSuccessHandler)
+                        .failureHandler(loginFailureHandler)
+                );
+
         http
-                .logout()
-                .logoutSuccessUrl("/login")
-                .invalidateHttpSession(true)
-                .deleteCookies("remember-me");
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/login")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("remember-me")
+                );
+
         http
-                .rememberMe()
-                .userDetailsService(managerService)
-                .tokenRepository(persistentRepository)
-                .tokenValiditySeconds(60 * 60 * 24 * 7);
+                .rememberMe(remember -> remember
+                        .userDetailsService(managerService)
+                        .tokenRepository(persistentRepository)
+                        .tokenValiditySeconds(60 * 60 * 24 * 7));
 
         return http.build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, ManagerService managerService, PasswordEncoder passwordEncoder) throws Exception {
+    public AuthenticationManager authenticationManager(HttpSecurity http, ManagerService managerService,
+                                                       PasswordEncoder passwordEncoder) throws Exception {
         MyAuthenticationProvider provider = new MyAuthenticationProvider();
         provider.setUserDetailsService(managerService);
         provider.setPasswordEncoder(passwordEncoder);
 
         MyAuthenticationProvider provider2 = new MyAuthenticationProvider();
         provider2.setUserDetailsService(username -> {
-            if(username.equals("administrator")){
+            if (username.equals("administrator")) {
                 return managerService.getAdministrator();
-            }else{
+            } else {
                 throw new UsernameNotFoundException(username);
             }
         });
