@@ -170,7 +170,7 @@ public class ManagerService implements UserDetailsService {
         manager.setUsername("administrator");
         manager.setPassword(passwordEncoder.encode("123456"));
         manager.setGender((byte) 1);
-        manager.setRealName("Default User");
+        manager.setRealName("超管员");
         manager.setAvatar("https://music-story.oss-cn-hongkong.aliyuncs.com/uPic/beautify.png");
         manager.setBirthday(LocalDate.of(1993,7, 24));
         manager.setState(Manager.STATE_NORMAL);

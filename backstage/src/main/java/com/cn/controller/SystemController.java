@@ -90,11 +90,7 @@ public class SystemController {
         String checkRoleIds;
         Set<Role> beSelectedRoles;
         if (managerId != null) {
-            if(managerId.equals(managerDetail.getId())) {
-                manager = managerService.getAdministrator();
-            }else{
-                manager = managerService.getManagerById(managerId);
-            }
+            manager = managerService.getManagerById(managerId);
             checkRoleIds = manager.getRoleList().stream().map(role ->
                     role.getId().toString()).collect(Collectors.joining(","));
             beSelectedRoles = Stream.concat(currentManagerRoles.stream(), manager.getRoleList().stream()).collect(Collectors.toSet());
