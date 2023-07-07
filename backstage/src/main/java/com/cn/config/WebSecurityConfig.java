@@ -6,6 +6,7 @@ import com.cn.util.JacksonUtil;
 import com.cn.util.Result;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.entity.ContentType;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -50,6 +51,7 @@ public class WebSecurityConfig {
         http
                 .authorizeHttpRequests(authorizeHttpRequests ->
                         authorizeHttpRequests
+                                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 .requestMatchers(IGNORING_URLS).permitAll()
                                 .anyRequest().access(new MyAuthorizationManager(managerService))
                 );

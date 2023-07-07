@@ -113,7 +113,7 @@ public class Manager extends AbstractDateAudit implements UserDetails, Credentia
     public static final byte STATE_NORMAL = 1;
     public static final byte STATE_LOCK = 2;
 
-    public static final String ADMIN = "admin";
+    public static final String ADMIN = "administrator";
 
     /**
      * 加载权限

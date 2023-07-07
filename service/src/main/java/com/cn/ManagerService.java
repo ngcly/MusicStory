@@ -42,7 +42,11 @@ public class ManagerService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return managerRepository.findManagerByUsername(username).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
+        if(Manager.ADMIN.equals(username)){
+            return getAdministrator();
+        }else{
+            return managerRepository.findManagerByUsername(username).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
+        }
     }
 
     /**
@@ -167,7 +171,7 @@ public class ManagerService implements UserDetailsService {
     public Manager getAdministrator() {
         Manager manager = new Manager();
         manager.setId(0L);
-        manager.setUsername("administrator");
+        manager.setUsername(Manager.ADMIN);
         manager.setPassword(passwordEncoder.encode("123456"));
         manager.setGender((byte) 1);
         manager.setRealName("超管员");
