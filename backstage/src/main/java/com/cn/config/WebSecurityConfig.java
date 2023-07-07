@@ -1,6 +1,7 @@
 package com.cn.config;
 
 import com.cn.ManagerService;
+import com.cn.entity.Manager;
 import com.cn.pojo.RestCode;
 import com.cn.util.JacksonUtil;
 import com.cn.util.Result;
@@ -102,7 +103,7 @@ public class WebSecurityConfig {
 
         MyAuthenticationProvider provider2 = new MyAuthenticationProvider();
         provider2.setUserDetailsService(username -> {
-            if (username.equals("administrator")) {
+            if (username.equals(Manager.ADMIN)) {
                 return managerService.getAdministrator();
             } else {
                 throw new UsernameNotFoundException(username);
