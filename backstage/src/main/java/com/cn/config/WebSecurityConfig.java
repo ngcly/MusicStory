@@ -1,7 +1,6 @@
 package com.cn.config;
 
 import com.cn.ManagerService;
-import com.cn.entity.Manager;
 import com.cn.pojo.RestCode;
 import com.cn.util.JacksonUtil;
 import com.cn.util.Result;
@@ -16,7 +15,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
@@ -48,16 +46,13 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //设置可以iframe访问
         http
-                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
-        http
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(authorizeHttpRequests ->
                         authorizeHttpRequests
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 .requestMatchers(IGNORING_URLS).permitAll()
                                 .anyRequest().access(new MyAuthorizationManager(managerService))
-                );
-
-        http
+                )
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling.accessDeniedHandler((request, response, accessDeniedException) -> {
                             response.setContentType(ContentType.APPLICATION_JSON.toString());
@@ -65,27 +60,20 @@ public class WebSecurityConfig {
                                 printWriter.write(JacksonUtil.stringify(Result.failure(RestCode.UNAUTHORIZED)));
                             }
                         })
-                );
-
-        http
-                .csrf(csrf -> csrf.ignoringRequestMatchers(IGNORING_URLS));
-        http
+                )
+                .csrf(csrf -> csrf.ignoringRequestMatchers(IGNORING_URLS))
                 .formLogin(formLogin -> formLogin
                         .authenticationDetailsSource(myAuthenticationDetailsSource)
                         .loginPage("/login")
                         .permitAll()
                         .successHandler(loginSuccessHandler)
                         .failureHandler(loginFailureHandler)
-                );
-
-        http
+                )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login")
                         .invalidateHttpSession(true)
                         .deleteCookies("remember-me")
-                );
-
-        http
+                )
                 .rememberMe(remember -> remember
                         .userDetailsService(managerService)
                         .tokenRepository(persistentRepository)
@@ -101,19 +89,8 @@ public class WebSecurityConfig {
         provider.setUserDetailsService(managerService);
         provider.setPasswordEncoder(passwordEncoder);
 
-        MyAuthenticationProvider provider2 = new MyAuthenticationProvider();
-        provider2.setUserDetailsService(username -> {
-            if (username.equals(Manager.ADMIN)) {
-                return managerService.getAdministrator();
-            } else {
-                throw new UsernameNotFoundException(username);
-            }
-        });
-        provider2.setPasswordEncoder(passwordEncoder);
-
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .authenticationProvider(provider)
-                .authenticationProvider(provider2)
                 .build();
     }
 
