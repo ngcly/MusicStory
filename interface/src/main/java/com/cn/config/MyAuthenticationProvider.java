@@ -8,6 +8,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
+
 /**
  * @author chenning
  */
@@ -25,7 +27,7 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
         MyAuthenticationToken token = (MyAuthenticationToken) authentication;
         User user = userService.socialLogin(token.getLoginType(), token.getPrincipal().toString(), token.getCredentials().toString());
 
-        return new MyAuthenticationToken(token.getLoginType(), user.getUsername(), user.getPassword());
+        return new MyAuthenticationToken(token.getLoginType(), user.getUsername(), user.getPassword(), new ArrayList<>());
     }
 
     @Override
