@@ -44,7 +44,7 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
 //                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .addFilterBefore(new JwtLoginFilter(authManager, jwtTokenUtil), UsernamePasswordAuthenticationFilter.class)
-                .addFilter(new JwtVerifyFilter(authManager, jwtTokenUtil))
+                .addFilter(new JwtAuthenticationFilter(authManager, jwtTokenUtil))
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint));
         return http.build();
@@ -60,7 +60,7 @@ public class WebSecurityConfig {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userService);
         authenticationProvider.setPasswordEncoder(passwordEncoder);
-        MyAuthenticationProvider myAuthenticationProvider = new MyAuthenticationProvider(userService);
+        SocialAuthenticationProvider myAuthenticationProvider = new SocialAuthenticationProvider(userService);
         return new ProviderManager(List.of(authenticationProvider, myAuthenticationProvider));
     }
 

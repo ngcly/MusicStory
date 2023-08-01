@@ -26,10 +26,10 @@ import java.util.Objects;
  * @author chenning
  */
 @Slf4j
-public class JwtVerifyFilter extends BasicAuthenticationFilter {
+public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     private final JwtTokenUtil jwtTokenUtil;
 
-    public JwtVerifyFilter(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil) {
         super(authenticationManager);
         this.jwtTokenUtil = jwtTokenUtil;
     }

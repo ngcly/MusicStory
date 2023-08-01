@@ -1,8 +1,8 @@
 package com.cn.config;
 
-import com.cn.constant.LoginType;
 import com.cn.entity.User;
 import com.cn.pojo.AuthenticationDetails;
+import com.cn.pojo.LogInDTO;
 import com.cn.pojo.RestCode;
 import com.cn.util.JacksonUtil;
 import com.cn.util.Result;
@@ -30,27 +30,8 @@ import java.io.PrintWriter;
 public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
     private final JwtTokenUtil jwtTokenUtil;
 
-    public static final String SPRING_SECURITY_FORM_USERNAME_KEY = "username";
-
-    public static final String SPRING_SECURITY_FORM_PASSWORD_KEY = "password";
-
-    public static final String LOGIN_TYPE_KEY = "loginType";
-
     private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher("/login",
             "POST");
-
-    private String usernameParameter = SPRING_SECURITY_FORM_USERNAME_KEY;
-
-    private String passwordParameter = SPRING_SECURITY_FORM_PASSWORD_KEY;
-
-    private String loginTypeParameter = LOGIN_TYPE_KEY;
-
-    private boolean postOnly = true;
-
-    public JwtLoginFilter(JwtTokenUtil jwtTokenUtil) {
-        super(DEFAULT_ANT_PATH_REQUEST_MATCHER);
-        this.jwtTokenUtil = jwtTokenUtil;
-    }
 
     public JwtLoginFilter(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil) {
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER, authenticationManager);
@@ -59,23 +40,19 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
-        if (this.postOnly && !request.getMethod().equals("POST")) {
+            throws AuthenticationException, IOException {
+        if (!request.getMethod().equals("POST")) {
             throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
         }
-        String loginType = request.getParameter(this.loginTypeParameter);
-        LoginType lt = LoginType.valueOf(loginType);
-        if(lt.isSocialLoginType()){
-            MyAuthenticationToken authRequest = new MyAuthenticationToken(loginType,request.getParameter("code"), request.getParameter("state"));
+        LogInDTO logInDTO = JacksonUtil.toObject(request.getInputStream(), LogInDTO.class);
+        if(logInDTO instanceof LogInDTO.SocialLoginDTO socialLoginDTO){
+            MyAuthenticationToken authRequest = new MyAuthenticationToken(socialLoginDTO.getLoginType().name(), socialLoginDTO.getCode(), socialLoginDTO.getState());
             authRequest.setDetails(new AuthenticationDetails(request));
             return this.getAuthenticationManager().authenticate(authRequest);
         }else{
-            String username = request.getParameter(this.usernameParameter);
-            username = (username != null) ? username.trim() : "";
-            String password = request.getParameter(this.passwordParameter);
-            password = (password != null) ? password : "";
-            UsernamePasswordAuthenticationToken authRequest = UsernamePasswordAuthenticationToken.unauthenticated(username,
-                    password);
+            LogInDTO.UserNameLoginDTO userNameLoginDTO = (LogInDTO.UserNameLoginDTO) logInDTO;
+            UsernamePasswordAuthenticationToken authRequest = UsernamePasswordAuthenticationToken.unauthenticated(userNameLoginDTO.getUsername(),
+                    userNameLoginDTO.getPassword());
             authRequest.setDetails(new AuthenticationDetails(request));
             return this.getAuthenticationManager().authenticate(authRequest);
         }

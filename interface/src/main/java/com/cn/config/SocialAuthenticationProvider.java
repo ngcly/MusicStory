@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * @author chenning
  */
 @RequiredArgsConstructor
-public class MyAuthenticationProvider implements AuthenticationProvider {
+public class SocialAuthenticationProvider implements AuthenticationProvider {
     private final UserService userService;
 
     @Override

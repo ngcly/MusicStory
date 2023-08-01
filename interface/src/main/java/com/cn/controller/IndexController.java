@@ -1,6 +1,5 @@
 package com.cn.controller;
 
-import cn.hutool.http.Header;
 import com.cn.*;
 import com.cn.config.JwtTokenUtil;
 import com.cn.config.MyAuthenticationToken;
@@ -86,8 +85,8 @@ public class IndexController {
 
     @Operation(summary = "刷新token", description = "用户刷新token")
     @GetMapping("/signin")
-    public Result<String> getAccessToken(HttpServletRequest request) {
-        return Result.success(jwtTokenUtil.refreshToken(request.getHeader(Header.AUTHORIZATION.getValue())));
+    public Result<String> getAccessToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
+        return Result.success(jwtTokenUtil.refreshToken(authorization));
     }
 
     @Operation(summary = "登出", description = "退出登录")
