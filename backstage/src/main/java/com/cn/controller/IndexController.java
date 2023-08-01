@@ -38,7 +38,7 @@ public class IndexController {
     public String index(@AuthenticationPrincipal Manager manager, Model model) {
         boolean init = false;
         Collection<Role> roleList;
-        if ("administrator".equals(manager.getUsername())) {
+        if (Manager.ADMIN.equals(manager.getUsername())) {
             roleList = managerService.getAdministrator().getRoleList();
         } else {
             Manager dbManager = managerService.getManagerById(manager.getId());

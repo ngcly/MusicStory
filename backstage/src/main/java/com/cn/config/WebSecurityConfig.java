@@ -9,8 +9,7 @@ import org.apache.http.entity.ContentType;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -20,6 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 import java.io.PrintWriter;
+import java.util.List;
 
 /**
  * Spring Security 配置
@@ -83,15 +83,11 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, ManagerService managerService,
-                                                       PasswordEncoder passwordEncoder) throws Exception {
+    public ProviderManager providerManager(PasswordEncoder passwordEncoder){
         MyAuthenticationProvider provider = new MyAuthenticationProvider();
         provider.setUserDetailsService(managerService);
         provider.setPasswordEncoder(passwordEncoder);
-
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .authenticationProvider(provider)
-                .build();
+        return new ProviderManager(List.of(provider));
     }
 
 //    @Bean
