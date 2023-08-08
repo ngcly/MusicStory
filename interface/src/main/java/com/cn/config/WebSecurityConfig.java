@@ -42,7 +42,6 @@ public class WebSecurityConfig {
                                 .anyRequest().permitAll())
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .addFilterBefore(new JwtLoginFilter(authManager, jwtTokenUtil), UsernamePasswordAuthenticationFilter.class)
                 .addFilter(new JwtAuthenticationFilter(authManager, jwtTokenUtil))
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

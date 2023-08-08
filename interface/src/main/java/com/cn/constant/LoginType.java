@@ -14,8 +14,4 @@ public enum LoginType {
     WECHAT,
     @JsonProperty("qq")
     QQ;
-
-    public boolean isSocialLoginType(){
-        return this == LoginType.WECHAT || this == LoginType.QQ;
-    }
 }
