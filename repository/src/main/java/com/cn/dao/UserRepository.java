@@ -81,7 +81,7 @@ public interface UserRepository extends JpaRepository<User,Long>, JpaSpecificati
                 predicates.add(cb.equal(root.get("state"), state));
             }
 
-            return query.where(cb.and(predicates.toArray(new Predicate[predicates.size()]))).getRestriction();
+            return query.where(cb.and(predicates.toArray(new Predicate[0]))).getRestriction();
         };
     }
 }

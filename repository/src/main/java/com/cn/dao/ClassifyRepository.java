@@ -31,7 +31,7 @@ public interface ClassifyRepository extends JpaRepository<Classify,Long>, JpaSpe
             if(StringUtils.hasLength(name)) {
                 predicates.add(cb.like(root.get("name"),"%"+name+"%"));
             }
-            return query.where(cb.and(predicates.toArray(new Predicate[predicates.size()]))).getRestriction();
+            return query.where(cb.and(predicates.toArray(new Predicate[0]))).getRestriction();
         };
     }
 }

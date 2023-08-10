@@ -55,7 +55,7 @@ public interface EssayRepository extends JpaRepository<Essay,Long>, JpaSpecifica
                 Join<Essay, User> join = root.join("user", JoinType.INNER);
                 predicates.add(cb.like(join.get("username"),"%"+essay.getUser().getUsername()+"%"));
             }
-            return query.where(cb.and(predicates.toArray(new Predicate[predicates.size()]))).getRestriction();
+            return query.where(cb.and(predicates.toArray(new Predicate[0]))).getRestriction();
         };
     }
 

@@ -2,6 +2,7 @@ package com.cn.dao;
 
 import com.cn.entity.Manager;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -23,12 +24,15 @@ import java.util.Optional;
  */
 @Repository
 public interface ManagerRepository extends JpaRepository<Manager,Long>,JpaSpecificationExecutor<Manager> {
+    @EntityGraph(value = "Role.Graph", type = EntityGraph.EntityGraphType.FETCH)
+    Optional<Manager> findManagerById(Long id);
 
     /**
      * 根据用户名查询
      * @param username 用户名
      * @return Manager
      */
+    @EntityGraph(value = "Role.Graph", type = EntityGraph.EntityGraphType.FETCH)
     Optional<Manager> findManagerByUsername(String username);
 
     /**
@@ -70,7 +74,7 @@ public interface ManagerRepository extends JpaRepository<Manager,Long>,JpaSpecif
                 if(Objects.nonNull(endTime)){
                     predicates.add(cb.lessThanOrEqualTo(root.get("createdAt"), endTime));
                 }
-                return query.where(cb.and(predicates.toArray(new Predicate[predicates.size()]))).getRestriction();
+                return query.where(cb.and(predicates.toArray(new Predicate[0]))).getRestriction();
         };
     }
 }

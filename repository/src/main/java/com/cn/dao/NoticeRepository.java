@@ -45,7 +45,7 @@ public interface NoticeRepository extends JpaRepository<Notice,Long>, JpaSpecifi
                 predicates.add(cb.lessThanOrEqualTo(root.get("beginTime"), showTime));
                 predicates.add(cb.greaterThanOrEqualTo(root.get("endTime"), showTime));
             }
-            return query.where(cb.and(predicates.toArray(new Predicate[predicates.size()]))).getRestriction();
+            return query.where(cb.and(predicates.toArray(new Predicate[0]))).getRestriction();
         };
     }
 }

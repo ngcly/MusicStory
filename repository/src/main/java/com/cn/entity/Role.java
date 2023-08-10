@@ -72,7 +72,7 @@ public class Role extends AbstractUserDateAudit {
     /**
      * 角色 -- 权限关系：多对多关系;
      */
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "role_permission",
             joinColumns = @JoinColumn(name = "role_id"),

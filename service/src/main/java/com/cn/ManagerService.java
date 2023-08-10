@@ -59,7 +59,7 @@ public class ManagerService implements UserDetailsService {
         if(managerId == 0){
             return getAdministrator();
         }
-        return managerRepository.findById(managerId).orElseThrow();
+        return managerRepository.findManagerById(managerId).orElseThrow();
     }
 
     /**

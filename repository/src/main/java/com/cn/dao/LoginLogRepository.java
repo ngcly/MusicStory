@@ -52,7 +52,7 @@ public interface LoginLogRepository extends JpaRepository<LoginLog,Long>,JpaSpec
             if(Objects.nonNull(endTime)){
                 predicates.add(cb.lessThanOrEqualTo(root.get("loginTime"), endTime));
             }
-            return query.where(cb.and(predicates.toArray(new Predicate[predicates.size()]))).getRestriction();
+            return query.where(cb.and(predicates.toArray(new Predicate[0]))).getRestriction();
         };
     }
 
