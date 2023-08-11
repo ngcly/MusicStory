@@ -3,5 +3,6 @@ package com.cn.enums;
 /**
  * @author chenning
  */
-public class UserStatusEnum {
+public enum UserStatusEnum {
+    INITIALIZE, NORMAL, LOCKED;
 }

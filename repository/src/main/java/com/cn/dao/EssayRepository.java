@@ -3,6 +3,7 @@ package com.cn.dao;
 import com.cn.entity.Classify;
 import com.cn.entity.Essay;
 import com.cn.entity.User;
+import com.cn.enums.FaveTypeEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -76,7 +77,7 @@ public interface EssayRepository extends JpaRepository<Essay,Long>, JpaSpecifica
      * @return Page<Essay> 分页文章列表
      */
     @Query("select e from Essay e, UserFaves u where u.userId =:userId and u.essayId = e.id and u.faveType=:faveType")
-    Page<Essay> findUserFaveEssay(@Param("userId") Long userId, @Param("faveType") Byte faveType, Pageable pageable);
+    Page<Essay> findUserFaveEssay(@Param("userId") Long userId, @Param("faveType") FaveTypeEnum faveType, Pageable pageable);
 
     /**
      * 获取用户的文章

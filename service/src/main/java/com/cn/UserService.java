@@ -2,14 +2,11 @@ package com.cn;
 
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.RandomUtil;
-import com.cn.enums.GenderEnum;
-import com.cn.enums.UserTypeEnum;
+import com.cn.enums.*;
 import com.cn.exception.GlobalException;
 import com.cn.config.RabbitConfig;
 import com.cn.dao.*;
 import com.cn.entity.*;
-import com.cn.enums.SocialEnum;
-import com.cn.enums.SocialParamEnum;
 import com.cn.pojo.RestCode;
 import com.cn.util.MailUtil;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -75,7 +72,7 @@ public class UserService implements UserDetailsService {
             throw new GlobalException(300, "该邮箱已注册");
         }
 
-        newUser.setState(User.STATE_INITIALIZE);
+        newUser.setState(UserStatusEnum.INITIALIZE);
         User result = userRepository.save(newUser);
         //生成激活码
         String code = System.currentTimeMillis() % 100 + result.getUsername();
@@ -113,7 +110,7 @@ public class UserService implements UserDetailsService {
             throw new GlobalException(500, "激活码错误");
         }
         User user = userOptional.get();
-        user.setState(User.STATE_NORMAL);
+        user.setState(UserStatusEnum.NORMAL);
         userRepository.save(user);
         redisTemplate.delete(code);
         return "激活成功！请前往登录页面登录";
@@ -237,7 +234,7 @@ public class UserService implements UserDetailsService {
      */
     public User getThirdUserInfo(SocialInfo social, SocialEnum socialEnum) {
         User user = new User();
-        user.setState(User.STATE_NORMAL);
+        user.setState(UserStatusEnum.NORMAL);
         String userInfoUrl;
         JsonNode userInfo;
         if (SocialEnum.QQ.equals(socialEnum)) {
@@ -359,7 +356,7 @@ public class UserService implements UserDetailsService {
      */
     public void delUnActiveUser(Long userId) {
         User user = userRepository.findById(userId).orElse(null);
-        if (Objects.nonNull(user) && User.STATE_INITIALIZE == user.getState()) {
+        if (Objects.nonNull(user) && UserStatusEnum.INITIALIZE == user.getState()) {
             userRepository.delete(user);
         }
     }

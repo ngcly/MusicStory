@@ -1,5 +1,7 @@
 package com.cn;
 
+import com.cn.enums.GenderEnum;
+import com.cn.enums.UserStatusEnum;
 import com.cn.enums.UserTypeEnum;
 import com.cn.exception.GlobalException;
 import com.cn.dao.ManagerRepository;
@@ -99,7 +101,7 @@ public class ManagerService implements UserDetailsService {
             roles.addAll(manager.getRoleList());
         } else {
             updateManager.setPassword(passwordEncoder.encode("123456"));
-            updateManager.setState(Manager.STATE_INITIALIZE);
+            updateManager.setState(UserStatusEnum.INITIALIZE);
         }
         if (!StringUtils.hasText(updateManager.getUsername())) {
             throw new GlobalException(333, "用户名不可为空");
@@ -173,11 +175,11 @@ public class ManagerService implements UserDetailsService {
         manager.setId(0L);
         manager.setUsername(Manager.ADMIN);
         manager.setPassword(passwordEncoder.encode("123456"));
-        manager.setGender((byte) 1);
+        manager.setGender(GenderEnum.MAN);
         manager.setRealName("超管员");
         manager.setAvatar("https://music-story.oss-cn-hongkong.aliyuncs.com/uPic/beautify.png");
         manager.setBirthday(LocalDate.of(1993,7, 24));
-        manager.setState(Manager.STATE_NORMAL);
+        manager.setState(UserStatusEnum.NORMAL);
         manager.setRoleList(new HashSet<>(roleService.getAvailableRoles(UserTypeEnum.ADMIN)));
         return manager;
     }

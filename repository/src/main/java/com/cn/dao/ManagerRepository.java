@@ -1,6 +1,8 @@
 package com.cn.dao;
 
 import com.cn.entity.Manager;
+import com.cn.enums.GenderEnum;
+import com.cn.enums.UserStatusEnum;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -52,7 +54,7 @@ public interface ManagerRepository extends JpaRepository<Manager,Long>,JpaSpecif
      * @param endTime 结束时间
      * @return Specification<Manager>
      */
-    static Specification<Manager> getManagerList(String username, Byte state, Byte gender, LocalDateTime beginTime, LocalDateTime endTime){
+    static Specification<Manager> getManagerList(String username, UserStatusEnum state, GenderEnum gender, LocalDateTime beginTime, LocalDateTime endTime){
         return (Root<Manager> root, CriteriaQuery<?> query, CriteriaBuilder cb)->{
                 List<Predicate> predicates = new ArrayList<>();
                 if(StringUtils.hasLength(username)) {

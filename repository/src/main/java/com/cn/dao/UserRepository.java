@@ -1,6 +1,7 @@
 package com.cn.dao;
 
 import com.cn.entity.User;
+import com.cn.enums.UserStatusEnum;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -58,7 +59,7 @@ public interface UserRepository extends JpaRepository<User,Long>, JpaSpecificati
      * @param state 状态
      * @return Specification<User
      */
-    static Specification<User> getUserList(String username, String nickName, String phone, String email, Byte state){
+    static Specification<User> getUserList(String username, String nickName, String phone, String email, UserStatusEnum state){
         return (Root<User> root, CriteriaQuery<?> query, CriteriaBuilder cb)->{
             List<Predicate> predicates = new ArrayList<>();
             if(StringUtils.hasLength(username)) {

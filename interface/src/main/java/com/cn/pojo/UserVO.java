@@ -1,5 +1,7 @@
 package com.cn.pojo;
 
+import com.cn.enums.GenderEnum;
+import com.cn.enums.UserStatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -20,7 +22,7 @@ public class UserVO {
     @Schema(title = "生日")
     private LocalDate birthday;
     @Schema(title = "性别")
-    private Byte gender ;
+    private GenderEnum gender ;
     @Schema(title = "地址")
     private String address;
     @Schema(title = "真实姓名")
@@ -42,6 +44,6 @@ public class UserVO {
     @Schema(title = "积分")
     private Integer credit;
     @Schema(title = "用户状态")
-    private Byte state;
+    private UserStatusEnum state;
 
 }

@@ -2,6 +2,7 @@ package com.cn.entity;
 
 import com.cn.config.AbstractDateAudit;
 import com.cn.enums.GenderEnum;
+import com.cn.enums.UserStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -124,10 +125,10 @@ public class User extends AbstractDateAudit implements UserDetails, CredentialsC
     private Integer credit;
 
     /**
-     * 用户状态,0:未激活 1:正常状态,2:异常.
+     * 用户状态
      */
     @Column(nullable = false)
-    private Byte state;
+    private UserStatusEnum state;
 
     /**
      * 密码修改时间
@@ -149,13 +150,6 @@ public class User extends AbstractDateAudit implements UserDetails, CredentialsC
 
     @Transient
     private Long[] roleIds;
-
-    /**
-     * 用户状态
-     */
-    public static final byte STATE_INITIALIZE = 0;
-    public static final byte STATE_NORMAL = 1;
-    public static final byte STATE_EXCEPTION = 2;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -180,7 +174,7 @@ public class User extends AbstractDateAudit implements UserDetails, CredentialsC
 
     @Override
     public boolean isEnabled() {
-        return getState() != STATE_INITIALIZE;
+        return getState() != UserStatusEnum.INITIALIZE;
     }
 
     @Override

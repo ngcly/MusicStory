@@ -6,6 +6,7 @@ import com.cn.ManagerService;
 import com.cn.entity.Manager;
 import com.cn.entity.Role;
 import com.cn.enums.ResourceEnum;
+import com.cn.enums.UserStatusEnum;
 import com.cn.pojo.MenuDTO;
 import com.cn.pojo.CaptchaInfo;
 import com.cn.util.MenuUtil;
@@ -43,9 +44,9 @@ public class IndexController {
         } else {
             Manager dbManager = managerService.getManagerById(manager.getId());
             roleList = dbManager.getRoleList();
-            if (dbManager.getState() == Manager.STATE_INITIALIZE) {
+            if (dbManager.getState() == UserStatusEnum.INITIALIZE) {
                 init = true;
-                dbManager.setState(Manager.STATE_NORMAL);
+                dbManager.setState(UserStatusEnum.NORMAL);
                 managerService.updateManager(dbManager);
             }
         }

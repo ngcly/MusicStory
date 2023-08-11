@@ -1,6 +1,7 @@
 package com.cn.entity;
 
 import com.cn.config.AbstractDateAudit;
+import com.cn.enums.FaveTypeEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,12 +30,7 @@ public class UserFaves extends AbstractDateAudit {
     @Column(nullable = false)
     private Long essayId;
 
-    /**类型 1-点赞 2-收藏*/
-    @Column(nullable = false)
-    private Byte faveType;
-
     /**类型*/
-    public static final byte FAVE_TYPE_LIKE = 1;
-    public static final byte FAVE_TYPE_COLLECT = 2;
-
+    @Column(nullable = false)
+    private FaveTypeEnum faveType;
 }

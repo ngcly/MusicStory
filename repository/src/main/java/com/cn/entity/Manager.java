@@ -1,6 +1,8 @@
 package com.cn.entity;
 
 import com.cn.config.AbstractDateAudit;
+import com.cn.enums.GenderEnum;
+import com.cn.enums.UserStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
@@ -55,9 +57,9 @@ public class Manager extends AbstractDateAudit implements UserDetails, Credentia
     private String password;
 
     /**
-     * 性别 1-男 2-女
+     * 性别
      */
-    private Byte gender;
+    private GenderEnum gender;
 
     /**
      * 真实姓名
@@ -77,10 +79,10 @@ public class Manager extends AbstractDateAudit implements UserDetails, Credentia
     private LocalDate birthday;
 
     /**
-     * 状态,0:创建未认证 1:正常状态,2：用户被锁定.
+     * 状态
      */
     @Column(nullable = false)
-    private Byte state;
+    private UserStatusEnum state;
 
     /**
      * 一个用户具有多个角色
@@ -104,13 +106,6 @@ public class Manager extends AbstractDateAudit implements UserDetails, Credentia
     private LocalDateTime endTime;
     @Transient
     private Long[] roleIds;
-
-    /**
-     * 用户状态
-     */
-    public static final byte STATE_INITIALIZE = 0;
-    public static final byte STATE_NORMAL = 1;
-    public static final byte STATE_LOCK = 2;
 
     public static final String ADMIN = "administrator";
 
@@ -150,7 +145,7 @@ public class Manager extends AbstractDateAudit implements UserDetails, Credentia
 
     @Override
     public boolean isEnabled() {
-        return STATE_LOCK != state;
+        return UserStatusEnum.LOCKED != state;
     }
 
     @Override
