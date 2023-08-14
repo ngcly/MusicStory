@@ -64,6 +64,18 @@ public class IndexController {
     @Operation(summary = "登录", description = "普通登录")
     @PostMapping("/signin")
     public ResponseEntity<Result<User>> postAccessToken(HttpServletRequest request, @Valid @RequestBody LogInDTO logInDTO) {
+        AbstractAuthenticationToken authenticationToken = getAuthenticationToken(request, logInDTO);
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        User user = (User) authentication.getPrincipal();
+        String token = jwtTokenUtil.generateToken(user);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .body(Result.success(user));
+    }
+
+    private AbstractAuthenticationToken getAuthenticationToken(HttpServletRequest request, LogInDTO logInDTO) {
         AbstractAuthenticationToken authenticationToken;
         if (logInDTO instanceof LogInDTO.SocialLoginDTO dto) {
             authenticationToken = new MyAuthenticationToken(dto.getLoginType().name(), dto.getCode(), dto.getState());
@@ -73,14 +85,7 @@ public class IndexController {
         }
 
         authenticationToken.setDetails(new AuthenticationDetails(request));
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        User user = (User) authentication.getPrincipal();
-        String token = jwtTokenUtil.generateToken(user);
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, token)
-                .body(Result.success(user));
+        return authenticationToken;
     }
 
     @Operation(summary = "刷新token", description = "用户刷新token")
