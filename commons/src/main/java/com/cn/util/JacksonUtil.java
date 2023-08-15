@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 
 @Slf4j
 public class JacksonUtil {
+    private JacksonUtil(){}
 
     public static ObjectMapper objectMapper;
     public static YAMLMapper yamlMapper;
@@ -400,26 +401,26 @@ public class JacksonUtil {
      * 向json中添加属性
      */
     private static <T> void add(JsonNode jsonNode, String key, T value) {
-        if (value instanceof String) {
-            ((ObjectNode) jsonNode).put(key, (String) value);
-        } else if (value instanceof Short) {
-            ((ObjectNode) jsonNode).put(key, (Short) value);
-        } else if (value instanceof Integer) {
-            ((ObjectNode) jsonNode).put(key, (Integer) value);
-        } else if (value instanceof Long) {
-            ((ObjectNode) jsonNode).put(key, (Long) value);
-        } else if (value instanceof Float) {
-            ((ObjectNode) jsonNode).put(key, (Float) value);
-        } else if (value instanceof Double) {
-            ((ObjectNode) jsonNode).put(key, (Double) value);
-        } else if (value instanceof BigDecimal) {
-            ((ObjectNode) jsonNode).put(key, (BigDecimal) value);
-        } else if (value instanceof BigInteger) {
-            ((ObjectNode) jsonNode).put(key, (BigInteger) value);
-        } else if (value instanceof Boolean) {
-            ((ObjectNode) jsonNode).put(key, (Boolean) value);
-        } else if (value instanceof byte[]) {
-            ((ObjectNode) jsonNode).put(key, (byte[]) value);
+        if (value instanceof String str) {
+            ((ObjectNode) jsonNode).put(key, str);
+        } else if (value instanceof Short vst) {
+            ((ObjectNode) jsonNode).put(key, vst);
+        } else if (value instanceof Integer vnt) {
+            ((ObjectNode) jsonNode).put(key, vnt);
+        } else if (value instanceof Long vlt) {
+            ((ObjectNode) jsonNode).put(key, vlt);
+        } else if (value instanceof Float vft) {
+            ((ObjectNode) jsonNode).put(key, vft);
+        } else if (value instanceof Double vde) {
+            ((ObjectNode) jsonNode).put(key, vde);
+        } else if (value instanceof BigDecimal vbd) {
+            ((ObjectNode) jsonNode).put(key, vbd);
+        } else if (value instanceof BigInteger vbt) {
+            ((ObjectNode) jsonNode).put(key, vbt);
+        } else if (value instanceof Boolean vbl) {
+            ((ObjectNode) jsonNode).put(key, vbl);
+        } else if (value instanceof byte[] vbe) {
+            ((ObjectNode) jsonNode).put(key, vbe);
         } else {
             ((ObjectNode) jsonNode).put(key, stringify(value));
         }

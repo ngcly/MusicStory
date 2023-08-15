@@ -36,6 +36,13 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = {"username", "email"}))
 @JsonIgnoreProperties(value = {"handler", "hibernateLazyInitializer", "fieldHandler"})
+@NamedEntityGraph(name = "Role.Graph", attributeNodes = {
+        @NamedAttributeNode(value = "roleList", subgraph = "Permission.Graph")
+},
+        subgraphs = {@NamedSubgraph(name = "Permission.Graph", attributeNodes = {
+                @NamedAttributeNode("permissions")
+        })}
+)
 public class User extends AbstractDateAudit implements UserDetails, CredentialsContainer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -139,7 +146,7 @@ public class User extends AbstractDateAudit implements UserDetails, CredentialsC
      * 一个用户具有多个角色
      * 立即从数据库中进行加载数据;
      */
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),

@@ -3,6 +3,7 @@ package com.cn.dao;
 import com.cn.entity.User;
 import com.cn.enums.UserStatusEnum;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -34,6 +35,7 @@ public interface UserRepository extends JpaRepository<User,Long>, JpaSpecificati
      * @param email 邮箱
      * @return User
      */
+    @EntityGraph(value = "Role.Graph", type = EntityGraph.EntityGraphType.FETCH)
     Optional<User> findByUsernameOrEmail(String username, String email);
 
     /**
