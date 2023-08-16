@@ -34,7 +34,7 @@ public interface CarouselRepository extends JpaRepository<CarouselCategory,Long>
             if(StringUtils.hasLength(name)) {
                 predicates.add(cb.like(root.get("title"),"%"+name+"%"));
             }
-            return query.where(cb.and(predicates.toArray(new Predicate[predicates.size()]))).getRestriction();
+            return query.where(cb.and(predicates.toArray(new Predicate[0]))).getRestriction();
         };
     }
 

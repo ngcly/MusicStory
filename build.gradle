@@ -45,19 +45,19 @@ subprojects {  //子项目通配
 
     //定义版本
     ext {
-        ulisesVersion = '3.0.5'
+        jasyptVersion = '3.0.5'
         docVersion = '2.1.0'
         jsoupVersion = '1.14.3'
         nekohtmlVersion = '1.9.22'
-        hutoolVersion = '5.8.19'
-        guavaVersion = '32.0.0-jre'
+        hutoolVersion = '5.8.21'
+        guavaVersion = '32.1.2-jre'
         aliOssVersion = '3.16.3'
         druidVersion = '1.2.18'
         dialectVersion = '3.1.0'
         locatorVersion = '0.52'
         layuiVersion = '2.8.8'
         treegridVersion = '0.3.0'
-        logstashVersion = '7.3'
+        logstashVersion = '7.4'
         jacksonVersion = '2.13.3'
     }
 
@@ -67,7 +67,7 @@ subprojects {  //子项目通配
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-security'
         implementation 'org.springframework.boot:spring-boot-starter-validation'
-        implementation "com.github.ulisesbocchio:jasypt-spring-boot-starter:${ulisesVersion}"
+        implementation "com.github.ulisesbocchio:jasypt-spring-boot-starter:${jasyptVersion}"
         implementation "net.logstash.logback:logstash-logback-encoder:${logstashVersion}"
 
         developmentOnly 'org.springframework.boot:spring-boot-devtools'
