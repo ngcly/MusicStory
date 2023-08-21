@@ -44,10 +44,11 @@ public class ManagerService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if(Manager.ADMIN.equals(username)){
+        if (Manager.ADMIN.equals(username)) {
             return getAdministrator();
-        }else{
-            return managerRepository.findManagerByUsername(username).orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
+        } else {
+            return managerRepository.findManagerByUsername(username).orElseThrow(() -> new UsernameNotFoundException(
+                    "用户不存在"));
         }
     }
 
@@ -58,7 +59,7 @@ public class ManagerService implements UserDetailsService {
      * @return Manager
      */
     public Manager getManagerById(Long managerId) {
-        if(managerId == 0){
+        if (managerId == 0) {
             return getAdministrator();
         }
         return managerRepository.findManagerById(managerId).orElseThrow();
@@ -164,6 +165,7 @@ public class ManagerService implements UserDetailsService {
 
     /**
      * 获取url权限元数据
+     *
      * @return List<String>
      */
     public List<String> getUrlPermissionMetadata() {
@@ -178,7 +180,7 @@ public class ManagerService implements UserDetailsService {
         manager.setGender(GenderEnum.MAN);
         manager.setRealName("超管员");
         manager.setAvatar("https://music-story.oss-cn-hongkong.aliyuncs.com/uPic/beautify.png");
-        manager.setBirthday(LocalDate.of(1993,7, 24));
+        manager.setBirthday(LocalDate.of(1993, 7, 24));
         manager.setState(UserStatusEnum.NORMAL);
         manager.setRoleList(new HashSet<>(roleService.getAvailableRoles(UserTypeEnum.ADMIN)));
         return manager;

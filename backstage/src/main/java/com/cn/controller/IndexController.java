@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.*;
 
 /**
@@ -77,7 +78,7 @@ public class IndexController {
     /**
      * 验证码
      *
-     * @param request  请求对象
+     * @param request 请求对象
      */
     @GetMapping("/captcha")
     public StreamingResponseBody generateCaptcha(HttpServletRequest request) {

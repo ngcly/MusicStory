@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.Valid;
+
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -43,6 +44,7 @@ public class SystemController {
     /**
      * 权限注解说明
      * 下面两个权限注解底层实现一样  唯一区别就是hasRole默认添加 ROLE_ 前缀
+     *
      * @PreAuthorize("hasAuthority('ROLE_admin')")
      * @PreAuthorize("hasRole('admin')") 方法调用前判断是否有权限
      * @PreAuthorize("hasPermission('sys','created')") 自定义判断权限标识符
@@ -50,7 +52,7 @@ public class SystemController {
      * @PostFilter("filterObject.id%2==0") 对返回结果进行过滤  filterObject内置为返回对象
      * @PreFilter(filterTarget="ids", value="filterObject%2==0") 对方法参数进行过滤 如有多参则指定参数 ids为其中一个参数
      * 上述注解方式属于静态鉴权 由于本项目采用了动态鉴权模式:@link MyAuthorizationManager .所以上述注解并未使用到
-     *
+     * <p>
      * 管理员列表页
      */
     @GetMapping("/manager.html")
@@ -60,10 +62,11 @@ public class SystemController {
 
     @ResponseBody
     @GetMapping("/manager")
-    public Result<List<Manager>> getManagerList(@PageableDefault(sort = {"createdAt"}, direction = Sort.Direction.DESC)Pageable pageable,
+    public Result<List<Manager>> getManagerList(@PageableDefault(sort = {"createdAt"}, direction =
+            Sort.Direction.DESC) Pageable pageable,
                                                 @Valid Manager manager) {
         Page<Manager> managerList = managerService.getManagersList(
-                pageable.withPage(pageable.getPageNumber()-1), manager);
+                pageable.withPage(pageable.getPageNumber() - 1), manager);
         return Result.success(managerList.getTotalElements(), managerList.getContent());
     }
 
@@ -81,10 +84,12 @@ public class SystemController {
      * 管理员编辑页
      */
     @GetMapping("/manager/edit.html")
-    public String altManager(@AuthenticationPrincipal Manager managerDetail, @RequestParam(required = false) Long managerId, Model model) {
+    public String altManager(@AuthenticationPrincipal Manager managerDetail,
+                             @RequestParam(required = false) Long managerId, Model model) {
         //最好是从当前授权信息里面提出角色列表来
         Set<Role> currentManagerRoles = managerDetail.getRoleList();
-        String optRole = currentManagerRoles.stream().map(role -> role.getId().toString()).collect(Collectors.joining(","));
+        String optRole =
+                currentManagerRoles.stream().map(role -> role.getId().toString()).collect(Collectors.joining(","));
 
         Manager manager;
         String checkRoleIds;
@@ -93,7 +98,8 @@ public class SystemController {
             manager = managerService.getManagerById(managerId);
             checkRoleIds = manager.getRoleList().stream().map(role ->
                     role.getId().toString()).collect(Collectors.joining(","));
-            beSelectedRoles = Stream.concat(currentManagerRoles.stream(), manager.getRoleList().stream()).collect(Collectors.toSet());
+            beSelectedRoles =
+                    Stream.concat(currentManagerRoles.stream(), manager.getRoleList().stream()).collect(Collectors.toSet());
         } else {
             manager = new Manager();
             checkRoleIds = "";
@@ -126,7 +132,7 @@ public class SystemController {
     @ResponseBody
     @PutMapping("/manager")
     public Result<Void> updateManager(@AuthenticationPrincipal Manager curManager, @Valid Manager manager) {
-        if("administrator".equals(curManager.getUsername())){
+        if ("administrator".equals(curManager.getUsername())) {
             return Result.failure(333, "当前用户属于内置管理员，不支持信息修改");
         }
         managerService.saveManager(curManager, manager);
@@ -162,7 +168,7 @@ public class SystemController {
     @ResponseBody
     @PutMapping("/manager/pwd")
     public Result<Void> updatePassword(@AuthenticationPrincipal Manager manager, @RequestParam String oldPassword,
-                                    @RequestParam String password) {
+                                       @RequestParam String password) {
         if ("administrator".equals(manager.getUsername())) {
             return Result.failure(333, "当前用户属于内置管理员,不支持密码修改");
         }
@@ -192,16 +198,17 @@ public class SystemController {
 
     /**
      * 角色数据
+     *
      * @param pageable 分页
-     * @param role 条件数据
+     * @param role     条件数据
      * @return List<Role>
      */
     @GetMapping("/role")
     @ResponseBody
-    public Result<List<Role>> roleList(@PageableDefault(sort = {"roleName"}, direction = Sort.Direction.DESC)Pageable pageable,
+    public Result<List<Role>> roleList(@PageableDefault(sort = {"roleName"}, direction = Sort.Direction.DESC) Pageable pageable,
                                        @Valid Role role) {
         Page<Role> roleList = roleService.getRoleList(
-                pageable.withPage(pageable.getPageNumber()-1), role);
+                pageable.withPage(pageable.getPageNumber() - 1), role);
 
         return Result.success(roleList.getTotalElements(), roleList.getContent());
     }
@@ -221,6 +228,7 @@ public class SystemController {
 
     /**
      * 新增/修改 角色
+     *
      * @param role 修改内容
      */
     @ResponseBody
@@ -291,7 +299,8 @@ public class SystemController {
      * 新增或修改菜单页
      */
     @GetMapping("/menu/edit.html")
-    public String menuEdit(@RequestParam(required = false) Long menuId, @RequestParam(required = false) Long parentId, Model model) {
+    public String menuEdit(@RequestParam(required = false) Long menuId, @RequestParam(required = false) Long parentId
+            , Model model) {
         Permission permission = new Permission();
         permission.setSort(0);
         String parentName = "";
@@ -342,11 +351,11 @@ public class SystemController {
 
     @ResponseBody
     @GetMapping("/logs")
-    public Result<List<LoginLog>> getLogList(@PageableDefault(sort = {"loginTime"}, direction = Sort.Direction.DESC)Pageable pageable,
+    public Result<List<LoginLog>> getLogList(@PageableDefault(sort = {"loginTime"}, direction = Sort.Direction.DESC) Pageable pageable,
                                              @Valid LoginLog loginLog) {
 
         Page<LoginLog> logList = logService.getLoginLogList(
-                pageable.withPage(pageable.getPageNumber()-1), loginLog);
+                pageable.withPage(pageable.getPageNumber() - 1), loginLog);
         return Result.success(logList.getTotalElements(), logList.getContent());
     }
 

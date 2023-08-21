@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.Valid;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -113,7 +114,8 @@ public class MsController {
     @ResponseBody
     @GetMapping("/classify")
     public Result<List<Classify>> getClassifyList(@RequestParam(value = "page", defaultValue = "1") Integer page,
-                                    @RequestParam(value = "size", defaultValue = "10") Integer size, Classify classify) {
+                                                  @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                                  Classify classify) {
         Page<Classify> classifyList = classifyService.getClassifyList(PageRequest.of(page - 1, size), classify);
         return Result.success(classifyList.getTotalElements(), classifyList.getContent());
     }
@@ -166,8 +168,10 @@ public class MsController {
     @ResponseBody
     @GetMapping("/essay")
     public Result<List<Essay>> getEssayList(@RequestParam(value = "page", defaultValue = "1") Integer page,
-                                 @RequestParam(value = "size", defaultValue = "10") Integer size, Essay essay) {
-        Page<Essay> essayList = essayService.getEssayList(PageRequest.of(page - 1, size, Sort.by("createdAt").descending()), essay);
+                                            @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                            Essay essay) {
+        Page<Essay> essayList = essayService.getEssayList(PageRequest.of(page - 1, size,
+                Sort.by("createdAt").descending()), essay);
         return Result.success(essayList.getTotalElements(), essayList.getContent());
     }
 
@@ -205,7 +209,8 @@ public class MsController {
     @ResponseBody
     @GetMapping("/notice")
     public Result<List<Notice>> getNoticeList(@RequestParam(value = "page", defaultValue = "1") Integer page,
-                                  @RequestParam(value = "size", defaultValue = "10") Integer size, Notice notice) {
+                                              @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                              Notice notice) {
         Page<Notice> notices = noticeService.getNoticeList(PageRequest.of(page - 1, size), notice);
         return Result.success(notices.getTotalElements(), notices.getContent());
     }
@@ -257,7 +262,7 @@ public class MsController {
     @ResponseBody
     @GetMapping("/carousel")
     public Result<List<CarouselCategory>> carouselList(@RequestParam(value = "page", defaultValue = "1") Integer page,
-                                 @RequestParam(value = "size", defaultValue = "10") Integer size, String name) {
+                                                       @RequestParam(value = "size", defaultValue = "10") Integer size, String name) {
         Page<CarouselCategory> carouselCategory = carouselService.getCarouselList(name, PageRequest.of(page - 1, size));
         return Result.success(carouselCategory.getTotalElements(), carouselCategory.getContent());
     }
