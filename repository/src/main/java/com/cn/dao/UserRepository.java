@@ -35,7 +35,7 @@ public interface UserRepository extends JpaRepository<User,Long>, JpaSpecificati
      * @param email 邮箱
      * @return User
      */
-    @EntityGraph(value = "Role.Graph", type = EntityGraph.EntityGraphType.FETCH)
+    @EntityGraph(value = "UserRole.Graph", type = EntityGraph.EntityGraphType.FETCH)
     Optional<User> findByUsernameOrEmail(String username, String email);
 
     /**

@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = {"username", "email"}))
 @JsonIgnoreProperties(value = {"handler", "hibernateLazyInitializer", "fieldHandler"})
-@NamedEntityGraph(name = "Role.Graph", attributeNodes = {
+@NamedEntityGraph(name = "UserRole.Graph", attributeNodes = {
         @NamedAttributeNode(value = "roleList", subgraph = "Permission.Graph")
 },
         subgraphs = {@NamedSubgraph(name = "Permission.Graph", attributeNodes = {

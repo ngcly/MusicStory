@@ -10,3 +10,8 @@ spring:
     username: root
     password: 12345678
     driverClassName: com.mysql.cj.jdbc.Driver
+
+  docker:
+    compose:
+      enabled: true
+      file: docker-compose.yml

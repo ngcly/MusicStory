@@ -54,8 +54,8 @@ docker run --name rabbitmq -p 15672:15672 -p 5672:5672 rabbitmq
 
 ### SpringBoot3.0 已知存在以下问题
 1. Druid组件监控页面无法使用
-2. Jasypt配置文件加解密无效
-3. Hutool还未适配，SpringUtil无法正常使用
+2. ~~Jasypt配置文件加解密无效~~
+3. ~~Hutool还未适配，SpringUtil无法正常使用~~
 
 特别鸣谢：  
 感谢JetBrains免费提供Idea开发工具对本项目的支持  
