@@ -23,30 +23,22 @@
 
 前端代码链接：https://github.com/ngcly/music-story  
 
-各类组件初始化，为了方便安装各类组件，建议采用docker方式：
-1. 安装Redis:
-```
-docker pull redis:latest
-docker run -itd --name redis -p 6379:6379 redis
-```
-2. 安装RabbitMQ:
-```
-docker pull rabbitmq
-docker run --name rabbitmq -p 15672:15672 -p 5672:5672 rabbitmq
-```
-3. 安装RabbitMQ延时队列插件： 
+各类组件初始化，为了方便安装各类组件，建议采用docker方式：   
+项目目前已经添加了spring-boot-docker-compose支持
+项目启动时会根据docker-compose.yml的配置自动创建docker容器  
+部分组件需要安装插件
+
+ 1.安装RabbitMQ延时队列插件： 
    1. 下载rabbitmq_delayed_message_exchange插件 下载地址：https://www.rabbitmq.com/community-plugins.html
    2. 将下载的插件拷贝到容器中
    ```
    docker cp rabbitmq_delayed_message_exchange-3.10.2.ez  rabbitmq:/plugins
-   ```
-    3. 启动插件并重启容器
+   ```  
+   3. 启动插件并重启容器
    ```
    rabbitmq-plugins enable rabbitmq_delayed_message_exchange
    ```
-4. 安装ElasticSearch:  
-  请参阅根目录下ELK的 docker-compose.yml文件。   
-  使用fluentd需要安装插件：
+2.若使用fluentd则需要安装插件：
   ```
   docker exec -it --user root efk-fluentd /bin/sh
   fluent-gem install fluent-plugin-elasticsearch
