@@ -23,10 +23,10 @@
 
 前端代码链接：https://github.com/ngcly/music-story  
 
-各类组件初始化，为了方便安装各类组件，建议采用docker方式：   
+为了方便下载项目代码后直接运行启动，建议先安装docker：   
 项目目前已经添加了spring-boot-docker-compose支持
 项目启动时会根据docker-compose.yml的配置自动创建docker容器  
-部分组件需要安装插件
+容器创建完并启动后 部分组件需要安装插件
 
  1.安装RabbitMQ延时队列插件： 
    1. 下载rabbitmq_delayed_message_exchange插件 下载地址：https://www.rabbitmq.com/community-plugins.html
@@ -38,7 +38,7 @@
    ```
    rabbitmq-plugins enable rabbitmq_delayed_message_exchange
    ```
-2.若使用fluentd则需要安装插件：
+2.若有使用fluentd则需要安装插件(自行配置可选)：
   ```
   docker exec -it --user root efk-fluentd /bin/sh
   fluent-gem install fluent-plugin-elasticsearch
