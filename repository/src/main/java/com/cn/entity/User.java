@@ -6,7 +6,7 @@ import com.cn.enums.UserStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -152,7 +152,7 @@ public class User extends AbstractDateAudit implements UserDetails, CredentialsC
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    @Where(clause = "available=true")
+    @SQLRestriction("available=true")
     private Set<Role> roleList;
 
     @Transient

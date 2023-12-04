@@ -132,7 +132,7 @@ public class SystemController {
     @ResponseBody
     @PutMapping("/manager")
     public Result<Void> updateManager(@AuthenticationPrincipal Manager curManager, @Valid Manager manager) {
-        if ("administrator".equals(curManager.getUsername())) {
+        if (Manager.ADMIN.equals(curManager.getUsername())) {
             return Result.failure(333, "当前用户属于内置管理员，不支持信息修改");
         }
         managerService.saveManager(curManager, manager);

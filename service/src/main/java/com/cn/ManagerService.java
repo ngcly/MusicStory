@@ -9,11 +9,13 @@ import com.cn.entity.Manager;
 import com.cn.entity.Role;
 
 import lombok.AllArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +35,7 @@ import java.util.*;
 public class ManagerService implements UserDetailsService {
     private final ManagerRepository managerRepository;
     private final RoleService roleService;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     /**
      * 根据用户名获取用户
@@ -43,6 +45,7 @@ public class ManagerService implements UserDetailsService {
      * @throws UsernameNotFoundException 用户名未找到
      */
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         if (Manager.ADMIN.equals(username)) {
             return getAdministrator();
@@ -173,6 +176,7 @@ public class ManagerService implements UserDetailsService {
     }
 
     public Manager getAdministrator() {
+        List<Role> roles = roleService.getAvailableRoles(UserTypeEnum.ADMIN);
         Manager manager = new Manager();
         manager.setId(0L);
         manager.setUsername(Manager.ADMIN);
@@ -182,7 +186,8 @@ public class ManagerService implements UserDetailsService {
         manager.setAvatar("https://music-story.oss-cn-hongkong.aliyuncs.com/uPic/beautify.png");
         manager.setBirthday(LocalDate.of(1993, 7, 24));
         manager.setState(UserStatusEnum.NORMAL);
-        manager.setRoleList(new HashSet<>(roleService.getAvailableRoles(UserTypeEnum.ADMIN)));
+        manager.setRoleList(new HashSet<>(roles));
+        roles.forEach(role -> Hibernate.initialize(role.getPermissions()));
         return manager;
     }
 }

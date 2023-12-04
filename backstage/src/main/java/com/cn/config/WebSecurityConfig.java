@@ -14,10 +14,11 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
+import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.util.List;
 
@@ -33,10 +34,8 @@ import java.util.List;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
+    private final DataSource dataSource;
     private final ManagerService managerService;
-    private final PersistentTokenRepository persistentRepository;
-    private final LoginSuccessHandler loginSuccessHandler;
-    private final LoginFailureHandler loginFailureHandler;
     private final MyAuthenticationDetailsSource myAuthenticationDetailsSource;
 
     private static final String[] IGNORING_URLS = new String[]{"/captcha", "/webjars/*", "/layui/*", "/js/*", "/css/*",
@@ -66,8 +65,8 @@ public class WebSecurityConfig {
                         .authenticationDetailsSource(myAuthenticationDetailsSource)
                         .loginPage("/login")
                         .permitAll()
-                        .successHandler(loginSuccessHandler)
-                        .failureHandler(loginFailureHandler)
+                        .successHandler(loginSuccessHandler())
+                        .failureHandler(loginFailureHandler())
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login")
@@ -76,17 +75,16 @@ public class WebSecurityConfig {
                 )
                 .rememberMe(remember -> remember
                         .userDetailsService(managerService)
-                        .tokenRepository(persistentRepository)
+                        .tokenRepository(persistentRepository(dataSource))
                         .tokenValiditySeconds(60 * 60 * 24 * 7));
 
         return http.build();
     }
 
     @Bean
-    public ProviderManager providerManager(PasswordEncoder passwordEncoder){
+    public ProviderManager providerManager(){
         MyAuthenticationProvider provider = new MyAuthenticationProvider();
         provider.setUserDetailsService(managerService);
-        provider.setPasswordEncoder(passwordEncoder);
         return new ProviderManager(List.of(provider));
     }
 
@@ -97,4 +95,23 @@ public class WebSecurityConfig {
 //        return roleHierarchy;
 //    }
 
+
+    @Bean
+    public PersistentTokenRepository persistentRepository(DataSource dataSource) {
+        var jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+        jdbcTokenRepository.setDataSource(dataSource);
+        //自动创建令牌桶，第一次启动需要，第二次启动时需要注释
+//        jdbcTokenRepository.setCreateTableOnStartup(true);
+        return jdbcTokenRepository;
+    }
+
+    @Bean
+    public LoginSuccessHandler loginSuccessHandler(){
+        return new LoginSuccessHandler();
+    }
+
+    @Bean
+    public LoginFailureHandler loginFailureHandler(){
+        return new LoginFailureHandler();
+    }
 }

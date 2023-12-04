@@ -6,7 +6,7 @@ version '1.0-SNAPSHOT'
 buildscript { //构建脚本
     //定义版本号
     ext {
-        springBootVersion = '3.1.2'
+        springBootVersion = '3.2.0'
     }
     repositories {//jar包仓库
         maven { url 'https://maven.aliyun.com/repository/central' }
