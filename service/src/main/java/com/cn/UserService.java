@@ -10,6 +10,8 @@ import com.cn.entity.*;
 import com.cn.pojo.RestCode;
 import com.cn.util.MailUtil;
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.annotation.Resource;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.EnumUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
@@ -22,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import jakarta.annotation.Resource;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -34,21 +35,16 @@ import java.util.concurrent.TimeUnit;
  * @date 2018-01-02 18:20
  */
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
-    @Resource
-    private UserRepository userRepository;
-    @Resource
-    private SocialInfoRepository socialInfoRepository;
-    @Resource
-    private RoleRepository roleRepository;
+    private final UserRepository userRepository;
+    private final SocialInfoRepository socialInfoRepository;
+    private final RoleRepository roleRepository;
+    private final RabbitTemplate rabbitTemplate;
+    private final RestTemplate restTemplate;
+    private final MailUtil mailUtil;
     @Resource
     private RedisTemplate<String, Long> redisTemplate;
-    @Resource
-    private RabbitTemplate rabbitTemplate;
-    @Resource
-    private RestTemplate restTemplate;
-    @Resource
-    private MailUtil mailUtil;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -360,5 +356,4 @@ public class UserService implements UserDetailsService {
             userRepository.delete(user);
         }
     }
-
 }

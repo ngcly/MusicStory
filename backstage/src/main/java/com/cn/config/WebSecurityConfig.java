@@ -7,15 +7,16 @@ import com.cn.util.Result;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.entity.ContentType;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
@@ -83,11 +84,12 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager providerManager(){
+    public AuthenticationManager providerManager(ApplicationEventPublisher applicationEventPublisher){
         MyAuthenticationProvider provider = new MyAuthenticationProvider();
         provider.setUserDetailsService(managerService);
-        new InMemoryUserDetailsManager();
-        return new ProviderManager(provider);
+        ProviderManager providerManager = new ProviderManager(provider);
+        providerManager.setAuthenticationEventPublisher(new DefaultAuthenticationEventPublisher(applicationEventPublisher));
+        return providerManager;
     }
 
 //    @Bean

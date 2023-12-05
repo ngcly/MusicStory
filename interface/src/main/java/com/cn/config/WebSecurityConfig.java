@@ -2,6 +2,7 @@ package com.cn.config;
 
 import com.cn.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.*;
@@ -16,8 +17,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import java.util.List;
 
 /**
  * Spring Security 配置
@@ -55,12 +54,15 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public ProviderManager providerManager(UserService userService, PasswordEncoder passwordEncoder){
+    public AuthenticationManager providerManager(UserService userService, PasswordEncoder passwordEncoder,
+                                                 ApplicationEventPublisher applicationEventPublisher){
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userService);
         authenticationProvider.setPasswordEncoder(passwordEncoder);
         SocialAuthenticationProvider myAuthenticationProvider = new SocialAuthenticationProvider(userService);
-        return new ProviderManager(List.of(authenticationProvider, myAuthenticationProvider));
+        ProviderManager providerManager = new ProviderManager(authenticationProvider, myAuthenticationProvider);
+        providerManager.setAuthenticationEventPublisher(new DefaultAuthenticationEventPublisher(applicationEventPublisher));
+        return providerManager;
     }
 
 }
