@@ -81,7 +81,7 @@ public class IndexController {
             authenticationToken = new MyAuthenticationToken(dto.getLoginType().name(), dto.getCode(), dto.getState());
         } else {
             LogInDTO.UserNameLoginDTO dto = (LogInDTO.UserNameLoginDTO) logInDTO;
-            authenticationToken = new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
+            authenticationToken = UsernamePasswordAuthenticationToken.unauthenticated(dto.getUsername(), dto.getPassword());
         }
 
         authenticationToken.setDetails(new AuthenticationDetails(request));
