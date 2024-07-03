@@ -42,6 +42,8 @@ public final class IpUtil {
     private static final String COMMA = ",";
     private static final String UNKNOWN = "unknown";
     private static final String EMPTY = "";
+
+    //alternate_address  view detail https://api.songzixian.com/api-detail/1
     private static final String IP_ADDRESS_URL = "https://whois.pconline.com.cn/ipJson.jsp?json=true&ip=%s";
     private static final String ADDRESS_KEY = "addr";
 
