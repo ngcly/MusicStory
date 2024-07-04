@@ -6,7 +6,7 @@ version '1.0-SNAPSHOT'
 buildscript { //构建脚本
     //定义版本号
     ext {
-        springBootVersion = '3.2.0'
+        springBootVersion = '3.3.1'
     }
     repositories {//jar包仓库
         maven { url 'https://maven.aliyun.com/repository/central' }
@@ -46,16 +46,16 @@ subprojects {  //子项目通配
     //定义版本
     ext {
         jasyptVersion = '3.0.5'
-        docVersion = '2.1.0'
+        docVersion = '2.5.0'
         jsoupVersion = '1.14.3'
         nekohtmlVersion = '1.9.22'
-        hutoolVersion = '5.8.21'
-        guavaVersion = '32.1.2-jre'
-        aliOssVersion = '3.16.3'
-        druidVersion = '1.2.20'
-        dialectVersion = '3.1.0'
-        locatorVersion = '0.52'
-        layuiVersion = '2.8.8'
+        hutoolVersion = '5.8.28'
+        guavaVersion = '33.2.1-jre'
+        aliOssVersion = '3.17.4'
+        druidVersion = '1.2.23'
+        dialectVersion = '3.2.0'
+        locatorVersion = '0.59'
+        layuiVersion = '2.9.11'
         treegridVersion = '0.3.0'
         logstashVersion = '7.4'
         jacksonVersion = '2.13.3'
