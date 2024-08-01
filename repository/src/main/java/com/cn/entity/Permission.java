@@ -1,7 +1,7 @@
 package com.cn.entity;
 
 import com.cn.enums.ResourceEnum;
-import com.cn.pojo.MenuDTO;
+import com.cn.model.MenuDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Setter;
 

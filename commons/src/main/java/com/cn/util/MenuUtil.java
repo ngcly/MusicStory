@@ -1,7 +1,7 @@
 package com.cn.util;
 
 import cn.hutool.core.collection.CollUtil;
-import com.cn.pojo.MenuDTO;
+import com.cn.model.MenuDTO;
 
 import java.util.*;
 

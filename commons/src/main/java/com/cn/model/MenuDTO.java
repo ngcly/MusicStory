@@ -1,4 +1,4 @@
-package com.cn.pojo;
+package com.cn.model;
 
 import lombok.Getter;
 import lombok.Setter;

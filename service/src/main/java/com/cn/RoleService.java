@@ -5,7 +5,7 @@ import com.cn.dao.RoleRepository;
 import com.cn.entity.Permission;
 import com.cn.entity.Role;
 import com.cn.enums.UserTypeEnum;
-import com.cn.pojo.MenuDTO;
+import com.cn.model.MenuDTO;
 import com.cn.util.MenuUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;

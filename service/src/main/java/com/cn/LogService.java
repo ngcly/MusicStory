@@ -6,7 +6,7 @@ import com.cn.dao.LoginLogRepository;
 import com.cn.entity.LoginLog;
 import com.cn.enums.LoginStatusEnum;
 import com.cn.enums.UserTypeEnum;
-import com.cn.pojo.AuthenticationDetails;
+import com.cn.model.AuthenticationDetails;
 import com.cn.util.IpUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;

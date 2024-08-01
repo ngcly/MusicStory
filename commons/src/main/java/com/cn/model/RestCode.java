@@ -1,4 +1,4 @@
-package com.cn.pojo;
+package com.cn.model;
 
 /**
  * restful 风格 错误编码

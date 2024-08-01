@@ -1,4 +1,4 @@
-package com.cn.pojo;
+package com.cn.model;
 
 import com.cn.constant.LoginType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;

@@ -1,4 +1,4 @@
-package com.cn.pojo;
+package com.cn.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

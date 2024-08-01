@@ -1,7 +1,7 @@
 package com.cn.config;
 
 import com.cn.ManagerService;
-import com.cn.pojo.RestCode;
+import com.cn.model.RestCode;
 import com.cn.util.JacksonUtil;
 import com.cn.util.Result;
 import lombok.RequiredArgsConstructor;

@@ -3,7 +3,7 @@ package com.cn.config;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import com.cn.exception.GlobalException;
-import com.cn.pojo.RestCode;
+import com.cn.model.RestCode;
 import com.cn.util.Result;
 import org.apache.http.HttpHeaders;
 import org.apache.http.entity.ContentType;

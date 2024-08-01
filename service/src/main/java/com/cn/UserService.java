@@ -7,7 +7,7 @@ import com.cn.exception.GlobalException;
 import com.cn.config.RabbitConfig;
 import com.cn.dao.*;
 import com.cn.entity.*;
-import com.cn.pojo.RestCode;
+import com.cn.model.RestCode;
 import com.cn.util.MailUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.annotation.Resource;

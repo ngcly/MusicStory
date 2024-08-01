@@ -1,6 +1,6 @@
 package com.cn.config;
 
-import com.cn.pojo.AuthenticationDetails;
+import com.cn.model.AuthenticationDetails;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 

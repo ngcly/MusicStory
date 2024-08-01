@@ -1,6 +1,6 @@
 package com.cn.exception;
 
-import com.cn.pojo.RestCode;
+import com.cn.model.RestCode;
 
 /**
  * @author chenning

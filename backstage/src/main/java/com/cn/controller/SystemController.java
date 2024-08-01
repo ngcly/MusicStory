@@ -4,7 +4,7 @@ import com.cn.LogService;
 import com.cn.ManagerService;
 import com.cn.RoleService;
 import com.cn.entity.*;
-import com.cn.pojo.MenuDTO;
+import com.cn.model.MenuDTO;
 import com.cn.util.Result;
 import com.cn.util.UploadUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;

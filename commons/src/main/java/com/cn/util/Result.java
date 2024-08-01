@@ -1,6 +1,6 @@
 package com.cn.util;
 
-import com.cn.pojo.RestCode;
+import com.cn.model.RestCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import org.springframework.lang.Nullable;

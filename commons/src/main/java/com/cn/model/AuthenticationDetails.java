@@ -1,4 +1,4 @@
-package com.cn.pojo;
+package com.cn.model;
 
 import com.cn.util.IpUtil;
 import jakarta.servlet.http.HttpServletRequest;

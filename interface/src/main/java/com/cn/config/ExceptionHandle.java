@@ -1,7 +1,7 @@
 package com.cn.config;
 
 import com.cn.exception.GlobalException;
-import com.cn.pojo.RestCode;
+import com.cn.model.RestCode;
 import com.cn.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;

@@ -1,4 +1,4 @@
-package com.cn.pojo;
+package com.cn.model;
 
 import com.cn.enums.GenderEnum;
 import com.cn.enums.UserStatusEnum;

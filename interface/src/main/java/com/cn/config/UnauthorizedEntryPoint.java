@@ -1,6 +1,6 @@
 package com.cn.config;
 
-import com.cn.pojo.RestCode;
+import com.cn.model.RestCode;
 import com.cn.util.JacksonUtil;
 import com.cn.util.Result;
 import org.apache.http.entity.ContentType;
