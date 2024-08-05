@@ -4,6 +4,7 @@ import com.cn.exception.GlobalException;
 import com.cn.model.RestCode;
 import com.cn.util.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +26,7 @@ import jakarta.validation.ConstraintViolationException;
  * @author ngcly
  */
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 public class ExceptionHandle extends ResponseEntityExceptionHandler {
 
 //    @ExceptionHandler(value
@@ -69,4 +71,10 @@ public class ExceptionHandle extends ResponseEntityExceptionHandler {
         }
     }
 
+//    @ExceptionHandler
+//    ProblemDetail handException(GlobalException e) {
+//        ProblemDetail problemDetail = ProblemDetail.forStatus(e.getCode());
+//        problemDetail.setDetail(e.getMessage());
+//        return problemDetail;
+//    }
 }
