@@ -1,9 +1,12 @@
 package com.cn.enums;
 
+import lombok.Getter;
+
 /**
  * 配置相关 枚举
  * @author ngcly
  */
+@Getter
 public enum ConfigEnum {
     /**
      * 密钥属性
@@ -18,11 +21,4 @@ public enum ConfigEnum {
         this.value = value;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
-    }
 }

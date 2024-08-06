@@ -1,11 +1,14 @@
 package com.cn.enums;
 
+import lombok.Getter;
+
 /**
  * 三方枚举
  * @author ngcly
  * @version V1.0
  * @since 2021/8/26 17:39
  */
+@Getter
 public enum SocialEnum {
     /** 腾讯QQ */
     QQ("qq","qq","101447968","46474c655bd4f21ddc55cf827e2f04be"),
@@ -22,22 +25,6 @@ public enum SocialEnum {
         this.name = name;
         this.appId = appId;
         this.appSecret = appSecret;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getAppId() {
-        return appId;
-    }
-
-    public String getAppSecret() {
-        return appSecret;
     }
 
     /**回调地址填写前端地址  不然后面拿到用户信息后没办法通知前端登录成功*/

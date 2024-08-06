@@ -25,12 +25,10 @@ import java.util.Scanner;
 class IndexControllerTest {
 
     @Test
-    void defaultCaptcha() {
+    void defaultCaptcha() throws IOException {
         ICaptcha captcha = CaptchaUtil.createGifCaptcha(116, 36, 4);
         try (FileOutputStream out = new FileOutputStream("d:/gif.gif")){
             captcha.write(out);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         Assert.isTrue(captcha.verify(captcha.getCode()));
     }

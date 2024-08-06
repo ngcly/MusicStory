@@ -54,7 +54,7 @@ public final class IpUtil {
      * @return boolean
      */
     public static boolean isEmptyIp(final String ip) {
-        return ip == null || ip.length() == 0 || EMPTY.equals(ip.trim()) || UNKNOWN.equalsIgnoreCase(ip);
+        return ip == null || ip.isEmpty() || EMPTY.equals(ip.trim()) || UNKNOWN.equalsIgnoreCase(ip);
     }
 
     /**
