@@ -4,7 +4,7 @@ import cn.hutool.core.lang.Singleton;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -122,8 +122,8 @@ public final class IpUtil {
      */
     public static String getIpAddresses(String ip) {
         String url = String.format(IP_ADDRESS_URL, ip);
-        RestTemplate restTemplate = Singleton.get(RestTemplate.class.getName(), RestTemplate::new);
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+        RestClient restClient = Singleton.get(RestClient.class.getName(), RestClient::create);
+        ResponseEntity<String> responseEntity = restClient.get().uri(url).retrieve().toEntity(String.class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             JsonNode jsonNode = JacksonUtil.toObject(responseEntity.getBody(), JsonNode.class);
             return jsonNode.get(ADDRESS_KEY).asText();

@@ -22,7 +22,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -41,7 +41,7 @@ public class UserService implements UserDetailsService {
     private final SocialInfoRepository socialInfoRepository;
     private final RoleRepository roleRepository;
     private final RabbitTemplate rabbitTemplate;
-    private final RestTemplate restTemplate;
+    private final RestClient restClient;
     private final MailUtil mailUtil;
     @Resource
     private RedisTemplate<String, Long> redisTemplate;
@@ -181,7 +181,7 @@ public class UserService implements UserDetailsService {
             //通过Authorization Code获取Access Token
             String url = String.format("https://graph.qq.com/oauth2.0/token" +
                     "?grant_type=authorization_code&client_id=%s&client_secret=%s&code=%s&redirect_uri=%s", socialEnum.getAppId(), socialEnum.getAppSecret(), authCode, SocialEnum.APP_REDIRECT + socialEnum.getSource());
-            JsonNode tokenResult = restTemplate.getForObject(url, JsonNode.class);
+            JsonNode tokenResult = restClient.get().uri(url).retrieve().body(JsonNode.class);
             if (Objects.isNull(tokenResult)) {
                 throw new GlobalException("QQ获取access_token失败");
             }
@@ -194,7 +194,7 @@ public class UserService implements UserDetailsService {
 
             //获取回调后的 openid 值
             url = String.format("https://graph.qq.com/oauth2.0/me?access_token=%s", social.getAccessToken());
-            JsonNode openidResult = restTemplate.getForObject(url, JsonNode.class);
+            JsonNode openidResult = restClient.get().uri(url).retrieve().body(JsonNode.class);
             if (Objects.isNull(openidResult)) {
                 throw new GlobalException("QQ获取openid失败");
             }
@@ -206,7 +206,7 @@ public class UserService implements UserDetailsService {
         } else {
             //微信 通过code获取access_token
             String wechatUrl = String.format("https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code", socialEnum.getAppId(), socialEnum.getAppSecret(), authCode);
-            JsonNode json = restTemplate.getForObject(wechatUrl, JsonNode.class);
+            JsonNode json = restClient.get().uri(wechatUrl).retrieve().body(JsonNode.class);
             if (Objects.isNull(json)) {
                 throw new GlobalException("微信获取access_token失败");
             }
@@ -236,7 +236,7 @@ public class UserService implements UserDetailsService {
         if (SocialEnum.QQ.equals(socialEnum)) {
             //获取QQ用户信息
             userInfoUrl = String.format("https://graph.qq.com/user/get_user_info?access_token=%s&oauth_consumer_key=%s&openid=%s", social.getAccessToken(), socialEnum.getAppId(), social.getOpenId());
-            userInfo = restTemplate.getForObject(userInfoUrl, JsonNode.class);
+            userInfo = restClient.get().uri(userInfoUrl).retrieve().body(JsonNode.class);
             if (Objects.isNull(userInfo)) {
                 throw new GlobalException("获取QQ用户信息失败");
             }
@@ -249,7 +249,7 @@ public class UserService implements UserDetailsService {
         } else {
             //获取微信用户信息
             userInfoUrl = String.format("https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s", social.getAccessToken(), social.getOpenId());
-            userInfo = restTemplate.getForObject(userInfoUrl, JsonNode.class);
+            userInfo = restClient.get().uri(userInfoUrl).retrieve().body(JsonNode.class);
             if (Objects.isNull(userInfo)) {
                 throw new GlobalException("获取微信用户信息失败");
             }
