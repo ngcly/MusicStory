@@ -31,13 +31,13 @@
  1.安装RabbitMQ延时队列插件： 
    1. 下载rabbitmq_delayed_message_exchange插件 下载地址：https://www.rabbitmq.com/community-plugins.html
    2. 将下载的插件拷贝到容器中
-   ```
-   docker cp rabbitmq_delayed_message_exchange-3.10.2.ez  rabbitmq:/plugins
-   ```  
+      ```
+      docker cp rabbitmq_delayed_message_exchange-3.10.2.ez  rabbitmq:/plugins
+      ```  
    3. 启动插件并重启容器
-   ```
-   rabbitmq-plugins enable rabbitmq_delayed_message_exchange
-   ```
+      ```
+      rabbitmq-plugins enable rabbitmq_delayed_message_exchange
+      ```
 2.若有使用fluentd则需要安装插件(自行配置可选)：
   ```
   docker exec -it --user root efk-fluentd /bin/sh
