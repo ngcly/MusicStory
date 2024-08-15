@@ -17,6 +17,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 用户相关 service
@@ -123,10 +124,13 @@ public class UserRelatedService {
      * websocket 通知
      */
     public void notifyUser(@NotNull News news) {
-        //TODO 待完善
-        //群发
-        messageTemplate.convertAndSend("/topic/notify", "webSocket消息测试");
-        //对某个用户发
-        messageTemplate.convertAndSendToUser("ngcly", "/queue/notify", news.getContent());
+        //TODO 待完善,需要用表记录当前消息及发送状态
+        if(Objects.nonNull(news.getUserId())){
+            //对某个用户发
+            messageTemplate.convertAndSendToUser(news.getUserId().toString(), "/queue/notify", news.getContent());
+        }else{
+            //群发
+            messageTemplate.convertAndSend("/topic/notify", news.getContent());
+        }
     }
 }
