@@ -7,6 +7,7 @@ import com.cn.entity.News;
 import com.cn.entity.UserFaves;
 import com.cn.entity.UserFollow;
 import com.cn.enums.FaveTypeEnum;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
@@ -27,15 +28,12 @@ import java.util.Objects;
  * @since 2021/8/26 15:16
  */
 @Service
+@AllArgsConstructor
 public class UserRelatedService {
-    @Resource
-    private UserFavesRepository userFavesRepository;
-    @Resource
-    private UserFollowRepository userFollowRepository;
-    @Resource
-    private CustomizeRepository customizeRepository;
-    @Resource
-    private SimpMessageSendingOperations messageTemplate;
+    private final UserFavesRepository userFavesRepository;
+    private final UserFollowRepository userFollowRepository;
+    private final CustomizeRepository customizeRepository;
+    private final SimpMessageSendingOperations messageTemplate;
 
     /**
      * 点赞/收藏
