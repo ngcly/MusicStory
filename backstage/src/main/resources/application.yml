@@ -55,8 +55,8 @@ spring:
           log-slow-sql: true
           slow-sql-millis: 1000
           merge-sql: true
-        wall:
-          enabled: true
+#        wall:
+#          enabled: true
       web-stat-filter:
         enabled: true
         url-pattern: '/*'
