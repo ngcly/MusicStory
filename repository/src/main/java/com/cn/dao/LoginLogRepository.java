@@ -12,6 +12,8 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +36,7 @@ public interface LoginLogRepository extends JpaRepository<LoginLog,Long>,JpaSpec
      * @param endTime 截止时间
      * @return Specification<LoginLog>
      */
-    static Specification<LoginLog> getLoginLogList(String userName, UserTypeEnum userType, LocalDateTime beginTime, LocalDateTime endTime){
+    static Specification<LoginLog> getLoginLogList(String userName, UserTypeEnum userType, Instant beginTime, Instant endTime){
         return (Root<LoginLog> root, CriteriaQuery<?> query, CriteriaBuilder cb)->{
             List<Predicate> predicates = new ArrayList<>();
             if(StringUtils.hasLength(userName)) {

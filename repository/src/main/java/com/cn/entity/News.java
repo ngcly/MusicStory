@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import jakarta.persistence.*;
+
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 /**
@@ -40,10 +42,10 @@ public class News {
 
     /** 创建时间 */
     @Column(nullable = false)
-    private LocalDateTime createTime;
+    private Instant createTime;
 
     /** 发送时间 */
     @Column(nullable = false)
-    private LocalDateTime sendTime;
+    private Instant sendTime;
 
 }

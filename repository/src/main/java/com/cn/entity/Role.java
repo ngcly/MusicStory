@@ -43,6 +43,7 @@ public class Role extends AbstractUserDateAudit {
      * 角色类型
      */
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private UserTypeEnum roleType;
 
     /**

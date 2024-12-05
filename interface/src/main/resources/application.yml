@@ -55,17 +55,16 @@ spring:
     host: smtp.qq.com
     port: 465
     username: 531237716@qq.com
-    password: ENC(i4zMO8N0ihz2sXZtcCMoDXId6gEW2xH4uv6p01hPxtCYm+aCZIfD9I26MQKkB2tIZiRGXg5aiP+slVPS+rMKhg==)
+    password: ENC(pS7NvCDk4ouixF9t8kcIPfrRUr/ZZ3J+JGBYc5yT4TAGHb8YBLu7r3l2ZSWoPuFIy7ROpcPHZCP/gYBTHWpNvw==)
     properties:
       mail:
         smtp:
-          port: 465
           auth: true
           starttls:
             enable: true
             required: true
-          socketFactory:
-            class: javax.net.ssl.SSLSocketFactory
+          ssl:
+            enable: true
 
 jwt:
   secret: ngcly

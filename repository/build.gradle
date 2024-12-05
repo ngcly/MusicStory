@@ -11,5 +11,6 @@ dependencies {
     api 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
     api "com.alibaba:druid-spring-boot-3-starter:${druidVersion}"
 
+    runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
 }

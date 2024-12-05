@@ -5,6 +5,12 @@ server:
       timeout: 1800
 
 spring:
+  jpa:
+    database: mysql
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
   datasource:
     url: jdbc:mysql://localhost:3306/music_story?serverTimezone=UTC&characterEncoding=utf-8&allowPublicKeyRetrieval=true
     username: root

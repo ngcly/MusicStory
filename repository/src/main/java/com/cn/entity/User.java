@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -32,9 +33,10 @@ import java.util.stream.Collectors;
  * @version V1.0
  * @since 2017/6/23 11:01
  */
-@Data
+@Getter
+@Setter
 @Entity
-@Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = {"username", "email"}))
+@Table(name = "user_info", uniqueConstraints = @UniqueConstraint(columnNames = {"username", "email"}))
 @JsonIgnoreProperties(value = {"handler", "hibernateLazyInitializer", "fieldHandler"})
 @NamedEntityGraph(name = "UserRole.Graph", attributeNodes = {
         @NamedAttributeNode(value = "roleList", subgraph = "Permission.Graph")
@@ -75,6 +77,7 @@ public class User extends AbstractDateAudit implements UserDetails, CredentialsC
     /**
      * 性别
      */
+    @Enumerated(EnumType.STRING)
     private GenderEnum gender;
 
     /**
@@ -134,13 +137,14 @@ public class User extends AbstractDateAudit implements UserDetails, CredentialsC
     /**
      * 用户状态
      */
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserStatusEnum state;
 
     /**
      * 密码修改时间
      */
-    private LocalDateTime pwdAlt;
+    private Instant pwdAlt;
 
     /**
      * 一个用户具有多个角色

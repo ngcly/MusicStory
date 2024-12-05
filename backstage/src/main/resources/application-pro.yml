@@ -4,6 +4,12 @@ server:
 
 #数据源
 spring:
+  jpa:
+    database: mysql
+    show-sql: false
+    generate-ddl: false
+    hibernate:
+      ddl-auto: update
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/music_story?characterEncoding=utf-8
     username: root

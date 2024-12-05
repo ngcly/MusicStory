@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.*;
+
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 /**
@@ -36,14 +38,14 @@ public class Notice extends AbstractUserDateAudit {
 
     /**展示开始时间*/
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime beginTime;
+    private Instant beginTime;
 
     /**展示结束时间*/
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime endTime;
+    private Instant endTime;
 
     @Transient
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime showTime;
+    private Instant showTime;
 
 }

@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.*;
+
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 /**
@@ -30,6 +32,7 @@ public class LoginLog {
 
     /**用户类型*/
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private UserTypeEnum userType;
 
     /**登录IP*/
@@ -46,17 +49,18 @@ public class LoginLog {
 
     /**登录时间*/
     @Column(nullable = false)
-    private LocalDateTime loginTime;
+    private Instant loginTime;
 
     /**登录状态*/
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private LoginStatusEnum loginStatus;
 
     @Transient
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime beginTime;
+    private Instant beginTime;
     @Transient
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime endTime;
+    private Instant endTime;
 
 }

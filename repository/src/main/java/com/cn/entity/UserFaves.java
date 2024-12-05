@@ -32,5 +32,6 @@ public class UserFaves extends AbstractDateAudit {
 
     /**类型*/
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private FaveTypeEnum faveType;
 }

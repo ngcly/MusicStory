@@ -33,8 +33,9 @@ public class Essay extends AbstractDateAudit {
     private String synopsis;
 
     /**文章内容*/
-    @Lob @Basic(fetch = FetchType.LAZY)
-    @Column(columnDefinition="mediumtext NOT NULL")
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+//    @Column(columnDefinition="mediumtext", nullable = false)
     private String content;
 
     /**阅览数*/
@@ -43,6 +44,7 @@ public class Essay extends AbstractDateAudit {
 
     /**状态*/
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private EssayStatusEnum state;
 
     /**审核不通过原由*/

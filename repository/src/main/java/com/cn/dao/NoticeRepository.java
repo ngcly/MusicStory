@@ -11,6 +11,8 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +37,7 @@ public interface NoticeRepository extends JpaRepository<Notice,Long>, JpaSpecifi
      * @param showTime 展示时间
      * @return Specification<Notice>
      */
-    static Specification<Notice> getNoticeList(String title, LocalDateTime showTime){
+    static Specification<Notice> getNoticeList(String title, Instant showTime){
         return (Root<Notice> root, CriteriaQuery<?> query, CriteriaBuilder cb)->{
             List<Predicate> predicates = new ArrayList<>();
             if(StringUtils.hasLength(title)) {

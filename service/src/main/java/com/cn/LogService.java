@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -61,7 +62,7 @@ public class LogService {
         loginLog.setLoginAddress(IpUtil.getIpAddresses(ip));
         loginLog.setLoginBrowser(Objects.nonNull(userAgent) ? userAgent.getBrowser().toString() : "");
         loginLog.setLoginStatus(loginStatus);
-        loginLog.setLoginTime(LocalDateTime.now());
+        loginLog.setLoginTime(Instant.now());
         saveLog(loginLog);
     }
 

@@ -17,6 +17,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -39,12 +40,12 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         String token = JwtTokenUtil.getToken(request);
         if (StringUtils.hasLength(token)) {
             User user = null;
-            LocalDateTime issuedAt = null;
+            Instant issuedAt = null;
             try {
                 JWT jwt = JWTUtil.parseToken(token);
                 if (jwtTokenUtil.verify(jwt)) {
                     user = jwt.getPayload().getClaimsJson().toBean(User.class);
-                    issuedAt = DateUtil.toLocalDateTime(jwt.getPayloads().getDate(RegisteredPayload.ISSUED_AT));
+                    issuedAt = DateUtil.toInstant(jwt.getPayloads().getDate(RegisteredPayload.ISSUED_AT));
                 }
             } catch (Exception e) {
                 log.info("token 无效:{}", e.getMessage());
@@ -67,7 +68,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
      * @param issuedAt   jwt有效期
      * @return boolean
      */
-    public boolean validUserAuthenticated(User userDetail, LocalDateTime issuedAt) {
+    public boolean validUserAuthenticated(User userDetail, Instant issuedAt) {
         return Objects.nonNull(userDetail)
                 && Objects.isNull(SecurityContextHolder.getContext().getAuthentication())
                 && Objects.nonNull(issuedAt)

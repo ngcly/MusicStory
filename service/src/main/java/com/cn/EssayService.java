@@ -17,7 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -144,9 +144,9 @@ public class EssayService {
             News news = new News();
             news.setUserId(essay1.getUser().getId());
             news.setContent(essay.getRemark());
-            news.setCreateTime(LocalDateTime.now());
+            news.setCreateTime(Instant.now());
             news.setSenderId(1L);
-            news.setSendTime(LocalDateTime.now());
+            news.setSendTime(Instant.now());
             //在线消息通知 由于后台服务与api服务分开部署 无法在此直接发送websocket消息 所以通过Rabbit转发
             rabbitTemplate.convertAndSend(RabbitConfig.NOTIFY_QUEUE, news);
             //邮件通知作者

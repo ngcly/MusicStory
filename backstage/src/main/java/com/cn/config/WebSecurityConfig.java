@@ -41,7 +41,7 @@ public class WebSecurityConfig {
     private final MyAuthenticationDetailsSource myAuthenticationDetailsSource;
 
     private static final String[] IGNORING_URLS = new String[]{"/captcha", "/webjars/*", "/layui/*", "/js/*", "/css/*",
-            "/img/*", "/media/*", "/*/favicon.ico", "/druid/*"};
+            "/img/*", "/media/*", "/*/favicon.ico", "/druid/*", "/h2-console/*"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

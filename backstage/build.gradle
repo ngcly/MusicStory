@@ -16,7 +16,7 @@ dependencies {
 //    implementation "org.thymeleaf.extras:thymeleaf-extras-java8time:${extrasVersion}"
     implementation "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${dialectVersion}"
     //js包
-    implementation "org.webjars:webjars-locator-core:${locatorVersion}"
+    implementation "org.webjars:webjars-locator-lite:${locatorVersion}"
     implementation "org.webjars.npm:layui:${layuiVersion}"
     implementation "org.webjars.bower:jquery-treegrid:${treegridVersion}"
 }

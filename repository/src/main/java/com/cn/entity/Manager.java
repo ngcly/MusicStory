@@ -59,6 +59,7 @@ public class Manager extends AbstractDateAudit implements UserDetails, Credentia
     /**
      * 性别
      */
+    @Enumerated(EnumType.STRING)
     private GenderEnum gender;
 
     /**
@@ -82,6 +83,7 @@ public class Manager extends AbstractDateAudit implements UserDetails, Credentia
      * 状态
      */
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private UserStatusEnum state;
 
     /**

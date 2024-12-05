@@ -1,0 +1,24 @@
+server:
+  port: 9090
+  servlet:
+    session:
+      timeout: 1800
+
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: true
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+  docker:
+    compose:
+      enabled: true
+      file: docker-compose.yml
