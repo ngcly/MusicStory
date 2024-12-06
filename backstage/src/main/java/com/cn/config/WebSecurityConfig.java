@@ -17,6 +17,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
@@ -39,6 +41,7 @@ public class WebSecurityConfig {
     private final DataSource dataSource;
     private final ManagerService managerService;
     private final MyAuthenticationDetailsSource myAuthenticationDetailsSource;
+    private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     private static final String[] IGNORING_URLS = new String[]{"/captcha", "/webjars/*", "/layui/*", "/js/*", "/css/*",
             "/img/*", "/media/*", "/*/favicon.ico", "/druid/*", "/h2-console/*"};
@@ -87,6 +90,7 @@ public class WebSecurityConfig {
     public AuthenticationManager providerManager(ApplicationEventPublisher applicationEventPublisher){
         MyAuthenticationProvider provider = new MyAuthenticationProvider();
         provider.setUserDetailsService(managerService);
+        provider.setPasswordEncoder(passwordEncoder);
         ProviderManager providerManager = new ProviderManager(provider);
         providerManager.setAuthenticationEventPublisher(new DefaultAuthenticationEventPublisher(applicationEventPublisher));
         return providerManager;
