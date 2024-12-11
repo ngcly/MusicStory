@@ -38,8 +38,8 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">性别</label>
                     <div class="layui-input-inline">
-                        <input type="radio" name="gender" value="1" title="男" checked>
-                        <input type="radio" name="gender" value="2" title="女" th:checked="${manager.gender==2}">
+                        <input type="radio" name="gender" value="MAN" title="男" checked>
+                        <input type="radio" name="gender" value="WOMAN" title="女" th:checked="${manager.gender==2}">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -52,14 +52,14 @@
                     <label class="layui-form-label">状态</label>
                     <div class="layui-input-inline">
                         <select name="state" lay-verify="required" th:if="not ${#strings.equals(manager.id,currentId)}">
-                            <option value="0" th:disabled="${manager.state!=0}">初始化</option>
-                            <option value="1" th:disabled="${manager.state==0}" th:selected="${manager.state==1}">正常</option>
-                            <option value="2" th:selected="${manager.state==2}">封禁</option>
+                            <option value="0" th:disabled="${manager.state!='INITIALIZE'}">初始化</option>
+                            <option value="1" th:disabled="${manager.state=='INITIALIZE'}" th:selected="${manager.state=='NORMAL'}">正常</option>
+                            <option value="2" th:selected="${manager.state=='LOCKED'}">封禁</option>
                         </select>
                         <select name="state" lay-verify="required" disabled th:if="${#strings.equals(manager.id,currentId)}">
-                            <option value="0" th:selected="${manager.state==0}">初始化</option>
-                            <option value="1" th:selected="${manager.state==1}">正常</option>
-                            <option value="2" th:selected="${manager.state==2}">封禁</option>
+                            <option value="0" th:selected="${manager.state=='INITIALIZE'}">初始化</option>
+                            <option value="1" th:selected="${manager.state=='NORMAL'}">正常</option>
+                            <option value="2" th:selected="${manager.state=='LOCKED'}">封禁</option>
                         </select>
                     </div>
                 </div>

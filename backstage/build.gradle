@@ -17,6 +17,7 @@ dependencies {
     implementation "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${dialectVersion}"
     //js包
     implementation "org.webjars:webjars-locator-lite:${locatorVersion}"
-    implementation "org.webjars.npm:layui:${layuiVersion}"
-    implementation "org.webjars.bower:jquery-treegrid:${treegridVersion}"
+    runtimeOnly "org.webjars.npm:layui:${layuiVersion}"
+    runtimeOnly "org.webjars.npm:jquery:${jqueryVersion}"
+    runtimeOnly "org.webjars.npm:jquery-treegrid:${treegridVersion}"
 }

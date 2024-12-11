@@ -20,15 +20,15 @@
                 <label class="layui-form-label">状态</label>
                 <div class="layui-input-inline">
                     <select name="state" lay-filter="statChange">
-                        <option value="1" th:selected="${essay.state==1}">待审核</option>
-                        <option value="2" th:selected="${essay.state==2}">查封</option>
-                        <option value="3" th:selected="${essay.state==3}">正常</option>
-                        <option value="4" th:selected="${essay.state==4}">推荐</option>
+                        <option value="PENDING" th:selected="${essay.state.toString()=='PENDING'}">待审核</option>
+                        <option value="FORBIDDEN" th:selected="${essay.state.toString()=='FORBIDDEN'}">查封</option>
+                        <option value="NORMAL" th:selected="${essay.state.toString()=='NORMAL'}">正常</option>
+                        <option value="RECOMMEND" th:selected="${essay.state.toString()=='RECOMMEND'}">推荐</option>
                     </select>
                 </div>
             </div>
             <div class="layui-form-item" id="reason">
-                <div th:if="${essay.state==2}">
+                <div th:if="${essay.state.toString()=='FORBIDDEN'}">
                     <label class="layui-form-label">原因说明</label>
                     <div class="layui-input-inline">
                         <input class="layui-input" type="text" name="remark" th:value="${essay.remark}">
@@ -52,7 +52,7 @@
 
         //监听审查是否通过
         form.on('select(statChange)', function (data) {
-            if(data.value==2){
+            if(data.value=='FORBIDDEN'){
                 $('#reason').append('<label class="layui-form-label">原因说明</label>' +
                     '<div class="layui-input-inline">' +
                     '<input type="text" name="remark" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input" value=[[${essay.remark}]]>' +

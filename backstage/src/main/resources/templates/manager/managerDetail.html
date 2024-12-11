@@ -17,12 +17,12 @@
         </tr>
         <tr>
             <td>性别：</td>
-            <td th:text="${manager.gender==1}?'男':'女'"></td>
+            <td th:text="${manager.gender=='MAN'}?'男':'女'"></td>
             <td>状态：</td>
             <td th:switch="${manager.state}">
-                <span th:case="0">初始化</span>
-                <span th:case="1">正常</span>
-                <span th:case="2">封禁</span>
+                <span th:case="INITIALIZE">初始化</span>
+                <span th:case="NORMAL">正常</span>
+                <span th:case="LOCKED">封禁</span>
             </td>
         </tr>
         <tr>

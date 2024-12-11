@@ -72,9 +72,9 @@
                     <label class="layui-form-label">状态</label>
                     <div class="layui-input-inline">
                         <select name="state" lay-verify="required">
-                            <option value="0" >禁用</option>
-                            <option value="1" th:selected="${user.state==1}">正常</option>
-                            <option value="2" th:selected="${user.state==2}">异常</option>
+                            <option value="INITIALIZE" th:selected="${user.state.toString()=='INITIALIZE'}">禁用</option>
+                            <option value="NORMAL" th:selected="${user.state.toString()=='NORMAL'}">正常</option>
+                            <option value="LOCKED" th:selected="${user.state.toString()=='LOCKED'}">异常</option>
                         </select>
                     </div>
                 </div>

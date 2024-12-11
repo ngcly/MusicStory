@@ -54,9 +54,9 @@
                 <div class="search-input">
                     <select name="state">
                         <option value=""></option>
-                        <option value="0">禁用</option>
-                        <option value="1">正常</option>
-                        <option value="2">异常</option>
+                        <option value="INITIALIZE">禁用</option>
+                        <option value="NORMAL">正常</option>
+                        <option value="LOCKED">异常</option>
                     </select>
                 </div>
             </div>
@@ -162,16 +162,16 @@
 </script>
 
 <script type="text/html" id="stateTpl">
-    {{#  if(d.state == '0'){ }}
+    {{#  if(d.state == 'INITIALIZE'){ }}
     禁用
-    {{#  } else if(d.state ==  '1') {}}
+    {{#  } else if(d.state ==  'NORMAL') {}}
     正常
     {{#  } else { }}
     异常
     {{#  } }}
 </script>
 <script type="text/html" id="genderTpl">
-    {{#  if(d.gender == '1'){ }}
+    {{#  if(d.gender == 'MAN'){ }}
     男
     {{#  } else { }}
     女

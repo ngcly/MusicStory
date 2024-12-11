@@ -36,8 +36,8 @@
                 <div class="search-input">
                     <select name="gender">
                         <option value=""></option>
-                        <option value="1">男</option>
-                        <option value="2">女</option>
+                        <option value="MAN">男</option>
+                        <option value="WOMAN">女</option>
                     </select>
                 </div>
             </div>
@@ -46,9 +46,9 @@
                 <div class="search-input">
                     <select name="state">
                         <option value=""></option>
-                        <option value="0">初始化</option>
-                        <option value="1">正常</option>
-                        <option value="2">封禁</option>
+                        <option value="INITIALIZE">初始化</option>
+                        <option value="NORMAL">正常</option>
+                        <option value="LOCKED">封禁</option>
                     </select>
                 </div>
             </div>
@@ -189,16 +189,16 @@
 </script>
 
 <script type="text/html" id="stateTpl">
-    {{#  if(d.state == '0'){ }}
+    {{#  if(d.state == 'INITIALIZE'){ }}
     初始化
-    {{#  } else if(d.state ==  '1') {}}
+    {{#  } else if(d.state ==  'NORMAL') {}}
     正常
     {{#  } else { }}
     封禁
     {{#  } }}
 </script>
 <script type="text/html" id="genderTpl">
-    {{#  if(d.gender == '1'){ }}
+    {{#  if(d.gender == 'MAN'){ }}
     男
     {{#  } else { }}
     女

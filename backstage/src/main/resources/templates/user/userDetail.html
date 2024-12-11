@@ -23,12 +23,12 @@
         </tr>
         <tr>
             <td>性别：</td>
-            <td th:text="${user.gender==1}?'男':'女'"></td>
+            <td th:text="${user.gender=='MAN'}?'男':'女'"></td>
             <td>状态：</td>
             <td th:switch="${user.state}">
-                <span th:case="0">禁用</span>
-                <span th:case="1">正常</span>
-                <span th:case="2">异常</span>
+                <span th:case="INITIALIZE">禁用</span>
+                <span th:case="NORMAL">正常</span>
+                <span th:case="LOCKED">异常</span>
             </td>
         </tr>
         <tr>

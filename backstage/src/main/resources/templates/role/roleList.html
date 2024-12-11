@@ -30,8 +30,8 @@
                 <div class="search-input">
                     <select name="roleType">
                         <option value=""></option>
-                        <option value="1">后台角色</option>
-                        <option value="2">前台角色</option>
+                        <option value="ADMIN">后台角色</option>
+                        <option value="USER">前台角色</option>
                     </select>
                 </div>
             </div>
@@ -209,7 +209,7 @@
 </script>
 
 <script type="text/html" id="typeTpl">
-    {{#  if(d.roleType == 'administrator'){ }}
+    {{#  if(d.roleType == 'ADMIN'){ }}
     后台角色
     {{#  } else { }}
     前台角色

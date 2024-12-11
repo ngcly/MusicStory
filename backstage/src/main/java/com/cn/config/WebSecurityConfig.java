@@ -109,7 +109,7 @@ public class WebSecurityConfig {
         var jdbcTokenRepository = new JdbcTokenRepositoryImpl();
         jdbcTokenRepository.setDataSource(dataSource);
         //自动创建令牌桶，第一次启动需要，第二次启动时需要注释
-//        jdbcTokenRepository.setCreateTableOnStartup(true);
+        jdbcTokenRepository.setCreateTableOnStartup(true);
         return jdbcTokenRepository;
     }
 
