@@ -93,7 +93,7 @@
                     ,{field: 'phone', title: '手机'}
                     ,{field: 'email', title: '邮箱'}
                     ,{field: 'state', title: '状态',templet:'#stateTpl'}
-                    ,{field: 'createdAt', title: '注册时间'}
+                    ,{field: 'createdAt', title: '注册时间', templet: '<div>{{ layui.util.toDateString(d.createdAt, "yyyy-MM-dd HH:mm:ss") }}</div>'}
                     ,{fixed: 'right', title:'操作', align:'center',width:'220', toolbar: '#bar'}]
             ]
         });

@@ -70,10 +70,10 @@
             ,cols: [
                 [{field: 'title', title: '标题',width:202}
                     ,{field: 'content', title: '内容',width:700}
-                    ,{field: 'beginTime', title: '展示开始时间',width:160}
-                    ,{field: 'endTime', title: '展示结束时间',width:160}
+                    ,{field: 'beginTime', title: '展示开始时间',width:160, templet: '<div>{{ layui.util.toDateString(d.beginTime, "yyyy-MM-dd HH:mm:ss") }}</div>'}
+                    ,{field: 'endTime', title: '展示结束时间',width:160, templet: '<div>{{ layui.util.toDateString(d.endTime, "yyyy-MM-dd HH:mm:ss") }}</div>'}
                     ,{field: 'updatedBy',title: '修改人',width:80}
-                    ,{field: 'updatedAt', title: '修改时间',width:160}
+                    ,{field: 'updatedAt', title: '修改时间',width:160, templet: '<div>{{ layui.util.toDateString(d.updatedAt, "yyyy-MM-dd HH:mm:ss") }}</div>'}
                     ,{fixed: 'right',title:'操作', align:'center',width:'220', toolbar: '#bar'}]
             ]
         });

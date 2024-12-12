@@ -56,7 +56,7 @@ subprojects {  //子项目通配
         dialectVersion = '3.2.0'
         locatorVersion = '1.0.1'
         jqueryVersion = '3.7.1'
-        layuiVersion = '2.9.11'
+        layuiVersion = '2.9.18'
         treegridVersion = '0.3.0'
         logstashVersion = '7.4'
         jacksonVersion = '2.13.3'

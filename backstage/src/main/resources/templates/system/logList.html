@@ -90,7 +90,7 @@
                     ,{field: 'loginAddress', title: '地区'}
                     ,{field: 'loginBrowser', title: '登录浏览器'}
                     ,{field: 'loginStatus', title: '登录状态', templet: '#loginStatusTpl'}
-                    ,{field: 'loginTime', title: '登录时间', sort: true}]
+                    ,{field: 'loginTime', title: '登录时间', sort: true, templet: '<div>{{ layui.util.toDateString(d.loginTime, "yyyy-MM-dd HH:mm:ss") }}</div>'}]
             ]
         });
 

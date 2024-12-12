@@ -100,8 +100,8 @@
                     ,{field: 'gender', title: '性别', templet:'#genderTpl'}
                     ,{field: 'birthday', title: '生日'}
                     ,{field: 'state', title: '状态', templet: '#stateTpl'}
-                    ,{field: 'createdAt', title: '创建时间', sort: true}
-                    ,{field: 'updatedAt', title: '修改时间', sort: true}
+                    ,{field: 'createdAt', title: '创建时间', sort: true, templet: '<div>{{ layui.util.toDateString(d.createdAt, "yyyy-MM-dd HH:mm:ss") }}</div>'}
+                    ,{field: 'updatedAt', title: '修改时间', sort: true, templet: '<div>{{ layui.util.toDateString(d.updatedAt, "yyyy-MM-dd HH:mm:ss") }}</div>'}
                     ,{fixed: 'right', title:'操作', align:'center',width:'310', toolbar: '#bar'}]
             ]
         });

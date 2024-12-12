@@ -89,7 +89,7 @@
                     ,{field: 'synopsis', title: '文章简介'}
                     ,{field: 'd.classify.name', title: '分类名',templet:'<div>{{d.classify.name}}</div>'}
                     ,{field: 'readNum', title: '阅览数'}
-                    ,{field: 'createdAt', title: '创建时间'}
+                    ,{field: 'createdAt', title: '创建时间', templet: '<div>{{ layui.util.toDateString(d.createdAt, "yyyy-MM-dd HH:mm:ss") }}</div>'}
             ,{field: 'state', title: '状态',templet:'<div>{{#  if(d.state == "PENDING"){ }}待审核{{#  }else if(d.state == "FORBIDDEN") {}}查封{{#  }else if(d.state == "NORMAL") {}}正常{{#  } else if(d.state == "RECOMMEND") {}}查封{{#  } }}</div>'}
                     ,{fixed: 'right', title:'操作', align:'center',width:'100', toolbar: '#bar'}]
             ]
