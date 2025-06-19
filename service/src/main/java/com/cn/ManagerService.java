@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,9 +21,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 后台客服管理员 service类
@@ -35,6 +40,7 @@ import java.util.*;
 public class ManagerService implements UserDetailsService {
     private final ManagerRepository managerRepository;
     private final RoleService roleService;
+    private final RequestMappingHandlerMapping requestMappingHandlerMapping;
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     /**
@@ -189,5 +195,41 @@ public class ManagerService implements UserDetailsService {
         manager.setRoleList(new HashSet<>(roles));
         roles.forEach(role -> Hibernate.initialize(role.getPermissions()));
         return manager;
+    }
+
+    private List<String> getAllUrlPermission() {
+        Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
+
+        // 创建一个Set来存储格式化后的映射（HTTP方法_路径）
+        Set<String> formattedMappings = new LinkedHashSet<>();
+
+        handlerMethods.forEach((mappingInfo, handlerMethod) -> {
+            // 获取HTTP方法
+            Set<String> httpMethods = new HashSet<>();
+            mappingInfo.getMethodsCondition().getMethods().forEach(method ->
+                    httpMethods.add(method.name()));
+
+            // 如果没有指定HTTP方法，默认添加所有HTTP方法
+            if (httpMethods.isEmpty()) {
+                httpMethods.addAll(Arrays.stream(HttpMethod.values()).map(HttpMethod::name).collect(Collectors.toSet()));
+            }
+
+            // 获取URL路径
+            Set<String> patterns = new HashSet<>();
+            if (mappingInfo.getPathPatternsCondition() != null) {
+                mappingInfo.getPathPatternsCondition().getPatterns().forEach(pattern ->
+                        patterns.add(pattern.getPatternString()));
+            } else if (mappingInfo.getPatternsCondition() != null) {
+                patterns.addAll(mappingInfo.getPatternsCondition().getPatterns());
+            }
+
+            // 为每个HTTP方法和每个URL路径的组合创建一个格式化的字符串
+            for (String httpMethod : httpMethods) {
+                for (String pattern : patterns) {
+                    formattedMappings.add(httpMethod + "_" + pattern);
+                }
+            }
+        });
+        return new ArrayList<>(formattedMappings);
     }
 }

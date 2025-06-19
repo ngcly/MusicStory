@@ -92,10 +92,9 @@ public class UserService implements UserDetailsService {
      * 注册用户进行激活
      *
      * @param code 激活码
-     * @return String
      */
     @Transactional(rollbackFor = Exception.class)
-    public String activeUser(String code) {
+    public void activeUser(String code) {
         //根据激活码 从redis获取用户ID信息
         Long id = redisTemplate.opsForValue().get(code);
         if (Objects.isNull(id)) {
@@ -109,7 +108,6 @@ public class UserService implements UserDetailsService {
         user.setState(UserStatusEnum.NORMAL);
         userRepository.save(user);
         redisTemplate.delete(code);
-        return "激活成功！请前往登录页面登录";
     }
 
     /**

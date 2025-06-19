@@ -30,6 +30,8 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -143,8 +145,11 @@ public class IndexController {
 
     @Operation(summary = "激活", description = "用户注册激活")
     @GetMapping("/active/{code}")
-    public Result<String> activeUser(@PathVariable("code") String code) {
-        return Result.success(userService.activeUser(code));
+    public ResponseEntity<Void> activeUser(@PathVariable("code") String code) {
+        userService.activeUser(code);
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create("/signin"))
+                .build();
     }
 
     /**

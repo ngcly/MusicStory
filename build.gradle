@@ -28,8 +28,8 @@ subprojects {  //子项目通配
     //编译使用UTF-8
     [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
 
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 
     configurations {
         compileOnly {

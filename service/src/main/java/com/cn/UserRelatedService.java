@@ -13,7 +13,6 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
