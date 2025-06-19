@@ -1,4 +1,4 @@
-package com.cn.amqp;
+package com.cn.listener;
 
 import com.cn.UserRelatedService;
 import com.cn.UserService;
@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @AllArgsConstructor
-public class MqReceive {
-    private static final Logger log = LoggerFactory.getLogger(MqReceive.class);
+public class MqListener {
+    private static final Logger log = LoggerFactory.getLogger(MqListener.class);
 
     private final UserService userService;
     private final UserRelatedService userRelatedService;

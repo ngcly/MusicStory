@@ -88,8 +88,7 @@ public class WebSecurityConfig {
 
     @Bean
     public AuthenticationManager providerManager(ApplicationEventPublisher applicationEventPublisher){
-        MyAuthenticationProvider provider = new MyAuthenticationProvider();
-        provider.setUserDetailsService(managerService);
+        MyAuthenticationProvider provider = new MyAuthenticationProvider(managerService);
         provider.setPasswordEncoder(passwordEncoder);
         ProviderManager providerManager = new ProviderManager(provider);
         providerManager.setAuthenticationEventPublisher(new DefaultAuthenticationEventPublisher(applicationEventPublisher));
