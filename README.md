@@ -4,7 +4,7 @@
 - 没弄微服务分布式，麻烦，用不上
 - 后台页面采用 thymeleaf 模板   
 - 以layui框架为页面布局主题   
-- 数据库：mysql
+- 数据库：h2 / mysql
 - 数据连接池：阿里druid   
 - 缓存：Redis  
 - 消息队列：RabbitMQ   

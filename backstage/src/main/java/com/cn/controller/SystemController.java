@@ -296,6 +296,17 @@ public class SystemController {
     }
 
     /**
+     * 菜单数据列表
+     * @return List<Permission>
+     */
+    @GetMapping("/menu")
+    @ResponseBody
+    public Result<List<Permission>> menList() {
+        List<Permission> menuList = roleService.getMenuList();
+        return Result.success((long) menuList.size(), menuList);
+    }
+
+    /**
      * 新增或修改菜单页
      */
     @GetMapping("/menu/edit.html")
