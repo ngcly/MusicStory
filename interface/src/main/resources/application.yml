@@ -8,6 +8,9 @@ server:
     enabled: true
 
 spring:
+  threads:
+    virtual:
+      enabled: true
   jpa:
     database: MYSQL
     show-sql: false

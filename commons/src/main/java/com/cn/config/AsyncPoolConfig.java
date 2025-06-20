@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.support.TaskExecutorAdapter;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -34,7 +36,6 @@ public class AsyncPoolConfig implements AsyncConfigurer, WebMvcConfigurer {
         return executor;
     }
 
-
     @Override
     public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
         configurer.setTaskExecutor(asyncExecutor());
@@ -42,7 +43,8 @@ public class AsyncPoolConfig implements AsyncConfigurer, WebMvcConfigurer {
 
     @Override
     public Executor getAsyncExecutor() {
-        return asyncExecutor();
+        return new TaskExecutorAdapter(Executors.newThreadPerTaskExecutor(
+                Thread.ofVirtual().name("virtual-async#", 1).factory()));
     }
 
     @Override

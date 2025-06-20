@@ -1,6 +1,9 @@
 spring:
   profiles:
     active: local
+  threads:
+    virtual:
+      enabled: true
 
   mail:
     host: smtp.qq.com
