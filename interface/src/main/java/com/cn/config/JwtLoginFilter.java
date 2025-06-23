@@ -8,16 +8,18 @@ import com.cn.util.JacksonUtil;
 import com.cn.util.Result;
 import org.apache.http.HttpHeaders;
 import org.apache.http.entity.ContentType;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -30,8 +32,8 @@ import java.io.PrintWriter;
 public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
     private final JwtTokenUtil jwtTokenUtil;
 
-    private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher("/login",
-            "POST");
+    private static final PathPatternRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER = PathPatternRequestMatcher
+            .withDefaults().matcher(HttpMethod.POST, "/login");
 
     public JwtLoginFilter(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil) {
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER, authenticationManager);
