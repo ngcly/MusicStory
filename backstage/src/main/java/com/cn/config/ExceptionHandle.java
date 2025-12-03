@@ -5,9 +5,9 @@ import cn.hutool.log.LogFactory;
 import com.cn.exception.GlobalException;
 import com.cn.model.RestCode;
 import com.cn.util.Result;
-import org.apache.http.HttpHeaders;
-import org.apache.http.entity.ContentType;
+import org.apache.hc.core5.http.ContentType;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -45,39 +45,52 @@ public class ExceptionHandle {
     }
 
     public Result<String> getResult(Exception e){
-        if(e instanceof AccessDeniedException){
-            return Result.failure(RestCode.UNAUTHORIZED);
-        } else if (e instanceof DataIntegrityViolationException){
-            return Result.failure(RestCode.UNION_DUMP);
-        } else if (e instanceof HttpRequestMethodNotSupportedException) {
-            return Result.failure(RestCode.METHOD_ERROR);
-        } else if (e instanceof MissingPathVariableException) {
-            // 缺少路径参数
-            return Result.failure(RestCode.NOT_FOUND);
-        } else if (e instanceof MissingServletRequestParameterException) {
-            // 缺少必须的请求参数
-            return Result.failure(RestCode.PARAM_ERROR);
-        } else if (e instanceof HttpMediaTypeNotAcceptableException){
-            return Result.failure(RestCode.HEAD_ERROR);
-        }  else if (e instanceof GlobalException globalException){
-            return Result.failure(globalException.getCode(), globalException.getMessage());
-        } else if (e instanceof ConstraintViolationException exception) {
-            //@RequestParam 参数校验失败
-            String msg = exception.getConstraintViolations().stream().map(constraint ->
-                    constraint.getInvalidValue()+":"+constraint.getMessage()).collect(Collectors.joining(";"));
-            return Result.failure(RestCode.PARAM_ERROR.code, msg);
-        } else if (e instanceof MethodArgumentNotValidException exception){
-            StringBuilder errMsg = new StringBuilder();
-            String msg = exception.getBindingResult().getAllErrors().stream().map(objectError -> {
-                if(objectError instanceof FieldError fieldError){
-                    errMsg.append(fieldError.getField()).append(":");
-                }
-                errMsg.append(objectError.getDefaultMessage()==null?"":objectError.getDefaultMessage());
-                return errMsg;
-            }).collect(Collectors.joining(";"));
-            return Result.failure(RestCode.PARAM_ERROR.code, msg);
-        } else {
-            return Result.failure(RestCode.SERVER_ERROR);
+        switch (e) {
+            case AccessDeniedException accessDeniedException -> {
+                return Result.failure(RestCode.UNAUTHORIZED);
+            }
+            case DataIntegrityViolationException dataIntegrityViolationException -> {
+                return Result.failure(RestCode.UNION_DUMP);
+            }
+            case HttpRequestMethodNotSupportedException httpRequestMethodNotSupportedException -> {
+                return Result.failure(RestCode.METHOD_ERROR);
+            }
+            case MissingPathVariableException missingPathVariableException -> {
+                // 缺少路径参数
+                return Result.failure(RestCode.NOT_FOUND);
+                // 缺少路径参数
+            }
+            case MissingServletRequestParameterException missingServletRequestParameterException -> {
+                // 缺少必须的请求参数
+                return Result.failure(RestCode.PARAM_ERROR);
+                // 缺少必须的请求参数
+            }
+            case HttpMediaTypeNotAcceptableException httpMediaTypeNotAcceptableException -> {
+                return Result.failure(RestCode.HEAD_ERROR);
+            }
+            case GlobalException globalException -> {
+                return Result.failure(globalException.getCode(), globalException.getMessage());
+            }
+            case ConstraintViolationException exception -> {
+                //@RequestParam 参数校验失败
+                String msg = exception.getConstraintViolations().stream().map(constraint ->
+                        constraint.getInvalidValue() + ":" + constraint.getMessage()).collect(Collectors.joining(";"));
+                return Result.failure(RestCode.PARAM_ERROR.code, msg);
+            }
+            case MethodArgumentNotValidException exception -> {
+                StringBuilder errMsg = new StringBuilder();
+                String msg = exception.getBindingResult().getAllErrors().stream().map(objectError -> {
+                    if (objectError instanceof FieldError fieldError) {
+                        errMsg.append(fieldError.getField()).append(":");
+                    }
+                    errMsg.append(objectError.getDefaultMessage() == null ? "" : objectError.getDefaultMessage());
+                    return errMsg;
+                }).collect(Collectors.joining(";"));
+                return Result.failure(RestCode.PARAM_ERROR.code, msg);
+            }
+            case null, default -> {
+                return Result.failure(RestCode.SERVER_ERROR);
+            }
         }
     }
 }

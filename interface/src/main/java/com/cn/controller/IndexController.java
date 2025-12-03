@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -225,7 +224,7 @@ public class IndexController {
     @Operation(summary = "搜索", description = "文章搜索")
     @GetMapping("/search/{pageSize}/{page}/{keyword}")
     @Parameter(name = "keyword", description = "关键字", in = ParameterIn.PATH)
-    public Result<Page<SearchHit<Book>>> search(@PathVariable int pageSize, @PathVariable int page, @PathVariable("keyword") String keyword) {
+    public Result<Page<Book>> search(@PathVariable int pageSize, @PathVariable int page, @PathVariable("keyword") String keyword) {
         return Result.success(bookService.highLightSearchEssay(keyword, PageRequest.of(page - 1, pageSize)));
     }
 

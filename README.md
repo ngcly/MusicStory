@@ -1,6 +1,6 @@
 # MusicStory
 一个用来听歌看书的网站   
-- 基本框架：springboot3.0全家桶 ，gradle构建  
+- 基本框架：springboot4.0全家桶 ，gradle构建  
 - 没弄微服务分布式，麻烦，用不上
 - 后台页面采用 thymeleaf 模板   
 - 以layui框架为页面布局主题   
@@ -34,7 +34,7 @@
       ```
       docker cp rabbitmq_delayed_message_exchange-3.10.2.ez  rabbitmq:/plugins
       ```  
-   3. 启动插件并重启容器
+   3. 进入容器中启动插件并重启容器
       ```
       rabbitmq-plugins enable rabbitmq_delayed_message_exchange
       ```
@@ -44,9 +44,9 @@
   fluent-gem install fluent-plugin-elasticsearch
   ```
 
-### SpringBoot3.0 已知存在以下问题
-1. ~~Druid组件监控页面无法使用~~
-2. ~~Jasypt配置文件加解密无效~~
+### SpringBoot4.0 已知存在以下问题
+1. Druid组件监控页面无法使用
+2. Jasypt配置文件加解密无效
 3. ~~Hutool还未适配，SpringUtil无法正常使用~~
 
 特别鸣谢：  

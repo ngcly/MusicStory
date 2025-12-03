@@ -5,6 +5,7 @@ import com.cn.entity.Manager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.authorization.AuthorizationResult;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
@@ -21,7 +22,7 @@ public class MyAuthorizationManager implements AuthorizationManager<RequestAutho
     private final ManagerService managerService;
 
     @Override
-    public AuthorizationDecision check(Supplier<Authentication> authentication, RequestAuthorizationContext context) {
+    public AuthorizationResult authorize(Supplier<? extends Authentication> authentication, RequestAuthorizationContext context) {
         //当前用户名
         String username = authentication.get().getName();
         //admin账号 就没有过不去的坎
@@ -53,4 +54,5 @@ public class MyAuthorizationManager implements AuthorizationManager<RequestAutho
 
         return new AuthorizationDecision(isGranted);
     }
+
 }

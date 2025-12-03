@@ -219,8 +219,6 @@ public class ManagerService implements UserDetailsService {
             if (mappingInfo.getPathPatternsCondition() != null) {
                 mappingInfo.getPathPatternsCondition().getPatterns().forEach(pattern ->
                         patterns.add(pattern.getPatternString()));
-            } else if (mappingInfo.getPatternsCondition() != null) {
-                patterns.addAll(mappingInfo.getPatternsCondition().getPatterns());
             }
 
             // 为每个HTTP方法和每个URL路径的组合创建一个格式化的字符串

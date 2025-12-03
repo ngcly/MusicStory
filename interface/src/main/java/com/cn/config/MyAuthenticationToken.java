@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @author chenning
@@ -23,7 +24,7 @@ public class MyAuthenticationToken extends AbstractAuthenticationToken {
      *
      */
     public MyAuthenticationToken(String loginType, Object principal, Object credentials) {
-        super(null);
+        super(Collections.emptyList());
         this.loginType = loginType;
         this.principal = principal;
         this.credentials = credentials;

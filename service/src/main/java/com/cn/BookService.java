@@ -25,7 +25,7 @@ public class BookService {
      * @param pageable 分页
      * @return Page<SearchHit < Book>>
      */
-    public Page<SearchHit<Book>> highLightSearchEssay(String keyword, Pageable pageable) {
+    public Page<Book> highLightSearchEssay(String keyword, Pageable pageable) {
         var list = bookRepository.findBooksByTitleOrContent(keyword, keyword, pageable);
         return new PageImpl<>(list);
     }

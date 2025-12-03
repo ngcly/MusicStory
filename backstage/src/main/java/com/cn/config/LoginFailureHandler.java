@@ -3,7 +3,7 @@ package com.cn.config;
 import com.cn.model.RestCode;
 import com.cn.util.JacksonUtil;
 import com.cn.util.Result;
-import org.apache.http.entity.ContentType;
+import org.apache.hc.core5.http.ContentType;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

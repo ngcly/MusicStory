@@ -5,7 +5,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.annotations.Highlight;
 import org.springframework.data.elasticsearch.annotations.HighlightField;
 import org.springframework.data.elasticsearch.annotations.HighlightParameters;
-import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 import java.util.List;
@@ -33,6 +32,6 @@ public interface BookRepository extends ElasticsearchRepository<Book, String> {
                     postTags = "</span>"
             )
     )
-    List<SearchHit<Book>> findBooksByTitleOrContent(String title, String content, Pageable pageable);
+    List<Book> findBooksByTitleOrContent(String title, String content, Pageable pageable);
 
 }

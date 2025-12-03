@@ -7,9 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import org.apache.http.HttpHeaders;
-import org.springframework.security.core.SpringSecurityCoreVersion;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -20,8 +18,7 @@ import java.util.Objects;
 @ToString
 @EqualsAndHashCode
 public class AuthenticationDetails implements Serializable {
-    @Serial
-    private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
+
     private static final String CAPTCHA_KEY = "captcha";
 
     private final CaptchaInfo captchaInfo;

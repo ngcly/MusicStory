@@ -6,7 +6,7 @@ version '1.0-SNAPSHOT'
 buildscript { //构建脚本
     //定义版本号
     ext {
-        springBootVersion = '3.5.0'
+        springBootVersion = '4.0.0'
     }
     repositories {//jar包仓库
         maven { url 'https://maven.aliyun.com/repository/central' }
@@ -28,8 +28,11 @@ subprojects {  //子项目通配
     //编译使用UTF-8
     [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
 
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(25)
+        }
+    }
 
     configurations {
         compileOnly {
@@ -46,13 +49,13 @@ subprojects {  //子项目通配
     //定义版本
     ext {
         jasyptVersion = '3.0.5'
-        docVersion = '2.5.0'
+        docVersion = '3.0.0-RC1'
         jsoupVersion = '1.14.3'
         nekohtmlVersion = '1.9.22'
         hutoolVersion = '5.8.28'
         guavaVersion = '33.2.1-jre'
         aliOssVersion = '3.18.1'
-        druidVersion = '1.2.23'
+        druidVersion = '1.2.27'
         dialectVersion = '3.2.0'
         locatorVersion = '1.0.1'
         jqueryVersion = '3.7.1'
@@ -64,7 +67,8 @@ subprojects {  //子项目通配
 
     dependencies {  //所有子项目通用依赖
         implementation 'org.springframework.boot:spring-boot-starter-actuator'
-        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-webflux'
+        implementation 'org.springframework.boot:spring-boot-starter-webmvc'
         implementation 'org.springframework.boot:spring-boot-starter-security'
         implementation 'org.springframework.boot:spring-boot-starter-validation'
         implementation "com.github.ulisesbocchio:jasypt-spring-boot-starter:${jasyptVersion}"
@@ -75,8 +79,10 @@ subprojects {  //子项目通配
         developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
         annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
         annotationProcessor 'org.projectlombok:lombok'
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
-        testImplementation 'org.springframework.security:spring-security-test'
+        testImplementation 'org.springframework.boot:spring-boot-starter-actuator-test'
+        testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
+        testImplementation 'org.springframework.boot:spring-boot-starter-webflux-test'
+        testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
 

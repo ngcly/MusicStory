@@ -2,7 +2,7 @@ package com.cn.config;
 
 import com.cn.util.JacksonUtil;
 import com.cn.util.Result;
-import org.apache.http.entity.ContentType;
+import org.apache.hc.core5.http.ContentType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 

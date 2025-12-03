@@ -3,6 +3,7 @@ package com.cn.config;
 import cn.hutool.core.text.CharSequenceUtil;
 import com.cn.model.AuthenticationDetails;
 import com.cn.model.CaptchaInfo;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;

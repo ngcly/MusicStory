@@ -3,7 +3,6 @@ package com.cn;
 import com.cn.enums.ConfigEnum;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cache.annotation.EnableCaching;
 
 /**
  * 后台主启动类
@@ -16,10 +15,9 @@ import org.springframework.cache.annotation.EnableCaching;
  * @author ngcly
  * @since 2017-12-30 15:51
  */
-@EnableCaching
 @SpringBootApplication
 public class BackstageApplication {
-    public static void main(String[] args) {
+    static void main(String[] args) {
         ConfigEnum configEnum = ConfigEnum.JASYPT_ENCRYPTOR;
         System.setProperty(configEnum.getKey(),configEnum.getValue());
         SpringApplication.run(BackstageApplication.class, args);

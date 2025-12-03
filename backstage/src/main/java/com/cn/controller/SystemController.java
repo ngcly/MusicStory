@@ -5,10 +5,10 @@ import com.cn.ManagerService;
 import com.cn.RoleService;
 import com.cn.entity.*;
 import com.cn.model.MenuDTO;
+import com.cn.util.JacksonUtil;
 import com.cn.util.Result;
 import com.cn.util.UploadUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,7 +39,6 @@ public class SystemController {
     private final ManagerService managerService;
     private final RoleService roleService;
     private final LogService logService;
-    private final ObjectMapper objectMapper;
 
     /**
      * 权限注解说明
@@ -244,7 +243,7 @@ public class SystemController {
     @GetMapping("/role/grant.html")
     public String grantForm(@RequestParam long roleId, @RequestParam String type, Model model) throws JsonProcessingException {
         Collection<MenuDTO> menuSet = roleService.getMenuListWithChecked(roleId);
-        String menuList = objectMapper.writeValueAsString(menuSet);
+        String menuList = JacksonUtil.getObjectMapper().writeValueAsString(menuSet);
         model.addAttribute("type", type);
         model.addAttribute("roleId", roleId);
         model.addAttribute("menuList", menuList);

@@ -5,8 +5,8 @@ import com.cn.model.RestCode;
 import com.cn.util.JacksonUtil;
 import com.cn.util.Result;
 import lombok.RequiredArgsConstructor;
-import org.apache.http.entity.ContentType;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.apache.hc.core5.http.ContentType;
+import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,10 +20,7 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
-import javax.sql.DataSource;
 import java.io.PrintWriter;
 
 /**
@@ -38,7 +35,6 @@ import java.io.PrintWriter;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
-    private final DataSource dataSource;
     private final ManagerService managerService;
     private final MyAuthenticationDetailsSource myAuthenticationDetailsSource;
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -47,7 +43,7 @@ public class WebSecurityConfig {
             "/img/*", "/media/*", "/*/favicon.ico", "/druid/*", "/h2-console/*"};
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) {
         //设置可以iframe访问
         http
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
@@ -79,9 +75,11 @@ public class WebSecurityConfig {
                         .deleteCookies("remember-me")
                 )
                 .rememberMe(remember -> remember
-                        .userDetailsService(managerService)
-                        .tokenRepository(persistentRepository(dataSource))
-                        .tokenValiditySeconds(60 * 60 * 24 * 7));
+                        .key("B4F5A0D558E32C2AFAF24D6EDD9B7A52C911E6DDB5E74E12CCFEE0F292356DB9") // 用于 token 签名
+                        .tokenValiditySeconds(60 * 60 * 24 * 14) // 14 days
+                        .rememberMeParameter("remember-me")
+                        .rememberMeCookieName("my-remember-me")
+                        .userDetailsService(managerService));
 
         return http.build();
     }
@@ -101,16 +99,6 @@ public class WebSecurityConfig {
 //        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_STAFF \n ROLE_STAFF > ROLE_USER");
 //        return roleHierarchy;
 //    }
-
-
-    @Bean
-    public PersistentTokenRepository persistentRepository(DataSource dataSource) {
-        var jdbcTokenRepository = new JdbcTokenRepositoryImpl();
-        jdbcTokenRepository.setDataSource(dataSource);
-        //自动创建令牌桶，第一次启动需要，第二次启动时需要注释
-        jdbcTokenRepository.setCreateTableOnStartup(true);
-        return jdbcTokenRepository;
-    }
 
     @Bean
     public LoginSuccessHandler loginSuccessHandler(){
