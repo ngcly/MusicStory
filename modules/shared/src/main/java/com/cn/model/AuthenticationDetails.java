@@ -6,8 +6,6 @@ import jakarta.servlet.http.HttpSession;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import org.springframework.http.HttpHeaders;
-
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -31,7 +29,7 @@ public class AuthenticationDetails implements Serializable {
 
     public AuthenticationDetails(HttpServletRequest request) {
         this(extractCaptchaInfo(request), IpUtil.getIpAddress(request),
-                request.getHeader(HttpHeaders.USER_AGENT), request.getParameter(CAPTCHA_KEY));
+                request.getHeader("User-Agent"), request.getParameter(CAPTCHA_KEY));
     }
 
     public AuthenticationDetails(CaptchaInfo captchaInfo, String remoteAddress,

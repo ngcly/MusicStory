@@ -1,9 +1,7 @@
 package com.cn.util;
 
 import com.cn.model.RestCode;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
-import org.springframework.lang.Nullable;
 
 /**
  * 返回体
@@ -13,21 +11,17 @@ import org.springframework.lang.Nullable;
  * @since 2020/5/18 11:04
  */
 @Getter
-@Schema(description = "返回体")
 public class Result<T> {
 
-    @Schema(title = "状态码")
     private final int code;
-    @Schema(title = "说明信息")
     private final String msg;
-    @Schema(title = "内容")
     private final T data;
 
     private Result(int code, String msg) {
         this(code, msg, null);
     }
 
-    private Result(int code, String msg, @Nullable T data) {
+    private Result(int code, String msg, T data) {
         this.code = code;
         this.msg = msg;
         this.data = data;

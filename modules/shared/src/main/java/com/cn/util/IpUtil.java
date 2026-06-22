@@ -1,10 +1,8 @@
 package com.cn.util;
 
-import cn.hutool.core.lang.Singleton;
+import cn.hutool.http.HttpUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestClient;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -122,11 +120,12 @@ public final class IpUtil {
      */
     public static String getIpAddresses(String ip) {
         String url = String.format(IP_ADDRESS_URL, ip);
-        RestClient restClient = Singleton.get(RestClient.class.getName(), RestClient::create);
-        ResponseEntity<String> responseEntity = restClient.get().uri(url).retrieve().toEntity(String.class);
-        if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            JsonNode jsonNode = JacksonUtil.toObject(responseEntity.getBody(), JsonNode.class);
-            return jsonNode.get(ADDRESS_KEY).asText();
+        String body = HttpUtil.get(url);
+        if (body != null && !body.isEmpty()) {
+            JsonNode jsonNode = JacksonUtil.toObject(body, JsonNode.class);
+            if (jsonNode != null && jsonNode.has(ADDRESS_KEY)) {
+                return jsonNode.get(ADDRESS_KEY).asText();
+            }
         }
         return null;
     }
