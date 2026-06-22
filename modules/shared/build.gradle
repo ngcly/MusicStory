@@ -1,0 +1,17 @@
+jar {
+    enabled = true
+}
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    api "org.springdoc:springdoc-openapi-starter-webmvc-ui:${docVersion}"
+    api "com.google.guava:guava:${guavaVersion}"
+    api "cn.hutool:hutool-core:${hutoolVersion}"
+    api "cn.hutool:hutool-extra:${hutoolVersion}"
+    api "cn.hutool:hutool-http:${hutoolVersion}"
+    api "cn.hutool:hutool-captcha:${hutoolVersion}"
+    api "cn.hutool:hutool-jwt:${hutoolVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+}

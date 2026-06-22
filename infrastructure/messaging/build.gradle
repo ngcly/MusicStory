@@ -1,0 +1,12 @@
+jar {
+    enabled = true
+}
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    api project(":modules:shared")
+    api 'org.springframework.boot:spring-boot-starter-amqp'
+    api 'org.springframework.boot:spring-boot-starter-websocket'
+}

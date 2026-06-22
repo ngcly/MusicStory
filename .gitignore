@@ -3,6 +3,7 @@
 
 # Log file
 *.log
+logs/
 
 # BlueJ files
 *.ctxt
@@ -23,7 +24,16 @@ hs_err_pid*
 
 .gradle
 build/
+**/build/
 !gradle/wrapper/gradle-wrapper.jar
+
+# Local runtime data
+es/data/
+es/logs/
+*.lck
+
+# OS files
+.DS_Store
 
 ### STS ###
 .apt_generated

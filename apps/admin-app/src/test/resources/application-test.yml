@@ -1,0 +1,22 @@
+spring:
+  sql:
+    init:
+      mode: never
+  jpa:
+    database: h2
+    show-sql: false
+    hibernate:
+      ddl-auto: create-drop
+  datasource:
+    url: jdbc:h2:mem:music_story_test;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+  docker:
+    compose:
+      enabled: false
+
+oss:
+  config:
+    access-key-id: test-access-key-id
+    access-key-secret: test-access-key-secret

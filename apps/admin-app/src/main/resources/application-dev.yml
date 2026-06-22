@@ -1,0 +1,23 @@
+server:
+  port: 9090
+  servlet:
+    session:
+      timeout: 1800
+
+spring:
+  jpa:
+    database: mysql
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/music_story?serverTimezone=UTC&characterEncoding=utf-8&allowPublicKeyRetrieval=true}
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:}
+    driverClassName: com.mysql.cj.jdbc.Driver
+
+  docker:
+    compose:
+      enabled: true
+      file: docker-compose.yml

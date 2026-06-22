@@ -1,0 +1,11 @@
+jar {
+    enabled = true
+}
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    api project(":modules:shared")
+    api "com.aliyun.oss:aliyun-sdk-oss:${aliOssVersion}"
+}

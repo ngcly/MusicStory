@@ -1,0 +1,17 @@
+#正式环境配置文件
+server:
+  port: 9090
+
+#数据源
+spring:
+  jpa:
+    database: mysql
+    show-sql: false
+    generate-ddl: false
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: ${MYSQL_URL:jdbc:mysql://127.0.0.1:3306/music_story?characterEncoding=utf-8}
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:}
+    driverClassName: com.mysql.cj.jdbc.Driver

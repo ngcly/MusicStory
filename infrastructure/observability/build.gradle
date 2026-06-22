@@ -1,0 +1,10 @@
+jar {
+    enabled = true
+}
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    api project(":modules:shared")
+}

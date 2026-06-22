@@ -1,0 +1,13 @@
+jar {
+    enabled = true
+}
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    api project(":modules:shared")
+    api project(":infrastructure:persistence")
+    api project(":infrastructure:messaging")
+    api project(":infrastructure:cache")
+}

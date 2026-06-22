@@ -1,0 +1,15 @@
+bootJar {
+    archiveBaseName = "web-app"
+    archiveVersion = '1.0'
+}
+
+dependencies {
+    implementation project(":modules:user")
+    implementation project(":modules:content")
+    implementation project(":modules:notification")
+    implementation project(":modules:search")
+    implementation project(":modules:relation")
+
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${docVersion}"
+}
