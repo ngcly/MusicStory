@@ -1,0 +1,178 @@
+.sign{
+    height: 100%;
+    font-size: 14px;
+    text-align: center;
+}
+.sign .logo{
+    position:absolute;
+    top: 50px;
+    left: 50px;
+}
+.sign .logo img{
+    width: 100px;
+}
+.sign .main{
+    width: 400px;
+    margin: 50px auto 0;
+    padding: 50px 50px 30px;
+    border-radius: 4px;
+    background-color: #fff;
+    box-shadow: 0 0 8px rgba(0,0,0,.1);
+    display: inline-block;
+}
+.sign .main .title{
+    margin: 0 auto 50px;
+    padding:10px;
+    color:#939393;
+}
+.sign .main .title h4{
+    margin: 0;
+    font-size: 18px;
+}
+.sign .main .title h4 a,.main .title h4 b{
+    padding: 10px;
+}
+.sign .main .title h4 a.active{
+    font-weight: 700;
+    color:#ea6f5a !important;
+    border-bottom:2px solid #ea6f5a;
+}
+.sign .main .title h4 a:hover{
+    border-bottom:2px solid #ea6f5a;
+}
+.sign .main form {
+    margin: 0 0 30px;
+    color:#969696;
+}
+.sign .main form .input-prepend{
+    position: relative;
+    width: 100%;
+}
+.sign .main form .input-prepend input{
+    width: 100%;
+    height: 50px;
+    padding:4px 12px 4px 35px;
+    background-color: rgb(248,248,248);
+}
+.sign .main form input.top-radius {
+    border-radius: 4px 4px 0 0;
+}
+.sign .main form input.bottom-radius{
+    border-radius:0 0 4px 4px;
+    border-bottom: 1px solid #c8c8c8;
+}
+.sign .main form .input-prepend i{
+    position: absolute;
+    color:#969696;
+    top:15px;
+    left:15px;
+    font-size: 20px;
+}
+.sign .main form .remember{
+    float:left;
+    margin: 15px 0;
+}
+.sign .main form .help{
+    float: right;
+    margin: 15px 0;
+}
+.sign .main form>input{
+    width: 100%;
+    display: block;
+    border-radius: 20px;
+    height: 43px;
+}
+.sign .main .more-sign p{
+    position: relative;
+    font-size: 14px;
+    color: #b8b8b8;
+    margin-bottom: 20px;
+}
+.sign .main .more-sign p:before{
+    content:"";
+    width:60px;
+    border-bottom: 1px solid #b8b8b8;
+    position: absolute;
+    top:10px;
+    left:30px;
+}
+.sign .main .more-sign p:after{
+    content:"";
+    width:60px;
+    border-bottom: 1px solid #b8b8b8;
+    position: absolute;
+    top:10px;
+    right:30px;
+}
+.sign .main .more-sign ul{
+    margin-bottom: 20px;
+}
+.sign .main .more-sign ul li {
+    display: inline-block;
+    border-radius: 50%;
+    color:white;
+    margin: 0 5px;
+}
+.sign .main .more-sign ul li a{
+    width: 50px;
+    height: 50px;
+    display: block;
+    line-height: 50px;
+}
+.sign .main .more-sign ul .other{
+    color:#939393;
+}
+.sign .main .more-sign ul li a i{
+    font-size: 25px;
+}
+.sign .main .more-sign ul li.weibo{
+    background: #e05244;
+}
+.sign .main .more-sign ul li.weixin{
+    background: #00bb29;
+}
+.sign .main .more-sign ul li.qq{
+    background: #498ad5;
+}
+.sign .main .more-sign ul li.other{
+    background:rgb(248,248,248);
+    color:#939393;
+}
+.sign .main form {
+    margin-top: 20px;
+}
+.sign .main form p.sign-up-msg{
+    margin: 15px 0;
+    font-size: 12px;
+    line-height: 20px;
+    color:#969696;
+}
+.sign .main form .ssm{
+    position: relative;
+}
+.sign .main form .input-prepend a.send-ssm{
+    position: absolute;
+    top:7px;
+    right: 10px;
+    width: 100px;
+    height: 36px;
+    line-height: 36px;
+    border-radius: 20px;
+    color:white !important;
+    opacity:0.8;
+}
+.sign .btn-primary,.sign .btn-info{
+    width: 300px;
+}
+@media (max-width:768px) {
+    .sign .logo{
+        display: none;
+    }
+    #sign-template{
+        background: #fff;
+    }
+    .sign .main{
+        box-shadow: none;
+        margin: 0 auto;
+    }
+}

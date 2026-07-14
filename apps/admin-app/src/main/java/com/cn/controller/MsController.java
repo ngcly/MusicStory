@@ -3,8 +3,8 @@ package com.cn.controller;
 import com.cn.*;
 import com.cn.entity.*;
 import com.cn.enums.UserTypeEnum;
+import com.cn.service.StorageService;
 import com.cn.util.Result;
-import com.cn.util.UploadUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Controller;
@@ -32,6 +32,7 @@ public class MsController {
     private final NoticeService noticeService;
     private final CarouselService carouselService;
     private final EssayService essayService;
+    private final StorageService storageService;
 
     /**
      * 用户列表页
@@ -309,7 +310,7 @@ public class MsController {
         if (file.isEmpty()) {
             return Result.failure(222, "文件为空");
         }
-        String path = UploadUtil.uploadFileByAli(file, "img");
+        String path = storageService.uploadFile(file, "img");
         carouselService.addCarousel(id, path);
         return Result.success();
     }

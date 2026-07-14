@@ -48,7 +48,7 @@ subprojects {  //子项目通配
 
     //定义版本
     ext {
-        jasyptVersion = '3.0.5'
+        jasyptVersion = '4.0.4'
         docVersion = '3.0.0-RC1'
         jsoupVersion = '1.14.3'
         nekohtmlVersion = '1.9.22'

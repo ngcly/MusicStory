@@ -41,4 +41,8 @@ public class OssConfigProperties {
      * 存储桶名称
      */
     private String bucketName;
+    /**
+     * 区域 (默认 us-east-1)
+     */
+    private String region = "us-east-1";
 }

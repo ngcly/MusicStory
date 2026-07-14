@@ -7,8 +7,8 @@ import com.cn.enums.FaveTypeEnum;
 import com.cn.model.EssayDTO;
 import com.cn.entity.*;
 import com.cn.model.UserVO;
+import com.cn.service.StorageService;
 import com.cn.util.Result;
-import com.cn.util.UploadUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -41,6 +41,7 @@ public class UserController {
     private final UserService userService;
     private final UserRelatedService userRelatedService;
     private final EssayService essayService;
+    private final StorageService storageService;
 
     @Operation(summary = "用户信息", description = "获取用户详情信息")
     @GetMapping("/info")
@@ -206,7 +207,7 @@ public class UserController {
         if (file.isEmpty()) {
             return Result.failure(222, "文件为空");
         }
-        String path = UploadUtil.uploadFileByAli(file, dir);
+        String path = storageService.uploadFile(file, dir);
         return Result.success(path);
     }
 }

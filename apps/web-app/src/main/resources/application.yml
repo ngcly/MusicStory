@@ -24,31 +24,31 @@ spring:
     username: ${MYSQL_USERNAME:root}
     password: ${MYSQL_PASSWORD:}
     driverClassName: com.mysql.cj.jdbc.Driver
-#    type: com.alibaba.druid.pool.DruidDataSource
-#    # 下面为连接池的补充设置，应用到上面所有数据源中
-#    druid:
-#      # 初始化大小，最小，最大
-#      initialSize: 5
-#      minIdle: 5
-#      maxActive: 20
-#      # 配置获取连接等待超时的时间
-#      maxWait: 60000
-#      validationQuery: SELECT 1
-#      # 打开PSCache，并且指定每个连接上PSCache的大小
-#      poolPreparedStatements: true
-#      maxPoolPreparedStatementPerConnectionSize: 20
-#      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall' 用于防火墙
-#      filter:
-#        stat:
-#          merge-sql: true
-#          db-type: mysql
-#          slow-sql-millis: 1000
-#          log-slow-sql: true
-#        #配置 wall filter
-#        wall:
-#          db-type: mysql
-#      # 合并多个DruidDataSource的监控数据
-#      useGlobalDataSourceStat: true
+    type: com.alibaba.druid.pool.DruidDataSource
+    # 下面为连接池的补充设置，应用到上面所有数据源中
+    druid:
+      # 初始化大小，最小，最大
+      initialSize: 5
+      minIdle: 5
+      maxActive: 20
+      # 配置获取连接等待超时的时间
+      maxWait: 60000
+      validationQuery: SELECT 1
+      # 打开PSCache，并且指定每个连接上PSCache的大小
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall' 用于防火墙
+      filter:
+        stat:
+          merge-sql: true
+          db-type: mysql
+          slow-sql-millis: 1000
+          log-slow-sql: true
+        #配置 wall filter
+        wall:
+          db-type: mysql
+      # 合并多个DruidDataSource的监控数据
+      useGlobalDataSourceStat: true
 
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss

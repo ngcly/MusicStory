@@ -7,5 +7,5 @@ bootJar {
 
 dependencies {
     api project(":modules:shared")
-    api "com.aliyun.oss:aliyun-sdk-oss:${aliOssVersion}"
+    api "com.amazonaws:aws-java-sdk-s3:1.12.797"
 }

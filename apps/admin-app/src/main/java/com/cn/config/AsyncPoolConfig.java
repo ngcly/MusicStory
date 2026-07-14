@@ -4,18 +4,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.support.TaskExecutorAdapter;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
+ * 异步任务与 Web MVC 异步配置
+ * 统一采用 JVM 虚拟线程 (Virtual Threads)
+ *
  * @author ngcly
  */
 @Slf4j
@@ -24,15 +24,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class AsyncPoolConfig implements AsyncConfigurer, WebMvcConfigurer {
 
     @Bean
-    public ThreadPoolTaskExecutor asyncExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
-        executor.setMaxPoolSize(50);
-        executor.setQueueCapacity(10);
-        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.setWaitForTasksToCompleteOnShutdown(true);
-        executor.setAwaitTerminationSeconds(5);
-        executor.initialize();
+    public SimpleAsyncTaskExecutor asyncExecutor() {
+        SimpleAsyncTaskExecutor executor = new SimpleAsyncTaskExecutor("virtual-async#");
+        executor.setVirtualThreads(true);
         return executor;
     }
 
@@ -43,8 +37,7 @@ public class AsyncPoolConfig implements AsyncConfigurer, WebMvcConfigurer {
 
     @Override
     public Executor getAsyncExecutor() {
-        return new TaskExecutorAdapter(Executors.newThreadPerTaskExecutor(
-                Thread.ofVirtual().name("virtual-async#", 1).factory()));
+        return asyncExecutor();
     }
 
     @Override

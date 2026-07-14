@@ -3,7 +3,7 @@ package com.cn;
 import com.cn.dao.CarouselRepository;
 import com.cn.entity.Carousel;
 import com.cn.entity.CarouselCategory;
-import com.cn.util.UploadUtil;
+import com.cn.service.StorageService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
 public class CarouselService {
     private final CarouselRepository carouselRepository;
+    private final StorageService storageService;
 
     /**
      * 根据条件获取轮播图列表
@@ -71,7 +72,7 @@ public class CarouselService {
         CarouselCategory carouselCategory = carouselRepository.getReferenceById(id);
         try {
             for (Carousel carousel : carouselCategory.getCarousels()) {
-                UploadUtil.deleteFileByAli(carousel.getImageUrl());
+                storageService.deleteFile(carousel.getImageUrl());
             }
         } catch (Exception e) {
             log.error("delete carousel category error:", e);
@@ -88,7 +89,7 @@ public class CarouselService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteCarousel(Long id, String url) {
         try {
-            UploadUtil.deleteFileByAli(url);
+            storageService.deleteFile(url);
         } catch (Exception e) {
             log.error("delete carousel error:", e);
         }
