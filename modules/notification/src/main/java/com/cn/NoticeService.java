@@ -9,7 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -24,7 +24,7 @@ public class NoticeService {
      * 获取展示公告
      */
     public List<Notice> getNotice() {
-        LocalDateTime now = LocalDateTime.now();
+        Instant now = Instant.now();
         return noticeRepository.getNoticesByBeginTimeBeforeAndEndTimeAfterOrderByCreatedAtDesc(now, now);
     }
 

@@ -1,14 +1,14 @@
 package com.cn.config;
 
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Configuration;
+
+import java.net.URI;
 
 /**
  * OSS 自动配置类 (S3 兼容协议)
@@ -19,17 +19,20 @@ import org.springframework.context.annotation.Configuration;
 public class OssAutoConfig {
 
     @Bean
-    public AmazonS3 amazonS3(OssConfigProperties properties) {
-        AWSCredentials credentials = new BasicAWSCredentials(properties.getAccessKeyId(), properties.getAccessKeySecret());
-        ClientConfiguration clientConfiguration = new ClientConfiguration();
-        clientConfiguration.setMaxConnections(100);
+    public S3Client s3Client(OssConfigProperties properties) {
+        Region region = properties.getRegion() != null ? Region.of(properties.getRegion()) : Region.US_EAST_1;
 
-        return AmazonS3ClientBuilder.standard()
-                .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(properties.getHost(), properties.getRegion()))
-                .withClientConfiguration(clientConfiguration)
-                .disableChunkedEncoding()
-                .withPathStyleAccessEnabled(true)
+        S3Configuration serviceConfiguration = S3Configuration.builder()
+                .pathStyleAccessEnabled(true)
+                .chunkedEncodingEnabled(false)
+                .build();
+
+        return S3Client.builder()
+                .credentialsProvider(StaticCredentialsProvider.create(
+                        AwsBasicCredentials.create(properties.getAccessKeyId(), properties.getAccessKeySecret())))
+                .endpointOverride(URI.create(properties.getHost()))
+                .region(region)
+                .serviceConfiguration(serviceConfiguration)
                 .build();
     }
 }

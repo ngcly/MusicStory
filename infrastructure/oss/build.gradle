@@ -7,5 +7,5 @@ bootJar {
 
 dependencies {
     api project(":modules:shared")
-    api "com.amazonaws:aws-java-sdk-s3:1.12.797"
+    api "software.amazon.awssdk:s3:2.25.10"
 }

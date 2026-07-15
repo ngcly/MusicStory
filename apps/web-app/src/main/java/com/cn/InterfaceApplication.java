@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class InterfaceApplication {
     public static void main(String[] args) {
+        System.setProperty("aws.java.v1.disableDeprecationAnnouncement", "true");
         ConfigEnum configEnum = ConfigEnum.JASYPT_ENCRYPTOR;
         System.setProperty(configEnum.getKey(),configEnum.getValue());
         SpringApplication.run(InterfaceApplication.class, args);

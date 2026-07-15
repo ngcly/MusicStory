@@ -1,38 +1,42 @@
 {
-  "name": "music-story",
-  "version": "0.2.0",
+  "name": "music-story-client",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.7.0",
-    "@fortawesome/free-solid-svg-icons": "^6.7.0",
-    "@fortawesome/vue-fontawesome": "^3.0.8",
-    "md-editor-v3": "^6.5.3",
-    "@tsparticles/vue3": "^4.3.2",
-    "@tsparticles/slim": "^4.3.2",
+    "@lucide/vue": "^1.24.0",
+    "@nuxtjs/tailwindcss": "^6.12.1",
+    "@pinia/nuxt": "^0.5.2",
+    "@tiptap/extension-image": "^2.27.2",
+    "@tiptap/extension-placeholder": "^2.6.4",
+    "@tiptap/starter-kit": "^2.6.4",
+    "@tiptap/vue-3": "^2.6.4",
+    "@vueuse/core": "^14.3.0",
     "animate.css": "^4.1.1",
-    "aplayer": "^1.10.1",
-    "axios": "^1.7.0",
-    "@element-plus/icons-vue": "^2.3.1",
-    "element-plus": "^2.10.0",
-    "font-awesome": "^4.7.0",
+    "axios": "^1.7.2",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
     "js-cookie": "^3.0.5",
     "js-md5": "^0.8.3",
+    "lucide-vue-next": "^0.414.0",
     "normalize.css": "^8.0.1",
-    "pinia": "^2.3.0",
+    "nuxt": "^3.12.2",
+    "pinia": "^2.1.9",
+    "radix-vue": "^1.9.0",
+    "reka-ui": "^2.10.1",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",
-    "vue": "^3.5.0",
-    "vue-router": "^4.5.0"
+    "tailwind-merge": "^2.3.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.2.0",
-    "vite": "^6.1.0",
+    "tailwindcss-animate": "^1.0.7",
+    "vite": "^8.1.4",
     "vite-plugin-compression": "^0.5.1"
   }
 }

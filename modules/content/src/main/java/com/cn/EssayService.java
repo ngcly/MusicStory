@@ -44,8 +44,8 @@ public class EssayService {
      */
     public List<Map<String, Object>> getEssayList(int page, int pageSize) {
         String sql = "SELECT t.id,t.title,t.synopsis,t3.username,t2.name,t.created_at,t.updated_at,t.read_num " +
-                "FROM essay t,classify t2,user t3 WHERE t.classify_id=t2.id AND t.user_id=t3.id " +
-                "AND (t.state=3 OR t.state=4) order by t.updated_at desc LIMIT ?,?";
+                "FROM essay t,classify t2,user_info t3 WHERE t.classify_id=t2.id AND t.user_id=t3.id " +
+                "AND (t.state='NORMAL' OR t.state='RECOMMEND') order by t.updated_at desc LIMIT ?,?";
         return customizeRepository.nativeQueryListMap(sql, (page - 1) * pageSize, pageSize);
     }
 
