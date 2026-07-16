@@ -1,128 +1,94 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>菜单编辑页</title>
-    <link rel="stylesheet" href="/webjars/layui/dist/css/layui.css">
-    <link rel="stylesheet" href="/css/public.css">
+    <title>菜单编辑</title>
 </head>
-<body class="child-body">
-<div class="child-nav">
-    <span class="layui-breadcrumb">
-         <a>系统设置</a>
-         <a href="/sys/menu">菜单列表</a>
-        <a><cite th:text="${#strings.equals(menu.id,null)?'新增菜单':'修改菜单'}"></cite></a>
-    </span>
-    <a class="layui-btn layui-btn-sm" href="javascript:location.replace(location.href);" title="刷新" style="float:right;margin-top: 3px"><i class="layui-icon layui-icon-refresh-3"></i></a>
-</div>
-<div class="layui-col-md12">
-    <div class="layui-card">
-        <div class="layui-card-header" th:text="${#strings.equals(menu.id,null)?'新增菜单':'修改菜单'}"></div>
-        <div class="layui-card-body">
-            <form class="layui-form" action="/sys/menu" method="post">
-                <input type="hidden" name="id" id="mid" th:value="${menu.id}">
-                <input type="hidden" name="parentId" th:value="${menu.parentId}" />
-                <div class="layui-form-item">
-                    <label class="layui-form-label">菜单名</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="name" lay-verify="required" lay-vertype="tips" th:value="${menu.name}" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">请求方法</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="httpMethod" lay-verify="required" lay-vertype="tips" th:value="${menu.httpMethod}" autocomplete="off" class="layui-input">
-                    </div>
-                    <div class="layui-form-mid layui-word-aux">GET|POST|PUT|DELETE</div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">资源类型</label>
-                    <div class="layui-input-inline">
-                        <select name="resourceType" lay-verify="required">
-                            <option value="menu">菜单</option>
-                            <option value="button" th:selected="${#strings.equals(menu.resourceType,'button')}">按钮</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">父级菜单</label>
-                    <div class="layui-input-inline">
-                        <input type="text" th:value="${#strings.equals(parentName,'')?'顶层菜单':parentName}" readonly="readonly" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">跳转地址</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="url" class="layui-input" th:value="${menu.url}" autocomplete="off">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">图标</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="icon" class="layui-input" th:value="${menu.icon}" autocomplete="off">
-                        <!--<i class="layui-icon" th:utext="${menu.icon}"></i>-->
-                    </div>
-                    <div class="layui-form-mid layui-word-aux">图标只对菜单起作用，这块本想做成下拉框的效果 然后图标跟表格一样排列在下面任由选择，奈何，哎！流下了没有技术的泪水</div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">排序</label>
-                    <div class="layui-input-inline">
-                        <input type="number" name="sort" lay-verify="sort" lay-vertype="tips"  class="layui-input" th:value="${menu.sort}" autocomplete="off">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <div class="layui-input-block">
-                        <button class="layui-btn" id="save" lay-submit lay-filter="save" th:text="${#strings.equals(menu.id,null)?'保存':'修改'}"></button>
-                        <a href="/sys/menu.html" type="button" class="layui-btn layui-btn-primary">返回</a>
-                    </div>
-                </div>
-            </form>
+<body>
+ 
+<div th:fragment="menuEditFragment" class="p-4"
+     x-data="{
+        resourceType: '[[${menu.resourceType != null ? menu.resourceType : 'menu'}]]'
+     }">
+     
+    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4"
+        th:text="${menu.id == null ? '新增菜单' : '修改菜单'}"></h3>
+        
+    <form th:hx-put="${menu.id != null} ? '/sys/menu' : null"
+          th:hx-post="${menu.id == null} ? '/sys/menu' : null"
+          hx-swap="none"
+          class="space-y-4">
+          
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="hidden" name="id" th:value="${menu.id}">
+        <input type="hidden" name="parentId" th:value="${menu.parentId != null ? menu.parentId : 0}" />
+        
+        <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase">菜单名</label>
+            <input type="text" name="name" th:value="${menu.name}" required
+                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
         </div>
-    </div>
+        
+        <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase">请求方法</label>
+            <input type="text" name="httpMethod" th:value="${menu.httpMethod}" required placeholder="GET|POST|PUT|DELETE"
+                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            <span class="text-xs text-gray-400 mt-1 block">接口请求的HTTP方法，如：GET|POST</span>
+        </div>
+ 
+        <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase mb-2">资源类型</label>
+            <div class="flex items-center space-x-4">
+                <label class="inline-flex items-center">
+                    <input type="radio" name="resourceType" value="menu" x-model="resourceType"
+                           class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                    <span class="ml-2 text-sm text-gray-700 dark:text-gray-200">菜单</span>
+                </label>
+                <label class="inline-flex items-center">
+                    <input type="radio" name="resourceType" value="button" x-model="resourceType"
+                           class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                    <span class="ml-2 text-sm text-gray-700 dark:text-gray-200">按钮</span>
+                </label>
+            </div>
+        </div>
+        
+        <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase">父级菜单</label>
+            <input type="text" th:value="${parentName == null || parentName.isEmpty() ? '顶层菜单' : parentName}" readonly
+                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-500 sm:text-sm">
+        </div>
+        
+        <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase">跳转地址</label>
+            <input type="text" name="url" th:value="${menu.url}" placeholder="如：/sys/menu.html"
+                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+        </div>
+ 
+        <div x-show="resourceType === 'menu'">
+            <label class="block text-xs font-semibold text-gray-400 uppercase">图标 (Thyme / FontAwesome)</label>
+            <input type="text" name="icon" th:value="${menu.icon}" placeholder="如：&#xe608;"
+                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            <span class="text-xs text-gray-400 mt-1 block">只在菜单级别展示</span>
+        </div>
+        
+        <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase">排序</label>
+            <input type="number" name="sort" th:value="${menu.sort}" required min="0"
+                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+        </div>
+ 
+        <div class="pt-4 flex justify-end space-x-2 border-t border-gray-100 dark:border-gray-700">
+            <button type="button" @click="openEdit = false"
+                    class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                取消
+            </button>
+            <button type="submit" @click="openEdit = false"
+                    class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    th:text="${menu.id == null ? '保存' : '修改'}">
+            </button>
+        </div>
+    </form>
 </div>
-
-<script src="/webjars/layui/dist/layui.js"></script>
-<script type="text/javascript">
-    layui.use(['element','form'], function(){
-        $ = layui.jquery;
-        const form = layui.form;
-
-        //表单校验
-        form.verify({
-            // 校验原始密码
-            sort:[
-                /^(?:0|[1-9]\d*)$/
-                ,'排序号必须是大于等于0的整数'
-            ],
-        });
-        //监听提交
-        form.on('submit(save)', function(data){
-            const headers = {};
-            headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
-            const methodType = $('#id').val() == undefined || $('#id').val() == ''?'post':'put';
-            $.ajax({
-                url:data.form.action,
-                type:methodType,
-                headers: headers,
-                data:data.field,
-                dataType:'json',
-                beforeSend:function() { //触发ajax请求开始时执行 防止重复提交
-                    $("#save").attr("disabled","true"); //改变提交按钮上的文字并将按钮设置为不可点击
-                },
-                success:function(data){
-                    if(data.code == 0){
-                        layer.msg(data.msg, {icon: 1,time:600}, function () {
-                            location.href="/sys/menu.html";
-                        });
-                    }else{
-                        layer.msg(data.msg,{time:1000});
-                    }
-                }
-            });
-            return false;
-        });
-
-    });
-</script>
+ 
 </body>
 </html>

@@ -1,6 +1,6 @@
 package com.cn.config;
 
-import com.cn.entity.User;
+import com.cn.user.domain.User;
 import com.cn.model.AuthenticationDetails;
 import com.cn.model.LogInDTO;
 import com.cn.model.RestCode;
@@ -66,7 +66,8 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain chain, Authentication authResult) throws IOException {
-        User user = (User) authResult.getPrincipal();
+        SecurityUser securityUser = (SecurityUser) authResult.getPrincipal();
+        User user = securityUser.getUser();
         String token = jwtTokenUtil.generateToken(user);
         response.setContentType(ContentType.APPLICATION_JSON.toString());
         response.setHeader(HttpHeaders.AUTHORIZATION, token);

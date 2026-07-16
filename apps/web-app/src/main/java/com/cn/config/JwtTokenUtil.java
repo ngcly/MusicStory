@@ -7,7 +7,7 @@ import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.http.Header;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
-import com.cn.entity.User;
+import com.cn.user.domain.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

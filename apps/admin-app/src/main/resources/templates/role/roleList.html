@@ -1,222 +1,335 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>角色列表</title>
-    <link rel="stylesheet" href="/webjars/layui/dist/css/layui.css">
-    <link rel="stylesheet" href="/css/public.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4f46e5',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="child-body">
-<div class="child-nav">
-    <span class="layui-breadcrumb">
-         <a>系统设置</a>
-         <a><cite>角色列表</cite></a>
-    </span>
-    <a class="layui-btn layui-btn-sm" href="javascript:location.replace(location.href);" title="刷新" style="float:right;margin-top: 3px"><i class="layui-icon layui-icon-refresh-3"></i></a>
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen p-6"
+      x-data="{ openEdit: false, openGrant: false }">
+ 
+<!-- Top Navigation Bar -->
+<div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 pb-4 mb-6">
+    <nav class="flex" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center text-gray-500">系统设置</li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                    </svg>
+                    <span class="ml-1 text-sm font-semibold text-gray-800 dark:text-white">角色列表</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+    <button class="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-500" 
+            onclick="location.reload()" title="刷新">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+        </svg>
+    </button>
 </div>
-
-<div class="layui-row">
-    <form  class="layui-form">
-        <div class="layui-form-item search-row">
-            <div class="layui-inline">
-                <label class="search-label">角色名</label>
-                <div class="search-input">
-                    <input type="text" name="roleName" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-inline">
-                <label class="search-label">角色类型</label>
-                <div class="search-input">
-                    <select name="roleType">
-                        <option value=""></option>
-                        <option value="ADMIN">后台角色</option>
-                        <option value="USER">前台角色</option>
-                    </select>
-                </div>
-            </div>
-            <div class="layui-inline">
-                <label class="search-label">是否可用</label>
-                <div class="search-input">
-                    <select name="available">
-                        <option value=""></option>
-                        <option value="0">停用</option>
-                        <option value="1">正常</option>
-                    </select>
-                </div>
-            </div>
-            <div class="layui-inline">
-                <button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
-                <button class="layui-btn" type="reset"><i class="layui-icon layui-icon-refresh"></i>重置</button>
-            </div>
-            <div class="layui-inline">
-                <a sec:authorize="hasAuthority('POST_/sys/role')" href="javascript:void(0)" type="button" id="add" class="layui-btn"><i class="layui-icon">&#xe608;</i>新增</a>
-            </div>
+ 
+<!-- Search & Actions Row -->
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <form id="search-form" hx-get="/sys/role.html" hx-target="#roleTableContainer" hx-swap="outerHTML" class="grid grid-cols-1 md:grid-cols-4 gap-4 flex-1 items-end">
+        <div>
+            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">角色名</label>
+            <input type="text" name="roleName" th:value="${roleParam != null ? roleParam.roleName : ''}"
+                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+        </div>
+        <div>
+            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">角色类型</label>
+            <select name="roleType" 
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                <option value=""></option>
+                <option value="ADMIN" th:selected="${roleParam != null && roleParam.roleType != null && roleParam.roleType.toString() == 'ADMIN'}">后台角色</option>
+                <option value="USER" th:selected="${roleParam != null && roleParam.roleType != null && roleParam.roleType.toString() == 'USER'}">前台角色</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">是否可用</label>
+            <select name="available" 
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                <option value=""></option>
+                <option value="false" th:selected="${roleParam != null && roleParam.available != null && !roleParam.available}">停用</option>
+                <option value="true" th:selected="${roleParam != null && roleParam.available != null && roleParam.available}">正常</option>
+            </select>
+        </div>
+        <div class="flex space-x-2">
+            <button type="submit" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 w-full">
+                查询
+            </button>
+            <button type="reset" class="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 w-full">
+                重置
+            </button>
         </div>
     </form>
+    <div>
+        <button sec:authorize="hasAuthority('POST_/sys/role')"
+                hx-get="/sys/role/edit.html" 
+                hx-target="#editModalContent"
+                @click="openEdit = true"
+                class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            <svg class="-ml-1 mr-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+            </svg>
+            新增角色
+        </button>
+    </div>
 </div>
-
-<table class="layui-table" id="table" lay-filter="roles"></table>
-
-<script src="/webjars/layui/dist/layui.js"></script>
-<script type="text/javascript">
-    layui.use('table', function(){
-        $ = layui.jquery;
-        const form = layui.form,
-            table = layui.table;
-
-        //执行渲染
-        table.render({
-            elem: '#table' //指定原始表格元素选择器（推荐id选择器）
-            ,url: '/sys/role'
-            ,id: 're'
-            ,request: {
-                limitName: 'size' //每页数据量的参数名，默认：limit
-            }
-            ,loading:true
-            ,page: true //开启分页
-            ,cols: [
-                [{field: 'roleName', title: '角色名', sort: true}
-                    ,{field: 'roleCode', title: '标识符'}
-                    ,{field: 'description', title: '角色描述'}
-                    ,{field: 'roleType', title: '角色类型', templet: '#typeTpl'}
-                    ,{field: 'available', title: '是否可用', templet: '#stateTpl'}
-                    ,{fixed: 'right', title:'操作', align:'center',width:'310', toolbar: '#bar'}]
-            ]
-        });
-
-        //条件搜索
-        form.on('submit(search)', function(data){
-            const values = data.field;
-            table.reload('re', {
-                page: {
-                    curr: 1 //重新从第 1 页开始
-                }
-                , where: values
-            });
-            return false;
-        });
-
-        //监听工具条
-        table.on('tool(roles)', function(obj){  //删除
-            const $ = layui.$;
-            //注：tool是工具条事件名，manager是table原始容器的属性 lay-filter="对应的值"
-            const data = obj.data; //获得当前行数据
-            const layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-            const headers = {};
-            headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
-
-            if(layEvent === 'detail'){ //查看
-                layer.open({
-                    type: 2 //Page层类型
-                    ,skin: 'layui-layer-molv'
-                    ,area: ['400px', '500px']
-                    ,title: ['角色权限','font-size:18px']
-                    ,shadeClose: true
-                    ,shade: 0 //遮罩透明度
-                    ,maxmin: true //允许全屏最小化
-                    ,content:'/sys/role/grant.html?roleId='+data.id+'&type=1'
-                });
-            } else if(layEvent === 'del'){
-                layer.confirm('确定删除吗?',{title:'删除'}, function(){
-                    $.ajax({
-                        url: '/sys/role',
-                        type: 'delete',
-                        headers: headers,
-                        data: {roleId: data.id},
-                        dataType: 'json',
-                        success: function(res) {
-                            if (res.code == 0){
-                                layer.msg(res.msg, {icon: 1,time:600},function () {
-                                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                                });
-                            } else {
-                                layer.msg(res.msg, {icon: 2,time:600});
-                            }
-                        }
-                    })
-                });
-            } else if(layEvent === 'grant'){
-                layer.open({
-                    type: 2 //Page层类型
-                    ,skin: 'layui-layer-molv'
-                    ,area: ['400px', '510px']
-                    ,title: ['角色授权','font-size:18px']
-                    ,shadeClose: true
-                    ,shade: 0 //遮罩透明度
-                    ,maxmin: true //允许全屏最小化
-                    ,content:'/sys/role/grant.html?roleId='+data.id+'&type=2'
-                });
-            } else if(layEvent === 'edit'){ //编辑
-                layer.open({
-                    type: 2 //Page层类型
-                    ,skin: 'layui-layer-molv'
-                    ,area: ['500px', '455px']
-                    ,title: ['角色信息','font-size:18px']
-                    ,shadeClose: true
-                    ,shade: 0 //遮罩透明度
-                    ,maxmin: true //允许全屏最小化
-                    ,content:'/sys/role/edit.html?roleId='+data.id
-                });
-            }
-        });
-
-        //监听是否启用
-        form.on('switch(switch)', function(obj){
-            const id = $(this).attr('data-id');
-            const _this = $(this);
-
-            $.getJSON('/sys/role/toggle', {roleId:id}, function(ret){
-                if (ret.code == 0){
-                    layer.msg(ret.msg, {icon: 1,time:600});
-                } else {
-                    _this.prop("checked",!_this.prop("checked"));
-                    form.render("checkbox");
-                    layer.msg(ret.msg, {icon: 2,time:600});
-                }
-            }).fail(function(jqXHR) {
-                _this.prop("checked",!_this.prop("checked"));
-                form.render("checkbox");
-                if (jqXHR.status == 403) {
-                    layer.msg('抱歉，您没有权限', {icon: 2,time:600});
-                } else {
-                    layer.msg('未知错误', {icon: 2,time:600});
-                }
-            });
-        });
-
-        //新增角色窗口
-        $('#add').on('click',function () {
-            layer.open({
-                type: 2 //Page层类型
-                ,skin: 'layui-layer-molv'
-                ,area: ['500px', '455px']
-                ,title: ['角色信息','font-size:18px']
-                ,shadeClose: true
-                ,shade: 0 //遮罩透明度
-                ,maxmin: true //允许全屏最小化
-                ,content:'/sys/role/edit.html'
-            });
-        });
-
-    });
-</script>
-<script type="text/html" id="bar">
-    <a class="layui-btn layui-btn-xs" lay-event="detail"><i class="layui-icon iconfont icon-view"></i>查看</a>
-    <a class="layui-btn layui-btn-xs" lay-event="grant" ><i class="layui-icon layui-icon-auz"></i>授权</a>
-    <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
-</script>
-
-<script type="text/html" id="typeTpl">
-    {{#  if(d.roleType == 'ADMIN'){ }}
-    后台角色
-    {{#  } else { }}
-    前台角色
-    {{#  } }}
-</script>
-<script type="text/html" id="stateTpl">
-    <input type="checkbox" name="available" value="{{d.available}}" lay-skin="switch" lay-text="启用|停用" data-id={{d.id}} lay-filter="switch" {{ d.available ? 'checked' : '' }}>
-</script>
+ 
+<!-- Table Container -->
+<div id="roleTableContainer" th:fragment="roleTable"
+     hx-trigger="roleListChanged from:body" 
+     hx-get="/sys/role.html" 
+     hx-include="#search-form" 
+     hx-target="this" 
+     hx-swap="outerHTML"
+     class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+ 
+    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <thead class="bg-gray-50 dark:bg-gray-900">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">角色名</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">标识符</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">角色描述</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">角色类型</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">是否可用</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">操作</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+            <tr th:each="role : ${rolePage.content}" class="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white" th:text="${role.roleName}"></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300" th:text="${role.roleCode}"></td>
+                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-300" th:text="${role.description}"></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300" th:text="${role.roleType == 'ADMIN' ? '后台角色' : '前台角色'}"></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <button class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none"
+                            th:hx-get="'/sys/role/toggle?roleId=' + ${role.id}"
+                            hx-swap="none"
+                            th:classappend="${role.available ? 'bg-indigo-650 bg-indigo-600' : 'bg-gray-200 dark:bg-gray-700'}"
+                            role="switch">
+                        <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                              th:classappend="${role.available ? 'translate-x-5' : 'translate-x-0'}"></span>
+                    </button>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                    <button class="text-indigo-600 hover:text-indigo-900"
+                            th:hx-get="'/sys/role/grant.html?roleId=' + ${role.id} + '&type=1'" 
+                            hx-target="#grantModalContent"
+                            @click="openGrant = true">
+                        查看
+                    </button>
+                    <button class="text-indigo-600 hover:text-indigo-900"
+                            th:hx-get="'/sys/role/grant.html?roleId=' + ${role.id} + '&type=2'" 
+                            hx-target="#grantModalContent"
+                            @click="openGrant = true">
+                        授权
+                    </button>
+                    <button class="text-indigo-600 hover:text-indigo-900"
+                            th:hx-get="'/sys/role/edit.html?roleId=' + ${role.id}" 
+                            hx-target="#editModalContent"
+                            @click="openEdit = true">
+                        编辑
+                    </button>
+                    <button class="text-red-600 hover:text-red-900"
+                            th:hx-delete="'/sys/role?roleId=' + ${role.id}"
+                            hx-confirm="确定删除该角色吗？"
+                            hx-target="closest tr"
+                            hx-swap="outerHTML"
+                            th:hx-headers="'{&quot;X-CSRF-TOKEN&quot;: &quot;' + ${_csrf.token} + '&quot;}'">
+                        删除
+                    </button>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(rolePage.content)}">
+                <td colspan="6" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                    未找到相关的角色。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+ 
+    <!-- Pagination -->
+    <div class="bg-white dark:bg-gray-800 px-4 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 sm:px-6">
+        <div class="flex-1 flex justify-between sm:hidden">
+            <button th:if="${rolePage.hasPrevious()}"
+                    th:hx-get="'/sys/role.html?page=' + ${currentPage - 1} + '&size=' + ${size}"
+                    hx-include="#search-form"
+                    hx-target="#roleTableContainer"
+                    hx-swap="outerHTML"
+                    class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                上一页
+            </button>
+            <button th:if="${rolePage.hasNext()}"
+                    th:hx-get="'/sys/role.html?page=' + ${currentPage + 1} + '&size=' + ${size}"
+                    hx-include="#search-form"
+                    hx-target="#roleTableContainer"
+                    hx-swap="outerHTML"
+                    class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                下一页
+            </button>
+        </div>
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+                <p class="text-sm text-gray-700 dark:text-gray-300">
+                    当前显示第 <span class="font-medium" th:text="${(currentPage - 1) * size + 1}"></span> 至 
+                    <span class="font-medium" th:text="${(currentPage - 1) * size + rolePage.numberOfElements}"></span> 条，
+                    共 <span class="font-medium" th:text="${rolePage.totalElements}"></span> 条记录
+                </p>
+            </div>
+            <div>
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-1" aria-label="Pagination">
+                    <button th:disabled="${!rolePage.hasPrevious()}"
+                            th:hx-get="${rolePage.hasPrevious()} ? '/sys/role.html?page=' + ${currentPage - 1} + '&size=' + ${size} : null"
+                            hx-include="#search-form"
+                            hx-target="#roleTableContainer"
+                            hx-swap="outerHTML"
+                            class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50">
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <button th:each="pageNum : ${#numbers.sequence(1, rolePage.totalPages == 0 ? 1 : rolePage.totalPages)}"
+                            th:hx-get="'/sys/role.html?page=' + ${pageNum} + '&size=' + ${size}"
+                            hx-include="#search-form"
+                            hx-target="#roleTableContainer"
+                            hx-swap="outerHTML"
+                            th:classappend="${pageNum == currentPage} ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'"
+                            class="relative inline-flex items-center px-4 py-2 border text-sm font-medium"
+                            th:text="${pageNum}">
+                    </button>
+                    <button th:disabled="${!rolePage.hasNext()}"
+                            th:hx-get="${rolePage.hasNext()} ? '/sys/role.html?page=' + ${currentPage + 1} + '&size=' + ${size} : null"
+                            hx-include="#search-form"
+                            hx-target="#roleTableContainer"
+                            hx-swap="outerHTML"
+                            class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50">
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<!-- Edit Modal -->
+<div x-show="openEdit" 
+     class="fixed inset-0 z-50 overflow-y-auto" 
+     aria-labelledby="modal-title" role="dialog" aria-modal="true" style="display: none;">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div x-show="openEdit"
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
+             @click="openEdit = false"></div>
+ 
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+ 
+        <div x-show="openEdit"
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             class="inline-block align-middle bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="flex items-center justify-between border-b pb-3 mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white" id="modal-title">角色信息</h3>
+                    <button class="text-gray-400 hover:text-gray-600" @click="openEdit = false">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <div id="editModalContent">
+                    <div class="flex justify-center p-6">
+                        <svg class="animate-spin h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<!-- Grant Modal -->
+<div x-show="openGrant" 
+     class="fixed inset-0 z-50 overflow-y-auto" 
+     aria-labelledby="modal-title" role="dialog" aria-modal="true" style="display: none;">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div x-show="openGrant"
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
+             @click="openGrant = false"></div>
+ 
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+ 
+        <div x-show="openGrant"
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             class="inline-block align-middle bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full">
+            <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="flex items-center justify-between border-b pb-3 mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white" id="modal-title">权限管理</h3>
+                    <button class="text-gray-400 hover:text-gray-600" @click="openGrant = false">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <div id="grantModalContent">
+                    <div class="flex justify-center p-6">
+                        <svg class="animate-spin h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ 
 </body>
 </html>

@@ -1,13 +1,17 @@
 package com.cn.user;
-
+ 
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.RandomUtil;
 import com.cn.enums.*;
 import com.cn.exception.GlobalException;
 import com.cn.config.RabbitConfig;
-import com.cn.dao.*;
-import com.cn.entity.*;
 import com.cn.model.RestCode;
+import com.cn.user.domain.Role;
+import com.cn.user.domain.SocialInfo;
+import com.cn.user.domain.User;
+import com.cn.user.domain.repository.RoleRepositoryPort;
+import com.cn.user.domain.repository.SocialInfoRepositoryPort;
+import com.cn.user.domain.repository.UserRepositoryPort;
 import com.cn.util.MailUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.annotation.Resource;
@@ -17,42 +21,40 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
-
+ 
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-
+ 
 /**
- * 用户 service 类
+ * 用户领域服务类 (Domain Service)
+ * 不再直接依赖 JPA 实体和 Spring Security 接口，改由接口注入 (Ports)
  *
- * @author chen
- * @date 2018-01-02 18:20
+ * @author ngcly
  */
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
-    private final UserRepository userRepository;
-    private final SocialInfoRepository socialInfoRepository;
-    private final RoleRepository roleRepository;
+public class UserService {
+    private final UserRepositoryPort userRepositoryPort;
+    private final SocialInfoRepositoryPort socialInfoRepositoryPort;
+    private final RoleRepositoryPort roleRepositoryPort;
     private final RabbitTemplate rabbitTemplate;
     private final RestClient restClient;
     private final MailUtil mailUtil;
     @Resource
     private RedisTemplate<String, Long> redisTemplate;
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsernameOrEmail(username, username)
-                .orElseThrow(() -> new UsernameNotFoundException("用户不存在"));
+ 
+    /**
+     * 根据用户名/邮箱加载用户 (原 loadUserByUsername, 业务化)
+     */
+    public User getUserByUsernameOrEmail(String username) {
+        return userRepositoryPort.findByUsernameOrEmail(username, username)
+                .orElseThrow(() -> new GlobalException(RestCode.UNAUTHORIZED.code, "用户不存在"));
     }
-
+ 
     /**
      * 注册账户
      *
@@ -60,21 +62,21 @@ public class UserService implements UserDetailsService {
      * @return string
      */
     public String signUp(User newUser) {
-        if (userRepository.existsByUsername(newUser.getUsername())) {
+        if (userRepositoryPort.existsByUsername(newUser.getUsername())) {
             throw new GlobalException(300, "用户名已存在");
         }
-
-        if (userRepository.existsByEmail(newUser.getEmail())) {
+ 
+        if (userRepositoryPort.existsByEmail(newUser.getEmail())) {
             throw new GlobalException(300, "该邮箱已注册");
         }
-
+ 
         newUser.setState(UserStatusEnum.INITIALIZE);
-        User result = userRepository.save(newUser);
+        User result = userRepositoryPort.save(newUser);
         //生成激活码
         String code = System.currentTimeMillis() % 100 + result.getUsername();
         //以激活码为KEY 将用户ID保存到redis 有效期三小时
         redisTemplate.opsForValue().set(code, result.getId(), 3, TimeUnit.HOURS);
-
+ 
         String subject = "来自[音书]网站的激活邮件";
         String templateName = "activation.html";
         Dict context = Dict.create().set("username", result.getUsername()).set("code", code);
@@ -87,7 +89,7 @@ public class UserService implements UserDetailsService {
         });
         return result.getUsername();
     }
-
+ 
     /**
      * 注册用户进行激活
      *
@@ -100,23 +102,23 @@ public class UserService implements UserDetailsService {
         if (Objects.isNull(id)) {
             throw new GlobalException(500, "激活码已过期或无效");
         }
-        Optional<User> userOptional = userRepository.findById(id);
+        Optional<User> userOptional = userRepositoryPort.findById(id);
         if (userOptional.isEmpty()) {
             throw new GlobalException(500, "激活码错误");
         }
         User user = userOptional.get();
         user.setState(UserStatusEnum.NORMAL);
-        userRepository.save(user);
+        userRepositoryPort.save(user);
         redisTemplate.delete(code);
     }
-
+ 
     /**
      * 用户登录 (三方登录)
      *
      * @param source   三方资源名称
      * @param authCode 三方授权码
      * @param state    防 csrf 标识符
-     * @return UserDetail
+     * @return User
      */
     @Transactional(rollbackFor = Exception.class)
     public User socialLogin(String source, String authCode, String state) {
@@ -126,27 +128,27 @@ public class UserService implements UserDetailsService {
         SocialEnum socialEnum = SocialEnum.valueOf(source.toUpperCase());
         SocialInfo socialInfo = getSocialInfo(socialEnum, authCode);
         socialInfo.setSource(source);
-
+ 
         //根据OpenId 从数据库中查找是否有该用户信息 若有则直接使用用户信息 进行token生成操作
-        SocialInfo thirdUser = socialInfoRepository.findByOpenId(socialInfo.getOpenId());
+        SocialInfo thirdUser = socialInfoRepositoryPort.findByOpenId(socialInfo.getOpenId()).orElse(null);
         if (Objects.isNull(thirdUser)) {
             thirdUser = socialInfo;
             //若未登录过，则需要获取用户信息进行注册
             User user = getThirdUserInfo(socialInfo, socialEnum);
             //如果名称已存在 则添加随机数
             String username = user.getNickName();
-            while (userRepository.existsByUsername(username)) {
+            while (userRepositoryPort.existsByUsername(username)) {
                 username = user.getNickName() + RandomUtil.randomString(3);
             }
             user.setUsername(username);
-            userRepository.save(user);
-
+            userRepositoryPort.save(user);
+ 
             thirdUser.setUser(user);
-            socialInfoRepository.save(thirdUser);
+            socialInfoRepositoryPort.save(thirdUser);
         }
         return socialInfo.getUser();
     }
-
+ 
     /**
      * 三方账号绑定
      *
@@ -163,9 +165,9 @@ public class UserService implements UserDetailsService {
         SocialInfo thirdUser = getSocialInfo(socialEnum, authCode);
         thirdUser.setSource(source);
         thirdUser.setUser(currentUser);
-        socialInfoRepository.save(thirdUser);
+        socialInfoRepositoryPort.save(thirdUser);
     }
-
+ 
     /**
      * 获取三方 access_token,open_id等信息
      *
@@ -189,7 +191,7 @@ public class UserService implements UserDetailsService {
             social.setAccessToken(tokenResult.get(SocialParamEnum.access_token.name()).asText());
             social.setExpireIn(tokenResult.get(SocialParamEnum.expires_in.name()).asInt());
             social.setRefreshToken(tokenResult.get(SocialParamEnum.refresh_token.name()).asText());
-
+ 
             //获取回调后的 openid 值
             url = String.format("https://graph.qq.com/oauth2.0/me?access_token=%s", social.getAccessToken());
             JsonNode openidResult = restClient.get().uri(url).retrieve().body(JsonNode.class);
@@ -218,7 +220,7 @@ public class UserService implements UserDetailsService {
         }
         return social;
     }
-
+ 
     /**
      * 获取三方用户信息
      *
@@ -255,7 +257,7 @@ public class UserService implements UserDetailsService {
                 throw new GlobalException(userInfo.get(SocialParamEnum.errcode.name()).asInt(), userInfo.get(SocialParamEnum.errmsg.name()).asText());
             }
             social.setUnionId(userInfo.get(SocialParamEnum.unionid.name()).asText());
-
+ 
             user.setNickName(userInfo.get(SocialParamEnum.nickname.name()).asText());
             user.setGender(GenderEnum.valueOf(userInfo.get(SocialParamEnum.sex.name()).textValue()));
             user.setAvatar(userInfo.get(SocialParamEnum.headimgurl.name()).asText());
@@ -265,7 +267,7 @@ public class UserService implements UserDetailsService {
         }
         return user;
     }
-
+ 
     /**
      * 获取三方授权跳转的 url
      *
@@ -285,7 +287,7 @@ public class UserService implements UserDetailsService {
         }
         return String.format(urlTemplate, socialEnum.getAppId(), SocialEnum.APP_REDIRECT, SocialEnum.STATE);
     }
-
+ 
     /**
      * 解绑三方用户信息
      *
@@ -293,29 +295,26 @@ public class UserService implements UserDetailsService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void revokeSocial(Long userId, String openId) {
-        long deleted = socialInfoRepository.deleteByOpenIdAndUser_Id(openId, userId);
+        long deleted = socialInfoRepositoryPort.deleteByOpenIdAndUserId(openId, userId);
         if (deleted == 0) {
             throw new GlobalException(RestCode.UNAUTHORIZED);
         }
     }
-
-    /**
-     * 修改用户
-     *
-     * @param user 用户信息
-     */
+ 
     public void altUser(User user) {
-        User altUser = userRepository.getReferenceById(user.getId());
+        User altUser = userRepositoryPort.getReferenceById(user.getId());
         altUser.setState(user.getState());
-        var allRole = roleRepository.getAllByAvailableIsTrueAndRoleType(UserTypeEnum.USER);
+        var allRole = roleRepositoryPort.getActiveRolesByType(UserTypeEnum.USER);
         if (Objects.nonNull(user.getRoleIds())) {
+            // 清空旧的角色列表，重新添加
+            altUser.getRoleList().clear();
             for (Long roleId : user.getRoleIds()) {
-                allRole.stream().filter(role -> role.getId().equals(roleId)).forEach(altUser.getRoleList()::add);
+                allRole.stream().filter(r -> r.getId().equals(roleId)).forEach(altUser.getRoleList()::add);
             }
         }
-        userRepository.save(altUser);
+        userRepositoryPort.save(altUser);
     }
-
+ 
     /**
      * 根据条件动态查询用户列表
      *
@@ -324,10 +323,16 @@ public class UserService implements UserDetailsService {
      * @return Page<User>
      */
     public Page<User> getUserList(Pageable pageable, User user) {
-        return userRepository.findAll(UserRepository.getUserList(user.getUsername(), user.getNickName(),
-                user.getPhone(), user.getEmail(), user.getState()), pageable);
+        return userRepositoryPort.findUserList(
+                user.getUsername(),
+                user.getNickName(),
+                user.getEmail(),
+                user.getPhone(),
+                user.getState() != null ? user.getState().name() : null,
+                pageable
+        );
     }
-
+ 
     /**
      * 获取用户详情
      *
@@ -335,27 +340,27 @@ public class UserService implements UserDetailsService {
      * @return user
      */
     public User getUserDetail(Long userId) {
-        return userRepository.getReferenceById(userId);
+        return userRepositoryPort.getReferenceById(userId);
     }
-
+ 
     /**
      * 删除用户
      *
      * @param userId 用户id
      */
     public void delUser(Long userId) {
-        userRepository.deleteById(userId);
+        userRepositoryPort.deleteById(userId);
     }
-
+ 
     /**
      * 清除过期未激活的用户
      *
      * @param userId 用户Id
      */
     public void delUnActiveUser(Long userId) {
-        User user = userRepository.findById(userId).orElse(null);
+        User user = userRepositoryPort.findById(userId).orElse(null);
         if (Objects.nonNull(user) && UserStatusEnum.INITIALIZE == user.getState()) {
-            userRepository.delete(user);
+            userRepositoryPort.delete(user);
         }
     }
 }

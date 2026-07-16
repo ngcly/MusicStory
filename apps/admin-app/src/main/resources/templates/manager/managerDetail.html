@@ -1,59 +1,60 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>管理员详情页</title>
-    <link rel="stylesheet" href="/webjars/layui/dist/css/layui.css">
+    <title>管理员详情</title>
 </head>
 <body>
-<div class="layui-col-md12">
-    <table class="layui-table" lay-skin="line">
-        <tbody>
-        <tr>
-            <td>用户名：</td>
-            <td th:text="${manager.username}"></td>
-            <td>真实姓名：</td>
-            <td th:text="${manager.realName}"></td>
-        </tr>
-        <tr>
-            <td>性别：</td>
-            <td th:text="${manager.gender=='MAN'}?'男':'女'"></td>
-            <td>状态：</td>
-            <td th:switch="${manager.state}">
-                <span th:case="INITIALIZE">初始化</span>
-                <span th:case="NORMAL">正常</span>
-                <span th:case="LOCKED">封禁</span>
-            </td>
-        </tr>
-        <tr>
-            <td>生日：</td>
-            <td th:text="${#temporals.format(manager.birthday,'yyyy-MM-dd')}"></td>
-            <td>头像：</td>
-            <td><img class="layui-circle" th:src="${manager.avatar}" /></td>
-        </tr>
-        <tr>
-            <td>创建时间：</td>
-            <td th:text="${#temporals.format(manager.createdAt,'yyyy-MM-dd HH:mm:ss')}"></td>
-            <td>修改时间：</td>
-            <td th:text="${#temporals.format(manager.updatedAt,'yyyy-MM-dd HH:mm:ss')}"></td>
-        </tr>
-        <tr>
-            <td>角色：</td>
-            <td colspan="3"><span th:each="role:${manager.roleList}" th:text="${roleStat.last}?${role.getRoleName()}:${role.getRoleName()}+'、'"></span></td>
-        </tr>
-        </tbody>
-    </table>
+ 
+<div th:fragment="managerDetailFragment" class="space-y-6 p-4">
+    <!-- Header with Avatar -->
+    <div class="flex items-center space-x-4 border-b pb-4 border-gray-100 dark:border-gray-700">
+        <img class="h-16 w-16 rounded-full object-cover border-2 border-primary" th:src="${manager.avatar != null && !manager.avatar.isEmpty() ? manager.avatar : '/images/avatar.jpg'}" alt="Avatar">
+        <div>
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white" th:text="${manager.realName != null && !manager.realName.isEmpty() ? manager.realName : manager.username}"></h3>
+            <p class="text-sm text-gray-500" th:text="${manager.username}"></p>
+        </div>
+    </div>
+ 
+    <!-- Detail Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 text-sm">
+        <div>
+            <span class="block text-xs font-semibold text-gray-400 uppercase">真实姓名</span>
+            <span class="text-gray-800 dark:text-gray-200" th:text="${manager.realName != null ? manager.realName : '-'}"></span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-400 uppercase">性别</span>
+            <span class="text-gray-800 dark:text-gray-200" th:text="${manager.gender == 'MAN' ? '男' : '女'}"></span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-400 uppercase">状态</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium" 
+                  th:classappend="${manager.state == 'NORMAL' ? 'bg-green-100 text-green-800' : (manager.state == 'INITIALIZE' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800')}"
+                  th:text="${manager.state == 'NORMAL' ? '正常' : (manager.state == 'INITIALIZE' ? '初始化' : '封禁')}">
+            </span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-400 uppercase">生日</span>
+            <span class="text-gray-800 dark:text-gray-200" th:text="${manager.birthday != null ? manager.birthday : '-'}"></span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-400 uppercase">创建时间</span>
+            <span class="text-gray-800 dark:text-gray-200" th:text="${#temporals.format(manager.createdAt,'yyyy-MM-dd HH:mm:ss')}"></span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-400 uppercase">修改时间</span>
+            <span class="text-gray-800 dark:text-gray-200" th:text="${#temporals.format(manager.updatedAt,'yyyy-MM-dd HH:mm:ss')}"></span>
+        </div>
+        <div class="md:col-span-2">
+            <span class="block text-xs font-semibold text-gray-400 uppercase mb-1">分配角色</span>
+            <div class="flex flex-wrap gap-1">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                      th:each="role : ${manager.roleList}" th:text="${role.roleName}"></span>
+                <span th:if="${#lists.isEmpty(manager.roleList)}" class="text-gray-400">暂未分配角色</span>
+            </div>
+        </div>
+    </div>
 </div>
-<script src="/webjars/layui/dist/layui.js"></script>
-<script type="text/javascript">
-    layui.use(['element'], function(){
-        $ = layui.jquery;
-
-        $("button.close").on('click', function () {
-            const index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-            parent.layer.close(index);
-        });
-    });
-</script>
+ 
 </body>
 </html>

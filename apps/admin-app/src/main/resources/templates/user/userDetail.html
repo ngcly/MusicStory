@@ -1,85 +1,75 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>用户详情页</title>
-    <link rel="stylesheet" href="/webjars/layui/dist/css/layui.css">
+    <title>用户详情</title>
 </head>
 <body>
-<div class="layui-col-md12">
-    <table class="layui-table" lay-skin="line">
-        <tbody>
-        <tr>
-            <td>用户名：</td>
-            <td th:text="${user.username}"></td>
-            <td>昵称：</td>
-            <td th:text="${user.nickName}"></td>
-        </tr>
-        <tr>
-            <td>真实姓名：</td>
-            <td th:text="${user.realName}"></td>
-            <td>个性签名：</td>
-            <td th:text="${user.signature}"></td>
-        </tr>
-        <tr>
-            <td>性别：</td>
-            <td th:text="${user.gender=='MAN'}?'男':'女'"></td>
-            <td>状态：</td>
-            <td th:switch="${user.state}">
-                <span th:case="INITIALIZE">禁用</span>
-                <span th:case="NORMAL">正常</span>
-                <span th:case="LOCKED">异常</span>
-            </td>
-        </tr>
-        <tr>
-            <td>手机：</td>
-            <td th:text="${user.phone}"></td>
-            <td>邮箱：</td>
-            <td th:text="${user.email}"></td>
-        </tr>
-        <tr>
-            <td>生日：</td>
-            <td th:text="${#temporals.format(user.birthday,'yyyy-MM-dd')}"></td>
-            <td>头像：</td>
-            <td><img class="layui-circle" th:src="${user.avatar}" /></td>
-        </tr>
-        <tr>
-            <td>等级：</td>
-            <td th:text="${user.level}"></td>
-            <td>积分：</td>
-            <td th:text="${user.credit}"></td>
-        </tr>
-        <tr>
-            <td>创建时间：</td>
-            <td th:text="${#temporals.format(user.createdAt,'yyyy-MM-dd HH:mm:ss')}"></td>
-            <td>修改时间：</td>
-            <td th:text="${#temporals.format(user.updatedAt,'yyyy-MM-dd HH:mm:ss')}"></td>
-        </tr>
-        <tr>
-            <td>地址：</td>
-            <td th:text="${user.address}"></td>
-            <td>简介：</td>
-            <td th:text="${user.personDesc}"></td>
-        </tr>
-        <tr>
-            <td>余额：</td>
-            <td th:text="${user.balance}"></td>
-            <td>角色：</td>
-            <td><span th:each="role:${user.roleList}" th:text="${roleStat.last}?${role.getRoleName()}:${role.getRoleName()}+'、'"></span></td>
-        </tr>
-        </tbody>
-    </table>
+ 
+<div th:fragment="userDetailFragment" class="space-y-6 p-4">
+    <!-- Header with Avatar -->
+    <div class="flex items-center space-x-4 border-b pb-4 border-gray-100 dark:border-gray-700">
+        <img class="h-16 w-16 rounded-full object-cover border-2 border-primary" th:src="${user.avatar}" alt="Avatar">
+        <div>
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white" th:text="${user.nickName}"></h3>
+            <p class="text-sm text-gray-500" th:text="${user.signature != null && !user.signature.isEmpty() ? user.signature : '这家伙很懒，什么都没写~'}"></p>
+        </div>
+    </div>
+ 
+    <!-- Detail Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 text-sm">
+        <div>
+            <span class="block text-xs font-semibold text-gray-400 uppercase">用户名</span>
+            <span class="text-gray-800 dark:text-gray-200" th:text="${user.username}"></span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-400 uppercase">真实姓名</span>
+            <span class="text-gray-800 dark:text-gray-200" th:text="${user.realName != null ? user.realName : '-'}"></span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-400 uppercase">性别</span>
+            <span class="text-gray-800 dark:text-gray-200" th:text="${user.gender == 'MAN' ? '男' : '女'}"></span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-400 uppercase">状态</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium" 
+                  th:classappend="${user.state == 'NORMAL' ? 'bg-green-100 text-green-800' : (user.state == 'INITIALIZE' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800')}"
+                  th:text="${user.state == 'NORMAL' ? '正常' : (user.state == 'INITIALIZE' ? '禁用' : '异常')}">
+            </span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-400 uppercase">手机号</span>
+            <span class="text-gray-800 dark:text-gray-200" th:text="${user.phone != null ? user.phone : '-'}"></span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-400 uppercase">邮箱</span>
+            <span class="text-gray-800 dark:text-gray-200" th:text="${user.email != null ? user.email : '-'}"></span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-400 uppercase">生日</span>
+            <span class="text-gray-800 dark:text-gray-200" th:text="${user.birthday != null ? user.birthday : '-'}"></span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-400 uppercase">余额</span>
+            <span class="text-gray-800 dark:text-gray-200 font-mono" th:text="'￥' + ${user.balance}"></span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-400 uppercase">等级 / 积分</span>
+            <span class="text-gray-800 dark:text-gray-200" th:text="'Lv.' + ${user.level} + ' / ' + ${user.credit} + ' Pt'"></span>
+        </div>
+        <div>
+            <span class="block text-xs font-semibold text-gray-400 uppercase">所属角色</span>
+            <span class="text-gray-800 dark:text-gray-200">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-1"
+                      th:each="role : ${user.roleList}" th:text="${role.roleName}"></span>
+            </span>
+        </div>
+        <div class="md:col-span-2">
+            <span class="block text-xs font-semibold text-gray-400 uppercase">个人简介</span>
+            <p class="text-gray-700 dark:text-gray-300 mt-1" th:text="${user.personDesc != null && !user.personDesc.isEmpty() ? user.personDesc : '暂无简介。'}"></p>
+        </div>
+    </div>
 </div>
-<script src="/webjars/layui/dist/layui.js"></script>
-<script type="text/javascript">
-    layui.use(['element'], function(){
-        $ = layui.jquery;
-
-        $("button.close").on('click', function () {
-            const index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-            parent.layer.close(index);
-        });
-    });
-</script>
+ 
 </body>
 </html>

@@ -8,6 +8,7 @@ dependencies {
     implementation project(":modules:user")
     implementation project(":modules:content")
     implementation project(":modules:notification")
+    implementation project(":infrastructure:persistence")
 
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springframework.boot:spring-boot-starter-security'

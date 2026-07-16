@@ -1,77 +1,104 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>授权窗口</title>
-    <link rel="stylesheet" href="/css/metroStyle/metroStyle.css">
-    <link rel="stylesheet" href="/webjars/layui/dist/css/layui.css">
-    <link rel="stylesheet" href="/css/public.css">
+    <title>角色授权</title>
 </head>
 <body>
-<div class="row">
-    <input type="hidden" id="menus" th:value="${menuList}">
-    <div class="row" th:style="${#strings.equals(type,'2')?'height:406px;overflow-y: auto;overflow-x: hidden;':''}+'padding-left: 60px'">
-        <div class="zTreeContent left">
-            <ul id="menuTree" class="ztree"></ul>
-        </div>
-    </div>
-    <div class="search-row" style="text-align: center" th:if="${#strings.equals(type,'2')}">
-        <button type="button" th:attr="data-id=${roleId}" class="layui-btn save">保存</button>
-        <button type="button" class="layui-btn cancel">取消</button>
-    </div>
-</div>
-<script src="/webjars/layui/dist/layui.js"></script>
-<script src="/webjars/jquery/dist/jquery.min.js"></script>
-<script src="/js/jquery.ztree.core.min.js"></script>
-<script src="/js/jquery.ztree.excheck.min.js"></script>
-<script type="text/javascript">
-    const zNodes = JSON.parse($('#menus').val());
-    const setting = {
-        view: {
-            selectedMulti: false
+ 
+<div th:fragment="grantFragment" class="p-4" 
+     x-data="{ 
+        checkedIds: [],
+        init() {
+            // Populate initially checked menu IDs from Thymeleaf
+            const initialIds = [/*[[${#strings.listJoin(menuSet.?[checked == true].![id], ',')}]]*/];
+            // Since Thymeleaf comments can be parsed, let's inject it safely
+            this.checkedIds = [[${menuSet.?[checked == true].![id]}]];
         },
-        check: {
-            enable: true,
-            chkboxType: {"Y": "p", "N": "s"}
+        toggleId(id) {
+            if (this.checkedIds.includes(id)) {
+                this.checkedIds = this.checkedIds.filter(x => x !== id);
+            } else {
+                this.checkedIds.push(id);
+            }
         },
-        data: {
-            key: {
-                url: "xUrl"
+        toggleParent(id, childIds) {
+            const hasUnchecked = childIds.some(cid => !this.checkedIds.includes(cid));
+            if (hasUnchecked) {
+                // Check parent and all children
+                if (!this.checkedIds.includes(id)) this.checkedIds.push(id);
+                childIds.forEach(cid => {
+                    if (!this.checkedIds.includes(cid)) this.checkedIds.push(cid);
+                });
+            } else {
+                // Uncheck parent and all children
+                this.checkedIds = this.checkedIds.filter(x => x !== id && !childIds.includes(x));
             }
         }
-    };
-    layui.use(['element','layer'], function(){
-        $ = layui.jquery;
-        const layer = layui.layer;
-
-        $.fn.zTree.init($("#menuTree"), setting, zNodes);
-        const treeObj = $.fn.zTree.getZTreeObj("menuTree");
-        treeObj.expandAll(true);
-        $("button.save").on('click', function () {
-            const roleId = $(this).data('id');
-            const nodes = treeObj.getCheckedNodes(true);
-            let checkNodes = "";
-            for(let i=0; i<nodes.length; i++){
-//                if(!nodes[i].getCheckStatus().half){
-                checkNodes += nodes[i].id+",";
-//                }
-            }
-            $.post('/sys/role/grant',{'[[${_csrf.parameterName}]]':'[[${_csrf.token}]]',roleId: roleId , menuIds: checkNodes},function (data) {
-                if(data.code == 0){
-                    layer.msg(data.msg, {icon: 1,time:600}, function () {
-                        const index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-                        parent.layer.close(index);
-                    });
-                }else{
-                    layer.msg(data.msg,{icon: 2,time:600});
-                }
-            })
-        });
-        $("button.cancel").on('click', function () {
-            const index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-            parent.layer.close(index);
-        });
-    });
-</script>
+     }">
+     
+    <form hx-post="/sys/role/grant" 
+          hx-swap="none"
+          class="space-y-4">
+          
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="hidden" name="roleId" th:value="${roleId}">
+        <!-- Submit checked menu IDs as comma-separated string -->
+        <input type="hidden" name="menuIds" :value="checkedIds.join(',')">
+ 
+        <div class="max-h-[400px] overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-900/50 space-y-4">
+            <!-- Level 1 loop -->
+            <div th:each="menu1 : ${menuSet}" class="border-b border-gray-100 dark:border-gray-800 pb-3 last:border-0 last:pb-0">
+                <!-- Level 1 Row -->
+                <div class="flex items-center justify-between py-1 bg-indigo-50/50 dark:bg-indigo-950/20 px-2 rounded">
+                    <label class="inline-flex items-center text-sm font-bold text-gray-800 dark:text-white">
+                        <input type="checkbox" :checked="checkedIds.includes([[${menu1.id}]])"
+                               @change="toggleParent([[${menu1.id}]], [[${menu1.children.![id]}]])"
+                               class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 mr-2 h-4 w-4">
+                        <span th:text="${menu1.name}"></span>
+                    </label>
+                </div>
+ 
+                <!-- Level 2 loop -->
+                <div class="ml-6 mt-2 space-y-2" th:if="${not #lists.isEmpty(menu1.children)}">
+                    <div th:each="menu2 : ${menu1.children}">
+                        <div class="flex items-center">
+                            <label class="inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-200">
+                                <input type="checkbox" :checked="checkedIds.includes([[${menu2.id}]])"
+                                       @change="toggleParent([[${menu2.id}]], [[${menu2.children.![id]}]])"
+                                       class="rounded border-gray-300 text-indigo-650 focus:ring-indigo-500 mr-2 h-4 w-4">
+                                <span th:text="${menu2.name}"></span>
+                            </label>
+                        </div>
+ 
+                        <!-- Level 3 loop (Permissions / Actions) -->
+                        <div class="ml-6 mt-1 flex flex-wrap gap-2" th:if="${not #lists.isEmpty(menu2.children)}">
+                            <div th:each="menu3 : ${menu2.children}" class="inline-flex items-center">
+                                <label class="inline-flex items-center text-xs text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 px-2 py-1 rounded border border-gray-150 dark:border-gray-700">
+                                    <input type="checkbox" :checked="checkedIds.includes([[${menu3.id}]])"
+                                           @change="toggleId([[${menu3.id}]])"
+                                           class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 mr-1.5 h-3.5 w-3.5">
+                                    <span th:text="${menu3.name}"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+ 
+        <div class="pt-4 flex justify-end space-x-2 border-t border-gray-100 dark:border-gray-700">
+            <button type="button" @click="openEdit = false; openCategory = false"
+                    class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                取消
+            </button>
+            <button type="submit" @click="openEdit = false; openCategory = false"
+                    class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                保存授权
+            </button>
+        </div>
+    </form>
+</div>
+ 
 </body>
 </html>

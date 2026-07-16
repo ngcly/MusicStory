@@ -1,44 +1,131 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="zh"><!-- Thymeleaf为我们提供的Spring Security的标签支持 -->
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>音书</title>
-    <link rel="stylesheet" href="/webjars/layui/dist/css/layui.css">
-    <link rel="stylesheet" href="/css/main.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音书 - 后台管理系统</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4f46e5',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"/>
 </head>
-<body class="layui-layout-body">
-<div class="layui-layout layui-layout-admin">
-    <div class="layui-header">
-        <div class="layui-logo" style="position: unset;float: left">后台管理</div>
-        <!-- 头部区域（可配合layui已有的水平导航） -->
-        <!--<a href="javascript:;" class="iconfont icon-caidan hideMenu" title="侧边伸缩"></a>-->
-        <ul class="layui-nav layui-layout-left">
-            <li class="layui-nav-item layadmin-flexible" lay-unselect="">
-                <a href="javascript:;" layadmin-event="flexible" class="hideMenu" title="侧边伸缩">
-                    <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
-                </a>
-            </li>
-            <li class="layui-nav-item"><a href="">控制台</a></li>
-            <li class="layui-nav-item"><a href="">消息<span class="layui-badge-dot" id="my-todo"></span></a></li>
-            <li class="layui-nav-item">
-                <a href="javascript:;">其它系统</a>
-                <dl class="layui-nav-child">
-                    <dd><a href="http://ngcly.cn" target="_blank">前台页面</a></dd>
-                    <dd><a href="https://github.com/ngcly/MusicStory" target="_blank">源码页面</a></dd>
-                    <dd><a href="/clouds" target="_blank">云中遨游</a></dd>
-                    <!--<dd><a href="">授权管理</a></dd>-->
-                </dl>
-            </li>
-        </ul>
-        <ul class="layui-nav layui-layout-right">
-            <li class="layui-nav-item">
-                <!-- 心知天气信息 -->
-                <div class="weather">
-                    <div id="tp-weather-widget" style="margin: -4px"></div>
+<body class="bg-gray-150 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen overflow-hidden"
+      x-data="{ 
+        sidebarExpanded: true, 
+        avatarDropdownOpen: false,
+        openSecurityModal: false,
+        activeMenuId: null,
+        expandedMenus: []
+      }"
+      @pwd-updated.window="alert('密码修改成功！'); openSecurityModal = false">
+ 
+<div class="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950">
+    <!-- Sidebar -->
+    <aside class="flex flex-col h-full bg-slate-900 text-white transition-all duration-305 border-r border-slate-800"
+           :class="sidebarExpanded ? 'w-64' : 'w-20'">
+        <!-- Sidebar Brand -->
+        <div class="h-16 flex items-center justify-between px-6 border-b border-slate-800">
+            <span class="font-extrabold text-xl tracking-wider text-indigo-400" 
+                  x-show="sidebarExpanded" 
+                  x-transition>音书管理</span>
+            <span class="font-extrabold text-xl tracking-wider text-indigo-400 mx-auto" 
+                  x-show="!sidebarExpanded" 
+                  x-transition>音</span>
+        </div>
+        
+        <!-- Sidebar Nav List -->
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 scrollbar-thin scrollbar-thumb-slate-800">
+            <div th:each="menu1 : ${menuList}" x-data="{ open: false }" class="space-y-1">
+                <!-- Level 1 Menu Heading -->
+                <button @click="open = !open" 
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors group">
+                    <div class="flex items-center space-x-3">
+                        <i class="text-lg text-slate-400 group-hover:text-white" th:utext="${menu1.icon}"></i>
+                        <span class="text-sm font-medium" x-show="sidebarExpanded" th:text="${menu1.name}"></span>
+                    </div>
+                    <svg class="h-4 w-4 transform transition-transform" 
+                         :class="open ? 'rotate-90' : ''" 
+                         x-show="sidebarExpanded"
+                         viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                
+                <!-- Level 2 Menu items -->
+                <div x-show="open && sidebarExpanded" x-collapse class="pl-8 space-y-1">
+                    <div th:each="menu2 : ${menu1.children}">
+                        <!-- Standard Item -->
+                        <a th:href="${menu2.url}" target="content"
+                           @click="activeMenuId = [[${menu2.id}]]"
+                           :class="activeMenuId === [[${menu2.id}]] ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'"
+                           class="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            <i class="text-sm" th:utext="${menu2.icon}"></i>
+                            <span th:text="${menu2.name}"></span>
+                        </a>
+                        
+                        <!-- Level 3 Menu nested items (if any) -->
+                        <div class="pl-4 mt-1 space-y-1" th:if="${not #lists.isEmpty(menu2.children)}">
+                            <a th:each="menu3 : ${menu2.children}"
+                               th:href="${menu3.url}" target="content"
+                               @click="activeMenuId = [[${menu3.id}]]"
+                               :class="activeMenuId === [[${menu3.id}]] ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-white'"
+                               class="flex items-center space-x-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors">
+                                <i class="text-xs" th:utext="${menu3.icon}"></i>
+                                <span th:text="${menu3.name}"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Sidebar Footer -->
+        <div class="p-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500">
+            <span x-show="sidebarExpanded">© admin.ngcly.cn</span>
+            <button @click="sidebarExpanded = !sidebarExpanded" class="p-1 rounded hover:bg-slate-800 text-slate-400">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+    </aside>
+ 
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Top Navbar -->
+        <header class="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 z-10">
+            <!-- Left Header -->
+            <div class="flex items-center space-x-4">
+                <button @click="sidebarExpanded = !sidebarExpanded" 
+                        class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 hidden md:block">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <div class="text-sm font-semibold text-gray-600 dark:text-gray-300">音书管理系统</div>
+            </div>
+ 
+            <!-- Right Header -->
+            <div class="flex items-center space-x-6">
+                <!-- Weather Widget -->
+                <div class="hidden lg:flex items-center text-xs text-gray-500">
+                    <div id="tp-weather-widget" class="mt-1"></div>
                     <script>(function(T,h,i,n,k,P,a,g,e){g=function(){P=h.createElement(i);a=h.getElementsByTagName(i)[0];P.src=k;P.charset="utf-8";P.async=1;a.parentNode.insertBefore(P,a)};T["ThinkPageWeatherWidgetObject"]=n;T[n]||(T[n]=function(){(T[n].q=T[n].q||[]).push(arguments)});T[n].l=+new Date();if(T.attachEvent){T.attachEvent("onload",g)}else{T.addEventListener("load",g,false)}}(window,document,"script","tpwidget","//widget.seniverse.com/widget/chameleon.js"))</script>
                     <script>tpwidget("init", {
                         "flavor": "slim",
@@ -50,195 +137,120 @@
                         "container": "tp-weather-widget",
                         "bubble": "enabled",
                         "alarmType": "badge",
-                        "color": "#FFFFFF",
+                        "color": "#6B7280",
                         "uid": "U78371FB98",
                         "hash": "cd55c15865ecbe0f16ba78ca60ad51eb"
                     });
                     tpwidget("show");</script>
                 </div>
-            </li>
-            <li class="layui-nav-item">
-                <a href="javascript:;">
-                    <img th:src="${manager.avatar}" class="layui-nav-img" id="my-avatar">
-                    <!--非 sec 标签获取当前用户名的写法-->
-                    <!--<span th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}"></span>-->
-                    <span sec:authentication="name" id="my-name"></span><!--&lt;!&ndash; 获得当前用户的用户名 &ndash;&gt;-->
-                </a>
-                <dl class="layui-nav-child">
-                    <dd><a th:href="@{'/sys/manager/edit.html?managerId='+${manager.id}}" target="content">基本资料</a></dd>
-                    <dd><a href="javascript:void(0);" id="model">安全设置</a></dd>
-                </dl>
-            </li>
-            <li class="layui-nav-item">
-                <form name="out" th:action="@{/logout}" method="post">
-                    <a href="javascript:document.out.submit();" >退出</a>
-                </form>
-            </li>
-        </ul>
-    </div>
-
-    <div class="layui-side layui-bg-black">
-        <div class="layui-side-scroll">
-            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-                <li class="layui-nav-item layui-nav-itemed" th:each="menuList:${menuList}">
-                    <a class="" href="javascript:;"><i class="layui-icon" th:utext="${menuList.icon}"></i><cite th:text="${menuList.name}"></cite></a>
-                    <dl class="layui-nav-child">
-                        <dd th:each="menuChild:${menuList.children}">
-                            <!--<a href="javascript:;" th:data="${menuChild.menuUrl}" th:text="${menuChild.name}"></a>-->
-                            <a th:href="${menuChild.url}" target="content"><i class="layui-icon" th:utext="${menuChild.icon}"></i><cite th:text="${menuChild.name}"></cite></a>
-                            <dl class="layui-nav-child" th:if="${not #lists.isEmpty(menuChild.children)}">
-                                <dd th:each="threeChild:${menuChild.children}">
-                                    <a th:href="${threeChild.url}" target="content"><i class="layui-icon" th:utext="${threeChild.icon}"></i><cite th:text="${threeChild.name}"></cite></a>
-                                </dd>
-                            </dl>
-                        </dd>
-                    </dl>
-                </li>
-            </ul>
-
-        </div>
-    </div>
-
-    <div class="layui-body">
-        <!-- 内容主体区域 -->
-        <!--<div style="padding: 15px;" id="content">-->
-        <iframe name="content" id="content" src="/home"></iframe>
-        <!--</div>-->
-    </div>
-
-    <div class="layui-footer">
-        <!-- 底部固定区域 -->
-        © admin.ngcly.cn
-        <button class="layui-btn layui-btn-danger layui-btn-xs" style="margin-left: 20px">捐赠作者</button>
-        <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=531237716&site=qq&menu=yes"><img src="http://wpa.qq.com/pa?p=2:531237716:51" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>
+ 
+                <!-- User Profile Dropdown -->
+                <div class="relative">
+                    <button @click="avatarDropdownOpen = !avatarDropdownOpen" 
+                            @click.away="avatarDropdownOpen = false"
+                            class="flex items-center space-x-3 focus:outline-none">
+                        <img th:src="${manager.avatar != null && !manager.avatar.isEmpty() ? manager.avatar : '/images/avatar.jpg'}" 
+                             class="h-9 w-9 rounded-full object-cover border border-gray-200" id="my-avatar">
+                        <span sec:authentication="name" class="text-sm font-medium text-gray-700 dark:text-gray-200" id="my-name"></span>
+                        <svg class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    
+                    <!-- Dropdown Options -->
+                    <div x-show="avatarDropdownOpen" 
+                         x-transition:enter="transition ease-out duration-100"
+                         x-transition:enter-start="transform opacity-0 scale-95"
+                         x-transition:enter-end="transform opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-75"
+                         x-transition:leave-start="transform opacity-100 scale-100"
+                         x-transition:leave-end="transform opacity-0 scale-95"
+                         class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-150 dark:border-gray-700 py-1 z-25" 
+                         style="display: none;">
+                        
+                        <a th:href="@{'/sys/manager/edit.html?managerId='+${manager.id}}" target="content"
+                           @click="avatarDropdownOpen = false"
+                           class="block px-4 py-2 text-sm text-gray-750 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            基本资料
+                        </a>
+                        <button id="security-settings-btn"
+                                hx-get="/sys/manager/pwd.html"
+                                hx-target="#pwdModalContent"
+                                @click="avatarDropdownOpen = false; openSecurityModal = true"
+                                class="w-full text-left block px-4 py-2 text-sm text-gray-750 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            安全设置
+                        </button>
+                        <hr class="border-gray-200 dark:border-gray-700">
+                        <form name="out" th:action="@{/logout}" method="post" class="w-full">
+                            <button type="submit" class="w-full text-left block px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20">
+                                退出
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Iframe Body Container -->
+        <main class="flex-1 bg-gray-100 dark:bg-gray-900 relative">
+            <iframe name="content" id="content" src="/home" class="w-full h-full border-0"></iframe>
+        </main>
     </div>
 </div>
-<script src="/webjars/layui/dist/layui.js"></script>
-<script>
-    //JavaScript代码区域
-    layui.use(['element','layer'], function(){
-        var element = layui.element,
-             layer = layui.layer;
-        $ = layui.jquery;
-        //    利用ajax 将菜单内容加载到指定区域 避免使用iframe
-        //    缺点：对于错误页面 无法直接加载静态资源 需要改spring的拦截器 比较麻烦 同时页面表单提交也很无语
-        // $(".layui-nav-child a").click(function(){
-        //     var code = $(this).attr("data");
-        //     $("#content").load(code);
-        //     $.ajax({
-        //         url:code,
-        //         type:"get",
-        //         dataType:"html",
-        //         success:function(data){
-        //             $("#content").html(data);
-        //         },
-        //         error : function(xhr) {
-        //             if(xhr.status==404){
-        //                 $("#content").load('/error/404.html');
-        //             }else if(xhr.status=403){
-        //                 $("#content").load('/error/403.html');
-        //             }else{
-        //                 $("#content").load('/error/500.html');
-        //             }
-        //         }
-        //     })
-        // });
-
-        //隐藏左侧导航
-        // $(".hideMenu").click(function(){
-        //     $(".layui-layout-admin").toggleClass("showMenu");
-        // })
-        $(function(){
-            $(".hideMenu").on("click",function(){
-                $('#LAY_app_flexible').removeClass("layui-icon-shrink-right");
-                $('#LAY_app_flexible').addClass("layui-icon-spread-left");
-                const oClass = $(".layui-side").hasClass("mini");
-                if(!oClass){
-                    $(".layui-side").animate({
-                        width:"50px"
-                    })
-                    $(".layui-body").animate({
-                        left:"50"
-                    })
-                    $(".layui-footer").animate({
-                        left:"50"
-                    })
-                }else{
-                    $('#LAY_app_flexible').removeClass("layui-icon-spread-left");
-                    $('#LAY_app_flexible').addClass("layui-icon-shrink-right");
-                    $(".layui-side").animate({
-                        width:"200px"
-                    })
-                    $(".layui-body").animate({
-                        left:"200"
-                    })
-                    $(".layui-footer").animate({
-                        left:"200"
-                    })
-
-                }
-                $(".layui-side").toggleClass("mini");
-            });
-            //mini 模式下添加 tips
-            $('.layui-nav-tree a').hover(function(){
-                if($(".layui-side").hasClass('mini')){
-                    const tipText = $(this).find('cite').text();
-                    layer.tips(tipText, this);
-                }
-            },function(){
-                layer.closeAll('tips');
-            });
-
-        });
-
-        //修改密码窗口
-        $('#model').on('click',function () {
-            layer.open({
-                type: 2 //Page层类型
-                ,skin: 'layui-layer-molv'
-                ,area: ['460px', '320px']
-                ,title: ['更新密码','font-size:18px']
-                ,shadeClose: true
-                ,shade: 0 //遮罩透明度
-                ,maxmin: true //允许全屏最小化
-                ,content:'/sys/manager/pwd.html'
-            });
-        });
-
-        const init = [[${init}]];
-        if(init === true){
-            layer.open({
-                type: 1
-                ,title: false //不显示标题栏
-                ,closeBtn: false
-                ,area: '300px;'
-                ,shade: 0.8
-                ,id: 'LAY_ly' //设定一个id，防止重复弹出
-                ,btn: ['知道了']
-                ,btnAlign: 'c'
-                ,moveType: 1 //拖拽模式，0或者1
-                ,content: '<div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">' +
-                '欢迎加入，请尽快修改密码！<br></div>'
-            });
-        }
-
-        /**
-         * 捐赠作者
-         */
-        $(".layui-footer button").click(function () {
-            layer.tab({
-                area: ["330px", "350px"],
-                tab: [{
-                    title: "支付宝",
-                    content: "<img src='/images/zfb.jpg' width='200' height='300' style='margin-left: 60px' alt='alipay'>"
-                }, {
-                    title: "微信",
-                    content: "<img src='/images/wx.jpg' width='200' height='300' style='margin-left: 60px' alt='wechat'>"
-                }]
-            });
-        });
-    });
+ 
+<!-- Security Settings (Update Password) Modal -->
+<div x-show="openSecurityModal" 
+     class="fixed inset-0 z-50 overflow-y-auto" 
+     style="display: none;">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div x-show="openSecurityModal"
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
+             @click="openSecurityModal = false"></div>
+ 
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+ 
+        <div x-show="openSecurityModal"
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             class="inline-block align-middle bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4 relative">
+                <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-600" @click="openSecurityModal = false">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+                <div id="pwdModalContent">
+                    <div class="flex justify-center p-6">
+                        <svg class="animate-spin h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<!-- Password warning for initial user -->
+<script th:inline="javascript">
+    const init = [[${init}]];
+    if (init === true) {
+        setTimeout(() => {
+            alert('为了您的账号安全，欢迎加入，请尽快修改默认密码！');
+        }, 1000);
+    }
 </script>
+ 
 </body>
 </html>

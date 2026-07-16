@@ -8,6 +8,8 @@ import com.cn.notification.NoticeService;
 import com.cn.search.BookService;
 import com.cn.config.JwtTokenUtil;
 import com.cn.config.MyAuthenticationToken;
+import com.cn.config.SecurityUser;
+import com.cn.user.domain.User;
 import com.cn.entity.*;
 import com.cn.model.AuthenticationDetails;
 import com.cn.model.LogInDTO;
@@ -74,7 +76,8 @@ public class IndexController {
         AbstractAuthenticationToken authenticationToken = getAuthenticationToken(request, logInDTO);
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        User user = (User) authentication.getPrincipal();
+        SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
+        User user = securityUser.getUser();
         String token = jwtTokenUtil.generateToken(user);
 
         return ResponseEntity.ok()
@@ -128,7 +131,8 @@ public class IndexController {
      * @return Result
      */
     @PutMapping("/revoke/{openid}")
-    public Result<Void> revokeSocial(@AuthenticationPrincipal User user, @PathVariable("openid") String openid) {
+    public Result<Void> revokeSocial(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("openid") String openid) {
+        User user = securityUser.getUser();
         userService.revokeSocial(user.getId(), openid);
         return Result.success();
     }

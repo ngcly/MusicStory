@@ -4,7 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
 import cn.hutool.jwt.RegisteredPayload;
-import com.cn.entity.User;
+import com.cn.user.domain.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -51,8 +51,9 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             }
 
             if (validUserAuthenticated(user, issuedAt)) {
+                SecurityUser securityUser = new SecurityUser(user);
                 UsernamePasswordAuthenticationToken authenticationToken =
-                        UsernamePasswordAuthenticationToken.authenticated(user, null, user.getAuthorities());
+                        UsernamePasswordAuthenticationToken.authenticated(securityUser, null, securityUser.getAuthorities());
                 log.info("authenticated user:{}", authenticationToken);
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }

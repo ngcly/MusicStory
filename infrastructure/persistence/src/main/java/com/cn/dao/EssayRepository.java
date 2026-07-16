@@ -18,6 +18,7 @@ import org.springframework.util.StringUtils;
 import jakarta.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -86,4 +87,13 @@ public interface EssayRepository extends JpaRepository<Essay,Long>, JpaSpecifica
      * @return Page<Essay>
      */
     Page<Essay> findEssayByUserId(@Param("userId") Long userId,Pageable pageable);
+
+    /**
+     * 获取文章摘要列表（自定义原生查询以替换 CustomizeRepository）
+     */
+    @Query(value = "SELECT t.id as id, t.title as title, t.synopsis as synopsis, t3.username as username, t2.name as name, t.created_at as created_at, t.updated_at as updated_at, t.read_num as read_num " +
+            "FROM essay t JOIN classify t2 ON t.classify_id=t2.id JOIN user_info t3 ON t.user_id=t3.id " +
+            "WHERE (t.state='NORMAL' OR t.state='RECOMMEND') ORDER BY t.updated_at DESC", 
+            nativeQuery = true)
+    List<Map<String, Object>> findEssaySummaryList(Pageable pageable);
 }

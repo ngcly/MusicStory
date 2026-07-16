@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseEntity;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -56,18 +58,24 @@ public class SystemController {
      * 管理员列表页
      */
     @GetMapping("/manager.html")
-    public String managerList() {
-        return "manager/managerList";
-    }
-
-    @ResponseBody
-    @GetMapping("/manager")
-    public Result<List<Manager>> getManagerList(@PageableDefault(sort = {"createdAt"}, direction =
-            Sort.Direction.DESC) Pageable pageable,
-                                                @Valid Manager manager) {
+    public String managerList(
+            @PageableDefault(sort = {"createdAt"}, direction = Sort.Direction.DESC) Pageable pageable,
+            @Valid Manager manager,
+            @RequestHeader(value = "HX-Request", required = false) boolean hxRequest,
+            Model model) {
+        
         Page<Manager> managerList = managerService.getManagersList(
                 pageable.withPage(pageable.getPageNumber() - 1), manager);
-        return Result.success(managerList.getTotalElements(), managerList.getContent());
+        
+        model.addAttribute("managerPage", managerList);
+        model.addAttribute("currentPage", pageable.getPageNumber());
+        model.addAttribute("size", pageable.getPageSize());
+        model.addAttribute("managerParam", manager);
+        
+        if (hxRequest) {
+            return "manager/managerList :: managerTable";
+        }
+        return "manager/managerList";
     }
 
     /**
@@ -77,7 +85,7 @@ public class SystemController {
     public String managerDetail(@PathVariable Long managerId, Model model) {
         Manager manager = managerService.getManagerById(managerId);
         model.addAttribute("manager", manager);
-        return "manager/managerDetail";
+        return "manager/managerDetail :: managerDetailFragment";
     }
 
     /**
@@ -113,43 +121,42 @@ public class SystemController {
         model.addAttribute("checkRoleId", checkRoleIds);
         //可授权角色ID
         model.addAttribute("optionRoles", optRole);
-        return "manager/managerEdit";
+        return "manager/managerEdit :: managerEditFragment";
     }
 
     /**
      * 新增管理员信息
      */
-    @ResponseBody
     @PostMapping("/manager")
-    public Result<Void> addManager(@AuthenticationPrincipal Manager curManager, @Valid Manager manager) {
+    public ResponseEntity<String> addManager(@AuthenticationPrincipal Manager curManager, @Valid Manager manager, HttpServletResponse response) {
         managerService.saveManager(curManager, manager);
-        return Result.success();
+        response.setHeader("HX-Trigger", "managerListChanged");
+        return ResponseEntity.ok().build();
     }
 
     /**
      * 修改管理员信息
      */
-    @ResponseBody
     @PutMapping("/manager")
-    public Result<Void> updateManager(@AuthenticationPrincipal Manager curManager, @Valid Manager manager) {
+    public ResponseEntity<String> updateManager(@AuthenticationPrincipal Manager curManager, @Valid Manager manager, HttpServletResponse response) {
         if (Manager.ADMIN.equals(curManager.getUsername())) {
-            return Result.failure(333, "当前用户属于内置管理员，不支持信息修改");
+            return ResponseEntity.badRequest().body("当前用户属于内置管理员，不支持信息修改");
         }
         managerService.saveManager(curManager, manager);
-        return Result.success();
+        response.setHeader("HX-Trigger", "managerListChanged");
+        return ResponseEntity.ok().build();
     }
 
     /**
      * 删除管理员
      */
-    @ResponseBody
     @DeleteMapping("/manager")
-    public Result<Void> deleteManager(@AuthenticationPrincipal Manager curManager, @RequestParam Long managerId) {
+    public ResponseEntity<String> deleteManager(@AuthenticationPrincipal Manager curManager, @RequestParam Long managerId) {
         if (curManager.getId().equals(managerId)) {
-            return Result.failure(333, "禁止删除自己");
+            return ResponseEntity.badRequest().body("禁止删除自己");
         }
         managerService.delManager(managerId);
-        return Result.success();
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -159,21 +166,21 @@ public class SystemController {
      */
     @GetMapping("/manager/pwd.html")
     public String altPwd() {
-        return "manager/updatePwd";
+        return "manager/updatePwd :: updatePwdFragment";
     }
 
     /**
      * 修改密码
      */
-    @ResponseBody
     @PutMapping("/manager/pwd")
-    public Result<Void> updatePassword(@AuthenticationPrincipal Manager manager, @RequestParam String oldPassword,
-                                       @RequestParam String password) {
+    public ResponseEntity<String> updatePassword(@AuthenticationPrincipal Manager manager, @RequestParam String oldPassword,
+                                       @RequestParam String password, HttpServletResponse response) {
         if ("administrator".equals(manager.getUsername())) {
-            return Result.failure(333, "当前用户属于内置管理员,不支持密码修改");
+            return ResponseEntity.badRequest().body("当前用户属于内置管理员,不支持密码修改");
         }
         managerService.updatePassword(manager.getId(), oldPassword, password);
-        return Result.success();
+        response.setHeader("HX-Trigger", "pwdUpdated");
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -181,41 +188,35 @@ public class SystemController {
      *
      * @param managerId 管理员id
      */
-    @ResponseBody
     @PostMapping("/manager/pwd")
-    public Result<Void> resetPassword(@RequestParam Long managerId) {
+    public ResponseEntity<Void> resetPassword(@RequestParam Long managerId, HttpServletResponse response) {
         managerService.updatePassword(managerId, "123456");
-        return Result.success();
+        response.setHeader("HX-Trigger", "managerListChanged");
+        return ResponseEntity.ok().build();
     }
 
-    /**
-     * 角色列表页
-     */
     @GetMapping("/role.html")
-    public String roleList() {
-        return "role/roleList";
-    }
-
-    /**
-     * 角色数据
-     *
-     * @param pageable 分页
-     * @param role     条件数据
-     * @return List<Role>
-     */
-    @GetMapping("/role")
-    @ResponseBody
-    public Result<List<Role>> roleList(@PageableDefault(sort = {"roleName"}, direction = Sort.Direction.DESC) Pageable pageable,
-                                       @Valid Role role) {
+    public String roleList(
+            @PageableDefault(sort = {"roleName"}, direction = Sort.Direction.DESC) Pageable pageable,
+            @Valid Role role,
+            @RequestHeader(value = "HX-Request", required = false) boolean hxRequest,
+            Model model) {
+        
+        // Convert to 0-based page for spring data
         Page<Role> roleList = roleService.getRoleList(
                 pageable.withPage(pageable.getPageNumber() - 1), role);
-
-        return Result.success(roleList.getTotalElements(), roleList.getContent());
+        
+        model.addAttribute("rolePage", roleList);
+        model.addAttribute("currentPage", pageable.getPageNumber());
+        model.addAttribute("size", pageable.getPageSize());
+        model.addAttribute("roleParam", role);
+        
+        if (hxRequest) {
+            return "role/roleList :: roleTable";
+        }
+        return "role/roleList";
     }
-
-    /**
-     * 新增或修改角色页面
-     */
+ 
     @GetMapping("/role/edit.html")
     public String roleEdit(@RequestParam(required = false) Long roleId, Model model) {
         Role role = new Role();
@@ -223,24 +224,16 @@ public class SystemController {
             role = roleService.findRole(roleId);
         }
         model.addAttribute("role", role);
-        return "role/roleEdit";
+        return "role/roleEdit :: roleEditFragment";
     }
-
-    /**
-     * 新增/修改 角色
-     *
-     * @param role 修改内容
-     */
-    @ResponseBody
+ 
     @RequestMapping(value = "/role", method = {RequestMethod.POST, RequestMethod.PUT})
-    public Result<Void> addRole(@Valid Role role) {
+    public ResponseEntity<Void> addRole(@Valid Role role, HttpServletResponse response) {
         roleService.saveRole(role);
-        return Result.success();
+        response.setHeader("HX-Trigger", "roleListChanged");
+        return ResponseEntity.ok().build();
     }
-
-    /**
-     * 角色授权页面
-     */
+ 
     @GetMapping("/role/grant.html")
     public String grantForm(@RequestParam long roleId, @RequestParam String type, Model model) throws JsonProcessingException {
         Collection<MenuDTO> menuSet = roleService.getMenuListWithChecked(roleId);
@@ -248,70 +241,47 @@ public class SystemController {
         model.addAttribute("type", type);
         model.addAttribute("roleId", roleId);
         model.addAttribute("menuList", menuList);
-        return "role/grant";
+        model.addAttribute("menuSet", menuSet); // Pass as object too for easy rendering
+        return "role/grant :: grantFragment";
     }
-
-    /**
-     * 保存授权
-     *
-     * @param roleId  角色id
-     * @param menuIds 菜单id列表
-     * @return Result
-     */
+ 
     @PostMapping("/role/grant")
-    @ResponseBody
-    public Result<Void> saveGrant(Long roleId, String menuIds) {
+    public ResponseEntity<Void> saveGrant(Long roleId, String menuIds, HttpServletResponse response) {
         roleService.saveGrant(roleId, menuIds);
-        return Result.success();
+        response.setHeader("HX-Trigger", "roleListChanged");
+        return ResponseEntity.ok().build();
     }
 
     /**
      * 是否停用角色
      */
     @GetMapping("/role/toggle")
-    @ResponseBody
-    public Result<Void> altRole(@RequestParam long roleId) {
+    public ResponseEntity<Void> altRole(@RequestParam long roleId, HttpServletResponse response) {
         roleService.altAvailable(roleId);
-        return Result.success();
+        response.setHeader("HX-Trigger", "roleListChanged");
+        return ResponseEntity.ok().build();
     }
-
-    /**
-     * 删除角色
-     */
-    @ResponseBody
+ 
     @DeleteMapping("/role")
-    public Result<Void> delRole(@RequestParam long roleId) {
+    public ResponseEntity<Void> delRole(@RequestParam long roleId) {
         roleService.delRole(roleId);
-        return Result.success();
+        return ResponseEntity.ok().build();
     }
 
-    /**
-     * 菜单列表页
-     */
     @GetMapping("/menu.html")
-    public String menuList(Model model) {
+    public String menuList(
+            @RequestHeader(value = "HX-Request", required = false) boolean hxRequest,
+            Model model) {
         List<Permission> menuList = roleService.getMenuList();
         model.addAttribute("menuList", menuList);
+        if (hxRequest) {
+            return "menu/menuList :: menuTable";
+        }
         return "menu/menuList";
     }
-
-    /**
-     * 菜单数据列表
-     * @return List<Permission>
-     */
-    @GetMapping("/menu")
-    @ResponseBody
-    public Result<List<Permission>> menList() {
-        List<Permission> menuList = roleService.getMenuList();
-        return Result.success((long) menuList.size(), menuList);
-    }
-
-    /**
-     * 新增或修改菜单页
-     */
+ 
     @GetMapping("/menu/edit.html")
-    public String menuEdit(@RequestParam(required = false) Long menuId, @RequestParam(required = false) Long parentId
-            , Model model) {
+    public String menuEdit(@RequestParam(required = false) Long menuId, @RequestParam(required = false) Long parentId, Model model) {
         Permission permission = new Permission();
         permission.setSort(0);
         String parentName = "";
@@ -329,45 +299,41 @@ public class SystemController {
         }
         model.addAttribute("menu", permission);
         model.addAttribute("parentName", parentName);
-        return "menu/menuEdit";
+        return "menu/menuEdit :: menuEditFragment";
     }
-
-    /**
-     * 新增/修改 菜单
-     */
-    @ResponseBody
+ 
     @RequestMapping(value = "/menu", method = {RequestMethod.POST, RequestMethod.PUT})
-    public Result<Void> saveMenu(@Valid Permission permission) {
+    public ResponseEntity<Void> saveMenu(@Valid Permission permission, HttpServletResponse response) {
         roleService.saveMenu(permission);
-        return Result.success();
+        response.setHeader("HX-Trigger", "menuListChanged");
+        return ResponseEntity.ok().build();
     }
-
-    /**
-     * 删除菜单
-     */
-    @ResponseBody
+ 
     @DeleteMapping("/menu")
-    public Result<Void> deleteMenu(@RequestParam long menuId) {
+    public ResponseEntity<Void> deleteMenu(@RequestParam long menuId) {
         roleService.delMenu(menuId);
-        return Result.success();
+        return ResponseEntity.ok().build();
     }
 
-    /**
-     * 登录日志列表页
-     */
     @GetMapping("/logs.html")
-    public String loginLogList() {
-        return "system/logList";
-    }
-
-    @ResponseBody
-    @GetMapping("/logs")
-    public Result<List<LoginLog>> getLogList(@PageableDefault(sort = {"loginTime"}, direction = Sort.Direction.DESC) Pageable pageable,
-                                             @Valid LoginLog loginLog) {
-
+    public String loginLogList(
+            @PageableDefault(sort = {"loginTime"}, direction = Sort.Direction.DESC) Pageable pageable,
+            @Valid LoginLog loginLog,
+            @RequestHeader(value = "HX-Request", required = false) boolean hxRequest,
+            Model model) {
+        
         Page<LoginLog> logList = logService.getLoginLogList(
                 pageable.withPage(pageable.getPageNumber() - 1), loginLog);
-        return Result.success(logList.getTotalElements(), logList.getContent());
+        
+        model.addAttribute("logPage", logList);
+        model.addAttribute("currentPage", pageable.getPageNumber());
+        model.addAttribute("size", pageable.getPageSize());
+        model.addAttribute("logParam", loginLog);
+        
+        if (hxRequest) {
+            return "system/logList :: logTable";
+        }
+        return "system/logList";
     }
 
     /**

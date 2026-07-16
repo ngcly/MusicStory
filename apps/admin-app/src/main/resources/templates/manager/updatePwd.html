@@ -1,90 +1,62 @@
 <!DOCTYPE html>
-<html lang="en"
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>修改密码</title>
-    <link rel="stylesheet" href="/webjars/layui/dist/css/layui.css">
 </head>
 <body>
-<div class="row">
-    <div class="layui-col-md12">
-        <div class="layui-card">
-            <div class="layui-card-header"><span sec:authentication="name"></span></div>
-            <div class="layui-card-body">
-                <form class="layui-form" action="/sys/manager/pwd">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">当前密码</label>
-                        <div class="layui-input-inline">
-                            <input type="password" name="oldPassword" lay-verify="required" lay-vertype="tips" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">新密码</label>
-                        <div class="layui-input-inline">
-                            <input type="password" id="np" name="password" lay-verify="pass" lay-vertype="tips" autocomplete="off" class="layui-input layui-form-danger">
-                        </div>
-                        <div class="layui-form-mid layui-word-aux">6到16个字符</div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">确认新密码</label>
-                        <div class="layui-input-inline">
-                            <input type="password" name="repassword" lay-verify="repass" lay-vertype="tips" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <div class="layui-input-block">
-                            <button class="layui-btn" lay-submit lay-filter="altPwd">确认修改</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
+ 
+<div th:fragment="updatePwdFragment" class="p-6 max-w-lg mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+     x-data="{ 
+        password: '',
+        repassword: '',
+        get isMatch() { return this.password === this.repassword },
+        get isValid() { return this.password.length >= 6 && this.password.length <= 12 }
+     }">
+     
+    <div class="border-b pb-3 mb-4 flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+            修改密码 - <span sec:authentication="name" class="text-indigo-650"></span>
+        </h3>
     </div>
+ 
+    <form hx-put="/sys/manager/pwd"
+          hx-swap="none"
+          class="space-y-4"
+          @submit.prevent="if(isValid && isMatch) { $el.submit() }">
+          
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+ 
+        <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase">当前密码</label>
+            <input type="password" name="oldPassword" required
+                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+        </div>
+        
+        <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase">新密码</label>
+            <input type="password" name="password" required x-model="password"
+                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            <span class="text-xs text-gray-400 mt-1 block">6到12个字符，且不能有空格</span>
+            <span x-show="password && !isValid" class="text-xs text-red-500 mt-1 block" style="display: none;">密码长度必须在6至12位之间</span>
+        </div>
+ 
+        <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase">确认新密码</label>
+            <input type="password" name="repassword" required x-model="repassword"
+                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            <span x-show="repassword && !isMatch" class="text-xs text-red-500 mt-1 block" style="display: none;">两次密码输入不一致</span>
+        </div>
+ 
+        <div class="pt-4 flex justify-end space-x-2 border-t border-gray-100 dark:border-gray-700">
+            <button type="submit" :disabled="!isValid || !isMatch"
+                    class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                确认修改
+            </button>
+        </div>
+    </form>
 </div>
-<script src="/webjars/layui/dist/layui.js"></script>
-<script type="text/javascript">
-    layui.use(['element','form'], function(){
-        $ = layui.jquery;
-        const form = layui.form;
-        //表单校验
-        form.verify({
-            // 校验原始密码
-            pass:[
-                /^\S{6,12}$/
-                ,'密码必须6到12位，且不能出现空格'
-            ],
-            repass:function(value){
-                const pass = $('#np').val();
-                if(value != pass){
-                    return '两次密码不一致';
-                }
-            },
-        });
-        //监听提交
-        form.on('submit(altPwd)', function(data){
-            const headers = {};
-            headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
-            $.ajax({
-                url:data.form.action,
-                type:'put',
-                headers: headers,
-                data:data.field,
-                dataType:'json',
-                success:function(data){
-                    if(data.code == 0){
-                        layer.msg(data.msg, {icon: 1,time:600}, function () {
-                            const index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-                            parent.layer.close(index);
-                        });
-                    }else{
-                        layer.msg(data.msg,{time:1000});
-                    }
-                }
-            });
-            return false;
-        });
-    });
-</script>
+ 
 </body>
 </html>

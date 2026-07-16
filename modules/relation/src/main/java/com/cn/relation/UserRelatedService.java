@@ -1,6 +1,5 @@
 package com.cn.relation;
 
-import com.cn.dao.CustomizeRepository;
 import com.cn.dao.UserFavesRepository;
 import com.cn.dao.UserFollowRepository;
 import com.cn.entity.News;
@@ -33,7 +32,6 @@ import java.util.Objects;
 public class UserRelatedService {
     private final UserFavesRepository userFavesRepository;
     private final UserFollowRepository userFollowRepository;
-    private final CustomizeRepository customizeRepository;
     private final SimpMessageSendingOperations messageTemplate;
 
     /**
@@ -106,13 +104,9 @@ public class UserRelatedService {
      * @return List<Map>
      */
     public List<Map<String, Object>> getMyFollowList(Long userId, Pageable pageable) {
-        String sql = "SELECT t.created_at, t2.id as userId, t2.username, t2.nick_name, t2.birthday, t2.gender, " +
-                "t2.address, t2.real_name, t2.person_desc, t2.signature, t2.avatar, t2.phone, t2.email " +
-                "FROM user_follow t,user_info t2 WHERE t.follow_id=t2.id AND t.user_id=? " +
-                "order by t.created_at desc";
-        return customizeRepository.nativePageQueryListMap(sql, pageable, userId).getContent();
+        return userFollowRepository.findMyFollowList(userId, pageable).getContent();
     }
-
+ 
     /**
      * 获取关注我的用户列表
      *
@@ -121,11 +115,7 @@ public class UserRelatedService {
      * @return List<User>
      */
     public List<Map<String, Object>> getFollowMeList(Long userId, Pageable pageable) {
-        String sql = "SELECT t.created_at, t2.id as userId, t2.username, t2.nick_name, t2.birthday, t2.gender, " +
-                "t2.address, t2.real_name, t2.person_desc, t2.signature, t2.avatar, t2.phone, t2.email " +
-                "FROM user_follow t,user_info t2 WHERE t.user_id=t2.id AND t.follow_id=? " +
-                "order by t.created_at desc";
-        return customizeRepository.nativePageQueryListMap(sql, pageable, userId).getContent();
+        return userFollowRepository.findFollowMeList(userId, pageable).getContent();
     }
 
     /**

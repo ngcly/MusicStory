@@ -1,80 +1,153 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8" />
-    <title>登录</title>
-    <meta name="renderer" content="webkit" />
-    <meta http-equiv="refresh" content="60" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <link rel="stylesheet" href="/webjars/layui/dist/css/layui.css" media="all"/>
-    <link rel="stylesheet" href="/css/login.css" media="all"/>
+    <title>音书 - 登录</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4f46e5',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"/>
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+    </style>
 </head>
-<body>
-<video class="video-player" preload="auto" autoplay="autoplay" loop="loop">
+<body class="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-950"
+      x-data="{
+        loading: false,
+        errorMessage: '',
+        captchaUrl: '/captcha',
+        refreshCaptcha() {
+            this.captchaUrl = '/captcha?_=' + Date.now();
+        },
+        submitLogin(event) {
+            this.loading = true;
+            this.errorMessage = '';
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            fetch(form.action, {
+                method: form.method,
+                headers: {
+                    'X-CSRF-TOKEN': '[[${_csrf.token}]]'
+                },
+                body: new URLSearchParams(formData)
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.loading = false;
+                if (data.code === 0) {
+                    location.href = '/';
+                } else {
+                    this.errorMessage = data.msg;
+                    this.refreshCaptcha();
+                }
+            })
+            .catch(err => {
+                this.loading = false;
+                this.errorMessage = '连接服务器失败，请稍后重试';
+            });
+        }
+      }">
+ 
+<!-- Video Background -->
+<video class="absolute inset-0 w-full h-full object-cover z-0 opacity-40" preload="auto" autoplay="autoplay" loop="loop" muted>
     <source src="/media/login.webm" type="video/webm" />
     <source src="/media/login.mp4" type="video/mp4" />
 </video>
-<div class="video_mask"></div>
-<div class="login">
-    <h1>后台管理登录</h1>
-    <form class="layui-form" action="/login" method="post">
-        <div class="layui-form-item">
-            <input class="layui-input" id="username" name="username" placeholder="用户名:vip" lay-verify="required" type="text" autocomplete="off" />
+ 
+<!-- Glassmorphism Login Container -->
+<div class="relative z-10 w-full max-w-md p-8 rounded-2xl glass-panel shadow-2xl mx-4">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-2xl font-extrabold text-white tracking-widest uppercase">音书后台管理</h1>
+        <p class="text-gray-400 text-xs mt-2">声音之美是为乐，往事如烟皆为故</p>
+    </div>
+ 
+    <!-- Error Alert Box -->
+    <div x-show="errorMessage" 
+         x-transition
+         class="mb-4 p-3 rounded-lg bg-red-500/20 border border-red-500/30 text-red-200 text-xs flex items-center space-x-2"
+         style="display: none;">
+        <svg class="h-4 w-4 shrink-0 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+        </svg>
+        <span x-text="errorMessage"></span>
+    </div>
+ 
+    <!-- Form -->
+    <form action="/login" method="post" @submit.prevent="submitLogin($event)" class="space-y-6">
+        <!-- Username input -->
+        <div>
+            <label class="block text-xs font-semibold text-gray-300 uppercase mb-1.5">用户名</label>
+            <input type="text" name="username" required placeholder="用户名: vip" autocomplete="off"
+                   class="w-full bg-slate-900/60 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
         </div>
-        <div class="layui-form-item">
-            <input class="layui-input" id="password" name="password" placeholder="密码:123456" lay-verify="required" type="password" autocomplete="off" />
+ 
+        <!-- Password input -->
+        <div>
+            <label class="block text-xs font-semibold text-gray-300 uppercase mb-1.5">密码</label>
+            <input type="password" name="password" required placeholder="密码: 123456" autocomplete="off"
+                   class="w-full bg-slate-900/60 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
         </div>
-        <div class="layui-form-item form_code">
-            <input class="layui-input" name="captcha" placeholder="验证码" lay-verify="required" type="text" autocomplete="off" />
-            <div class="code"><img src="/captcha" onclick="random(this)" width="116" height="36" id="vdc" title="看不清,点击换一张" /></div>
+ 
+        <!-- Captcha input -->
+        <div>
+            <label class="block text-xs font-semibold text-gray-300 uppercase mb-1.5">验证码</label>
+            <div class="flex space-x-3">
+                <input type="text" name="captcha" required placeholder="输入图形验证码" autocomplete="off"
+                       class="flex-1 bg-slate-900/60 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                <div class="shrink-0 cursor-pointer overflow-hidden rounded-lg border border-white/10 bg-slate-900/80 flex items-center justify-center">
+                    <img :src="captchaUrl" @click="refreshCaptcha()" class="h-11 w-28 object-cover" title="点击刷新验证码">
+                </div>
+            </div>
         </div>
-        <button class="layui-btn login_btn" lay-submit="" lay-filter="login">登录</button>
-        <input id="remember-me" name="remember-me" type="checkbox" value="true" title="记住我" />
+ 
+        <!-- Remember Me Checkbox -->
+        <div class="flex items-center">
+            <input type="checkbox" name="remember-me" value="true" id="remember-me"
+                   class="h-4 w-4 rounded border-white/10 bg-slate-900 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-slate-900">
+            <label for="remember-me" class="ml-2 block text-xs text-gray-300">记住登录状态</label>
+        </div>
+ 
+        <!-- Submit Button -->
+        <div>
+            <button type="submit" :disabled="loading"
+                    class="w-full flex justify-center items-center py-3 px-4 rounded-lg bg-indigo-650 bg-indigo-600 hover:bg-indigo-700 text-sm font-semibold text-white shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50 transition-colors">
+                <svg x-show="loading" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" style="display: none;">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span x-text="loading ? '正在登录...' : '立即登录'">立即登录</span>
+            </button>
+        </div>
     </form>
 </div>
-<script type="text/javascript" src="/webjars/layui/dist/layui.js"></script>
+ 
 <script>
-    layui.use(['element','form','layer'],function(){
-        $ = layui.jquery;
-        const form = layui.form,
-            layer = layui.layer;
-
-        form.on('submit(login)', function (data) {
-            const index = layer.load(0);
-            const headers = {};
-            headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
-            $.ajax({
-                url:data.form.action,
-                type:data.form.method,
-                headers: headers,
-                data:data.field,//这是是要提交的参数
-                dataType:'json',
-                success:function(data){
-                    if(data.code == 0){
-                        layer.close(index);
-                        location.href="/";
-                    }else{
-                        random($('#vdc')[0]);
-                        layer.close(index);
-                        layer.msg(data.msg,{time:1000});
-                    }
-                }
-            });
-            return false;
-        });
-
-    });
-
-    //跳出 iframe 框架
-    if (window != top)
+    // Break out of iframe if loaded inside one
+    if (window !== top) {
         top.location.href = location.href;
-    //获取验证码
-    function random(tmp){
-        tmp.src="/captcha?_"+Date.now();
     }
 </script>
+ 
 </body>
 </html>

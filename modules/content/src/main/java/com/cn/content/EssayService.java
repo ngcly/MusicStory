@@ -3,7 +3,6 @@ package com.cn.content;
 import com.cn.config.RabbitConfig;
 import com.cn.dao.ClassifyRepository;
 import com.cn.dao.CommentRepository;
-import com.cn.dao.CustomizeRepository;
 import com.cn.dao.EssayRepository;
 import com.cn.entity.*;
 import com.cn.enums.EssayStatusEnum;
@@ -33,7 +32,6 @@ public class EssayService {
     private final EssayRepository essayRepository;
     private final ClassifyRepository classifyRepository;
     private final CommentRepository commentRepository;
-    private final CustomizeRepository customizeRepository;
     private final BookService bookService;
     private final MailUtil mailUtil;
     private final RabbitTemplate rabbitTemplate;
@@ -44,10 +42,7 @@ public class EssayService {
      * @return List<Map < String, Object>>
      */
     public List<Map<String, Object>> getEssayList(int page, int pageSize) {
-        String sql = "SELECT t.id,t.title,t.synopsis,t3.username,t2.name,t.created_at,t.updated_at,t.read_num " +
-                "FROM essay t,classify t2,user_info t3 WHERE t.classify_id=t2.id AND t.user_id=t3.id " +
-                "AND (t.state='NORMAL' OR t.state='RECOMMEND') order by t.updated_at desc LIMIT ?,?";
-        return customizeRepository.nativeQueryListMap(sql, (page - 1) * pageSize, pageSize);
+        return essayRepository.findEssaySummaryList(PageRequest.of(page - 1, pageSize));
     }
 
     /**

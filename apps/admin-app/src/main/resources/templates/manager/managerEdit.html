@@ -1,175 +1,155 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>管理员编辑页</title>
-    <link rel="stylesheet" href="/webjars/layui/dist/css/layui.css">
-    <link rel="stylesheet" href="/css/public.css">
+    <title>管理员编辑</title>
 </head>
-<body class="child-body">
-<input type="hidden" id="ctm" th:value="${currentId}">
-<div class="child-nav">
-    <span class="layui-breadcrumb">
-         <a>系统设置</a>
-         <a href="/sys/adminList">管理员列表</a>
-        <a><cite th:text="${#strings.equals(manager.id,null)?'新增管理员':'修改管理员'}"></cite></a>
-    </span>
-    <a class="layui-btn layui-btn-sm" href="javascript:location.replace(location.href);" title="刷新" style="float:right;margin-top: 3px"><i class="layui-icon layui-icon-refresh-3"></i></a>
-</div>
-<div class="layui-col-md12">
-    <div class="layui-card">
-        <div class="layui-card-header" th:text="${#strings.equals(manager.id,null)?'新增管理员':'修改管理员'}"></div>
-        <div class="layui-card-body">
-            <form class="layui-form" action="/sys/manager">
-                <input type="hidden" id="altId" name="id" th:value="${manager.id}">
-                <div class="layui-form-item">
-                    <label class="layui-form-label">用户名</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="username" th:readonly="${manager.id!=null&&manager.id!=session.SPRING_SECURITY_CONTEXT.authentication.principal.id}" lay-verify="required" lay-vertype="tips" placeholder="请输入用户名" th:value="${manager.username}" autocomplete="off" class="layui-input">
-                    </div>
-                    <div class="layui-form-mid layui-word-aux" th:if="${manager.id==null}">新增用户默认密码为：123456</div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">真实姓名</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="realName" placeholder="请输入真实姓名" th:value="${manager.realName}" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">性别</label>
-                    <div class="layui-input-inline">
-                        <input type="radio" name="gender" value="MAN" title="男" checked>
-                        <input type="radio" name="gender" value="WOMAN" title="女" th:checked="${manager.gender==2}">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">生日</label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="birthday" name="birthday" th:value="${#temporals.format(manager.birthday,'yyyy-MM-dd')}" placeholder="出生年月" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item" th:if="${manager.state!=null}">
-                    <label class="layui-form-label">状态</label>
-                    <div class="layui-input-inline">
-                        <select name="state" lay-verify="required" th:if="not ${#strings.equals(manager.id,currentId)}">
-                            <option value="0" th:disabled="${manager.state!='INITIALIZE'}">初始化</option>
-                            <option value="1" th:disabled="${manager.state=='INITIALIZE'}" th:selected="${manager.state=='NORMAL'}">正常</option>
-                            <option value="2" th:selected="${manager.state=='LOCKED'}">封禁</option>
-                        </select>
-                        <select name="state" lay-verify="required" disabled th:if="${#strings.equals(manager.id,currentId)}">
-                            <option value="0" th:selected="${manager.state=='INITIALIZE'}">初始化</option>
-                            <option value="1" th:selected="${manager.state=='NORMAL'}">正常</option>
-                            <option value="2" th:selected="${manager.state=='LOCKED'}">封禁</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">头像</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="avatar" id="af" class="layui-input" th:value="${manager.avatar}">
-                    </div>
-                    <div class="layui-upload">
-                        <button type="button" class="layui-btn" id="avatar"><i class="layui-icon">&#xe681;</i>上传图片</button>
-                        <div class="layui-upload-list" style="padding-left: 110px">
-                            <img class="layui-upload-img layui-circle" style="max-width: 120px;max-height: 120px" id="avatar-view" th:src="${manager.avatar}">
-                            <p id="demoText"></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">角色</label>
-                    <div class="layui-input-block" th:if="${not #strings.equals(manager.id,currentId)}">
-                        <input type="checkbox" th:each="role:${roles}" th:name="'roleIds['+${role.id}+']'" th:checked="${#strings.contains(checkRoleId, role.id)}" th:value="${role.id}" th:title="${role.roleName}" th:disabled="${not #strings.contains(optionRoles, role.id)}">
-                    </div>
-                    <div class="layui-input-block" th:if="${#strings.equals(manager.id,currentId)}">
-                        <input type="checkbox" th:name="'roleIds['+${role.id}+']'" th:each="role:${manager.roleList}" th:title="${role.getRoleName()}" th:value="${role.id}" checked="checked" disabled>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <div class="layui-input-block">
-                        <button id="save" class="layui-btn" lay-submit lay-filter="save" th:text="${#strings.equals(manager.id,null)?'保存':'修改'}"></button>
-                        <a href="javascript:history.back()" type="button" class="layui-btn layui-btn-primary">返回</a>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<script src="/webjars/layui/dist/layui.js"></script>
-<script type="text/javascript">
-    layui.use(['element','form','laydate','upload'], function(){
-        $ = layui.jquery;
-        const form = layui.form,
-            laydate = layui.laydate,
-            upload = layui.upload;
-
-        //执行一个laydate实例
-        laydate.render({
-            elem: '#birthday' //指定元素
-            ,theme: 'grid'
-            ,min: '1960-1-1'
-            ,max: 0
-        });
-
-        //上传文件
-        upload.render({
-            elem: '#avatar'
-            ,url: '/sys/upload'
-            ,size: 600 //限制文件大小，单位 KB
-            // ,auto: false
-            // ,bindAction: '#testListAction' //指向一个按钮触发上传
-            ,accept: 'images' //普通文件
-            ,exts: 'jpg|jpeg|png' //只允许上传图片
-            ,acceptMime:'image/*'
-            ,before: function(obj){
-                this.data={
-                    "[[${_csrf.parameterName}]]": "[[${_csrf.token}]]"
-                },
-                    //预读本地文件示例，不支持ie8
-                obj.preview(function(index, file, result){
-                    $('#avatar-view').attr('src', result); //图片链接（base64）
-                });
-            }
-            ,done: function(res){
-                if(res.code == 0){
-                    $('#af').val(res.data);
-                }else{
-                    return layer.msg('上传失败');
+<body>
+ 
+<div th:fragment="managerEditFragment" class="p-4"
+     x-data="{
+        avatarUrl: '[[${manager.avatar}]]',
+        uploadAvatar(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('[[${_csrf.parameterName}]]', '[[${_csrf.token}]]');
+            
+            fetch('/sys/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.code === 0) {
+                    this.avatarUrl = result.data;
+                } else {
+                    alert('上传失败: ' + result.msg);
                 }
-            }
-        });
-
-        //监听提交
-        form.on('submit(save)', function(data){
-            const headers = {};
-            headers['X-CSRF-TOKEN'] = "[[${_csrf.token}]]";
-            const methodType = $('#altId').val() == undefined || $('#altId').val() == ''?'post':'put';
-            $.ajax({
-                url:data.form.action,
-                type:methodType,
-                headers: headers,
-                data:data.field,
-                dataType:'json',
-                beforeSend:function() { //触发ajax请求开始时执行
-                    $("#save").attr("disabled","true"); //改变提交按钮上的文字并将按钮设置为不可点击
-                },
-                success:function(result){
-                    if(result.code == 0){
-                        layer.msg(result.msg, {icon: 1,time:600}, function () {
-                            if($('#ctm').val()==$('#altId').val()){
-                                parent.$('#my-avatar').attr('src',data.field.avatar);
-                                parent.$('#my-name').html(data.field.username);
-                            }
-                            location.href="/sys/manager.html";
-                        });
-                    }else{
-                        layer.msg(result.msg,{time:1000});
-                    }
-                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('上传出错');
             });
-            return false;
-        });
-    });
-</script>
+        }
+     }">
+     
+    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4"
+        th:text="${manager.id == null ? '新增管理员' : '修改管理员'}"></h3>
+        
+    <form th:hx-put="${manager.id != null} ? '/sys/manager' : null"
+          th:hx-post="${manager.id == null} ? '/sys/manager' : null"
+          hx-swap="none"
+          class="space-y-4">
+          
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="hidden" id="altId" name="id" th:value="${manager.id}">
+        <input type="hidden" id="ctm" th:value="${currentId}">
+        
+        <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase">用户名</label>
+            <input type="text" name="username" th:value="${manager.username}" required
+                   th:readonly="${manager.id != null && manager.id != currentId}"
+                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm readonly:bg-gray-100 dark:readonly:bg-gray-800">
+            <span class="text-xs text-gray-400 mt-1 block" th:if="${manager.id == null}">新增用户默认密码为：123456</span>
+        </div>
+        
+        <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase">真实姓名</label>
+            <input type="text" name="realName" th:value="${manager.realName}" required
+                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+        </div>
+ 
+        <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase mb-2">性别</label>
+            <div class="flex items-center space-x-4">
+                <label class="inline-flex items-center">
+                    <input type="radio" name="gender" value="MAN"
+                           th:checked="${manager.gender == null || manager.gender.toString() == 'MAN'}"
+                           class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                    <span class="ml-2 text-sm text-gray-700 dark:text-gray-200">男</span>
+                </label>
+                <label class="inline-flex items-center">
+                    <input type="radio" name="gender" value="WOMAN"
+                           th:checked="${manager.gender != null && manager.gender.toString() == 'WOMAN'}"
+                           class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                    <span class="ml-2 text-sm text-gray-700 dark:text-gray-200">女</span>
+                </label>
+            </div>
+        </div>
+        
+        <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase">生日</label>
+            <input type="date" name="birthday" th:value="${manager.birthday}"
+                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+        </div>
+ 
+        <div th:if="${manager.state != null}">
+            <label class="block text-xs font-semibold text-gray-400 uppercase mb-2">状态</label>
+            <!-- When not editing self, allow changing state -->
+            <select name="state" required th:if="${!#strings.equals(manager.id, currentId)}"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                <option value="INITIALIZE" th:disabled="${manager.state.toString() != 'INITIALIZE'}" th:selected="${manager.state.toString() == 'INITIALIZE'}">初始化</option>
+                <option value="NORMAL" th:disabled="${manager.state.toString() == 'INITIALIZE'}" th:selected="${manager.state.toString() == 'NORMAL'}">正常</option>
+                <option value="LOCKED" th:selected="${manager.state.toString() == 'LOCKED'}">封禁</option>
+            </select>
+            <!-- When editing self, state is read-only -->
+            <select name="state" required disabled th:if="${#strings.equals(manager.id, currentId)}"
+                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-950 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-gray-105">
+                <option value="INITIALIZE" th:selected="${manager.state.toString() == 'INITIALIZE'}">初始化</option>
+                <option value="NORMAL" th:selected="${manager.state.toString() == 'NORMAL'}">正常</option>
+                <option value="LOCKED" th:selected="${manager.state.toString() == 'LOCKED'}">封禁</option>
+            </select>
+            <input type="hidden" name="state" th:value="${manager.state}" th:if="${#strings.equals(manager.id, currentId)}" />
+        </div>
+ 
+        <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase mb-2">头像</label>
+            <input type="hidden" name="avatar" :value="avatarUrl">
+            <div class="flex items-center space-x-4">
+                <img class="h-16 w-16 rounded-full object-cover border-2 border-gray-200" :src="avatarUrl ? avatarUrl : '/images/avatar.jpg'" alt="Avatar Preview">
+                <label class="cursor-pointer bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50">
+                    选择图片
+                    <input type="file" class="sr-only" accept="image/*" @change="uploadAvatar($event)">
+                </label>
+            </div>
+        </div>
+ 
+        <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase mb-2">角色</label>
+            <!-- Not self: allow checking roles -->
+            <div th:if="${!#strings.equals(manager.id, currentId)}" class="flex flex-wrap gap-4">
+                <label th:each="role : ${roles}" class="inline-flex items-center">
+                    <input type="checkbox" name="roleIds" th:value="${role.id}"
+                           th:checked="${#strings.contains(checkRoleId, role.id)}"
+                           th:disabled="${not #strings.contains(optionRoles, role.id)}"
+                           class="h-4 w-4 rounded border-gray-300 text-indigo-650 focus:ring-indigo-500">
+                    <span class="ml-2 text-sm text-gray-700 dark:text-gray-200" th:text="${role.roleName}"></span>
+                </label>
+            </div>
+            <!-- Editing self: roles are read-only -->
+            <div th:if="${#strings.equals(manager.id, currentId)}" class="flex flex-wrap gap-2">
+                <span th:each="role : ${manager.roleList}" 
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-850 dark:text-gray-200 border border-gray-200">
+                    <span th:text="${role.roleName}"></span>
+                    <input type="hidden" name="roleIds" th:value="${role.id}">
+                </span>
+            </div>
+        </div>
+ 
+        <div class="pt-4 flex justify-end space-x-2 border-t border-gray-100 dark:border-gray-700">
+            <button type="button" @click="openEdit = false"
+                    class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                取消
+            </button>
+            <button type="submit" @click="openEdit = false"
+                    class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    th:text="${manager.id == null ? '保存' : '修改'}">
+            </button>
+        </div>
+    </form>
+</div>
+ 
 </body>
 </html>
