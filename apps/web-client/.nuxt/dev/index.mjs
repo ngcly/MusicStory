@@ -1,47 +1,46 @@
 import process from 'node:process';globalThis._importMeta_={url:import.meta.url,env:process.env};import { tmpdir } from 'node:os';
-import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, createError, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, appendResponseHeader, getRequestURL, getResponseHeader, removeResponseHeader, getQuery as getQuery$1, readBody, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getResponseStatus, getRouterParam, getResponseStatusText } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/h3/dist/index.mjs';
 import { Server } from 'node:http';
 import { resolve, dirname, join } from 'node:path';
-import crypto$1 from 'node:crypto';
+import nodeCrypto from 'node:crypto';
 import { parentPort, threadId } from 'node:worker_threads';
-import { escapeHtml } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/@vue/shared/dist/shared.cjs.js';
-import viteNodeEntry_mjs from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/@nuxt/vite-builder/dist/vite-node-entry.mjs';
-import { viteNodeFetch } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/@nuxt/vite-builder/dist/vite-node.mjs';
-import { createRenderer, getRequestDependencies, getPreloadLinks, getPrefetchLinks } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/vue-bundle-renderer/dist/runtime.mjs';
-import { parseURL, withoutBase, joinURL, getQuery, withQuery, withTrailingSlash, decodePath, withLeadingSlash, withoutTrailingSlash, encodePath, joinRelativeURL } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/ufo/dist/index.mjs';
-import { renderToString } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/vue/server-renderer/index.mjs';
-import destr, { destr as destr$1 } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/destr/dist/index.mjs';
-import { createHooks } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/hookable/dist/index.mjs';
-import { createFetch, Headers as Headers$1 } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/ofetch/dist/node.mjs';
-import { fetchNodeRequestHandler, callNodeRequestHandler } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/node-mock-http/dist/index.mjs';
-import { createStorage, defineDriver, prefixStorage } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/unstorage/dist/index.mjs';
-import unstorage_47drivers_47fs from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/unstorage/drivers/fs.mjs';
-import fsDriver from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/unstorage/drivers/fs-lite.mjs';
-import lruCache from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/unstorage/drivers/lru-cache.mjs';
-import { digest, hash as hash$1 } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/ohash/dist/index.mjs';
-import { klona } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/klona/dist/index.mjs';
-import defu, { defuFn } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/defu/dist/defu.mjs';
-import { snakeCase } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/scule/dist/index.mjs';
-import { getContext } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/unctx/dist/index.mjs';
-import { toRouteMatcher, createRouter } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/radix3/dist/index.mjs';
+import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, createError, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, appendResponseHeader, getRequestURL, getResponseHeader, removeResponseHeader, getQuery as getQuery$1, readBody, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getResponseStatus, getRouterParam, getResponseStatusText } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/h3/dist/index.mjs';
+import { escapeHtml } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/@vue/shared/dist/shared.cjs.js';
+import viteNodeEntry_mjs from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/@nuxt/vite-builder/dist/vite-node-entry.mjs';
+import { viteNodeFetch } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/@nuxt/vite-builder/dist/vite-node.mjs';
+import { createRenderer, getRequestDependencies, getPreloadLinks, getPrefetchLinks } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/vue-bundle-renderer/dist/runtime.mjs';
+import { parseURL, withoutBase, joinURL, getQuery, withQuery, withTrailingSlash, decodePath, withLeadingSlash, withoutTrailingSlash, encodePath, joinRelativeURL } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/ufo/dist/index.mjs';
+import { renderToString } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/vue/server-renderer/index.mjs';
+import { klona } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/klona/dist/index.mjs';
+import defu, { defuFn } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/defu/dist/defu.mjs';
+import destr, { destr as destr$1 } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/destr/dist/index.mjs';
+import { snakeCase } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/scule/dist/index.mjs';
+import { createHead as createHead$1, propsToString, renderSSRHead } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/unhead/dist/server.mjs';
+import { stringify, uneval } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/devalue/index.js';
+import { isVNode, isRef, toValue } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/vue/index.mjs';
+import { DeprecationsPlugin, PromisesPlugin, TemplateParamsPlugin, AliasSortingPlugin } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/unhead/dist/plugins.mjs';
+import { createHooks } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/hookable/dist/index.mjs';
+import { createFetch, Headers as Headers$1 } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/ofetch/dist/node.mjs';
+import { fetchNodeRequestHandler, callNodeRequestHandler } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/node-mock-http/dist/index.mjs';
+import { createStorage, prefixStorage } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/unstorage/dist/index.mjs';
+import unstorage_47drivers_47fs from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/unstorage/drivers/fs.mjs';
+import file_58_47_47_47D_58_47git_37E9_37A1_37B9_37E7_379B_37AE_47MusicStory_47apps_47web_45client_47node_modules_47_64nuxt_47nitro_45server_47dist_47runtime_47utils_47cache_45driver_46js from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/@nuxt/nitro-server/dist/runtime/utils/cache-driver.js';
+import { digest, hash as hash$1 } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/ohash/dist/index.mjs';
+import { toRouteMatcher, createRouter } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/radix3/dist/index.mjs';
 import { readFile } from 'node:fs/promises';
-import consola, { consola as consola$1 } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/consola/dist/index.mjs';
-import { ErrorParser } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/youch-core/build/index.js';
-import { Youch } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/youch/build/index.js';
-import { SourceMapConsumer } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/source-map/source-map.js';
+import consola, { consola as consola$1 } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/consola/dist/index.mjs';
+import { ErrorParser } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/youch-core/build/index.js';
+import { Youch } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/youch/build/index.js';
+import { SourceMapConsumer } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/source-map/source-map.js';
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { stringify, uneval } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/devalue/index.js';
-import { captureRawStackTrace, parseRawStackTrace } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/errx/dist/index.js';
-import { isVNode, isRef, toValue } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/vue/index.mjs';
-import _wH6JrtIxmaSoA8lCPWFnE9z4lQeXW6H5z3l5aymEQw from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/@nuxt/vite-builder/dist/fix-stacktrace.mjs';
+import { getContext } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/unctx/dist/index.mjs';
+import { captureRawStackTrace, parseRawStackTrace } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/errx/dist/index.js';
+import _wH6JrtIxmaSoA8lCPWFnE9z4lQeXW6H5z3l5aymEQw from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/@nuxt/vite-builder/dist/fix-stacktrace.mjs';
 import { promises } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { dirname as dirname$1, resolve as resolve$1 } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/pathe/dist/index.mjs';
-import { createHead as createHead$1, propsToString, renderSSRHead } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/unhead/dist/server.mjs';
-import { DeprecationsPlugin, PromisesPlugin, TemplateParamsPlugin, AliasSortingPlugin } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/unhead/dist/plugins.mjs';
-import { walkResolver } from 'file:///Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/unhead/dist/utils.mjs';
+import { dirname as dirname$1, resolve as resolve$1 } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/pathe/dist/index.mjs';
+import { walkResolver } from 'file://D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/unhead/dist/utils.mjs';
 
-const serverAssets = [{"baseName":"server","dir":"/Users/chenning/personalProjects/backend/MusicStory/apps/web-client/server/assets"}];
+const serverAssets = [{"baseName":"server","dir":"D:/git项目/MusicStory/apps/web-client/server/assets"}];
 
 const assets$1 = createStorage();
 
@@ -49,55 +48,16 @@ for (const asset of serverAssets) {
   assets$1.mount(asset.baseName, unstorage_47drivers_47fs({ base: asset.dir, ignore: (asset?.ignore || []) }));
 }
 
-// @ts-check
-
-
-/**
- * @param {string} item
- */
-function normalizeFsKey (item) {
-  const safe = item.replace(/[^\w.-]/g, '_');
-  const prefix = safe.slice(0, 20);
-  const hash = crypto$1.createHash('sha256').update(item).digest('hex');
-  return `${prefix}-${hash}`
-}
-
-const _47Users_47chenning_47personalProjects_47backend_47MusicStory_47apps_47web_45client_47node_modules_47_64nuxt_47nitro_45server_47dist_47runtime_47utils_47cache_45driver_46js = defineDriver(
-  /**
-   * @param {{ base?: string }} opts
-   */
-  (opts) => {
-    const fs = fsDriver({ base: opts.base });
-    const lru = lruCache({ max: 1000 });
-
-    return {
-      ...fs, // fall back to file system - only the bottom three methods are used in renderer
-      async setItem (key, value, opts) {
-        await Promise.all([
-          fs.setItem?.(normalizeFsKey(key), value, opts),
-          lru.setItem?.(key, value, opts),
-        ]);
-      },
-      async hasItem (key, opts) {
-        return await lru.hasItem(key, opts) || await fs.hasItem(normalizeFsKey(key), opts)
-      },
-      async getItem (key, opts) {
-        return await lru.getItem(key, opts) || await fs.getItem(normalizeFsKey(key), opts)
-      },
-    }
-  },
-);
-
 const storage = createStorage({});
 
 storage.mount('/assets', assets$1);
 
-storage.mount('root', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"/Users/chenning/personalProjects/backend/MusicStory/apps/web-client","watchOptions":{"ignored":[null]}}));
-storage.mount('src', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"/Users/chenning/personalProjects/backend/MusicStory/apps/web-client/server","watchOptions":{"ignored":[null]}}));
-storage.mount('cache:nuxt:payload', _47Users_47chenning_47personalProjects_47backend_47MusicStory_47apps_47web_45client_47node_modules_47_64nuxt_47nitro_45server_47dist_47runtime_47utils_47cache_45driver_46js({"driver":"/Users/chenning/personalProjects/backend/MusicStory/apps/web-client/node_modules/@nuxt/nitro-server/dist/runtime/utils/cache-driver.js","base":"/Users/chenning/personalProjects/backend/MusicStory/apps/web-client/.nuxt/cache/nuxt/payload"}));
-storage.mount('build', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"/Users/chenning/personalProjects/backend/MusicStory/apps/web-client/.nuxt"}));
-storage.mount('cache', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"/Users/chenning/personalProjects/backend/MusicStory/apps/web-client/.nuxt/cache"}));
-storage.mount('data', unstorage_47drivers_47fs({"driver":"fs","base":"/Users/chenning/personalProjects/backend/MusicStory/apps/web-client/.data/kv"}));
+storage.mount('root', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"D:/git项目/MusicStory/apps/web-client","watchOptions":{"ignored":[null]}}));
+storage.mount('src', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"D:/git项目/MusicStory/apps/web-client/server","watchOptions":{"ignored":[null]}}));
+storage.mount('cache:nuxt:payload', file_58_47_47_47D_58_47git_37E9_37A1_37B9_37E7_379B_37AE_47MusicStory_47apps_47web_45client_47node_modules_47_64nuxt_47nitro_45server_47dist_47runtime_47utils_47cache_45driver_46js({"driver":"file:///D:/git%E9%A1%B9%E7%9B%AE/MusicStory/apps/web-client/node_modules/@nuxt/nitro-server/dist/runtime/utils/cache-driver.js","base":"D:/git项目/MusicStory/apps/web-client/.nuxt/cache/nuxt/payload"}));
+storage.mount('build', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"D:/git项目/MusicStory/apps/web-client/.nuxt"}));
+storage.mount('cache', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"D:/git项目/MusicStory/apps/web-client/.nuxt/cache"}));
+storage.mount('data', unstorage_47drivers_47fs({"driver":"fs","base":"D:/git项目/MusicStory/apps/web-client/.data/kv"}));
 
 function useStorage(base = "") {
   return base ? prefixStorage(storage, base) : storage;
@@ -726,11 +686,6 @@ new Proxy(/* @__PURE__ */ Object.create(null), {
     }
     return void 0;
   }
-});
-
-getContext("nitro-app", {
-  asyncContext: false,
-  AsyncLocalStorage: void 0
 });
 
 function isPathInScope(pathname, base) {
@@ -2082,13 +2037,13 @@ if (!window.__NUXT_DEVTOOLS_TIME_METRIC__) {
 window.__NUXT_DEVTOOLS_TIME_METRIC__.appInit = Date.now()
 `;
 
-const _Xb6WlQzgLvMBgdj4PhdG0JC2DPu_ywwmWLpXmt_MmDQ = (function(nitro) {
+const _yEk1ZrEzwSNtZYBbHwitvszyZF4VAIfo1AJGod8nE = (function(nitro) {
   nitro.hooks.hook("render:html", (htmlContext) => {
     htmlContext.head.push(`<script>${script}<\/script>`);
   });
 });
 
-const rootDir = "/Users/chenning/personalProjects/backend/MusicStory/apps/web-client";
+const rootDir = "D:/git项目/MusicStory/apps/web-client";
 
 const appHead = {"meta":[{"charset":"utf-8"},{"name":"viewport","content":"width=device-width, initial-scale=1"},{"name":"description","content":"结合了高品质音乐播放与优雅文字创作的文艺社区网站。"}],"link":[{"rel":"icon","type":"image/x-icon","href":"/favicon.ico"},{"rel":"preconnect","href":"https://fonts.googleapis.com"},{"rel":"preconnect","href":"https://fonts.gstatic.com","crossorigin":""},{"rel":"stylesheet","href":"https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Noto+Serif+SC:wght@200..900&display=swap"}],"style":[],"script":[{"children":"if (typeof global === 'undefined') { window.global = window; }","type":"text/javascript"}],"noscript":[],"title":"音书 - 高颜值文艺深阅读与听歌社区"};
 
@@ -2114,7 +2069,7 @@ const asyncContext = getContext("nuxt-dev", {
 	asyncContext: true,
 	AsyncLocalStorage
 });
-const _ogte42mSQc9ifqCcDUJQfLzK5ymrq8pfMNc2R_vQYjo = (nitroApp) => {
+const _L0DchAUmjxeXFBVHS9rpRe67vzP9xAx5CenMPIDdY = (nitroApp) => {
 	const handler = nitroApp.h3App.handler;
 	nitroApp.h3App.handler = (event) => {
 		return asyncContext.callAsync({
@@ -2190,8 +2145,8 @@ function onConsoleLog(callback) {
 }
 
 const plugins = [
-  _Xb6WlQzgLvMBgdj4PhdG0JC2DPu_ywwmWLpXmt_MmDQ,
-_ogte42mSQc9ifqCcDUJQfLzK5ymrq8pfMNc2R_vQYjo,
+  _yEk1ZrEzwSNtZYBbHwitvszyZF4VAIfo1AJGod8nE,
+_L0DchAUmjxeXFBVHS9rpRe67vzP9xAx5CenMPIDdY,
 _wH6JrtIxmaSoA8lCPWFnE9z4lQeXW6H5z3l5aymEQw
 ];
 
@@ -2220,7 +2175,7 @@ function getAsset (id) {
 
 const METHODS = /* @__PURE__ */ new Set(["HEAD", "GET"]);
 const EncodingMap = { gzip: ".gz", br: ".br" };
-const _FjDYqD = eventHandler((event) => {
+const _lZPk01 = eventHandler((event) => {
   if (event.method && !METHODS.has(event.method)) {
     return;
   }
@@ -2726,13 +2681,13 @@ async function getIslandContext(event) {
 	};
 }
 
-const _lazy_WU5oDN = () => Promise.resolve().then(function () { return renderer; });
+const _lazy_01UpI7 = () => Promise.resolve().then(function () { return renderer; });
 
 const handlers = [
-  { route: '', handler: _FjDYqD, lazy: false, middleware: true, method: undefined },
-  { route: '/__nuxt_error', handler: _lazy_WU5oDN, lazy: true, middleware: false, method: undefined },
+  { route: '', handler: _lZPk01, lazy: false, middleware: true, method: undefined },
+  { route: '/__nuxt_error', handler: _lazy_01UpI7, lazy: true, middleware: false, method: undefined },
   { route: '/__nuxt_island/**', handler: handler$1, lazy: false, middleware: false, method: undefined },
-  { route: '/**', handler: _lazy_WU5oDN, lazy: true, middleware: false, method: undefined }
+  { route: '/**', handler: _lazy_01UpI7, lazy: true, middleware: false, method: undefined }
 ];
 
 function createNitroApp() {
@@ -2953,7 +2908,7 @@ async function runTask(name, {
 }
 
 if (!globalThis.crypto) {
-  globalThis.crypto = crypto$1.webcrypto;
+  globalThis.crypto = nodeCrypto.webcrypto;
 }
 const { NITRO_NO_UNIX_SOCKET, NITRO_DEV_WORKER_ID } = process.env;
 trapUnhandledNodeErrors();

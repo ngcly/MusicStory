@@ -14,7 +14,7 @@ services:
       - "node.name=elasticsearch"
       - "cluster.name=elasticsearch" #设置集群名称为elasticsearch
       - "discovery.type=single-node" #以单一节点模式启动
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" #设置使用jvm内存大小
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m -Xlog:disable" #设置使用jvm内存大小并关闭JVM GC日志
       - "xpack.security.enabled=false"  #关闭xpack认证
     labels:
       org.springframework.boot.service-connection: elasticsearch

@@ -1,5 +1,7 @@
 package com.cn.config;
 
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
 import com.cn.model.RestCode;
 import com.cn.util.JacksonUtil;
 import com.cn.util.Result;
@@ -20,9 +22,12 @@ import java.io.PrintWriter;
  * 登录失败处理
  */
 public class LoginFailureHandler implements AuthenticationFailureHandler {
+    private static final Log log = LogFactory.get();
+
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException {
+        log.error("Login failed with exception: ", exception);
         response.setContentType(ContentType.APPLICATION_JSON.toString());
         RestCode restCode;
         if (exception instanceof BadCredentialsException ||

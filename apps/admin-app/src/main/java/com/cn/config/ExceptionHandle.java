@@ -35,8 +35,22 @@ public class ExceptionHandle {
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
     public Result<String> handlerException(HttpServletRequest request, Exception e) throws Exception {
-        log.error(e);
-        if (request.getHeader(HttpHeaders.ACCEPT).contains(ContentType.APPLICATION_JSON.getMimeType())
+        if (e instanceof org.springframework.web.servlet.resource.NoResourceFoundException) {
+            log.warn("No static resource found: {}", e.getMessage());
+        } else if (e instanceof AccessDeniedException
+                || e instanceof HttpRequestMethodNotSupportedException
+                || e instanceof MissingPathVariableException
+                || e instanceof MissingServletRequestParameterException
+                || e instanceof HttpMediaTypeNotAcceptableException
+                || e instanceof ConstraintViolationException
+                || e instanceof MethodArgumentNotValidException
+                || e instanceof GlobalException) {
+            log.warn("Client error: {}", e.getMessage());
+        } else {
+            log.error(e);
+        }
+        String accept = request.getHeader(HttpHeaders.ACCEPT);
+        if ((accept != null && accept.contains(ContentType.APPLICATION_JSON.getMimeType()))
                 ||  "XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
             return getResult(e);
         }else{
@@ -67,6 +81,9 @@ public class ExceptionHandle {
             }
             case HttpMediaTypeNotAcceptableException httpMediaTypeNotAcceptableException -> {
                 return Result.failure(RestCode.HEAD_ERROR);
+            }
+            case org.springframework.web.servlet.resource.NoResourceFoundException noResourceFoundException -> {
+                return Result.failure(RestCode.NOT_FOUND);
             }
             case GlobalException globalException -> {
                 return Result.failure(globalException.getCode(), globalException.getMessage());

@@ -65,7 +65,7 @@ public class SystemController {
             Model model) {
         
         Page<Manager> managerList = managerService.getManagersList(
-                pageable.withPage(pageable.getPageNumber() - 1), manager);
+                pageable.withPage(Math.max(0, pageable.getPageNumber() - 1)), manager);
         
         model.addAttribute("managerPage", managerList);
         model.addAttribute("currentPage", pageable.getPageNumber());
@@ -204,7 +204,7 @@ public class SystemController {
         
         // Convert to 0-based page for spring data
         Page<Role> roleList = roleService.getRoleList(
-                pageable.withPage(pageable.getPageNumber() - 1), role);
+                pageable.withPage(Math.max(0, pageable.getPageNumber() - 1)), role);
         
         model.addAttribute("rolePage", roleList);
         model.addAttribute("currentPage", pageable.getPageNumber());
@@ -323,7 +323,7 @@ public class SystemController {
             Model model) {
         
         Page<LoginLog> logList = logService.getLoginLogList(
-                pageable.withPage(pageable.getPageNumber() - 1), loginLog);
+                pageable.withPage(Math.max(0, pageable.getPageNumber() - 1)), loginLog);
         
         model.addAttribute("logPage", logList);
         model.addAttribute("currentPage", pageable.getPageNumber());

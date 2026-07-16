@@ -29,6 +29,9 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
     </style>
+    <!-- CSRF Meta Tags -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body class="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-950"
       x-data="{
@@ -44,10 +47,13 @@
             const form = event.target;
             const formData = new FormData(form);
             
+            const csrfToken = document.querySelector('meta[name=_csrf]').getAttribute('content');
+            const csrfHeader = document.querySelector('meta[name=_csrf_header]').getAttribute('content');
+            
             fetch(form.action, {
                 method: form.method,
                 headers: {
-                    'X-CSRF-TOKEN': '[[${_csrf.token}]]'
+                    [csrfHeader]: csrfToken
                 },
                 body: new URLSearchParams(formData)
             })

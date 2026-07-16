@@ -44,29 +44,41 @@ public class ExceptionHandle extends ResponseEntityExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
     public Result<String> handlerException(HttpServletRequest request, Exception e){
-        log.error(request.getRequestURI(), e);
-        if(e instanceof BadCredentialsException) {
+        if (e instanceof org.springframework.web.servlet.resource.NoResourceFoundException) {
+            log.warn("No static resource found: {}", e.getMessage());
+            return Result.failure(RestCode.NOT_FOUND);
+        } else if (e instanceof BadCredentialsException) {
+            log.warn("Bad credentials: {}", e.getMessage());
             return Result.failure(RestCode.USER_ERR);
         } else if (e instanceof AccessDeniedException) {
+            log.warn("Access denied for URI {}: {}", request.getRequestURI(), e.getMessage());
             return Result.failure(RestCode.UNAUTHORIZED);
         } else if (e instanceof HttpRequestMethodNotSupportedException) {
+            log.warn("Http request method not supported for URI {}: {}", request.getRequestURI(), e.getMessage());
             return Result.failure(RestCode.METHOD_ERROR);
         } else if (e instanceof MissingPathVariableException) {
             // 缺少路径参数
+            log.warn("Missing path variable for URI {}: {}", request.getRequestURI(), e.getMessage());
             return Result.failure(RestCode.NOT_FOUND);
         } else if (e instanceof MissingServletRequestParameterException) {
             // 缺少必须的请求参数
+            log.warn("Missing request parameter for URI {}: {}", request.getRequestURI(), e.getMessage());
             return Result.failure(RestCode.PARAM_ERROR);
         } else if (e instanceof HttpMediaTypeNotAcceptableException){
+            log.warn("Http media type not acceptable for URI {}: {}", request.getRequestURI(), e.getMessage());
             return Result.failure(RestCode.HEAD_ERROR);
-        }else if (e instanceof GlobalException exception){
+        } else if (e instanceof GlobalException exception){
+            log.warn("Global exception for URI {}: {}", request.getRequestURI(), exception.getMessage());
             return Result.failure(exception.getCode(),exception.getMessage());
         } else if (e instanceof ConstraintViolationException exception) {
             //@RequestParam 参数校验失败
+            log.warn("Constraint violation for URI {}: {}", request.getRequestURI(), exception.getMessage());
             return Result.failure(RestCode.PARAM_ERROR.code, exception.getMessage());
         } else if (e instanceof MethodArgumentNotValidException exception){
+            log.warn("Method argument not valid for URI {}: {}", request.getRequestURI(), exception.getMessage());
             return Result.failure(RestCode.PARAM_ERROR.code, exception.getMessage());
         } else {
+            log.error(request.getRequestURI(), e);
             return Result.failure(RestCode.SERVER_ERROR);
         }
     }

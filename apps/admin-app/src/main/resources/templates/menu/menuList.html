@@ -23,6 +23,35 @@
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <!-- Alpine.js -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Custom scrollbar styles */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.25);
+            border-radius: 3px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.5);
+        }
+    </style>
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
 </head>
 <body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen p-6"
       x-data="{ openEdit: false }">
@@ -77,15 +106,15 @@
         expandedIds: [],
         parentMap: {},
         init() {
-            // Build childId -> parentId mapping dynamically from Thymeleaf
-            this.parentMap = {
-                [th:each='m : ${menuList}' th:utext='&apos;&apos; + ${m.id} + &apos;: &apos; + ${m.parentId} + &apos;,&apos;']
-            };
-            
-            // Auto expand all top level menus initially
-            [th:each='m : ${menuList}' th:if='${#strings.equals(m.parentId, &quot;0&quot;)}']
-                this.expandedIds.push([[${m.id}]]);
-            [/]
+            const list = window.menuList || [];
+            list.forEach(m => {
+                this.parentMap[m.id] = m.parentId;
+                if (String(m.parentId) === '0' || m.parentId === 0) {
+                    if (!this.expandedIds.includes(m.id)) {
+                        this.expandedIds.push(m.id);
+                    }
+                }
+            });
         },
         isRowVisible(parentId) {
             if (parentId === 0 || parentId === '0') return true;
@@ -110,6 +139,10 @@
             return 1 + this.getDepth(nextParent);
         }
      }">
+     
+    <script th:inline="javascript">
+        window.menuList = [[${menuList}]];
+    </script>
  
     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
         <thead class="bg-gray-50 dark:bg-gray-900">
@@ -125,18 +158,18 @@
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
             <tr th:each="menu : ${menuList}" 
-                x-show="isRowVisible([[${menu.parentId}]])"
+                th:attr="x-show=|isRowVisible('${menu.parentId}')|"
                 class="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
                 
                 <!-- Indented name cell with toggle button -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white flex items-center"
-                    :style="'padding-left: ' + (getDepth([[${menu.parentId}]]) * 1.5 + 1.5) + 'rem'">
+                    th:attr=":style=|'padding-left: ' + (getDepth('${menu.parentId}') * 1.5 + 1.5) + 'rem'|">
                     
                     <!-- Toggle Chevron -->
-                    <button type="button" @click="toggleRow([[${menu.id}]])"
+                    <button type="button" th:attr="@click=|toggleRow('${menu.id}')|"
                             class="mr-1.5 text-gray-400 hover:text-gray-600 focus:outline-none"
                             th:unless="${#strings.equals(menu.resourceType,'button')}">
-                        <svg class="h-4 w-4 transform transition-transform" :class="isExpanded([[${menu.id}]]) ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                        <svg class="h-4 w-4 transform transition-transform" th:attr=":class=|isExpanded('${menu.id}') ? 'rotate-90' : ''|" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                         </svg>
                     </button>
@@ -155,7 +188,7 @@
                     </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-550 dark:text-gray-300">
-                    <i class="text-lg" th:utext="${menu.icon != null ? menu.icon : ''}"></i>
+                    <i class="w-5 h-5" th:data-lucide="${menu.icon != null && !menu.icon.isEmpty() ? menu.icon : 'help-circle'}"></i>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300" th:text="${menu.sort}"></td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
@@ -239,5 +272,14 @@
     </div>
 </div>
  
+<script>
+    // Initialize Lucide icons on load
+    lucide.createIcons();
+    
+    // Re-run Lucide icons creation after HTMX swaps
+    document.body.addEventListener('htmx:afterSwap', function() {
+        lucide.createIcons();
+    });
+</script>
 </body>
 </html>

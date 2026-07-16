@@ -5,6 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>音书 - 后台管理系统</title>
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -14,6 +18,9 @@
                 extend: {
                     colors: {
                         primary: '#4f46e5',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
                     }
                 }
             }
@@ -23,6 +30,47 @@
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <!-- Alpine.js -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- CSRF Meta Tags -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <style>
+        /* Custom scrollbar styles */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.25);
+            border-radius: 3px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.5);
+        }
+        
+        /* Iframe background sync */
+        iframe {
+            background-color: #f8fafc;
+            transition: background-color 0.3s ease;
+        }
+        .dark iframe {
+            background-color: #0f172a;
+        }
+    </style>
     <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"/>
 </head>
 <body class="bg-gray-150 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen overflow-hidden"
@@ -31,7 +79,8 @@
         avatarDropdownOpen: false,
         openSecurityModal: false,
         activeMenuId: null,
-        expandedMenus: []
+        expandedMenus: [],
+        darkMode: localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
       }"
       @pwd-updated.window="alert('密码修改成功！'); openSecurityModal = false">
  
@@ -56,7 +105,7 @@
                 <button @click="open = !open" 
                         class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors group">
                     <div class="flex items-center space-x-3">
-                        <i class="text-lg text-slate-400 group-hover:text-white" th:utext="${menu1.icon}"></i>
+                        <i class="w-5 h-5 text-slate-400 group-hover:text-white" th:data-lucide="${menu1.icon != null && !menu1.icon.isEmpty() ? menu1.icon : 'help-circle'}"></i>
                         <span class="text-sm font-medium" x-show="sidebarExpanded" th:text="${menu1.name}"></span>
                     </div>
                     <svg class="h-4 w-4 transform transition-transform" 
@@ -75,7 +124,7 @@
                            @click="activeMenuId = [[${menu2.id}]]"
                            :class="activeMenuId === [[${menu2.id}]] ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'"
                            class="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                            <i class="text-sm" th:utext="${menu2.icon}"></i>
+                            <i class="w-4 h-4" th:data-lucide="${menu2.icon != null && !menu2.icon.isEmpty() ? menu2.icon : 'help-circle'}"></i>
                             <span th:text="${menu2.name}"></span>
                         </a>
                         
@@ -86,7 +135,7 @@
                                @click="activeMenuId = [[${menu3.id}]]"
                                :class="activeMenuId === [[${menu3.id}]] ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-white'"
                                class="flex items-center space-x-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors">
-                                <i class="text-xs" th:utext="${menu3.icon}"></i>
+                                <i class="w-3.5 h-3.5" th:data-lucide="${menu3.icon != null && !menu3.icon.isEmpty() ? menu3.icon : 'help-circle'}"></i>
                                 <span th:text="${menu3.name}"></span>
                             </a>
                         </div>
@@ -144,6 +193,26 @@
                     tpwidget("show");</script>
                 </div>
  
+                <!-- Theme Toggle Button -->
+                <button @click="darkMode = !darkMode; 
+                                localStorage.setItem('theme', darkMode ? 'dark' : 'light'); 
+                                document.documentElement.classList.toggle('dark', darkMode);
+                                const iframe = document.getElementById('content');
+                                if (iframe && iframe.contentDocument) {
+                                    iframe.contentDocument.documentElement.classList.toggle('dark', darkMode);
+                                }"
+                        class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 focus:outline-none transition-colors"
+                        title="切换主题">
+                    <!-- Sun Icon (show when dark mode is active) -->
+                    <svg x-show="darkMode" class="h-5 w-5 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M14 12a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <!-- Moon Icon (show when light mode is active) -->
+                    <svg x-show="!darkMode" class="h-5 w-5 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+
                 <!-- User Profile Dropdown -->
                 <div class="relative">
                     <button @click="avatarDropdownOpen = !avatarDropdownOpen" 
@@ -250,6 +319,22 @@
             alert('为了您的账号安全，欢迎加入，请尽快修改默认密码！');
         }, 1000);
     }
+    
+    // Sync theme to iframe on load
+    document.getElementById('content').addEventListener('load', function() {
+        const isDark = document.documentElement.classList.contains('dark');
+        if (this.contentDocument) {
+            this.contentDocument.documentElement.classList.toggle('dark', isDark);
+        }
+    });
+
+    // Initialize Lucide icons
+    lucide.createIcons();
+    
+    // Re-run Lucide icons creation after HTMX content swap
+    document.body.addEventListener('htmx:afterSwap', function() {
+        lucide.createIcons();
+    });
 </script>
  
 </body>
