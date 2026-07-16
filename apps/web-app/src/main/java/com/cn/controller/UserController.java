@@ -1,8 +1,8 @@
 package com.cn.controller;
 
-import com.cn.EssayService;
-import com.cn.UserRelatedService;
-import com.cn.UserService;
+import com.cn.content.EssayService;
+import com.cn.relation.UserRelatedService;
+import com.cn.user.UserService;
 import com.cn.enums.FaveTypeEnum;
 import com.cn.model.EssayDTO;
 import com.cn.entity.*;

@@ -1,4 +1,4 @@
-package com.cn;
+package com.cn.user;
 
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.RandomUtil;

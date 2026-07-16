@@ -1,6 +1,6 @@
 package com.cn.config;
 
-import com.cn.ManagerService;
+import com.cn.security.ManagerService;
 import com.cn.model.RestCode;
 import com.cn.util.JacksonUtil;
 import com.cn.util.Result;

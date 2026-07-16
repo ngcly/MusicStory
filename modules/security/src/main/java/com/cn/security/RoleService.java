@@ -1,4 +1,4 @@
-package com.cn;
+package com.cn.security;
 
 import com.cn.dao.PermissionRepository;
 import com.cn.dao.RoleRepository;

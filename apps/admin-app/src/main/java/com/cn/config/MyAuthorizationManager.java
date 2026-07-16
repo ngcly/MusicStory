@@ -1,6 +1,6 @@
 package com.cn.config;
 
-import com.cn.ManagerService;
+import com.cn.security.ManagerService;
 import com.cn.entity.Manager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authorization.AuthorizationDecision;

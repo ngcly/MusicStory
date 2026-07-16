@@ -1,4 +1,4 @@
-package com.cn;
+package com.cn.content;
 
 import com.cn.dao.ClassifyRepository;
 import com.cn.entity.Classify;

@@ -1,6 +1,6 @@
 package com.cn.config;
 
-import com.cn.UserService;
+import com.cn.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;

@@ -1,4 +1,4 @@
-package com.cn;
+package com.cn.content;
 
 import com.cn.dao.CarouselRepository;
 import com.cn.entity.Carousel;

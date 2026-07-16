@@ -1,4 +1,4 @@
-package com.cn;
+package com.cn.relation;
 
 import com.cn.dao.CustomizeRepository;
 import com.cn.dao.UserFavesRepository;

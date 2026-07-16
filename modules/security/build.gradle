@@ -8,4 +8,6 @@ bootJar {
 dependencies {
     api project(":modules:shared")
     api project(":infrastructure:persistence")
+    api 'org.springframework.boot:spring-boot-starter-security'
+    api 'org.springframework.boot:spring-boot-starter-webmvc'
 }

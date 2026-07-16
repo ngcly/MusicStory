@@ -1,1 +1,0 @@
-import{c as a}from"./CK9xZVU8.js";import"./UKg4WKlE.js";const t=a("MessageSquareIcon",[["path",{d:"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",key:"1lielz"}]]),s=""+new URL("avatar.uscRzRXF.png",import.meta.url).href;export{t as M,s as d};

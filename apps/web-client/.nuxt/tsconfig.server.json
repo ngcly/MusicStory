@@ -29,6 +29,15 @@
       "@@/*": [
         "../*"
       ],
+      "vue-router": [
+        "../node_modules/vue-router"
+      ],
+      "vue-router/auto-routes": [
+        "../node_modules/vue-router/vue-router-auto-routes"
+      ],
+      "nuxt": [
+        "../node_modules/nuxt"
+      ],
       "@unhead/vue": [
         "../node_modules/@unhead/vue"
       ],
@@ -44,17 +53,8 @@
       "@vue/compiler-sfc": [
         "../node_modules/@vue/compiler-sfc"
       ],
-      "vue-router": [
-        "../node_modules/vue-router"
-      ],
       "@nuxt/schema": [
         "../node_modules/nuxt/node_modules/@nuxt/schema"
-      ],
-      "nuxt": [
-        "../node_modules/nuxt"
-      ],
-      "nitropack": [
-        "../node_modules/nitropack"
       ],
       "defu": [
         "../node_modules/defu"
@@ -71,11 +71,11 @@
       "crossws": [
         "../node_modules/crossws"
       ],
-      "vue-router/auto-routes": [
-        "../node_modules/vue-router/vue-router-auto-routes"
-      ],
       "unplugin-vue-router/client": [
         "../node_modules/unplugin-vue-router/client"
+      ],
+      "nitropack": [
+        "../node_modules/nitropack"
       ],
       "nitropack/types": [
         "../node_modules/nitropack/types"

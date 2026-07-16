@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'node:url'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2026-07-15',
@@ -32,6 +34,32 @@ export default defineNuxtConfig({
   vite: {
     server: {
       port: 9091
+    },
+    resolve: {
+      alias: {
+        // 将 stompjs 引用的 Node 原生 net 模块重定向到绝对路径的本地空 mock 文件，消除浏览器兼容性警告和 esbuild 预构建报错
+        net: fileURLToPath(new URL('./utils/empty.js', import.meta.url))
+      }
+    },
+    build: {
+      rollupOptions: {
+        // 静音第三方包（如 @vueuse/core）中无意义的注释或位置警告
+        onwarn(warning, warn) {
+          if (warning.code === 'MODULE_LEVEL_DIRECTIVE' || warning.message.includes('/* #__PURE__ */')) {
+            return
+          }
+          warn(warning)
+        }
+      }
     }
+  },
+  components: [
+    {
+      path: '~/components',
+      extensions: ['vue']
+    }
+  ],
+  experimental: {
+    appManifest: false
   }
 })

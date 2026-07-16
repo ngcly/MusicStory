@@ -1,4 +1,4 @@
-package com.cn;
+package com.cn.security;
 
 import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;

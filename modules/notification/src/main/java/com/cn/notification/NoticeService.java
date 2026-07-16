@@ -1,4 +1,4 @@
-package com.cn;
+package com.cn.notification;
 
 import com.cn.dao.NoticeRepository;
 import com.cn.entity.Notice;

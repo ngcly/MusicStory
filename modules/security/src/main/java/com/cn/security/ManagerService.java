@@ -1,4 +1,4 @@
-package com.cn;
+package com.cn.security;
 
 import com.cn.enums.GenderEnum;
 import com.cn.enums.UserStatusEnum;

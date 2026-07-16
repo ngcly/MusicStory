@@ -9,6 +9,10 @@ dependencies {
     implementation project(":modules:content")
     implementation project(":modules:notification")
 
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
     //后台模板jar包
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
@@ -22,4 +26,8 @@ dependencies {
     runtimeOnly "org.webjars.npm:layui:${layuiVersion}"
     runtimeOnly "org.webjars.npm:jquery:${jqueryVersion}"
     runtimeOnly "org.webjars.npm:jquery-treegrid:${treegridVersion}"
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-actuator-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 }

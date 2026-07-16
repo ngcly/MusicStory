@@ -1,4 +1,4 @@
-package com.cn;
+package com.cn.content;
 
 import com.cn.config.RabbitConfig;
 import com.cn.dao.ClassifyRepository;
@@ -10,6 +10,7 @@ import com.cn.enums.EssayStatusEnum;
 import com.cn.enums.FaveTypeEnum;
 import com.cn.exception.GlobalException;
 import com.cn.model.RestCode;
+import com.cn.search.BookService;
 import com.cn.util.MailUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;

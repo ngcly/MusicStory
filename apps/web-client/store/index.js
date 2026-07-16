@@ -5,6 +5,7 @@ import Cookies from 'js-cookie'
 
 export const useStore = defineStore('main', () => {
   const token = ref(null)
+  const isMusicPlaying = ref(false)
 
   // SSR 安全的 token 初始化
   if (process.client) {
@@ -69,5 +70,5 @@ export const useStore = defineStore('main', () => {
     })
   }
 
-  return { token, user, login, relogin, logout, getUserInfo, updateUser }
+  return { token, user, isMusicPlaying, login, relogin, logout, getUserInfo, updateUser }
 })

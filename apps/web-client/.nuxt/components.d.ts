@@ -17,6 +17,7 @@ type LazyComponent<T> = DefineComponent<HydrationStrategies, {}, {}, {}, {}, {},
 export const Acquaint: typeof import("../components/Acquaint.vue")['default']
 export const EditorTiptapEditor: typeof import("../components/editor/TiptapEditor.vue")['default']
 export const MascotCompanionWidget: typeof import("../components/mascot/CompanionWidget.vue")['default']
+export const MascotCat: typeof import("../components/mascot/MascotCat.vue")['default']
 export const UiButton: typeof import("../components/ui/button/Button.vue")['default']
 export const UiDialog: typeof import("../components/ui/dialog/Dialog.vue")['default']
 export const UiDialogClose: typeof import("../components/ui/dialog/DialogClose.vue")['default']
@@ -68,6 +69,7 @@ export const NuxtIsland: typeof import("../node_modules/nuxt/dist/app/components
 export const LazyAcquaint: LazyComponent<typeof import("../components/Acquaint.vue")['default']>
 export const LazyEditorTiptapEditor: LazyComponent<typeof import("../components/editor/TiptapEditor.vue")['default']>
 export const LazyMascotCompanionWidget: LazyComponent<typeof import("../components/mascot/CompanionWidget.vue")['default']>
+export const LazyMascotCat: LazyComponent<typeof import("../components/mascot/MascotCat.vue")['default']>
 export const LazyUiButton: LazyComponent<typeof import("../components/ui/button/Button.vue")['default']>
 export const LazyUiDialog: LazyComponent<typeof import("../components/ui/dialog/Dialog.vue")['default']>
 export const LazyUiDialogClose: LazyComponent<typeof import("../components/ui/dialog/DialogClose.vue")['default']>

@@ -1,4 +1,4 @@
-package com.cn;
+package com.cn.search;
 
 import com.cn.dao.BookRepository;
 import com.cn.entity.Book;

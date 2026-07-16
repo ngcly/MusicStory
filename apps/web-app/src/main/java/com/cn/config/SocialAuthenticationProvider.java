@@ -1,6 +1,6 @@
 package com.cn.config;
 
-import com.cn.UserService;
+import com.cn.user.UserService;
 import com.cn.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;

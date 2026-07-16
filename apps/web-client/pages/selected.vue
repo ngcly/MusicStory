@@ -77,6 +77,7 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useStore } from '@/store'
 import api from '@/api/api'
 import {
   Home as HomeIcon,
@@ -105,6 +106,7 @@ const isPlaying = ref(false)
 const showVolume = ref(false)
 const volume = ref(0.5)
 
+const store = useStore()
 const featuredEssays = ref([])
 const loading = ref(true)
 
@@ -124,8 +126,11 @@ function togglePlay() {
   if (!audioRef.value) return
   if (isPlaying.value) {
     audioRef.value.pause()
+    store.isMusicPlaying = false
   } else {
-    audioRef.value.play().catch(err => console.log('Autoplay blocked:', err))
+    audioRef.value.play().then(() => {
+      store.isMusicPlaying = true
+    }).catch(err => console.log('Autoplay blocked:', err))
   }
   isPlaying.value = !isPlaying.value
 }
@@ -133,11 +138,13 @@ function togglePlay() {
 function nextTrack() {
   currentTrackIndex.value = (currentTrackIndex.value + 1) % playlist.length
   isPlaying.value = false
+  store.isMusicPlaying = false
   setTimeout(() => {
     if (audioRef.value) {
       audioRef.value.load()
       audioRef.value.play().then(() => {
         isPlaying.value = true
+        store.isMusicPlaying = true
       }).catch(err => console.log('Playback error:', err))
     }
   }, 100)
@@ -153,6 +160,7 @@ onBeforeUnmount(() => {
   if (audioRef.value) {
     audioRef.value.pause()
   }
+  store.isMusicPlaying = false
 })
 </script>
 

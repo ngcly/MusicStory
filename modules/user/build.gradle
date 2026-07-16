@@ -11,4 +11,6 @@ dependencies {
     api project(":infrastructure:messaging")
     api project(":infrastructure:cache")
     implementation 'org.apache.commons:commons-lang3'
+    api 'org.springframework.boot:spring-boot-starter-security'
+    api 'org.springframework:spring-web'
 }

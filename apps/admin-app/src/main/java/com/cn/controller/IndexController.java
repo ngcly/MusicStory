@@ -2,7 +2,7 @@ package com.cn.controller;
 
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.ICaptcha;
-import com.cn.ManagerService;
+import com.cn.security.ManagerService;
 import com.cn.entity.Manager;
 import com.cn.entity.Role;
 import com.cn.enums.ResourceEnum;

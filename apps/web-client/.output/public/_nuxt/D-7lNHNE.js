@@ -1,1 +1,0 @@
-import{u as a,e as s,h as u,i as r,f as o}from"./UKg4WKlE.js";function i(e){const t=e||s();return t?.ssrContext?.head||t?.runWithContext(()=>{if(u())return r(o)})}function x(e,t={}){const n=i(t.nuxt);if(n)return a(e,{head:n,...t})}export{x as u};

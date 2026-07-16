@@ -1,7 +1,7 @@
 package com.cn.listener;
 
-import com.cn.UserRelatedService;
-import com.cn.UserService;
+import com.cn.relation.UserRelatedService;
+import com.cn.user.UserService;
 import com.cn.config.RabbitConfig;
 import com.cn.entity.News;
 import lombok.AllArgsConstructor;
