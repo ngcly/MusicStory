@@ -1,5 +1,6 @@
 package com.cn.relation;
 
+import com.cn.dao.NewsRepository;
 import com.cn.dao.UserFavesRepository;
 import com.cn.dao.UserFollowRepository;
 import com.cn.entity.News;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.validation.constraints.NotNull;
-
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -32,6 +33,7 @@ import java.util.Objects;
 public class UserRelatedService {
     private final UserFavesRepository userFavesRepository;
     private final UserFollowRepository userFollowRepository;
+    private final NewsRepository newsRepository;
     private final SimpMessageSendingOperations messageTemplate;
 
     /**
@@ -106,7 +108,7 @@ public class UserRelatedService {
     public List<Map<String, Object>> getMyFollowList(Long userId, Pageable pageable) {
         return userFollowRepository.findMyFollowList(userId, pageable).getContent();
     }
- 
+
     /**
      * 获取关注我的用户列表
      *
@@ -119,15 +121,49 @@ public class UserRelatedService {
     }
 
     /**
-     * websocket 通知
+     * 获取当前用户的消息列表
+     *
+     * @param userId 用户ID
+     * @return 消息列表
      */
+    public List<News> getMyNews(Long userId) {
+        return newsRepository.findByUserIdOrderByCreateTimeDesc(userId);
+    }
+
+    /**
+     * 发送用户消息
+     *
+     * @param senderId 发送人用户ID
+     * @param dto      消息发送 DTO
+     * @return 保存后的消息实体
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public News sendNews(Long senderId, com.cn.model.NewsDTO dto) {
+        News news = new News();
+        news.setUserId(dto.getUserId());
+        news.setSenderId(senderId);
+        news.setContent(dto.getContent());
+        news.setCreateTime(Instant.now());
+        news.setSent(false);
+        News saved = newsRepository.save(news);
+        notifyUser(saved);
+        return saved;
+    }
+
+    /**
+     * websocket 通知并更新消息状态
+     */
+    @Transactional(rollbackFor = Exception.class)
     public void notifyUser(@NotNull News news) {
-        //TODO 待完善,需要用表记录当前消息及发送状态
-        if(Objects.nonNull(news.getUserId())){
-            //对某个用户发
+        news.setSent(true);
+        news.setSendTime(Instant.now());
+        newsRepository.save(news);
+
+        if (Objects.nonNull(news.getUserId())) {
+            // 对某个用户发送
             messageTemplate.convertAndSendToUser(news.getUserId().toString(), "/queue/notify", news.getContent());
-        }else{
-            //群发
+        } else {
+            // 群发
             messageTemplate.convertAndSend("/topic/notify", news.getContent());
         }
     }

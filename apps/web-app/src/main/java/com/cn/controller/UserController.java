@@ -5,6 +5,7 @@ import com.cn.relation.UserRelatedService;
 import com.cn.user.UserService;
 import com.cn.enums.FaveTypeEnum;
 import com.cn.model.EssayDTO;
+import com.cn.model.NewsDTO;
 import com.cn.entity.*;
 import com.cn.model.UserVO;
 import com.cn.service.StorageService;
@@ -124,14 +125,15 @@ public class UserController {
     @Operation(summary = "获取用户消息", description = "获取当前用户的所有消息")
     @GetMapping("/new")
     public List<News> getMyNews(@AuthenticationPrincipal SecurityUser securityUser) {
-        //TODO
-        return null;
+        User user = securityUser.getUser();
+        return userRelatedService.getMyNews(user.getId());
     }
 
     @Operation(summary = "发送消息", description = "给某人发送消息")
     @PostMapping("/new")
-    public ResponseEntity<Void> sendNews(@AuthenticationPrincipal SecurityUser securityUser, @RequestBody News news) {
-        //TODO
+    public ResponseEntity<Void> sendNews(@AuthenticationPrincipal SecurityUser securityUser, @jakarta.validation.Valid @RequestBody com.cn.model.NewsDTO newsDTO) {
+        User user = securityUser.getUser();
+        userRelatedService.sendNews(user.getId(), newsDTO);
         return ResponseEntity.ok().build();
     }
 
