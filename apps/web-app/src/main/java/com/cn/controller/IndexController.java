@@ -14,7 +14,6 @@ import com.cn.entity.*;
 import com.cn.model.AuthenticationDetails;
 import com.cn.model.LogInDTO;
 import com.cn.model.SignUpDTO;
-import com.cn.util.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -72,7 +71,7 @@ public class IndexController {
      */
     @Operation(summary = "登录", description = "普通登录")
     @PostMapping("/signin")
-    public ResponseEntity<Result<User>> postAccessToken(HttpServletRequest request, @Valid @RequestBody LogInDTO logInDTO) {
+    public ResponseEntity<User> postAccessToken(HttpServletRequest request, @Valid @RequestBody LogInDTO logInDTO) {
         AbstractAuthenticationToken authenticationToken = getAuthenticationToken(request, logInDTO);
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -82,7 +81,7 @@ public class IndexController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, token)
-                .body(Result.success(user));
+                .body(user);
     }
 
     private AbstractAuthenticationToken getAuthenticationToken(HttpServletRequest request, LogInDTO logInDTO) {
@@ -100,14 +99,14 @@ public class IndexController {
 
     @Operation(summary = "刷新token", description = "用户刷新token")
     @GetMapping("/signin")
-    public Result<String> getAccessToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
-        return Result.success(jwtTokenUtil.refreshToken(authorization));
+    public String getAccessToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
+        return jwtTokenUtil.refreshToken(authorization);
     }
 
     @Operation(summary = "登出", description = "退出登录")
     @DeleteMapping("/signout")
-    public Result<Void> logout() {
-        return Result.success();
+    public ResponseEntity<Void> logout() {
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -128,28 +127,27 @@ public class IndexController {
      * 解除绑定
      *
      * @param openid 三方openid
-     * @return Result
      */
     @PutMapping("/revoke/{openid}")
-    public Result<Void> revokeSocial(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("openid") String openid) {
+    public ResponseEntity<Void> revokeSocial(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("openid") String openid) {
         User user = securityUser.getUser();
         userService.revokeSocial(user.getId(), openid);
-        return Result.success();
+        return ResponseEntity.ok().build();
     }
 
     /**
      * 注册
      *
      * @param signUpDTO 注册参数
-     * @return Result 注册结果
+     * @return 注册结果描述
      */
     @Operation(summary = "注册", description = "用户注册")
     @PostMapping("/signup")
-    public Result<String> registerUser(@Valid @RequestBody SignUpDTO signUpDTO) {
+    public String registerUser(@Valid @RequestBody SignUpDTO signUpDTO) {
         signUpDTO.setPassword(passwordEncoder.encode(signUpDTO.getPassword()));
         User user = new User();
         BeanUtils.copyProperties(signUpDTO, user);
-        return Result.success(userService.signUp(user));
+        return userService.signUp(user);
     }
 
     @Operation(summary = "激活", description = "用户注册激活")
@@ -166,8 +164,8 @@ public class IndexController {
      */
     @Operation(summary = "文章列表", description = "获取首页文章简介列表")
     @GetMapping("/essay/{pageSize}/{page}")
-    public Result<List<Map<String,Object>>> getEssayList(@PathVariable int pageSize, @PathVariable int page) {
-        return Result.success(essayService.getEssayList(page, pageSize));
+    public List<Map<String,Object>> getEssayList(@PathVariable int pageSize, @PathVariable int page) {
+        return essayService.getEssayList(page, pageSize);
     }
 
     /**
@@ -176,17 +174,16 @@ public class IndexController {
     @Operation(summary = "文章详情", description = "根据文章Id获取文章详情")
     @GetMapping("/essay/{id}")
     @Parameter(name = "id", description = "文章ID", in = ParameterIn.PATH)
-    public Result<Essay> getEssayDetail(@PathVariable Long id) {
-        Essay essay = essayService.getEssayDetail(id);
-        return Result.success(essay);
+    public Essay getEssayDetail(@PathVariable Long id) {
+        return essayService.getEssayDetail(id);
     }
 
     @Operation(summary = "阅读文章", description = "阅读文章 阅读数+1")
     @PutMapping("/essay/{id}")
     @Parameter(name = "id", description = "文章ID", in = ParameterIn.PATH)
-    public Result<Void> readEssay(@PathVariable Long id) {
+    public ResponseEntity<Void> readEssay(@PathVariable Long id) {
         essayService.readEssay(id);
-        return Result.success();
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -196,14 +193,14 @@ public class IndexController {
     @GetMapping("/comments/{id}/{page}")
     @Parameter(name = "id", description = "文章ID", in = ParameterIn.PATH)
     @Parameter(name = "page", description = "页数", in = ParameterIn.PATH)
-    public Result<Page<Map<String,Object>>> getEssayComment(@PathVariable Long id, @PathVariable Integer page) {
-        return Result.success(essayService.getComments(id, page));
+    public Page<Map<String,Object>> getEssayComment(@PathVariable Long id, @PathVariable Integer page) {
+        return essayService.getComments(id, page);
     }
 
     @Operation(summary = "获取分类列表", description = "获取文章分类列表")
     @GetMapping("/classify")
-    public Result<List<Classify>> getClassifyList() {
-        return Result.success(classifyService.getClassifyList());
+    public List<Classify> getClassifyList() {
+        return classifyService.getClassifyList();
     }
 
     /**
@@ -211,12 +208,12 @@ public class IndexController {
      */
     @Operation(summary = "轮播图", description = "获取轮播图列表")
     @GetMapping("/carousel")
-    public Result<List<Carousel>> getCarousel() {
+    public List<Carousel> getCarousel() {
         CarouselCategory carouselCategory = carouselService.getCarouselDetail(1L);
         if (Objects.nonNull(carouselCategory)) {
-            return Result.success(carouselCategory.getCarousels());
+            return carouselCategory.getCarousels();
         }
-        return Result.success();
+        return List.of();
     }
 
     /**
@@ -224,8 +221,8 @@ public class IndexController {
      */
     @Operation(summary = "公告", description = "获取展示公告")
     @GetMapping("/notice")
-    public Result<List<Notice>> getNotice() {
-        return Result.success(noticeService.getNotice());
+    public List<Notice> getNotice() {
+        return noticeService.getNotice();
     }
 
     /**
@@ -234,8 +231,8 @@ public class IndexController {
     @Operation(summary = "搜索", description = "文章搜索")
     @GetMapping("/search/{pageSize}/{page}/{keyword}")
     @Parameter(name = "keyword", description = "关键字", in = ParameterIn.PATH)
-    public Result<Page<Book>> search(@PathVariable int pageSize, @PathVariable int page, @PathVariable("keyword") String keyword) {
-        return Result.success(bookService.highLightSearchEssay(keyword, PageRequest.of(page - 1, pageSize)));
+    public Page<Book> search(@PathVariable int pageSize, @PathVariable int page, @PathVariable("keyword") String keyword) {
+        return bookService.highLightSearchEssay(keyword, PageRequest.of(page - 1, pageSize));
     }
 
     /**
@@ -243,8 +240,8 @@ public class IndexController {
      */
     @Operation(summary = "初始化ES数据", description = "将数据库数据同步至ES 测试用")
     @GetMapping("/init/es/data")
-    public Result<Void> initEsDataTest() {
+    public ResponseEntity<Void> initEsDataTest() {
         essayService.initBookDataTest();
-        return Result.success();
+        return ResponseEntity.ok().build();
     }
 }

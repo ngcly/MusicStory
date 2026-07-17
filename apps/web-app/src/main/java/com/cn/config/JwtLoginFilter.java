@@ -5,10 +5,10 @@ import com.cn.model.AuthenticationDetails;
 import com.cn.model.LogInDTO;
 import com.cn.model.RestCode;
 import com.cn.util.JacksonUtil;
-import com.cn.util.Result;
 import org.apache.hc.core5.http.ContentType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ProblemDetail;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -22,10 +22,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URI;
 
 /**
- * 当前方式是采用框架自带的过滤器实现登录
- * 另一种方式 就是自己去Controller实现登录接口 但是认证还是一样的
+ * 当前方式是采用框架自带的过滤器实现登录 (使用 ProblemDetail 处理登录失败)
  *
  * @author chenning
  */
@@ -72,7 +72,7 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
         response.setContentType(ContentType.APPLICATION_JSON.toString());
         response.setHeader(HttpHeaders.AUTHORIZATION, token);
         try (PrintWriter printWriter = response.getWriter()) {
-            String jsonStr = JacksonUtil.stringify(Result.success(user.getUsername()));
+            String jsonStr = JacksonUtil.stringify(user.getUsername());
             printWriter.write(jsonStr);
         }
     }
@@ -83,7 +83,6 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException ex) throws IOException {
-        response.setContentType(ContentType.APPLICATION_JSON.toString());
         RestCode restCode;
         if (ex instanceof BadCredentialsException ||
                 ex instanceof UsernameNotFoundException) {
@@ -101,8 +100,15 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
         } else {
             restCode = RestCode.UNAUTHORIZED;
         }
+
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(restCode.status, restCode.msg);
+        problemDetail.setTitle(restCode.msg);
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
+
+        response.setStatus(restCode.status.value());
+        response.setContentType("application/problem+json");
         try (PrintWriter printWriter = response.getWriter()) {
-            String jsonStr = JacksonUtil.stringify(Result.failure(restCode));
+            String jsonStr = JacksonUtil.stringify(problemDetail);
             printWriter.write(jsonStr);
         }
     }

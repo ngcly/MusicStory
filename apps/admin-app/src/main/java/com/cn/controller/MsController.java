@@ -10,7 +10,6 @@ import com.cn.entity.*;
 import com.cn.persistence.mapper.UserMapper;
 import com.cn.enums.UserTypeEnum;
 import com.cn.service.StorageService;
-import com.cn.util.Result;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Controller;
@@ -272,14 +271,14 @@ public class MsController {
     }
  
     @PostMapping("/carousel")
-    public ResponseEntity<Result<Void>> addCarousel(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id, HttpServletResponse response) {
+    public ResponseEntity<Void> addCarousel(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id, HttpServletResponse response) {
         if (file.isEmpty()) {
-            return ResponseEntity.ok(Result.failure(222, "文件为空"));
+            throw new GlobalException(RestCode.PARAM_ERROR.code, "文件为空");
         }
         String path = storageService.uploadFile(file, "img");
         carouselService.addCarousel(id, path);
         response.setHeader("HX-Trigger", "carouselImagesChanged");
-        return ResponseEntity.ok(Result.success());
+        return ResponseEntity.ok().build();
     }
  
     @DeleteMapping("/carousel/category")

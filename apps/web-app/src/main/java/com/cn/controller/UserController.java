@@ -8,7 +8,8 @@ import com.cn.model.EssayDTO;
 import com.cn.entity.*;
 import com.cn.model.UserVO;
 import com.cn.service.StorageService;
-import com.cn.util.Result;
+import com.cn.exception.GlobalException;
+import com.cn.model.RestCode;
 import com.cn.config.SecurityUser;
 import com.cn.user.domain.User;
 import com.cn.persistence.mapper.UserMapper;
@@ -48,185 +49,185 @@ public class UserController {
  
     @Operation(summary = "用户信息", description = "获取用户详情信息")
     @GetMapping("/info")
-    public Result<UserVO> userInfo(@AuthenticationPrincipal SecurityUser securityUser) {
+    public UserVO userInfo(@AuthenticationPrincipal SecurityUser securityUser) {
         User user = securityUser.getUser();
         UserVO vo = new UserVO();
         BeanUtils.copyProperties(user, vo);
-        return Result.success(vo);
+        return vo;
     }
- 
+
     /**
      * 绑定三方账号
      *
      * @param source  三方类型标识
      * @param request 请求request
-     * @return ModelMap
      */
     @Operation(summary = "绑定账号", description = "用户绑定三方账号")
     @GetMapping("/binding/{source}")
-    public Result<Void> bindingSocial(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("source") String source,
+    public ResponseEntity<Void> bindingSocial(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("source") String source,
                                       HttpServletRequest request) {
         User user = securityUser.getUser();
         userService.socialBinding(source, request.getParameter("code"), request.getParameter("state"), user);
-        return Result.success();
+        return ResponseEntity.ok().build();
     }
- 
+
     @Operation(summary = "我的文章", description = "获取用户写的文章")
     @GetMapping("/essay/{page}/{size}")
     @Parameter(name = "page", description = "页数", in = ParameterIn.PATH)
     @Parameter(name = "size", description = "条数", in = ParameterIn.PATH)
-    public Result<List<Essay>> getUserEssay(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("page") Integer page,
+    public List<Essay> getUserEssay(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("page") Integer page,
                                             @PathVariable("size") Integer size) {
         User user = securityUser.getUser();
-        return Result.success(essayService.getUserEssayList(PageRequest.of(page - 1, size), user.getId()));
+        return essayService.getUserEssayList(PageRequest.of(page - 1, size), user.getId());
     }
- 
+
     @Operation(summary = "写文章", description = "用户保存草稿")
     @PostMapping("/essay")
-    public Result<Long> createEssay(@AuthenticationPrincipal SecurityUser securityUser, @Valid @RequestBody EssayDTO essayDTO) {
+    public Long createEssay(@AuthenticationPrincipal SecurityUser securityUser, @Valid @RequestBody EssayDTO essayDTO) {
         User user = securityUser.getUser();
         Essay essay = new Essay();
         BeanUtils.copyProperties(essayDTO, essay);
         essay.setUser(UserMapper.toEntity(user));
-        return Result.success(essayService.createEssay(essayDTO.getClassifyId(), essay));
+        return essayService.createEssay(essayDTO.getClassifyId(), essay);
     }
- 
+
     @Operation(summary = "发表文章", description = "用户发表文章")
     @PutMapping("/essay")
-    public Result<Void> updateEssay(@AuthenticationPrincipal SecurityUser securityUser, @Valid @RequestBody EssayDTO essayDTO) {
+    public ResponseEntity<Void> updateEssay(@AuthenticationPrincipal SecurityUser securityUser, @Valid @RequestBody EssayDTO essayDTO) {
         User user = securityUser.getUser();
         Essay essay = new Essay();
         BeanUtils.copyProperties(essayDTO, essay);
         essay.setUser(UserMapper.toEntity(user));
         essayService.updateEssay(user.getId(), essayDTO.getClassifyId(), essay);
-        return Result.success();
+        return ResponseEntity.ok().build();
     }
- 
+
     @Operation(summary = "删文章", description = "根据文章ID删除用户文章")
     @DeleteMapping("/essay/{id}")
-    public Result<Void> deleteEssay(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteEssay(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("id") Long id) {
         User user = securityUser.getUser();
-        return essayService.delUserEssay(user.getId(), id) ? Result.success() : Result.failure(500, "删除失败");
+        if (!essayService.delUserEssay(user.getId(), id)) {
+            throw new GlobalException(RestCode.SERVER_ERROR.code, "删除失败");
+        }
+        return ResponseEntity.ok().build();
     }
- 
+
     @Operation(summary = "评论文章", description = "用户评论文章")
     @PostMapping("/comment")
-    public Result<Void> commentEssay(@AuthenticationPrincipal SecurityUser securityUser, @Valid @RequestBody Comment comment) {
+    public ResponseEntity<Void> commentEssay(@AuthenticationPrincipal SecurityUser securityUser, @Valid @RequestBody Comment comment) {
         User user = securityUser.getUser();
         essayService.addComments(user.getId(), comment);
-        return Result.success();
+        return ResponseEntity.ok().build();
     }
- 
+
     @Operation(summary = "获取用户消息", description = "获取当前用户的所有消息")
     @GetMapping("/new")
-    public Result<List<News>> getMyNews(@AuthenticationPrincipal SecurityUser securityUser) {
+    public List<News> getMyNews(@AuthenticationPrincipal SecurityUser securityUser) {
         //TODO
         return null;
     }
- 
+
     @Operation(summary = "发送消息", description = "给某人发送消息")
     @PostMapping("/new")
-    public Result<Void> sendNews(@AuthenticationPrincipal SecurityUser securityUser, @RequestBody News news) {
+    public ResponseEntity<Void> sendNews(@AuthenticationPrincipal SecurityUser securityUser, @RequestBody News news) {
         //TODO
-        return null;
+        return ResponseEntity.ok().build();
     }
- 
+
     @Operation(summary = "获取用户点赞的文章", description = "获取当前用户点赞的所有文章")
     @GetMapping("/star/{page}/{size}")
-    public Result<Page<Essay>> getMyStar(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("page") Integer page,
+    public Page<Essay> getMyStar(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("page") Integer page,
                                          @PathVariable("size") Integer size) {
         User user = securityUser.getUser();
-        return Result.success(essayService.getUserFavesEssay(user.getId(), FaveTypeEnum.LIKE, PageRequest.of(page - 1
-                , size)));
+        return essayService.getUserFavesEssay(user.getId(), FaveTypeEnum.LIKE, PageRequest.of(page - 1, size));
     }
- 
+
     @Operation(summary = "点赞", description = "用户点赞文章")
     @PostMapping("/star")
-    public Result<Void> star(@AuthenticationPrincipal SecurityUser securityUser, @RequestBody Long essayId) {
+    public ResponseEntity<Void> star(@AuthenticationPrincipal SecurityUser securityUser, @RequestBody Long essayId) {
         User user = securityUser.getUser();
         userRelatedService.addUserFaves(user.getId(), essayId, FaveTypeEnum.LIKE);
-        return Result.success();
+        return ResponseEntity.ok().build();
     }
- 
+
     @Operation(summary = "取消点赞", description = "用户取消点赞文章")
     @DeleteMapping("/star/{essayId}")
-    public Result<Void> cancelStar(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("essayId") Long essayId) {
+    public ResponseEntity<Void> cancelStar(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("essayId") Long essayId) {
         User user = securityUser.getUser();
         userRelatedService.delUserFaves(user.getId(), essayId, FaveTypeEnum.LIKE);
-        return Result.success();
+        return ResponseEntity.ok().build();
     }
- 
+
     @Operation(summary = "获取用户收藏的文章", description = "获取当前用户收藏的所有文章")
     @GetMapping("/collect/{page}/{size}")
-    public Result<Page<Essay>> getMyCollect(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("page") Integer page,
+    public Page<Essay> getMyCollect(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("page") Integer page,
                                             @PathVariable("size") Integer size) {
         User user = securityUser.getUser();
-        return Result.success(essayService.getUserFavesEssay(user.getId(), FaveTypeEnum.COLLECT,
-                PageRequest.of(page - 1, size)));
+        return essayService.getUserFavesEssay(user.getId(), FaveTypeEnum.COLLECT, PageRequest.of(page - 1, size));
     }
- 
+
     @Operation(summary = "收藏", description = "用户收藏文章")
     @PostMapping("/collect")
-    public Result<Void> collect(@AuthenticationPrincipal SecurityUser securityUser, @RequestBody Long essayId) {
+    public ResponseEntity<Void> collect(@AuthenticationPrincipal SecurityUser securityUser, @RequestBody Long essayId) {
         User user = securityUser.getUser();
         userRelatedService.addUserFaves(user.getId(), essayId, FaveTypeEnum.COLLECT);
-        return Result.success();
+        return ResponseEntity.ok().build();
     }
- 
+
     @Operation(summary = "取消收藏", description = "用户取消收藏文章")
     @DeleteMapping("/collect/{essayId}")
-    public Result<Void> cancelCollect(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("essayId") Long essayId) {
+    public ResponseEntity<Void> cancelCollect(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("essayId") Long essayId) {
         User user = securityUser.getUser();
         userRelatedService.delUserFaves(user.getId(), essayId, FaveTypeEnum.COLLECT);
-        return Result.success();
+        return ResponseEntity.ok().build();
     }
- 
+
     @Operation(summary = "获取关注我的用户", description = "获取关注当前用户的所有人")
     @GetMapping("/follow/{page}/{size}")
     @Parameter(name = "page", description = "页数", in = ParameterIn.PATH)
     @Parameter(name = "size", description = "条数", in = ParameterIn.PATH)
-    public Result<List<Map<String, Object>>> getFollowMe(@AuthenticationPrincipal SecurityUser securityUser,
+    public List<Map<String, Object>> getFollowMe(@AuthenticationPrincipal SecurityUser securityUser,
                                                          @PathVariable("page") Integer page,
                                                          @PathVariable("size") Integer size) {
         User user = securityUser.getUser();
-        return Result.success(userRelatedService.getFollowMeList(user.getId(), PageRequest.of(page - 1, size)));
+        return userRelatedService.getFollowMeList(user.getId(), PageRequest.of(page - 1, size));
     }
- 
+
     @Operation(summary = "获取用户关注的人", description = "获取当前用户关注的所有人")
     @GetMapping("/watch/{page}/{size}")
     @Parameter(name = "page", description = "页数", in = ParameterIn.PATH)
     @Parameter(name = "size", description = "条数", in = ParameterIn.PATH)
-    public Result<List<Map<String, Object>>> getMyWatches(@AuthenticationPrincipal SecurityUser securityUser,
+    public List<Map<String, Object>> getMyWatches(@AuthenticationPrincipal SecurityUser securityUser,
                                                           @PathVariable("page") Integer page,
                                                           @PathVariable("size") Integer size) {
         User user = securityUser.getUser();
-        return Result.success(userRelatedService.getMyFollowList(user.getId(), PageRequest.of(page - 1, size)));
+        return userRelatedService.getMyFollowList(user.getId(), PageRequest.of(page - 1, size));
     }
- 
+
     @Operation(summary = "关注", description = "关注某个用户")
     @PostMapping("/watch")
-    public Result<Void> watch(@AuthenticationPrincipal SecurityUser securityUser, @RequestBody Long userId) {
+    public ResponseEntity<Void> watch(@AuthenticationPrincipal SecurityUser securityUser, @RequestBody Long userId) {
         User user = securityUser.getUser();
         userRelatedService.addUserFollow(user.getId(), userId);
-        return Result.success();
+        return ResponseEntity.ok().build();
     }
- 
+
     @Operation(summary = "取消关注", description = "取消关注某个用户")
     @DeleteMapping("/watch/{userId}")
-    public Result<Void> cancelWatch(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("userId") Long userId) {
+    public ResponseEntity<Void> cancelWatch(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("userId") Long userId) {
         User user = securityUser.getUser();
         userRelatedService.delUserFollow(user.getId(), userId);
-        return Result.success();
+        return ResponseEntity.ok().build();
     }
- 
+
     @Operation(summary = "文件上传", description = "文件上传接口")
     @PostMapping("/upload/{dir}")
     @Parameter(name = "dir", description = "oss分类名", in = ParameterIn.PATH)
-    public Result<String> uploadAvatar(@RequestParam("file") MultipartFile file, @PathVariable("dir") String dir) {
+    public String uploadAvatar(@RequestParam("file") MultipartFile file, @PathVariable("dir") String dir) {
         if (file.isEmpty()) {
-            return Result.failure(222, "文件为空");
+            throw new GlobalException(RestCode.PARAM_ERROR.code, "文件为空");
         }
-        String path = storageService.uploadFile(file, dir);
-        return Result.success(path);
+        return storageService.uploadFile(file, dir);
     }
+}
 }

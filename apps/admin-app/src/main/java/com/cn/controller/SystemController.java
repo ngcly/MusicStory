@@ -7,7 +7,6 @@ import com.cn.entity.*;
 import com.cn.model.MenuDTO;
 import com.cn.service.StorageService;
 import com.cn.util.JacksonUtil;
-import com.cn.util.Result;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -344,11 +343,10 @@ public class SystemController {
      */
     @ResponseBody
     @PostMapping("/upload")
-    public Result<String> uploadAvatar(@RequestParam("file") MultipartFile file) {
+    public String uploadAvatar(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
-            return Result.failure(222, "文件为空");
+            throw new GlobalException(RestCode.PARAM_ERROR.code, "文件为空");
         }
-        String path = storageService.uploadFile(file, "avatar");
-        return Result.success(path);
+        return storageService.uploadFile(file, "avatar");
     }
 }

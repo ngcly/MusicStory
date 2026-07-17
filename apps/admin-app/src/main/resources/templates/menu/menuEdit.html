@@ -5,12 +5,26 @@
     <title>菜单编辑</title>
 </head>
 <body>
- 
-<div th:fragment="menuEditFragment" class="p-4"
+
+<div th:fragment="menuEditFragment" class="p-6 space-y-6"
      x-data="{
-        resourceType: '[[${menu.resourceType != null ? menu.resourceType : 'menu'}]]',
+        resourceType: '[[${menu.resourceType != null ? menu.resourceType.name().toLowerCase() : 'menu'}]]'.toLowerCase(),
+        selectedIcon: '[[${menu.icon != null ? menu.icon : ''}]]',
+        httpMethod: '[[${menu.httpMethod != null ? menu.httpMethod : 'GET'}]]',
         initialState: '',
         isSubmitting: false,
+
+        setHttpMethod(method) {
+            this.httpMethod = method;
+        },
+
+        selectIcon(iconName) {
+            this.selectedIcon = iconName;
+            this.$nextTick(() => {
+                if (window.lucide) window.lucide.createIcons();
+            });
+        },
+
         getIsDirty() {
             const form = this.$el.querySelector('form');
             if (!form) return false;
@@ -18,12 +32,16 @@
             const serialized = Array.from(current.entries()).map(e => e[0] + '=' + e[1]).join('&');
             return this.initialState !== serialized;
         },
+
         init() {
             this.$nextTick(() => {
                 const form = this.$el.querySelector('form');
                 if (form) {
                     const current = new FormData(form);
                     this.initialState = Array.from(current.entries()).map(e => e[0] + '=' + e[1]).join('&');
+                }
+                if (window.lucide) {
+                    window.lucide.createIcons();
                 }
             });
         }
@@ -43,86 +61,195 @@
             }
         }
      ">
-     
-    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4"
-        th:text="${menu.id == null ? '新增菜单' : '修改菜单'}"></h3>
-        
+
+    <!-- Modal Header -->
+    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold shadow-sm border border-indigo-100 dark:border-indigo-900/50">
+                <i class="w-5 h-5" th:data-lucide="${menu.id == null ? 'plus-circle' : 'edit-3'}"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white"
+                    th:text="${menu.id == null ? '新增菜单/权限' : '修改菜单/权限'}">新增菜单/权限</h3>
+                <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">配置菜单属性、路由节点及后端接口权限控制</p>
+            </div>
+        </div>
+    </div>
+
     <form th:hx-put="${menu.id != null} ? '/sys/menu' : null"
           th:hx-post="${menu.id == null} ? '/sys/menu' : null"
           hx-swap="none"
-          class="space-y-4"
+          class="space-y-5"
           @submit="isSubmitting = true">
-          
+
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <input type="hidden" name="id" th:value="${menu.id}">
         <input type="hidden" name="parentId" th:value="${menu.parentId != null ? menu.parentId : 0}" />
-        
+
+        <!-- 1. Resource Type Selection (Segmented Control Cards) -->
         <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase">菜单名</label>
-            <input type="text" name="name" th:value="${menu.name}" required
-                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-        </div>
-        
-        <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase">请求方法</label>
-            <input type="text" name="httpMethod" th:value="${menu.httpMethod}" required placeholder="GET|POST|PUT|DELETE"
-                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-            <span class="text-xs text-gray-400 mt-1 block">接口请求的HTTP方法，如：GET|POST</span>
-        </div>
- 
-        <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase mb-2">资源类型</label>
-            <div class="flex items-center space-x-4">
-                <label class="inline-flex items-center">
-                    <input type="radio" name="resourceType" value="menu" x-model="resourceType"
-                           class="h-4 w-4 border-gray-300 text-indigo-650 focus:ring-indigo-500">
-                    <span class="ml-2 text-sm text-gray-700 dark:text-gray-200">菜单</span>
+            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">资源类型</label>
+            <div class="grid grid-cols-2 gap-3">
+                <label class="relative flex items-center p-3 rounded-2xl border cursor-pointer transition-all duration-200"
+                       :class="resourceType === 'menu' 
+                          ? 'border-indigo-500/80 bg-indigo-50/50 dark:bg-indigo-950/30 ring-2 ring-indigo-500/20' 
+                          : 'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'">
+                    <input type="radio" name="resourceType" value="MENU" x-model="resourceType" class="sr-only">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-xl flex items-center justify-center transition-colors"
+                             :class="resourceType === 'menu' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'">
+                            <i class="w-4 h-4" data-lucide="layout-grid"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-slate-800 dark:text-slate-200 block">导航菜单</span>
+                            <span class="text-[11px] text-slate-400 dark:text-slate-500 block">展示在左侧导航栏</span>
+                        </div>
+                    </div>
                 </label>
-                <label class="inline-flex items-center">
-                    <input type="radio" name="resourceType" value="button" x-model="resourceType"
-                           class="h-4 w-4 border-gray-300 text-indigo-650 focus:ring-indigo-500">
-                    <span class="ml-2 text-sm text-gray-700 dark:text-gray-200">按钮</span>
+
+                <label class="relative flex items-center p-3 rounded-2xl border cursor-pointer transition-all duration-200"
+                       :class="resourceType === 'button' 
+                          ? 'border-violet-500/80 bg-violet-50/50 dark:bg-violet-950/30 ring-2 ring-violet-500/20' 
+                          : 'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'">
+                    <input type="radio" name="resourceType" value="BUTTON" x-model="resourceType" class="sr-only">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-xl flex items-center justify-center transition-colors"
+                             :class="resourceType === 'button' ? 'bg-violet-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'">
+                            <i class="w-4 h-4" data-lucide="mouse-pointer-click"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-slate-800 dark:text-slate-200 block">按钮 / 权限点</span>
+                            <span class="text-[11px] text-slate-400 dark:text-slate-500 block">页面操作及后端API防护</span>
+                        </div>
+                    </div>
                 </label>
             </div>
         </div>
-        
+
+        <!-- 2. Parent Menu Info Box -->
+        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200/60 dark:border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center space-x-2.5">
+                <i class="w-4 h-4 text-slate-400 dark:text-slate-500" data-lucide="corner-down-right"></i>
+                <span class="text-xs text-slate-500 dark:text-slate-400">所属父级:</span>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 rounded-xl text-xs font-bold bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300/50 dark:border-slate-700/50">
+                <i class="w-3.5 h-3.5 mr-1.5 text-indigo-500" th:data-lucide="${parentName == null || parentName.isEmpty() || parentName == '顶层菜单' ? 'folder-root' : 'folder'}"></i>
+                <span th:text="${parentName == null || parentName.isEmpty() ? '顶层菜单' : parentName}">顶层菜单</span>
+            </span>
+        </div>
+
+        <!-- 3. Menu/Button Name -->
         <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase">父级菜单</label>
-            <input type="text" th:value="${parentName == null || parentName.isEmpty() ? '顶层菜单' : parentName}" readonly
-                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-500 sm:text-sm">
+            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                <span x-text="resourceType === 'button' ? '按钮/权限名称' : '菜单名称'">菜单名称</span>
+                <span class="text-rose-500 ml-0.5">*</span>
+            </label>
+            <div class="relative rounded-2xl shadow-sm">
+                <input type="text" name="name" th:value="${menu.name}" required
+                       placeholder="请输入名称 (如: 用户管理 或 新增用户)"
+                       class="block w-full rounded-2xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-4 py-2.5 text-xs font-medium focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+            </div>
         </div>
-        
+
+        <!-- 4. HTTP Method Selector & Input -->
         <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase">跳转地址</label>
-            <input type="text" name="url" th:value="${menu.url}" placeholder="如：/sys/menu.html"
-                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                请求方法 (HTTP Method)
+                <span class="text-rose-500 ml-0.5">*</span>
+            </label>
+            
+            <!-- Quick Pills -->
+            <div class="flex items-center space-x-1.5 mb-2">
+                <button type="button" @click="setHttpMethod('GET')"
+                        :class="httpMethod === 'GET' ? 'bg-emerald-500 text-white shadow-sm ring-2 ring-emerald-500/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'"
+                        class="px-2.5 py-1 rounded-xl text-[11px] font-mono font-bold transition-all">GET</button>
+                <button type="button" @click="setHttpMethod('POST')"
+                        :class="httpMethod === 'POST' ? 'bg-indigo-500 text-white shadow-sm ring-2 ring-indigo-500/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'"
+                        class="px-2.5 py-1 rounded-xl text-[11px] font-mono font-bold transition-all">POST</button>
+                <button type="button" @click="setHttpMethod('PUT')"
+                        :class="httpMethod === 'PUT' ? 'bg-amber-500 text-white shadow-sm ring-2 ring-amber-500/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'"
+                        class="px-2.5 py-1 rounded-xl text-[11px] font-mono font-bold transition-all">PUT</button>
+                <button type="button" @click="setHttpMethod('DELETE')"
+                        :class="httpMethod === 'DELETE' ? 'bg-rose-500 text-white shadow-sm ring-2 ring-rose-500/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'"
+                        class="px-2.5 py-1 rounded-xl text-[11px] font-mono font-bold transition-all">DELETE</button>
+            </div>
+
+            <input type="text" name="httpMethod" x-model="httpMethod" required placeholder="GET|POST|PUT|DELETE"
+                   class="block w-full rounded-2xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white font-mono uppercase px-4 py-2.5 text-xs font-semibold focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+            <span class="text-[11px] text-slate-400 dark:text-slate-500 mt-1.5 block">后端 API 接口调用的 HTTP 请求方式，如 GET 或 POST</span>
         </div>
- 
-        <div x-show="resourceType === 'menu'">
-            <label class="block text-xs font-semibold text-gray-400 uppercase">图标 (Thyme / FontAwesome)</label>
-            <input type="text" name="icon" th:value="${menu.icon}" placeholder="如：&#xe608;"
-                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-            <span class="text-xs text-gray-400 mt-1 block">只在菜单级别展示</span>
-        </div>
-        
+
+        <!-- 5. URL Path -->
         <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase">排序</label>
-            <input type="number" name="sort" th:value="${menu.sort}" required min="0"
-                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                跳转链接 / 接口地址 (URL)
+            </label>
+            <div class="relative rounded-2xl shadow-sm">
+                <input type="text" name="url" th:value="${menu.url}" placeholder="例如: /sys/user.html 或 /api/sys/user"
+                       class="block w-full rounded-2xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white font-mono px-4 py-2.5 text-xs font-medium focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+            </div>
         </div>
- 
-        <div class="pt-4 flex justify-end space-x-2 border-t border-gray-100 dark:border-gray-700">
+
+        <!-- 6. Icon Picker (Show only for Menu type) -->
+        <div x-show="resourceType === 'menu'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0">
+            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                菜单图标 (Lucide Icon)
+            </label>
+            
+            <div class="flex space-x-3 items-center mb-2">
+                <!-- Icon Live Preview Badge -->
+                <div class="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200/60 dark:border-indigo-800/40 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0 shadow-sm">
+                    <i class="w-5 h-5" :data-lucide="selectedIcon ? selectedIcon : 'help-circle'"></i>
+                </div>
+
+                <div class="flex-1">
+                    <input type="text" name="icon" x-model="selectedIcon" @input="$nextTick(() => window.lucide && window.lucide.createIcons())" placeholder="输入 Lucide 图标标识, 如: folder, users, settings"
+                           class="block w-full rounded-2xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-4 py-2 text-xs font-mono focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                </div>
+            </div>
+
+            <!-- Preset Quick Icon Grid -->
+            <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200/60 dark:border-slate-800/80">
+                <span class="text-[11px] font-semibold text-slate-400 dark:text-slate-500 block mb-2">常用图标快捷选择:</span>
+                <div class="flex flex-wrap gap-1.5">
+                    <template x-for="iconItem in ['folder', 'file-text', 'settings', 'users', 'shield', 'bar-chart-3', 'layers', 'database', 'key', 'music', 'lock', 'list', 'grid', 'bell', 'calendar', 'home', 'layout-dashboard', 'cpu']" :key="iconItem">
+                        <button type="button" @click="selectIcon(iconItem)"
+                                :class="selectedIcon === iconItem ? 'bg-indigo-600 text-white shadow-sm ring-2 ring-indigo-500/30' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-800'"
+                                class="p-2 rounded-xl text-xs transition-all flex items-center justify-center" :title="iconItem">
+                            <i class="w-4 h-4" :data-lucide="iconItem"></i>
+                        </button>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. Sort Index -->
+        <div>
+            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                排序号 (Sort)
+                <span class="text-rose-500 ml-0.5">*</span>
+            </label>
+            <div class="relative rounded-2xl shadow-sm max-w-[200px]">
+                <input type="number" name="sort" th:value="${menu.sort}" required min="0"
+                       class="block w-full rounded-2xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white px-4 py-2.5 text-xs font-bold focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+            </div>
+            <span class="text-[11px] text-slate-400 dark:text-slate-500 mt-1 block">数值越小排序越靠前 (最小值: 0)</span>
+        </div>
+
+        <!-- Modal Footer Actions -->
+        <div class="pt-4 flex justify-end items-center space-x-3 border-t border-slate-100 dark:border-slate-800">
             <button type="button" @click="$dispatch('close-edit-modal')"
-                    class="rounded-md border border-gray-300 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none">
+                    class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-2.5 text-xs font-bold text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-95 transition-all">
                 取消
             </button>
             <button type="submit" @click="isSubmitting = true; openEdit = false"
-                    class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none"
-                    th:text="${menu.id == null ? '保存' : '修改'}">
+                    class="inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-indigo-500/20 active:scale-95 transition-all"
+                    th:text="${menu.id == null ? '确认新增' : '保存修改'}">
+                保存修改
             </button>
         </div>
     </form>
 </div>
- 
+
 </body>
 </html>

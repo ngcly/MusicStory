@@ -3,7 +3,6 @@ package com.cn.config;
 import com.cn.security.ManagerService;
 import com.cn.model.RestCode;
 import com.cn.util.JacksonUtil;
-import com.cn.util.Result;
 import lombok.RequiredArgsConstructor;
 import org.apache.hc.core5.http.ContentType;
 import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
@@ -55,9 +54,15 @@ public class WebSecurityConfig {
                 )
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling.accessDeniedHandler((request, response, accessDeniedException) -> {
-                            response.setContentType(ContentType.APPLICATION_JSON.toString());
+                            com.cn.model.RestCode restCode = com.cn.model.RestCode.UNAUTHORIZED;
+                            org.springframework.http.ProblemDetail problemDetail = org.springframework.http.ProblemDetail.forStatusAndDetail(restCode.status, restCode.msg);
+                            problemDetail.setTitle(restCode.msg);
+                            problemDetail.setInstance(java.net.URI.create(request.getRequestURI()));
+
+                            response.setStatus(restCode.status.value());
+                            response.setContentType("application/problem+json");
                             try (PrintWriter printWriter = response.getWriter()) {
-                                printWriter.write(JacksonUtil.stringify(Result.failure(RestCode.UNAUTHORIZED)));
+                                printWriter.write(JacksonUtil.stringify(problemDetail));
                             }
                         })
                 )
