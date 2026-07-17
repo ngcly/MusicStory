@@ -44,6 +44,7 @@
             <button sec:authorize="hasAuthority('POST_/ms/classify')"
                     hx-get="/ms/classify/edit.html" 
                     hx-target="#editModalContent"
+                    hx-swap="innerHTML"
                     @click="openEdit = true"
                     class="inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-indigo-500/20 active:scale-95 transition-all">
                 <i class="w-4 h-4 mr-1.5" data-lucide="plus"></i>
@@ -81,21 +82,21 @@
                         <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400" th:text="${#temporals.format(c.createdAt,'yyyy-MM-dd HH:mm:ss')}"></td>
                         <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400" th:text="${#temporals.format(c.updatedAt,'yyyy-MM-dd HH:mm:ss')}"></td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold space-x-2">
-                            <button sec:authorize="hasAuthority('PUT_/ms/classify')"
-                                    class="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-bold"
-                                    th:hx-get="'/ms/classify/edit.html?classifyId=' + ${c.id}" 
-                                    hx-target="#editModalContent"
-                                    @click="openEdit = true">
-                                编辑
-                            </button>
-                            <button sec:authorize="hasAuthority('DELETE_/ms/classify')"
-                                    class="text-rose-600 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 font-bold"
-                                    th:hx-delete="'/ms/classify?classifyId=' + ${c.id}"
-                                    hx-confirm="确定要删除此分类吗？"
-                                    hx-target="#classifyTableContainer"
-                                    hx-swap="outerHTML">
-                                删除
-                            </button>
+                             <button sec:authorize="hasAuthority('PUT_/ms/classify')"
+                                     class="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-bold"
+                                     th:hx-get="@{/ms/classify/edit.html(id=${c.id})}" 
+                                     hx-target="#editModalContent"
+                                     hx-swap="innerHTML"
+                                     @click="openEdit = true">
+                                 编辑
+                             </button>
+                             <button sec:authorize="hasAuthority('DELETE_/ms/classify')"
+                                     class="text-rose-600 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 font-bold"
+                                     th:hx-delete="'/ms/classify?id=' + ${c.id}"
+                                     hx-confirm="确定要删除此分类吗？"
+                                     hx-swap="none">
+                                 删除
+                             </button>
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(classifyPage.content)}">

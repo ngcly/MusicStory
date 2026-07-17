@@ -60,7 +60,7 @@ public class WebSecurityConfig {
                             problemDetail.setInstance(java.net.URI.create(request.getRequestURI()));
 
                             response.setStatus(restCode.status.value());
-                            response.setContentType("application/problem+json");
+                            response.setContentType("application/problem+json;charset=UTF-8");
                             try (PrintWriter printWriter = response.getWriter()) {
                                 printWriter.write(JacksonUtil.stringify(problemDetail));
                             }

@@ -30,6 +30,7 @@
             <button sec:authorize="hasAuthority('POST_/sys/menu')"
                     hx-get="/sys/menu/edit.html" 
                     hx-target="#editModalContent"
+                    hx-swap="innerHTML"
                     @click="openEdit = true"
                     class="inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-indigo-500/20 active:scale-95 transition-all">
                 <i class="w-4 h-4 mr-1.5" data-lucide="plus"></i>
@@ -49,20 +50,32 @@
             expandedIds: [],
             parentMap: {},
             init() {
-                const list = window.menuList || [];
-                list.forEach(m => {
-                    this.parentMap[m.id] = m.parentId;
-                    if (String(m.parentId) === '0' || m.parentId === 0) {
-                        if (!this.expandedIds.includes(m.id)) {
-                            this.expandedIds.push(m.id);
+                this.$nextTick(() => {
+                    const rows = this.$el.querySelectorAll('tbody tr');
+                    rows.forEach(tr => {
+                        const menuId = tr.dataset.menuId;
+                        const parentId = tr.dataset.parentId;
+                        if (menuId) {
+                            this.parentMap[menuId] = parentId;
                         }
-                    }
+                    });
+                    
+                    rows.forEach(tr => {
+                        const menuId = Number(tr.dataset.menuId);
+                        const parentId = tr.dataset.parentId;
+                        if (parentId === '0' || parentId === 0 || parentId === null || parentId === undefined) {
+                            if (!this.expandedIds.includes(menuId)) {
+                                this.expandedIds.push(menuId);
+                            }
+                        }
+                    });
                 });
             },
             isRowVisible(parentId) {
-                if (parentId === 0 || parentId === '0') return true;
+                if (!parentId || parentId === 0 || parentId === '0') return true;
                 if (!this.expandedIds.includes(Number(parentId)) && !this.expandedIds.includes(String(parentId))) return false;
                 const grandparentId = this.parentMap[parentId];
+                if (grandparentId === undefined || grandparentId === null || grandparentId === parentId) return true;
                 return this.isRowVisible(grandparentId);
             },
             toggleRow(menuId) {
@@ -77,16 +90,13 @@
                 return this.expandedIds.includes(Number(menuId));
             },
             getDepth(parentId) {
-                if (parentId === 0 || parentId === '0') return 0;
+                if (!parentId || parentId === 0 || parentId === '0') return 0;
                 const nextParent = this.parentMap[parentId];
+                if (nextParent === undefined || nextParent === null || nextParent === parentId) return 0;
                 return 1 + this.getDepth(nextParent);
             }
          }">
          
-        <script th:inline="javascript">
-            window.menuList = [[${permissionList}]];
-        </script>
- 
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-100 dark:divide-slate-800/80">
                 <thead class="bg-slate-50/80 dark:bg-slate-950/50">
@@ -149,23 +159,24 @@
                             <button sec:authorize="hasAuthority('POST_/sys/menu')"
                                     class="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-bold"
                                     th:unless="${#strings.equalsIgnoreCase(menu.resourceType, 'BUTTON')}"
-                                    th:hx-get="'/sys/menu/edit.html?parentId=' + ${menu.id}" 
+                                    th:hx-get="@{/sys/menu/edit.html(parentId=${menu.id})}" 
                                     hx-target="#editModalContent"
+                                    hx-swap="innerHTML"
                                     @click="openEdit = true">
                                 添加子菜单
                             </button>
                             <button sec:authorize="hasAuthority('PUT_/sys/menu')"
                                     class="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-bold"
-                                    th:hx-get="'/sys/menu/edit.html?menuId=' + ${menu.id}" 
+                                    th:hx-get="@{/sys/menu/edit.html(menuId=${menu.id})}" 
                                     hx-target="#editModalContent"
+                                    hx-swap="innerHTML"
                                     @click="openEdit = true">
                                 编辑
                             </button>
                             <button class="text-rose-600 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 font-bold"
                                     th:hx-delete="'/sys/menu?menuId=' + ${menu.id}"
                                     hx-confirm="确定要删除此菜单吗？"
-                                    hx-target="#menuTableContainer"
-                                    hx-swap="outerHTML">
+                                    hx-swap="none">
                                 删除
                             </button>
                         </td>

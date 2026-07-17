@@ -6,57 +6,167 @@
     <title>修改密码</title>
 </head>
 <body>
- 
-<div th:fragment="updatePwdFragment" class="p-6 max-w-lg mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
-     x-data="{ 
+
+<div th:fragment="updatePwdFragment"
+     x-data="{
+        oldPassword: '',
         password: '',
         repassword: '',
-        get isMatch() { return this.password === this.repassword },
-        get isValid() { return this.password.length >= 6 && this.password.length <= 12 }
-     }">
-     
-    <div class="border-b pb-3 mb-4 flex items-center justify-between">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-            修改密码 - <span sec:authentication="name" class="text-indigo-600 dark:text-indigo-400"></span>
-        </h3>
+        showOld: false,
+        showNew: false,
+        showConfirm: false,
+        get isLengthOk() { return this.password.length >= 6 && this.password.length <= 12 },
+        get hasNoSpace() { return !this.password.includes(' ') },
+        get isValid() { return this.isLengthOk && this.hasNoSpace },
+        get isMatch() { return this.password !== '' && this.password === this.repassword },
+        get canSubmit() { return this.oldPassword !== '' && this.isValid && this.isMatch }
+     }"
+     class="p-6">
+
+    <!-- Header -->
+    <div class="flex items-center space-x-3 mb-6">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/25 flex-shrink-0">
+            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+        </div>
+        <div>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white leading-tight">安全设置</h3>
+            <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                修改 <span sec:authentication="name" class="font-semibold text-amber-500"></span> 的登录密码
+            </p>
+        </div>
     </div>
- 
+
     <form hx-put="/sys/manager/pwd"
           hx-swap="none"
           class="space-y-4"
-          @submit.prevent="if(isValid && isMatch) { $el.submit() }">
-          
+          @submit.prevent="if(canSubmit) { $el.submit() }">
+
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
- 
-        <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase">当前密码</label>
-            <input type="password" name="oldPassword" required
-                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+
+        <!-- 当前密码 -->
+        <div class="space-y-1.5">
+            <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                当前密码
+            </label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                </div>
+                <input :type="showOld ? 'text' : 'password'"
+                       name="oldPassword"
+                       x-model="oldPassword"
+                       required
+                       placeholder="请输入当前密码"
+                       class="block w-full pl-9 pr-10 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500 dark:focus:border-amber-500 transition-all">
+                <button type="button" @click="showOld = !showOld"
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+                    <svg x-show="!showOld" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg x-show="showOld" class="w-3.5 h-3.5" style="display:none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+            </div>
         </div>
-        
-        <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase">新密码</label>
-            <input type="password" name="password" required x-model="password"
-                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-            <span class="text-xs text-gray-400 mt-1 block">6到12个字符，且不能有空格</span>
-            <span x-show="password && !isValid" class="text-xs text-red-500 mt-1 block" style="display: none;">密码长度必须在6至12位之间</span>
+
+        <!-- 新密码 -->
+        <div class="space-y-1.5">
+            <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                新密码
+            </label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <input :type="showNew ? 'text' : 'password'"
+                       name="password"
+                       x-model="password"
+                       required
+                       placeholder="6-12 位字符，不含空格"
+                       :class="password && !isValid
+                         ? 'border-rose-400 dark:border-rose-500 focus:ring-rose-400/40 focus:border-rose-400'
+                         : password && isValid
+                           ? 'border-emerald-400 dark:border-emerald-500 focus:ring-emerald-400/40 focus:border-emerald-400'
+                           : 'border-slate-200 dark:border-slate-700 focus:ring-amber-500/40 focus:border-amber-500'"
+                       class="block w-full pl-9 pr-10 py-2.5 text-xs rounded-xl border bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 transition-all">
+                <button type="button" @click="showNew = !showNew"
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+                    <svg x-show="!showNew" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg x-show="showNew" class="w-3.5 h-3.5" style="display:none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+            </div>
+
+            <!-- 密码强度指示条 -->
+            <div x-show="password.length > 0" class="flex items-center space-x-1.5 pt-1" style="display:none;">
+                <div class="flex space-x-1 flex-1">
+                    <div class="h-1 flex-1 rounded-full transition-all duration-300"
+                         :class="password.length >= 1 ? (isValid ? 'bg-emerald-400' : 'bg-amber-400') : 'bg-slate-200 dark:bg-slate-700'"></div>
+                    <div class="h-1 flex-1 rounded-full transition-all duration-300"
+                         :class="password.length >= 4 ? (isValid ? 'bg-emerald-400' : 'bg-amber-400') : 'bg-slate-200 dark:bg-slate-700'"></div>
+                    <div class="h-1 flex-1 rounded-full transition-all duration-300"
+                         :class="isValid ? 'bg-emerald-400' : 'bg-slate-200 dark:bg-slate-700'"></div>
+                </div>
+                <span class="text-xs font-medium transition-colors"
+                      :class="isValid ? 'text-emerald-500' : 'text-amber-500'"
+                      x-text="!isLengthOk ? '长度不足' : !hasNoSpace ? '含有空格' : '强度良好'"></span>
+            </div>
+
+            <p x-show="password && !isValid" style="display:none;"
+               class="text-xs text-rose-500 dark:text-rose-400 flex items-center space-x-1.5">
+                <svg class="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span x-text="!isLengthOk ? '密码长度需在 6-12 位之间' : '密码不能包含空格'"></span>
+            </p>
         </div>
- 
-        <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase">确认新密码</label>
-            <input type="password" name="repassword" required x-model="repassword"
-                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-            <span x-show="repassword && !isMatch" class="text-xs text-red-500 mt-1 block" style="display: none;">两次密码输入不一致</span>
+
+        <!-- 确认新密码 -->
+        <div class="space-y-1.5">
+            <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                确认新密码
+            </label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                </div>
+                <input :type="showConfirm ? 'text' : 'password'"
+                       name="repassword"
+                       x-model="repassword"
+                       required
+                       placeholder="再次输入新密码"
+                       :class="repassword && !isMatch
+                         ? 'border-rose-400 dark:border-rose-500 focus:ring-rose-400/40 focus:border-rose-400'
+                         : repassword && isMatch
+                           ? 'border-emerald-400 dark:border-emerald-500 focus:ring-emerald-400/40 focus:border-emerald-400'
+                           : 'border-slate-200 dark:border-slate-700 focus:ring-amber-500/40 focus:border-amber-500'"
+                       class="block w-full pl-9 pr-10 py-2.5 text-xs rounded-xl border bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 transition-all">
+                <button type="button" @click="showConfirm = !showConfirm"
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+                    <svg x-show="!showConfirm" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg x-show="showConfirm" class="w-3.5 h-3.5" style="display:none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+            </div>
+            <p x-show="repassword && !isMatch" style="display:none;"
+               class="text-xs text-rose-500 dark:text-rose-400 flex items-center space-x-1.5">
+                <svg class="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                <span>两次输入的密码不一致</span>
+            </p>
+            <p x-show="repassword && isMatch" style="display:none;"
+               class="text-xs text-emerald-500 dark:text-emerald-400 flex items-center space-x-1.5">
+                <svg class="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <span>密码一致</span>
+            </p>
         </div>
- 
-        <div class="pt-4 flex justify-end space-x-2 border-t border-gray-100 dark:border-gray-700">
-            <button type="submit" :disabled="!isValid || !isMatch"
-                    class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                确认修改
+
+        <!-- 操作按钮 -->
+        <div class="pt-2 flex items-center justify-end border-t border-slate-100 dark:border-slate-800">
+            <button type="submit"
+                    :disabled="!canSubmit"
+                    :class="canSubmit
+                        ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 shadow-md shadow-amber-500/20 cursor-pointer'
+                        : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed'"
+                    class="inline-flex items-center space-x-1.5 rounded-xl px-5 py-2.5 text-xs font-bold text-white active:scale-95 transition-all">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                <span>确认修改</span>
             </button>
         </div>
     </form>
 </div>
- 
+
 </body>
 </html>

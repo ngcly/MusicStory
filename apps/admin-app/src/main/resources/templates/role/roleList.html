@@ -56,6 +56,7 @@
             <button sec:authorize="hasAuthority('POST_/sys/role')"
                     hx-get="/sys/role/edit.html" 
                     hx-target="#editModalContent"
+                    hx-swap="innerHTML"
                     @click="openEdit = true"
                     class="inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-indigo-500/20 active:scale-95 transition-all">
                 <i class="w-4 h-4 mr-1.5" data-lucide="plus"></i>
@@ -118,24 +119,27 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
                             <div class="flex items-center justify-end space-x-1.5">
-                                <button th:hx-get="'/sys/role/grant.html?roleId=' + ${role.id} + '&type=1'" 
+                                <button th:hx-get="@{/sys/role/grant.html(roleId=${role.id},type=1)}" 
                                         hx-target="#grantModalContent"
+                                        hx-swap="innerHTML"
                                         @click="openGrant = true"
                                         class="p-2 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all hover:scale-105 active:scale-95"
                                         title="查看权限">
                                     <i class="w-4 h-4" data-lucide="eye"></i>
                                 </button>
                                 <button sec:authorize="hasAuthority('POST_/sys/role/grant')"
-                                        th:hx-get="'/sys/role/grant.html?roleId=' + ${role.id} + '&type=2'" 
+                                        th:hx-get="@{/sys/role/grant.html(roleId=${role.id},type=2)}" 
                                         hx-target="#grantModalContent"
+                                        hx-swap="innerHTML"
                                         @click="openGrant = true"
                                         class="p-2 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all hover:scale-105 active:scale-95"
                                         title="分配权限">
                                     <i class="w-4 h-4" data-lucide="shield-check"></i>
                                 </button>
                                 <button sec:authorize="hasAuthority('PUT_/sys/role')"
-                                        th:hx-get="'/sys/role/edit.html?roleId=' + ${role.id}" 
+                                        th:hx-get="@{/sys/role/edit.html(roleId=${role.id})}" 
                                         hx-target="#editModalContent"
+                                        hx-swap="innerHTML"
                                         @click="openEdit = true"
                                         class="p-2 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all hover:scale-105 active:scale-95"
                                         title="编辑角色">
@@ -144,8 +148,7 @@
                                 <button sec:authorize="hasAuthority('DELETE_/sys/role')"
                                         th:hx-delete="'/sys/role?roleId=' + ${role.id}"
                                         hx-confirm="确定要删除此角色吗？"
-                                        hx-target="#roleTableContainer"
-                                        hx-swap="outerHTML"
+                                        hx-swap="none"
                                         class="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all hover:scale-105 active:scale-95"
                                         title="删除角色">
                                     <i class="w-4 h-4" data-lucide="trash-2"></i>

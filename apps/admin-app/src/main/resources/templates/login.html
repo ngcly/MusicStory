@@ -60,10 +60,10 @@
             .then(res => res.json())
             .then(data => {
                 this.loading = false;
-                if (data.code === 0) {
+                if (data.status === 'ok' || data.code === 0) {
                     location.href = '/';
                 } else {
-                    this.errorMessage = data.msg;
+                    this.errorMessage = data.detail || data.msg || data.message || '登录失败';
                     this.refreshCaptcha();
                 }
             })

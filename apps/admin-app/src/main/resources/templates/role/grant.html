@@ -5,7 +5,7 @@
     <title>角色授权</title>
 </head>
 <body>
- 
+
 <div th:fragment="grantFragment" class="p-4" 
      x-data="{ 
         checkedIds: [],
@@ -14,17 +14,27 @@
         parentMap: {},
         
         init() {
-            // Decode the escaped JSON from Thymeleaf securely
-            const rawJson = `[[${grantMenuJson}]]`;
+            const rawJson = this.$refs.grantJsonData ? this.$refs.grantJsonData.value : '[]';
             try {
                 this.menuTree = JSON.parse(rawJson) || [];
             } catch(e) {
                 console.error('Failed to parse menuList JSON', e);
             }
             
-            // Populate initially checked IDs
-            const initialIds = [[${menuSet.?[checked == true].![id]}]];
-            this.checkedIds = Array.isArray(initialIds) ? initialIds : [];
+            // Traversal helper to collect initially checked node IDs
+            const collectCheckedIds = (nodes) => {
+                let ids = [];
+                nodes.forEach(node => {
+                    if (node.checked) {
+                        ids.push(node.id);
+                    }
+                    if (node.children && node.children.length > 0) {
+                        ids = ids.concat(collectCheckedIds(node.children));
+                    }
+                });
+                return ids;
+            };
+            this.checkedIds = collectCheckedIds(this.menuTree);
             
             // Build tree mapping relationships
             const buildMaps = (nodes, parentNode = null) => {
@@ -133,7 +143,9 @@
             });
         }
      }">
-     
+
+    <input type="hidden" x-ref="grantJsonData" th:value="${grantMenuJson}">
+
     <form hx-post="/sys/role/grant" 
           hx-swap="none"
           class="space-y-4">
@@ -142,41 +154,47 @@
         <input type="hidden" name="roleId" th:value="${roleId}">
         <!-- Submit checked menu IDs as comma-separated string -->
         <input type="hidden" name="menuIds" :value="checkedIds.join(',')">
- 
+
         <div class="max-h-[400px] overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-900/50 space-y-4">
             <!-- Level 1 loop -->
             <div th:each="menu1 : ${menuSet}" class="border-b border-gray-100 dark:border-gray-800 pb-3 last:border-0 last:pb-0">
                 <!-- Level 1 Row -->
                 <div class="flex items-center justify-between py-1.5 bg-indigo-50/50 dark:bg-indigo-950/20 px-2 rounded">
                     <label class="inline-flex items-center text-sm font-bold text-gray-855 dark:text-white">
-                        <input type="checkbox" :id="'checkbox-' + [[${menu1.id}]]"
-                               :checked="checkedIds.includes([[${menu1.id}]])"
-                               @change="toggleNode([[${menu1.id}]], $el.checked)"
+                        <input type="checkbox"
+                               th:id="'checkbox-' + ${menu1.id}"
+                               th:data-id="${menu1.id}"
+                               :checked="checkedIds.includes(Number($el.dataset.id))"
+                               @change="toggleNode(Number($el.dataset.id), $el.checked)"
                                class="rounded border-gray-300 text-indigo-650 focus:ring-indigo-500 mr-2 h-4 w-4">
                         <span th:text="${menu1.name}"></span>
                     </label>
                 </div>
- 
+
                 <!-- Level 2 loop -->
                 <div class="ml-6 mt-2 space-y-2" th:if="${not #lists.isEmpty(menu1.children)}">
                     <div th:each="menu2 : ${menu1.children}">
                         <div class="flex items-center py-1">
                             <label class="inline-flex items-center text-sm font-semibold text-gray-700 dark:text-gray-200">
-                                <input type="checkbox" :id="'checkbox-' + [[${menu2.id}]]"
-                                       :checked="checkedIds.includes([[${menu2.id}]])"
-                                       @change="toggleNode([[${menu2.id}]], $el.checked)"
+                                <input type="checkbox"
+                                       th:id="'checkbox-' + ${menu2.id}"
+                                       th:data-id="${menu2.id}"
+                                       :checked="checkedIds.includes(Number($el.dataset.id))"
+                                       @change="toggleNode(Number($el.dataset.id), $el.checked)"
                                        class="rounded border-gray-300 text-indigo-650 focus:ring-indigo-500 mr-2 h-4 w-4">
                                 <span th:text="${menu2.name}"></span>
                             </label>
                         </div>
- 
+
                         <!-- Level 3 loop (Permissions / Actions) -->
                         <div class="ml-6 mt-1 flex flex-wrap gap-2" th:if="${not #lists.isEmpty(menu2.children)}">
                             <div th:each="menu3 : ${menu2.children}" class="inline-flex items-center">
                                 <label class="inline-flex items-center text-xs text-gray-550 dark:text-gray-400 bg-white dark:bg-gray-800 px-2 py-1 rounded border border-gray-150 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer">
-                                    <input type="checkbox" :id="'checkbox-' + [[${menu3.id}]]"
-                                           :checked="checkedIds.includes([[${menu3.id}]])"
-                                           @change="toggleNode([[${menu3.id}]], $el.checked)"
+                                    <input type="checkbox"
+                                           th:id="'checkbox-' + ${menu3.id}"
+                                           th:data-id="${menu3.id}"
+                                           :checked="checkedIds.includes(Number($el.dataset.id))"
+                                           @change="toggleNode(Number($el.dataset.id), $el.checked)"
                                            class="rounded border-gray-300 text-indigo-650 focus:ring-indigo-500 mr-1.5 h-3.5 w-3.5">
                                     <span th:text="${menu3.name}"></span>
                                 </label>
@@ -186,7 +204,7 @@
                 </div>
             </div>
         </div>
- 
+
         <div class="pt-4 flex justify-end space-x-2 border-t border-gray-100 dark:border-gray-700">
             <button type="button" @click="openGrant = false"
                     class="rounded-md border border-gray-300 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -199,6 +217,6 @@
         </div>
     </form>
 </div>
- 
+
 </body>
 </html>

@@ -49,12 +49,12 @@ public class HtmxLayoutInterceptor implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         if (modelAndView != null && modelAndView.hasView()) {
             String viewName = modelAndView.getViewName();
-            if (viewName == null || viewName.startsWith("redirect:") || viewName.startsWith("forward:") || viewName.equals("login") || viewName.startsWith("layout/")) {
+            if (viewName == null || viewName.startsWith("redirect:") || viewName.startsWith("forward:") || viewName.equals("login") || viewName.equals("error") || viewName.startsWith("layout/")) {
                 return;
             }
  
             boolean isHtmx = "true".equals(request.getHeader("HX-Request"));
- 
+
             if (isHtmx) {
                 // HTMX 异步局部请求：只渲染当前视图的 mainContent 片段
                 if (!viewName.contains("::")) {
@@ -62,7 +62,8 @@ public class HtmxLayoutInterceptor implements HandlerInterceptor {
                 }
             } else {
                 // 浏览器直接回车/刷新（全页访问）：将视图路由为 layout/main 外壳，并把当前视图作为 contentTemplate 动态传入
-                modelAndView.addObject("contentTemplate", viewName);
+                String baseViewName = viewName.contains("::") ? viewName.substring(0, viewName.indexOf("::")).trim() : viewName;
+                modelAndView.addObject("contentTemplate", baseViewName);
                 modelAndView.setViewName("layout/main");
  
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();

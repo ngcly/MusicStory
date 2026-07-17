@@ -1,5 +1,7 @@
 package com.cn.controller;
 
+import com.cn.exception.GlobalException;
+import com.cn.model.RestCode;
 import com.cn.security.LogService;
 import com.cn.security.ManagerService;
 import com.cn.security.RoleService;
@@ -61,18 +63,23 @@ public class SystemController {
             @PageableDefault(sort = {"createdAt"}, direction = Sort.Direction.DESC) Pageable pageable,
             @Valid Manager manager,
             @RequestHeader(value = "HX-Request", required = false) boolean hxRequest,
+            @RequestHeader(value = "HX-Target", required = false) String hxTarget,
             Model model) {
         
+        int current = pageable.getPageNumber() == 0 ? 1 : pageable.getPageNumber();
         Page<Manager> managerList = managerService.getManagersList(
-                pageable.withPage(Math.max(0, pageable.getPageNumber() - 1)), manager);
+                pageable.withPage(current - 1), manager);
         
         model.addAttribute("managerPage", managerList);
-        model.addAttribute("currentPage", pageable.getPageNumber());
+        model.addAttribute("currentPage", current);
         model.addAttribute("size", pageable.getPageSize());
         model.addAttribute("managerParam", manager);
         
         if (hxRequest) {
-            return "manager/managerList :: managerTable";
+            if ("managerTableContainer".equals(hxTarget)) {
+                return "manager/managerList :: managerTable";
+            }
+            return "manager/managerList :: mainContent";
         }
         return "manager/managerList";
     }
@@ -120,7 +127,7 @@ public class SystemController {
         model.addAttribute("checkRoleId", checkRoleIds);
         //可授权角色ID
         model.addAttribute("optionRoles", optRole);
-        return "manager/managerEdit :: managerEditFragment";
+        return "manager/managerEdit";
     }
 
     /**
@@ -199,19 +206,24 @@ public class SystemController {
             @PageableDefault(sort = {"roleName"}, direction = Sort.Direction.DESC) Pageable pageable,
             @Valid Role role,
             @RequestHeader(value = "HX-Request", required = false) boolean hxRequest,
+            @RequestHeader(value = "HX-Target", required = false) String hxTarget,
             Model model) {
         
         // Convert to 0-based page for spring data
+        int current = pageable.getPageNumber() == 0 ? 1 : pageable.getPageNumber();
         Page<Role> roleList = roleService.getRoleList(
-                pageable.withPage(Math.max(0, pageable.getPageNumber() - 1)), role);
+                pageable.withPage(current - 1), role);
         
         model.addAttribute("rolePage", roleList);
-        model.addAttribute("currentPage", pageable.getPageNumber());
+        model.addAttribute("currentPage", current);
         model.addAttribute("size", pageable.getPageSize());
         model.addAttribute("roleParam", role);
         
         if (hxRequest) {
-            return "role/roleList :: roleTable";
+            if ("roleTableContainer".equals(hxTarget)) {
+                return "role/roleList :: roleTable";
+            }
+            return "role/roleList :: mainContent";
         }
         return "role/roleList";
     }
@@ -262,19 +274,24 @@ public class SystemController {
     }
  
     @DeleteMapping("/role")
-    public ResponseEntity<Void> delRole(@RequestParam long roleId) {
+    public ResponseEntity<Void> delRole(@RequestParam long roleId, HttpServletResponse response) {
         roleService.delRole(roleId);
+        response.setHeader("HX-Trigger", "roleListChanged");
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/menu.html")
     public String menuList(
             @RequestHeader(value = "HX-Request", required = false) boolean hxRequest,
+            @RequestHeader(value = "HX-Target", required = false) String hxTarget,
             Model model) {
         List<Permission> permissionList = roleService.getMenuList();
         model.addAttribute("permissionList", permissionList);
         if (hxRequest) {
-            return "menu/menuList :: menuTable";
+            if ("menuTableContainer".equals(hxTarget)) {
+                return "menu/menuList :: menuTable";
+            }
+            return "menu/menuList :: mainContent";
         }
         return "menu/menuList";
     }
@@ -309,8 +326,9 @@ public class SystemController {
     }
  
     @DeleteMapping("/menu")
-    public ResponseEntity<Void> deleteMenu(@RequestParam long menuId) {
+    public ResponseEntity<Void> deleteMenu(@RequestParam long menuId, HttpServletResponse response) {
         roleService.delMenu(menuId);
+        response.setHeader("HX-Trigger", "menuListChanged");
         return ResponseEntity.ok().build();
     }
 
@@ -319,18 +337,23 @@ public class SystemController {
             @PageableDefault(sort = {"loginTime"}, direction = Sort.Direction.DESC) Pageable pageable,
             @Valid LoginLog loginLog,
             @RequestHeader(value = "HX-Request", required = false) boolean hxRequest,
+            @RequestHeader(value = "HX-Target", required = false) String hxTarget,
             Model model) {
         
+        int current = pageable.getPageNumber() == 0 ? 1 : pageable.getPageNumber();
         Page<LoginLog> logList = logService.getLoginLogList(
-                pageable.withPage(Math.max(0, pageable.getPageNumber() - 1)), loginLog);
+                pageable.withPage(current - 1), loginLog);
         
         model.addAttribute("logPage", logList);
-        model.addAttribute("currentPage", pageable.getPageNumber());
+        model.addAttribute("currentPage", current);
         model.addAttribute("size", pageable.getPageSize());
         model.addAttribute("logParam", loginLog);
         
         if (hxRequest) {
-            return "system/logList :: logTable";
+            if ("logTableContainer".equals(hxTarget)) {
+                return "system/logList :: logTable";
+            }
+            return "system/logList :: mainContent";
         }
         return "system/logList";
     }

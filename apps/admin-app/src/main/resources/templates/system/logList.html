@@ -23,16 +23,11 @@
  
     <!-- Search Card Container -->
     <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800/80 p-5">
-        <form id="search-form" hx-get="/sys/logs.html" hx-target="#logTableContainer" hx-swap="outerHTML" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <form id="search-form" hx-get="/sys/logs.html" hx-target="#logTableContainer" hx-swap="outerHTML" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
             <div>
                 <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">操作账号</label>
-                <input type="text" name="username" th:value="${logParam != null ? logParam.username : ''}"
+                <input type="text" name="userName" th:value="${logParam != null ? logParam.userName : ''}"
                        class="w-full rounded-xl border-slate-200 dark:border-slate-800 dark:bg-slate-950/60 shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 text-xs py-2.5 px-3.5 transition-all placeholder-slate-400" placeholder="检索操作人...">
-            </div>
-            <div>
-                <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">请求地址</label>
-                <input type="text" name="url" th:value="${logParam != null ? logParam.url : ''}"
-                       class="w-full rounded-xl border-slate-200 dark:border-slate-800 dark:bg-slate-950/60 shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 text-xs py-2.5 px-3.5 transition-all placeholder-slate-400" placeholder="检索IP或网关地址...">
             </div>
             <div>
                 <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">用户类型</label>
@@ -43,7 +38,7 @@
                     <option value="USER" th:selected="${logParam != null && logParam.userType != null && logParam.userType.toString() == 'USER'}">前台会员</option>
                 </select>
             </div>
-            <div class="flex space-x-2 sm:col-span-2 md:col-span-1">
+            <div class="flex space-x-2">
                 <button type="submit" class="inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-indigo-500/20 active:scale-95 transition-all w-full">
                     <i class="w-3.5 h-3.5 mr-1.5" data-lucide="search"></i>
                     查询
@@ -71,26 +66,24 @@
                     <tr>
                         <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">操作账号</th>
                         <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">操作IP</th>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">请求方法</th>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">网关地址</th>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">耗时 (ms)</th>
+                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">登录状态</th>
+                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">登录地址</th>
+                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">浏览器</th>
                         <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">用户类型</th>
-                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">触发日期</th>
+                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">登录时间</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-800/80 bg-white dark:bg-slate-900">
                     <tr th:each="log : ${logPage.content}" class="hover:bg-slate-50/80 dark:hover:bg-slate-850/50 transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-xs font-bold text-slate-800 dark:text-slate-200" th:text="${log.username}"></td>
-                        <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400 font-mono" th:text="${log.ip}"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-xs font-bold text-slate-800 dark:text-slate-200" th:text="${log.userName}"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400 font-mono" th:text="${log.loginIp}"></td>
                         <td class="px-6 py-4 whitespace-nowrap text-xs">
                             <span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold"
-                                  th:classappend="${log.method == 'GET' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/40' : (log.method == 'POST' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/40' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200/60 dark:border-amber-800/40')}"
-                                  th:text="${log.method}"></span>
+                                  th:classappend="${log.loginStatus.toString() == 'SUCCESS' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/40' : 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-200/60 dark:border-rose-800/40'}"
+                                  th:text="${log.loginStatus.toString() == 'SUCCESS' ? '成功' : '失败'}"></span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400" th:text="${log.url}"></td>
-                        <td class="px-6 py-4 whitespace-nowrap text-xs font-mono" 
-                            th:classappend="${log.time > 500 ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-slate-500 dark:text-slate-400'}"
-                            th:text="${log.time}"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400" th:text="${log.loginAddress}"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400" th:text="${log.loginBrowser}"></td>
                         <td class="px-6 py-4 whitespace-nowrap text-xs">
                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold"
                                   th:classappend="${log.userType.toString() == 'ADMIN'} 
@@ -99,7 +92,7 @@
                                   th:text="${log.userType.toString() == 'ADMIN' ? '后台管理员' : '前台会员'}">
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400" th:text="${#temporals.format(log.createdAt,'yyyy-MM-dd HH:mm:ss')}"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400 font-mono" th:text="${#temporals.format(log.loginTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(logPage.content)}">
                         <td colspan="7" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">

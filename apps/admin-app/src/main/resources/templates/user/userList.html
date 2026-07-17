@@ -31,7 +31,7 @@
             </div>
             <div>
                 <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">昵称</label>
-                <input type="text" name="nickname" th:value="${userParam != null ? userParam.nickname : ''}"
+                <input type="text" name="nickName" th:value="${userParam != null ? userParam.nickName : ''}"
                        class="w-full rounded-xl border-slate-200 dark:border-slate-800 dark:bg-slate-950/60 shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 text-xs py-2.5 px-3.5 transition-all placeholder-slate-400" placeholder="检索昵称...">
             </div>
             <div>
@@ -107,13 +107,15 @@
                             <button class="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-bold"
                                     th:hx-get="'/ms/user/' + ${user.id}" 
                                     hx-target="#detailModalContent"
+                                    hx-swap="innerHTML"
                                     @click="openDetail = true">
                                 查看详情
                             </button>
                             <button sec:authorize="hasAuthority('PUT_/ms/user')"
                                     class="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-bold"
-                                    th:hx-get="'/ms/user/edit.html?userId=' + ${user.id}" 
+                                    th:hx-get="@{/ms/user/edit.html(userId=${user.id})}" 
                                     hx-target="#editModalContent"
+                                    hx-swap="innerHTML"
                                     @click="openEdit = true">
                                 编辑
                             </button>

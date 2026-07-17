@@ -28,17 +28,13 @@
         }
      }"
      @close-edit-modal.window="
-        if (openEdit) {
-            if (isSubmitting) {
-                openEdit = false;
+        if (typeof isSubmitting !== 'undefined' && isSubmitting) {
+            return;
+        }
+        if (typeof getIsDirty === 'function' && getIsDirty()) {
+            if (!confirm('检测到您有未保存的修改，确定要直接关闭吗？')) {
+                $event.stopImmediatePropagation();
                 return;
-            }
-            if (getIsDirty()) {
-                if (confirm('检测到您有未保存的修改，确定要直接关闭吗？')) {
-                    openEdit = false;
-                }
-            } else {
-                openEdit = false;
             }
         }
      ">

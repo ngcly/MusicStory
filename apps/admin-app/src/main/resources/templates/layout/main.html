@@ -145,16 +145,16 @@
 <div class="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 w-full">
     
     <!-- Sidebar -->
-    <aside class="flex flex-col h-full bg-slate-950 text-slate-300 transition-all duration-300 border-r border-slate-800/80 shrink-0 z-30"
+    <aside class="flex flex-col h-full bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-300 transition-all duration-300 border-r border-slate-200/80 dark:border-slate-800/80 shrink-0 z-30"
            :class="sidebarExpanded ? 'w-64' : 'w-20'">
         
         <!-- Sidebar Brand -->
-        <div class="h-16 flex items-center justify-between px-5 border-b border-slate-800/80 bg-slate-950">
+        <div class="h-16 flex items-center justify-between px-5 border-b border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-950">
             <div class="flex items-center space-x-3">
                 <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 flex items-center justify-center text-white font-black shadow-lg shadow-indigo-500/30 text-base">
                     音
                 </div>
-                <span class="font-extrabold text-lg tracking-tight text-white" 
+                <span class="font-extrabold text-lg tracking-tight text-slate-900 dark:text-white" 
                       x-show="sidebarExpanded" 
                       x-transition>音书管理系统</span>
             </div>
@@ -167,12 +167,12 @@
                 <a hx-get="/home" hx-target="#main-content" hx-push-url="true"
                    @click="activeMenuId = 'home'"
                    :class="activeMenuId === 'home' || activeMenuId === null 
-                    ? 'bg-gradient-to-r from-indigo-600/20 to-violet-600/10 text-indigo-400 font-semibold border-l-2 border-indigo-500' 
-                    : 'text-slate-400 hover:bg-slate-900/80 hover:text-slate-100'"
+                    ? 'bg-indigo-50 dark:bg-gradient-to-r dark:from-indigo-600/20 dark:to-violet-600/10 text-indigo-600 dark:text-indigo-400 font-semibold border-l-2 border-indigo-600 dark:border-indigo-500 shadow-xs' 
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-900/80 hover:text-slate-900 dark:hover:text-slate-100'"
                    class="relative w-full flex items-center px-3.5 py-2.5 rounded-xl text-xs transition-all duration-200 cursor-pointer group">
                     <div class="flex items-center space-x-3">
                         <i class="w-4 h-4 transition-transform group-hover:scale-110" 
-                           :class="activeMenuId === 'home' || activeMenuId === null ? 'text-indigo-400' : 'text-slate-400 group-hover:text-slate-100'"
+                           :class="activeMenuId === 'home' || activeMenuId === null ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100'"
                            data-lucide="layout-dashboard"></i>
                         <span class="tracking-wide" x-show="sidebarExpanded">控制台仪表盘</span>
                     </div>
@@ -183,14 +183,14 @@
             <div th:each="menu1 : ${menuList}" x-data="{ open: false }" class="space-y-1">
                 <!-- Level 1 Category Group -->
                 <button @click="open = !open" 
-                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:bg-slate-900/80 hover:text-slate-100 transition-all group">
+                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-900/80 hover:text-slate-900 dark:hover:text-slate-100 transition-all group">
                     <div class="flex items-center space-x-3">
-                        <i class="w-4 h-4 text-slate-400 group-hover:text-slate-200 transition-transform group-hover:scale-110" 
+                        <i class="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-transform group-hover:scale-110" 
                            th:data-lucide="${menu1.icon != null && !menu1.icon.isEmpty() ? menu1.icon : 'folder'}"></i>
                         <span class="tracking-wide" x-show="sidebarExpanded" th:text="${menu1.name}"></span>
                     </div>
-                    <svg class="h-3.5 w-3.5 transform transition-transform duration-200 text-slate-500" 
-                         :class="open ? 'rotate-90 text-slate-300' : ''" 
+                    <svg class="h-3.5 w-3.5 transform transition-transform duration-200 text-slate-400 dark:text-slate-500" 
+                         :class="open ? 'rotate-90 text-slate-700 dark:text-slate-300' : ''" 
                          x-show="sidebarExpanded"
                          viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
@@ -204,10 +204,10 @@
                            th:data-menu-id="${menu2.id}"
                            @click="activeMenuId = String($el.dataset.menuId)"
                            :class="activeMenuId === String($el.dataset.menuId) 
-                            ? 'bg-gradient-to-r from-indigo-600/20 to-violet-600/10 text-indigo-400 font-semibold border-l-2 border-indigo-500' 
-                            : 'text-slate-400 hover:bg-slate-900/80 hover:text-slate-200'"
+                            ? 'bg-indigo-50 dark:bg-gradient-to-r dark:from-indigo-600/20 dark:to-violet-600/10 text-indigo-600 dark:text-indigo-400 font-semibold border-l-2 border-indigo-600 dark:border-indigo-500 shadow-xs' 
+                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-900/80 hover:text-slate-900 dark:hover:text-slate-200'"
                            class="relative flex items-center space-x-2.5 px-3.5 py-2 rounded-xl text-xs transition-all duration-200 cursor-pointer group">
-                            <i class="w-4 h-4 text-slate-400 shrink-0 group-hover:text-indigo-400 transition-colors" 
+                            <i class="w-4 h-4 text-slate-500 dark:text-slate-400 shrink-0 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" 
                                th:data-lucide="${menu2.icon != null && !menu2.icon.isEmpty() ? menu2.icon : 'file-text'}"></i>
                             <span th:text="${menu2.name}"></span>
                         </a>
@@ -219,10 +219,10 @@
                                th:data-menu-id="${menu3.id}"
                                @click="activeMenuId = String($el.dataset.menuId)"
                                :class="activeMenuId === String($el.dataset.menuId) 
-                                ? 'text-indigo-400 font-semibold' 
-                                : 'text-slate-500 hover:text-slate-300'"
+                                ? 'text-indigo-600 dark:text-indigo-400 font-semibold' 
+                                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'"
                                class="flex items-center space-x-2 px-3 py-1.5 rounded-lg text-[11px] transition-colors cursor-pointer">
-                                <i class="w-3 h-3 text-slate-500 shrink-0" th:data-lucide="${menu3.icon != null && !menu3.icon.isEmpty() ? menu3.icon : 'dot'}"></i>
+                                <i class="w-3 h-3 text-slate-400 dark:text-slate-500 shrink-0" th:data-lucide="${menu3.icon != null && !menu3.icon.isEmpty() ? menu3.icon : 'dot'}"></i>
                                 <span th:text="${menu3.name}"></span>
                             </a>
                         </div>
@@ -232,10 +232,10 @@
         </nav>
         
         <!-- Sidebar Footer -->
-        <div class="p-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-500 bg-slate-950">
+        <div class="p-4 border-t border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-950">
             <span class="text-[11px] font-medium tracking-wide" x-show="sidebarExpanded">© admin.ngcly.cn</span>
             <button @click="sidebarExpanded = !sidebarExpanded" 
-                    class="p-1.5 rounded-lg hover:bg-slate-900 text-slate-400 hover:text-slate-200 transition-colors">
+                    class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
@@ -322,7 +322,7 @@
                          class="absolute right-0 mt-2 w-52 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 py-1.5 z-30" 
                          style="display: none;">
                         
-                        <a th:hx-get="@{'/sys/manager/edit.html?managerId='+${manager.id}}" hx-target="#main-content" hx-push-url="true"
+                        <a th:hx-get="@{/sys/manager/edit.html(managerId=${manager.id})}" hx-target="#main-content" hx-push-url="true"
                            @click="avatarDropdownOpen = false"
                            class="flex items-center space-x-2.5 px-4 py-2.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-850 transition-colors cursor-pointer">
                             <i class="w-4 h-4 text-slate-400" data-lucide="user"></i>
@@ -414,12 +414,32 @@
         lucide.createIcons();
     });
  
+    let loadingTimer = null;
+    function finishLoadingBar() {
+        const bar = document.getElementById('loading-bar');
+        if (bar) {
+            bar.style.width = '100%';
+            setTimeout(() => {
+                bar.style.opacity = '0';
+                setTimeout(() => {
+                    bar.style.width = '0%';
+                }, 300);
+            }, 200);
+        }
+        if (loadingTimer) {
+            clearTimeout(loadingTimer);
+            loadingTimer = null;
+        }
+    }
+
     document.body.addEventListener('htmx:configRequest', function(evt) {
         const bar = document.getElementById('loading-bar');
         if (bar) {
             bar.style.width = '30%';
             bar.style.opacity = '1';
         }
+        if (loadingTimer) clearTimeout(loadingTimer);
+        loadingTimer = setTimeout(finishLoadingBar, 3000);
 
         // Global Automatic CSRF Token Injection for all HTMX requests
         const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
@@ -437,23 +457,14 @@
     });
  
     document.body.addEventListener('htmx:afterRequest', function(evt) {
-        const bar = document.getElementById('loading-bar');
-        if (bar) {
-            bar.style.width = '100%';
-            setTimeout(() => {
-                bar.style.opacity = '0';
-                setTimeout(() => {
-                    bar.style.width = '0%';
-                }, 300);
-            }, 200);
-        }
+        finishLoadingBar();
  
         const xhr = evt.detail ? evt.detail.xhr : null;
         const reqConfig = evt.detail ? evt.detail.requestConfig : null;
         const method = (reqConfig && reqConfig.method) ? reqConfig.method.toUpperCase() : '';
         const status = xhr ? xhr.status : 0;
  
-        if (method !== 'GET' && status >= 200 && status < 300) {
+        if (['POST', 'PUT', 'DELETE'].includes(method) && status >= 200 && status < 300) {
             window.dispatchEvent(new CustomEvent('toast', { 
                 detail: { message: '操作成功！', type: 'success' } 
             }));
@@ -461,6 +472,7 @@
     });
  
     document.body.addEventListener('htmx:responseError', function(evt) {
+        finishLoadingBar();
         let msg = '服务异常，请稍后再试';
         const xhr = evt.detail ? evt.detail.xhr : null;
         if (xhr) {
@@ -476,6 +488,13 @@
             detail: { message: msg, type: 'error' } 
         }));
     });
+
+    window.addEventListener('popstate', finishLoadingBar);
+    document.body.addEventListener('htmx:historyRestore', finishLoadingBar);
+    document.body.addEventListener('htmx:historyCacheHit', finishLoadingBar);
+    document.body.addEventListener('htmx:responseError', finishLoadingBar);
+    document.body.addEventListener('htmx:sendError', finishLoadingBar);
+    document.body.addEventListener('htmx:targetError', finishLoadingBar);
 </script>
  
 </body>

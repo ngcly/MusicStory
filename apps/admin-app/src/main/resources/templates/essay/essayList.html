@@ -39,16 +39,19 @@
             </div>
             <div>
                 <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">作者</label>
-                <input type="text" name="author" th:value="${essayParam != null ? essayParam.author : ''}"
+                <input type="text" name="user.username" th:value="${essayParam != null && essayParam.user != null ? essayParam.user.username : ''}"
                        class="w-full rounded-xl border-slate-200 dark:border-slate-800 dark:bg-slate-950/60 shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 text-xs py-2.5 px-3.5 transition-all placeholder-slate-400" placeholder="检索作者...">
             </div>
             <div>
                 <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">状态</label>
-                <select name="show" 
+                <select name="state" 
                         class="w-full rounded-xl border-slate-200 dark:border-slate-800 dark:bg-slate-950/60 shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 text-xs py-2.5 px-3.5 transition-all">
                     <option value="">全部</option>
-                    <option value="true" th:selected="${essayParam != null && essayParam.show == true}">展示</option>
-                    <option value="false" th:selected="${essayParam != null && essayParam.show == false}">隐藏</option>
+                    <option value="NORMAL" th:selected="${essayParam != null && essayParam.state != null && essayParam.state.name() == 'NORMAL'}">已确认</option>
+                    <option value="PENDING" th:selected="${essayParam != null && essayParam.state != null && essayParam.state.name() == 'PENDING'}">待审核</option>
+                    <option value="DRAFT" th:selected="${essayParam != null && essayParam.state != null && essayParam.state.name() == 'DRAFT'}">草稿</option>
+                    <option value="FORBIDDEN" th:selected="${essayParam != null && essayParam.state != null && essayParam.state.name() == 'FORBIDDEN'}">查封</option>
+                    <option value="RECOMMEND" th:selected="${essayParam != null && essayParam.state != null && essayParam.state.name() == 'RECOMMEND'}">推荐</option>
                 </select>
             </div>
             <div class="flex space-x-2">
@@ -73,6 +76,7 @@
             <button sec:authorize="hasAuthority('POST_/ms/essay')"
                     hx-get="/ms/essay/edit.html" 
                     hx-target="#editModalContent"
+                    hx-swap="innerHTML"
                     @click="openEdit = true"
                     class="inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-indigo-500/20 active:scale-95 transition-all">
                 <i class="w-4 h-4 mr-1.5" data-lucide="plus"></i>
@@ -119,21 +123,21 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400" th:text="${#temporals.format(e.updatedAt,'yyyy-MM-dd HH:mm:ss')}"></td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold space-x-2">
-                            <button sec:authorize="hasAuthority('PUT_/ms/essay')"
-                                    class="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-bold"
-                                    th:hx-get="'/ms/essay/edit.html?essayId=' + ${e.id}" 
-                                    hx-target="#editModalContent"
-                                    @click="openEdit = true">
-                                编辑
-                            </button>
-                            <button sec:authorize="hasAuthority('DELETE_/ms/essay')"
-                                    class="text-rose-600 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 font-bold"
-                                    th:hx-delete="'/ms/essay?essayId=' + ${e.id}"
-                                    hx-confirm="确定要删除此文章吗？"
-                                    hx-target="#essayTableContainer"
-                                    hx-swap="outerHTML">
-                                删除
-                            </button>
+                             <button sec:authorize="hasAuthority('PUT_/ms/essay')"
+                                     class="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-bold"
+                                     th:hx-get="@{/ms/essay/edit.html(id=${e.id})}" 
+                                     hx-target="#editModalContent"
+                                     hx-swap="innerHTML"
+                                     @click="openEdit = true">
+                                 编辑
+                             </button>
+                             <button sec:authorize="hasAuthority('DELETE_/ms/essay')"
+                                     class="text-rose-600 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 font-bold"
+                                     th:hx-delete="'/ms/essay?id=' + ${e.id}"
+                                     hx-confirm="确定要删除此文章吗？"
+                                     hx-swap="none">
+                                 删除
+                             </button>
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(essayPage.content)}">

@@ -6,7 +6,7 @@
 </head>
 <body>
  
-<div th:fragment="essayEditFragment" class="p-4" x-data="{ state: '[[${essay.state}]]' }">
+<div th:fragment="essayEditFragment" class="p-4" th:data-state="${essay.state}" x-data="{ state: '' }" x-init="state = $el.dataset.state">
     <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">文章审核</h3>
         
     <form hx-post="/ms/essay" 

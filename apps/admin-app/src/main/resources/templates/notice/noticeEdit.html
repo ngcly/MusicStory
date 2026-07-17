@@ -27,14 +27,14 @@
         <div>
             <label class="block text-xs font-semibold text-gray-400 uppercase">展示开始时间</label>
             <input type="datetime-local" name="beginTime" required
-                   th:value="${notice.beginTime != null ? #temporals.format(notice.beginTime,'yyyy-MM-dd&apos;T&apos;HH:mm') : ''}"
+                   th:value="${notice.beginTime != null ? #temporals.format(notice.beginTime,'yyyy-MM-dd''T''HH:mm') : ''}"
                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
         </div>
         
         <div>
             <label class="block text-xs font-semibold text-gray-400 uppercase">展示结束时间</label>
             <input type="datetime-local" name="endTime" required
-                   th:value="${notice.endTime != null ? #temporals.format(notice.endTime,'yyyy-MM-dd&apos;T&apos;HH:mm') : ''}"
+                   th:value="${notice.endTime != null ? #temporals.format(notice.endTime,'yyyy-MM-dd''T''HH:mm') : ''}"
                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
         </div>
         

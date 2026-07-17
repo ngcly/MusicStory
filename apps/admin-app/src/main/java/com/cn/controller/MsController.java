@@ -1,5 +1,7 @@
 package com.cn.controller;
 
+import com.cn.exception.GlobalException;
+import com.cn.model.RestCode;
 import com.cn.user.UserService;
 import com.cn.security.RoleService;
 import com.cn.content.ClassifyService;
@@ -50,6 +52,7 @@ public class MsController {
             @RequestParam(value = "size", defaultValue = "10") Integer size,
             User user,
             @RequestHeader(value = "HX-Request", required = false) boolean hxRequest,
+            @RequestHeader(value = "HX-Target", required = false) String hxTarget,
             Model model) {
         
         Page<com.cn.user.domain.User> userList = userService.getUserList(PageRequest.of(page - 1, size), UserMapper.toDomain(user));
@@ -61,7 +64,10 @@ public class MsController {
         model.addAttribute("userParam", user);
         
         if (hxRequest) {
-            return "user/userList :: userTable";
+            if ("userTableContainer".equals(hxTarget)) {
+                return "user/userList :: userTable";
+            }
+            return "user/userList :: mainContent";
         }
         return "user/userList";
     }
@@ -107,6 +113,7 @@ public class MsController {
             @RequestParam(value = "size", defaultValue = "10") Integer size,
             Classify classify,
             @RequestHeader(value = "HX-Request", required = false) boolean hxRequest,
+            @RequestHeader(value = "HX-Target", required = false) String hxTarget,
             Model model) {
         
         Page<Classify> classifyList = classifyService.getClassifyList(PageRequest.of(page - 1, size), classify);
@@ -117,7 +124,10 @@ public class MsController {
         model.addAttribute("classifyParam", classify);
         
         if (hxRequest) {
-            return "classify/classifyList :: classifyTable";
+            if ("classifyTableContainer".equals(hxTarget)) {
+                return "classify/classifyList :: classifyTable";
+            }
+            return "classify/classifyList :: mainContent";
         }
         return "classify/classifyList";
     }
@@ -140,8 +150,9 @@ public class MsController {
     }
  
     @DeleteMapping("/classify")
-    public ResponseEntity<Void> delClassify(@RequestParam("id") Long id) {
+    public ResponseEntity<Void> delClassify(@RequestParam("id") Long id, HttpServletResponse response) {
         classifyService.deleteClassify(id);
+        response.setHeader("HX-Trigger", "classifyListChanged");
         return ResponseEntity.ok().build();
     }
 
@@ -151,6 +162,7 @@ public class MsController {
             @RequestParam(value = "size", defaultValue = "10") Integer size,
             Essay essay,
             @RequestHeader(value = "HX-Request", required = false) boolean hxRequest,
+            @RequestHeader(value = "HX-Target", required = false) String hxTarget,
             Model model) {
         
         Page<Essay> essayList = essayService.getEssayList(PageRequest.of(page - 1, size, Sort.by("createdAt").descending()), essay);
@@ -162,7 +174,10 @@ public class MsController {
         model.addAttribute("classifyList", classifyService.getClassifyList());
         
         if (hxRequest) {
-            return "essay/essayList :: essayTable";
+            if ("essayTableContainer".equals(hxTarget)) {
+                return "essay/essayList :: essayTable";
+            }
+            return "essay/essayList :: mainContent";
         }
         return "essay/essayList";
     }
@@ -187,6 +202,7 @@ public class MsController {
             @RequestParam(value = "size", defaultValue = "10") Integer size,
             Notice notice,
             @RequestHeader(value = "HX-Request", required = false) boolean hxRequest,
+            @RequestHeader(value = "HX-Target", required = false) String hxTarget,
             Model model) {
         
         Page<Notice> notices = noticeService.getNoticeList(PageRequest.of(page - 1, size), notice);
@@ -197,7 +213,10 @@ public class MsController {
         model.addAttribute("noticeParam", notice);
         
         if (hxRequest) {
-            return "notice/noticeList :: noticeTable";
+            if ("noticeTableContainer".equals(hxTarget)) {
+                return "notice/noticeList :: noticeTable";
+            }
+            return "notice/noticeList :: mainContent";
         }
         return "notice/noticeList";
     }
@@ -220,8 +239,9 @@ public class MsController {
     }
  
     @DeleteMapping("/notice")
-    public ResponseEntity<Void> delNotice(@RequestParam Long id) {
+    public ResponseEntity<Void> delNotice(@RequestParam Long id, HttpServletResponse response) {
         noticeService.deleteNotice(id);
+        response.setHeader("HX-Trigger", "noticeListChanged");
         return ResponseEntity.ok().build();
     }
 
@@ -231,6 +251,7 @@ public class MsController {
             @RequestParam(value = "size", defaultValue = "10") Integer size,
             @RequestParam(required = false) String name,
             @RequestHeader(value = "HX-Request", required = false) boolean hxRequest,
+            @RequestHeader(value = "HX-Target", required = false) String hxTarget,
             Model model) {
         
         Page<CarouselCategory> carouselCategory = carouselService.getCarouselList(name, PageRequest.of(page - 1, size));
@@ -241,7 +262,10 @@ public class MsController {
         model.addAttribute("nameParam", name);
         
         if (hxRequest) {
-            return "carousel/carouselList :: carouselTable";
+            if ("carouselTableContainer".equals(hxTarget)) {
+                return "carousel/carouselList :: carouselTable";
+            }
+            return "carousel/carouselList :: mainContent";
         }
         return "carousel/carouselList";
     }
@@ -282,8 +306,9 @@ public class MsController {
     }
  
     @DeleteMapping("/carousel/category")
-    public ResponseEntity<Void> delCarouselCategory(@RequestParam Long id) {
+    public ResponseEntity<Void> delCarouselCategory(@RequestParam Long id, HttpServletResponse response) {
         carouselService.deleteCarouselCategory(id);
+        response.setHeader("HX-Trigger", "carouselListChanged");
         return ResponseEntity.ok().build();
     }
  

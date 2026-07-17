@@ -23,18 +23,22 @@
  
     <!-- Search Card Container -->
     <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800/80 p-5">
-        <form id="search-form" hx-get="/sys/manager.html" hx-target="#managerTableContainer" hx-swap="outerHTML" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <form id="search-form" hx-get="/sys/manager.html" hx-target="#managerTableContainer" hx-swap="outerHTML" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
             <div>
                 <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">用户名 / 昵称</label>
                 <input type="text" name="username" th:value="${managerParam != null ? managerParam.username : ''}"
                        class="w-full rounded-xl border-slate-200 dark:border-slate-800 dark:bg-slate-950/60 shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 text-xs py-2.5 px-3.5 transition-all placeholder-slate-400" placeholder="搜索用户名或昵称...">
             </div>
             <div>
-                <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">邮箱</label>
-                <input type="text" name="email" th:value="${managerParam != null ? managerParam.email : ''}"
-                       class="w-full rounded-xl border-slate-200 dark:border-slate-800 dark:bg-slate-950/60 shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 text-xs py-2.5 px-3.5 transition-all placeholder-slate-400" placeholder="搜索绑定的邮箱...">
+                <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">状态</label>
+                <select name="state" 
+                        class="w-full rounded-xl border-slate-200 dark:border-slate-800 dark:bg-slate-950/60 shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 text-xs py-2.5 px-3.5 transition-all">
+                    <option value=""></option>
+                    <option value="NORMAL" th:selected="${managerParam != null && managerParam.state != null && managerParam.state.toString() == 'NORMAL'}">有效</option>
+                    <option value="LOCKED" th:selected="${managerParam != null && managerParam.state != null && managerParam.state.toString() == 'LOCKED'}">禁用</option>
+                </select>
             </div>
-            <div class="flex space-x-2 md:col-span-2">
+            <div class="flex space-x-2">
                 <button type="submit" class="inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-indigo-500/20 active:scale-95 transition-all w-full">
                     <i class="w-3.5 h-3.5 mr-1.5" data-lucide="search"></i>
                     查询
@@ -56,6 +60,7 @@
             <button sec:authorize="hasAuthority('POST_/sys/manager')"
                     hx-get="/sys/manager/edit.html" 
                     hx-target="#editModalContent"
+                    hx-swap="innerHTML"
                     @click="openEdit = true"
                     class="inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-indigo-500/20 active:scale-95 transition-all">
                 <i class="w-4 h-4 mr-1.5" data-lucide="plus"></i>
@@ -109,7 +114,7 @@
                         <td class="px-6 py-4 whitespace-nowrap text-xs" sec:authorize="hasAuthority('PUT_/sys/manager')">
                             <label class="inline-flex items-center cursor-pointer">
                                 <input type="checkbox" th:checked="${m.state != null && #strings.equals(m.state.name(), 'NORMAL')}" class="sr-only peer"
-                                       th:hx-put="'/sys/manager/state?managerId=' + ${m.id}"
+                                       th:hx-put="@{/sys/manager/state(managerId=${m.id})}"
                                        hx-swap="none"
                                        th:disabled="${#strings.equals(m.username,'admin')}">
                                 <div class="relative w-9 h-5 bg-slate-200 peer-focus:outline-none dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500 rounded-full"></div>
@@ -121,14 +126,16 @@
                             <div class="flex items-center justify-end space-x-1.5">
                                 <button th:hx-get="'/sys/manager/' + ${m.id}" 
                                         hx-target="#detailModalContent"
+                                        hx-swap="innerHTML"
                                         @click="openDetail = true"
                                         class="p-2 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all hover:scale-105 active:scale-95"
                                         title="查看详情">
                                     <i class="w-4 h-4" data-lucide="eye"></i>
                                 </button>
                                 <button sec:authorize="hasAuthority('PUT_/sys/manager')"
-                                        th:hx-get="'/sys/manager/edit.html?managerId=' + ${m.id}" 
+                                        th:hx-get="@{/sys/manager/edit.html(managerId=${m.id})}" 
                                         hx-target="#editModalContent"
+                                        hx-swap="innerHTML"
                                         @click="openEdit = true"
                                         class="p-2 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all hover:scale-105 active:scale-95"
                                         title="编辑资料">
@@ -137,6 +144,7 @@
                                 <button sec:authorize="hasAuthority('POST_/sys/manager/pwd')"
                                         th:hx-get="'/sys/manager/pwd/' + ${m.id}"
                                         hx-target="#editModalContent"
+                                        hx-swap="innerHTML"
                                         @click="openEdit = true"
                                         class="p-2 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all hover:scale-105 active:scale-95"
                                         title="重置密码">

@@ -9,7 +9,7 @@
  
 <div th:fragment="carouselEditFragment" class="p-4 space-y-6" id="editModalContent"
      hx-trigger="carouselImagesChanged from:body" 
-     th:hx-get="'/ms/carousel/edit.html?id=' + ${carouselCategory.id}"
+     th:hx-get="@{/ms/carousel/edit.html(id=${carouselCategory.id})}"
      hx-target="this" 
      hx-swap="outerHTML">
  
