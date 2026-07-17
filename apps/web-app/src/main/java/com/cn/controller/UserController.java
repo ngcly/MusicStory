@@ -21,6 +21,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -65,7 +66,7 @@ public class UserController {
     @Operation(summary = "绑定账号", description = "用户绑定三方账号")
     @GetMapping("/binding/{source}")
     public ResponseEntity<Void> bindingSocial(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("source") String source,
-                                      HttpServletRequest request) {
+                                              HttpServletRequest request) {
         User user = securityUser.getUser();
         userService.socialBinding(source, request.getParameter("code"), request.getParameter("state"), user);
         return ResponseEntity.ok().build();
@@ -229,5 +230,5 @@ public class UserController {
         }
         return storageService.uploadFile(file, dir);
     }
-}
+
 }
