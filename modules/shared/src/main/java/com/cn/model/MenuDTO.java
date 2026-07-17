@@ -46,7 +46,10 @@ public class MenuDTO implements Serializable {
             return false;
         }
         MenuDTO menuDTO = (MenuDTO) o;
-        return id.equals(menuDTO.id) && name.equals(menuDTO.name) && parentId.equals(menuDTO.parentId) && url.equals(menuDTO.url);
+        return Objects.equals(id, menuDTO.id)
+                && Objects.equals(name, menuDTO.name)
+                && Objects.equals(parentId, menuDTO.parentId)
+                && Objects.equals(url, menuDTO.url);
     }
 
     @Override

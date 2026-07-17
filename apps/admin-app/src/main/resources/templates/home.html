@@ -2,284 +2,196 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>首页 - 控制台</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#4f46e5',
-                    }
-                }
-            }
-        }
-    </script>
-    <script>
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
-    <style>
-        /* Custom scrollbar styles */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(156, 163, 175, 0.25);
-            border-radius: 3px;
-        }
-        .dark ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(99, 102, 241, 0.5);
-        }
-    </style>
+    <title>控制台 - 首页</title>
 </head>
-<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen p-6">
+<body>
  
-<!-- Top Welcome Jumbotron -->
-<div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl shadow-md p-6 text-white mb-8">
-    <h2 class="text-2xl font-bold mb-2">音乐故事 - 后台管理系统</h2>
-    <p class="text-indigo-100 text-sm">声音之美是为乐，往事如烟皆为故，每一首音乐都藏着一个故事。欢迎回到您的工作台。</p>
-</div>
- 
-<!-- Main Content Grid -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- Left Column: Timeline -->
-    <div class="lg:col-span-2 space-y-6">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-6 flex items-center">
-                <svg class="h-5 w-5 mr-2 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                最近纪事
-            </h3>
-            
-            <div class="flow-root">
-                <ul class="-mb-8">
-                    <!-- Item 1 -->
-                    <li>
-                        <div class="relative pb-8">
-                            <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200 dark:bg-gray-700" aria-hidden="true"></span>
-                            <div class="relative flex space-x-3">
-                                <div>
-                                    <span class="h-8 w-8 rounded-full bg-indigo-500 flex items-center justify-center ring-8 ring-white dark:ring-gray-800">
-                                        <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                    </span>
-                                </div>
-                                <div class="flex-1 min-w-0 pt-1.5 flex justify-between space-x-4">
-                                    <div>
-                                        <p class="text-sm font-semibold text-gray-800 dark:text-white">加了些前台管理功能</p>
-                                        <p class="text-xs text-gray-550 dark:text-gray-400 mt-1">磨了一年洋工，加了些前台管理功能，懒得无可救药。</p>
-                                    </div>
-                                    <div class="text-right text-xs whitespace-nowrap text-gray-400">
-                                        <time datetime="2026-01-10">1月10日</time>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    
-                    <!-- Item 2 -->
-                    <li>
-                        <div class="relative pb-8">
-                            <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200 dark:bg-gray-700" aria-hidden="true"></span>
-                            <div class="relative flex space-x-3">
-                                <div>
-                                    <span class="h-8 w-8 rounded-full bg-emerald-500 flex items-center justify-center ring-8 ring-white dark:ring-gray-800">
-                                        <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                    </span>
-                                </div>
-                                <div class="flex-1 min-w-0 pt-1.5 flex justify-between space-x-4">
-                                    <div>
-                                        <p class="text-sm font-semibold text-gray-800 dark:text-white">新的一年，新的开始</p>
-                                        <p class="text-xs text-gray-550 dark:text-gray-400 mt-1">2025年，新的梦想，新的目标，新的挑战，新的机遇，新的人生，新的自己。</p>
-                                    </div>
-                                    <div class="text-right text-xs whitespace-nowrap text-gray-400">
-                                        <time datetime="2026-01-01">1月1日</time>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
+<div th:fragment="mainContent" class="p-6 space-y-6">
+    <!-- Top Glowing Gradient Jumbotron -->
+    <div class="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 rounded-3xl p-8 text-white shadow-xl shadow-indigo-500/15">
+        <div class="absolute -right-10 -bottom-10 opacity-15 pointer-events-none">
+            <i class="w-72 h-72 text-white" data-lucide="music"></i>
         </div>
- 
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-6 flex items-center">
-                <svg class="h-5 w-5 mr-2 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-                </svg>
-                曾经岁月
-            </h3>
-            
-            <div class="flow-root">
-                <ul class="-mb-8">
-                    <!-- Item 1 -->
-                    <li>
-                        <div class="relative pb-8">
-                            <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200 dark:bg-gray-700" aria-hidden="true"></span>
-                            <div class="relative flex space-x-3">
-                                <div>
-                                    <span class="h-8 w-8 rounded-full bg-slate-400 flex items-center justify-center ring-8 ring-white dark:ring-gray-800">
-                                        <span class="text-white text-xs font-bold">24</span>
-                                    </span>
+        <div class="relative z-10 max-w-3xl">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-xs font-semibold text-indigo-100 mb-4 border border-white/20">
+                <i class="w-3.5 h-3.5" data-lucide="sparkles"></i>
+                <span>全新现代单页面工作台已启动</span>
+            </div>
+            <h2 class="text-3xl font-extrabold tracking-tight mb-2">音乐故事 - 后台管理系统</h2>
+            <p class="text-indigo-100/90 text-sm leading-relaxed font-normal">
+                “声音之美是为乐，往事如烟皆为故，每一首音乐都藏着一个故事。” 欢迎回到您的控制中心。
+            </p>
+        </div>
+    </div>
+     
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left Column: Timeline & Log -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Recent Timeline Card -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800/80 p-6">
+                <div class="flex items-center justify-between pb-5 border-b border-slate-100 dark:border-slate-800/80 mb-6">
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2.5">
+                        <div class="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400">
+                            <i class="w-4 h-4" data-lucide="history"></i>
+                        </div>
+                        <span>最近纪事</span>
+                    </h3>
+                    <span class="text-xs text-slate-400 font-medium">最近更新</span>
+                </div>
+                
+                <div class="flow-root px-2">
+                    <ul class="-mb-8">
+                        <!-- Item 1 -->
+                        <li>
+                            <div class="relative pb-8">
+                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-slate-200 dark:bg-slate-800" aria-hidden="true"></span>
+                                <div class="relative flex space-x-4">
+                                    <div>
+                                        <span class="h-8 w-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/30">
+                                            <i class="w-4 h-4" data-lucide="edit-3"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex-1 min-w-0 pt-1 flex justify-between space-x-4">
+                                        <div>
+                                            <p class="text-sm font-bold text-slate-800 dark:text-slate-100">加了些前台管理功能</p>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">磨了一年洋工，加了些前台管理功能，懒得无可救药。</p>
+                                        </div>
+                                        <div class="text-right text-xs whitespace-nowrap text-slate-400 font-medium">
+                                            <time datetime="2026-01-10">1月10日</time>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="flex-1 min-w-0 pt-1.5 flex justify-between space-x-4">
-                                    <div class="text-sm text-gray-600 dark:text-gray-300">
+                            </div>
+                        </li>
+                        
+                        <!-- Item 2 -->
+                        <li>
+                            <div class="relative pb-8">
+                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-slate-200 dark:bg-slate-800" aria-hidden="true"></span>
+                                <div class="relative flex space-x-4">
+                                    <div>
+                                        <span class="h-8 w-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/30">
+                                            <i class="w-4 h-4" data-lucide="smile"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex-1 min-w-0 pt-1 flex justify-between space-x-4">
+                                        <div>
+                                            <p class="text-sm font-bold text-slate-800 dark:text-slate-100">新的一年，新的开始</p>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">2025年，新的梦想，新的目标，新的挑战，新的机遇，新的人生，新的自己。</p>
+                                        </div>
+                                        <div class="text-right text-xs whitespace-nowrap text-slate-400 font-medium">
+                                            <time datetime="2026-01-01">1月1日</time>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+     
+            <!-- Historical Log Timeline -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800/80 p-6">
+                <div class="flex items-center justify-between pb-5 border-b border-slate-100 dark:border-slate-800/80 mb-6">
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2.5">
+                        <div class="p-2 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400">
+                            <i class="w-4 h-4" data-lucide="calendar"></i>
+                        </div>
+                        <span>曾经岁月</span>
+                    </h3>
+                </div>
+                
+                <div class="flow-root px-2">
+                    <ul class="-mb-8">
+                        <!-- 2024 -->
+                        <li>
+                            <div class="relative pb-8">
+                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-slate-200 dark:bg-slate-800"></span>
+                                <div class="relative flex space-x-4">
+                                    <span class="h-8 w-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold text-xs border border-slate-200 dark:border-slate-700">
+                                        24
+                                    </span>
+                                    <div class="flex-1 min-w-0 pt-1.5 text-xs text-slate-600 dark:text-slate-300">
                                         2024年，咸鱼的一年，大环境低下，无奈再续三年卖身契。
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </li>
-                    <!-- Item 2 -->
-                    <li>
-                        <div class="relative pb-8">
-                            <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200 dark:bg-gray-700" aria-hidden="true"></span>
-                            <div class="relative flex space-x-3">
-                                <div>
-                                    <span class="h-8 w-8 rounded-full bg-slate-400 flex items-center justify-center ring-8 ring-white dark:ring-gray-800">
-                                        <span class="text-white text-xs font-bold">23</span>
+                        </li>
+                        <!-- 2023 -->
+                        <li>
+                            <div class="relative pb-8">
+                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-slate-200 dark:bg-slate-800"></span>
+                                <div class="relative flex space-x-4">
+                                    <span class="h-8 w-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold text-xs border border-slate-200 dark:border-slate-700">
+                                        23
                                     </span>
-                                </div>
-                                <div class="flex-1 min-w-0 pt-1.5 flex justify-between space-x-4">
-                                    <div class="text-sm text-gray-600 dark:text-gray-300">
+                                    <div class="flex-1 min-w-0 pt-1.5 text-xs text-slate-600 dark:text-slate-300">
                                         2023年，红尘奔赴三千里，紫陌寻觅一良人。
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </li>
-                    <!-- Item 3 -->
-                    <li>
-                        <div class="relative pb-8">
-                            <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200 dark:bg-gray-700" aria-hidden="true"></span>
-                            <div class="relative flex space-x-3">
-                                <div>
-                                    <span class="h-8 w-8 rounded-full bg-slate-400 flex items-center justify-center ring-8 ring-white dark:ring-gray-800">
-                                        <span class="text-white text-xs font-bold">22</span>
+                        </li>
+                        <!-- 2022 -->
+                        <li>
+                            <div class="relative pb-8">
+                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-slate-200 dark:bg-slate-800"></span>
+                                <div class="relative flex space-x-4">
+                                    <span class="h-8 w-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold text-xs border border-slate-200 dark:border-slate-700">
+                                        22
                                     </span>
-                                </div>
-                                <div class="flex-1 min-w-0 pt-1.5 flex justify-between space-x-4">
-                                    <div class="text-sm text-gray-600 dark:text-gray-300">
+                                    <div class="flex-1 min-w-0 pt-1.5 text-xs text-slate-600 dark:text-slate-300">
                                         2022年，红码、核酸、隔离，终究还是逃不过一起咩咩。
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </li>
-                    <!-- Item 4 -->
-                    <li>
-                        <div class="relative pb-8">
-                            <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200 dark:bg-gray-700" aria-hidden="true"></span>
-                            <div class="relative flex space-x-3">
-                                <div>
-                                    <span class="h-8 w-8 rounded-full bg-slate-400 flex items-center justify-center ring-8 ring-white dark:ring-gray-800">
-                                        <span class="text-white text-xs font-bold">21</span>
+                        </li>
+                        <!-- 2021 -->
+                        <li>
+                            <div class="relative pb-8">
+                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-slate-200 dark:bg-slate-800"></span>
+                                <div class="relative flex space-x-4">
+                                    <span class="h-8 w-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold text-xs border border-slate-200 dark:border-slate-700">
+                                        21
                                     </span>
-                                </div>
-                                <div class="flex-1 min-w-0 pt-1.5 flex justify-between space-x-4">
-                                    <div class="text-sm text-gray-600 dark:text-gray-300">
+                                    <div class="flex-1 min-w-0 pt-1.5 text-xs text-slate-600 dark:text-slate-300">
                                         2021年，无休无止的无效加班，精神涣散，牛马选择了跳槽。
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </li>
-                    <!-- Item 5 -->
-                    <li>
-                        <div class="relative pb-8">
-                            <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200 dark:bg-gray-700" aria-hidden="true"></span>
-                            <div class="relative flex space-x-3">
-                                <div>
-                                    <span class="h-8 w-8 rounded-full bg-slate-400 flex items-center justify-center ring-8 ring-white dark:ring-gray-800">
-                                        <span class="text-white text-xs font-bold">20</span>
-                                    </span>
-                                </div>
-                                <div class="flex-1 min-w-0 pt-1.5 flex justify-between space-x-4">
-                                    <div class="text-sm text-gray-600 dark:text-gray-300">
-                                        2020年，疫情被困老家两个月后直接被裁，靓仔不好当，重回武汉当社畜。
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <!-- Item 6 -->
-                    <li>
-                        <div class="relative pb-8">
-                            <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200 dark:bg-gray-700" aria-hidden="true"></span>
-                            <div class="relative flex space-x-3">
-                                <div>
-                                    <span class="h-8 w-8 rounded-full bg-slate-400 flex items-center justify-center ring-8 ring-white dark:ring-gray-800">
-                                        <span class="text-white text-xs font-bold">19</span>
-                                    </span>
-                                </div>
-                                <div class="flex-1 min-w-0 pt-1.5 flex justify-between space-x-4">
-                                    <div class="text-sm text-gray-600 dark:text-gray-300">
-                                        2019年，喜提小钢炮 GK5，驱车前往深圳当靓仔。
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <!-- Item 7 -->
-                    <li>
-                        <div class="relative pb-8">
-                            <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200 dark:bg-gray-700" aria-hidden="true"></span>
-                            <div class="relative flex space-x-3">
-                                <div>
-                                    <span class="h-8 w-8 rounded-full bg-slate-400 flex items-center justify-center ring-8 ring-white dark:ring-gray-800">
-                                        <span class="text-white text-xs font-bold">18</span>
-                                    </span>
-                                </div>
-                                <div class="flex-1 min-w-0 pt-1.5 flex justify-between space-x-4">
-                                    <div class="text-sm text-gray-600 dark:text-gray-300">
-                                        2018年，开启了这个无聊之作。
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
- 
-    <!-- Right Column: Notice & Info -->
-    <div class="space-y-6">
-        <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 shadow-sm">
-            <h3 class="text-sm font-bold text-yellow-800 uppercase tracking-wider mb-3">使用提示</h3>
-            <div class="text-xs text-yellow-700 space-y-2 leading-relaxed">
-                <p><strong>注意：</strong>当前 VIP 用户所属的是管理员角色，请不要对此角色进行停用、修改、删除，否则重新登录之后就看不到东西了。</p>
-                <p>新增菜单是需要授权才可以看见的，所以目前新增菜单后无法直接看到效果。</p>
-                <p>目前管理员角色是没有授予删除和授权权限的，以防止基础数据丢失。</p>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
  
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 class="text-sm font-bold text-gray-800 dark:text-white uppercase tracking-wider mb-4">联系与支持</h3>
-            <div class="space-y-4">
-                <div class="flex items-center space-x-3">
-                    <span class="text-xs font-semibold px-2.5 py-1 rounded bg-indigo-50 dark:bg-indigo-950/20 text-indigo-700 dark:text-indigo-300">联系作者</span>
-                    <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=531237716&site=qq&menu=yes" class="text-xs text-gray-500 hover:text-indigo-600 transition-colors">
-                        点击这里给我发消息
-                    </a>
+        <!-- Right Column: System Tips & Contacts -->
+        <div class="space-y-6">
+            <!-- System Tip Soft Box -->
+            <div class="bg-amber-500/10 border border-amber-500/30 rounded-3xl p-6 backdrop-blur-md">
+                <h3 class="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-3 flex items-center space-x-2">
+                    <i class="w-4 h-4" data-lucide="alert-triangle"></i>
+                    <span>安全使用提示</span>
+                </h3>
+                <div class="text-xs text-amber-700 dark:text-amber-300 space-y-2.5 leading-relaxed">
+                    <p><strong>注意：</strong>当前 VIP 用户所属的是管理员角色，请不要对此角色进行停用、修改、删除，否则重新登录之后就看不到数据了。</p>
+                    <p>新增菜单是需要授权才可以看见的，所以目前新增菜单后无法直接看到效果。</p>
+                    <p>目前管理员角色是没有授予删除和授权权限的，以防止基础数据丢失。</p>
+                </div>
+            </div>
+ 
+            <!-- Contacts & Support Card -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800/80 p-6">
+                <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-4">联系与支持</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-850 border border-slate-100 dark:border-slate-800">
+                        <span class="text-xs font-semibold text-slate-700 dark:text-slate-200">作者 QQ 交流</span>
+                        <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=531237716&site=qq&menu=yes" 
+                           class="inline-flex items-center text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
+                            即刻发消息
+                            <i class="w-3.5 h-3.5 ml-1" data-lucide="external-link"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

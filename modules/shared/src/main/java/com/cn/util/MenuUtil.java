@@ -35,6 +35,8 @@ public final class MenuUtil {
      */
     public static Collection<MenuDTO> makeMenuToTree(Collection<MenuDTO> menuList) {
         Set<MenuDTO> rootTrees = new HashSet<>();
+        // 每次构建前先清空 children，避免 JPA 实体跨请求复用时子节点重复累积
+        menuList.forEach(menu -> menu.setChildren(null));
         menuList.forEach(menu -> {
             if(MenuDTO.rootId.equals(menu.getParentId())){
                 rootTrees.add(menu);

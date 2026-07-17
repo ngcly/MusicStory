@@ -1,341 +1,202 @@
 <!DOCTYPE html>
-<html lang="zh" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>音书 - 后台管理系统</title>
-    <!-- Google Fonts - Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#4f46e5',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- HTMX -->
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <!-- Alpine.js -->
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- CSRF Meta Tags -->
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
-    <style>
-        /* Custom scrollbar styles */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(156, 163, 175, 0.25);
-            border-radius: 3px;
-        }
-        .dark ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(99, 102, 241, 0.5);
-        }
-        
-        /* Iframe background sync */
-        iframe {
-            background-color: #f8fafc;
-            transition: background-color 0.3s ease;
-        }
-        .dark iframe {
-            background-color: #0f172a;
-        }
-    </style>
-    <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"/>
+    <title>控制台 - 首页</title>
 </head>
-<body class="bg-gray-150 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen overflow-hidden"
-      x-data="{ 
-        sidebarExpanded: true, 
-        avatarDropdownOpen: false,
-        openSecurityModal: false,
-        activeMenuId: null,
-        expandedMenus: [],
-        darkMode: localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-      }"
-      @pwd-updated.window="alert('密码修改成功！'); openSecurityModal = false">
+<body>
  
-<div class="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950">
-    <!-- Sidebar -->
-    <aside class="flex flex-col h-full bg-slate-900 text-white transition-all duration-305 border-r border-slate-800"
-           :class="sidebarExpanded ? 'w-64' : 'w-20'">
-        <!-- Sidebar Brand -->
-        <div class="h-16 flex items-center justify-between px-6 border-b border-slate-800">
-            <span class="font-extrabold text-xl tracking-wider text-indigo-400" 
-                  x-show="sidebarExpanded" 
-                  x-transition>音书管理</span>
-            <span class="font-extrabold text-xl tracking-wider text-indigo-400 mx-auto" 
-                  x-show="!sidebarExpanded" 
-                  x-transition>音</span>
+<div th:fragment="mainContent" class="p-6 space-y-6">
+    <!-- Top Glowing Gradient Jumbotron -->
+    <div class="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 rounded-3xl p-8 text-white shadow-xl shadow-indigo-500/15">
+        <div class="absolute -right-10 -bottom-10 opacity-15 pointer-events-none">
+            <i class="w-72 h-72 text-white" data-lucide="music"></i>
         </div>
-        
-        <!-- Sidebar Nav List -->
-        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 scrollbar-thin scrollbar-thumb-slate-800">
-            <div th:each="menu1 : ${menuList}" x-data="{ open: false }" class="space-y-1">
-                <!-- Level 1 Menu Heading -->
-                <button @click="open = !open" 
-                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors group">
-                    <div class="flex items-center space-x-3">
-                        <i class="w-5 h-5 text-slate-400 group-hover:text-white" th:data-lucide="${menu1.icon != null && !menu1.icon.isEmpty() ? menu1.icon : 'help-circle'}"></i>
-                        <span class="text-sm font-medium" x-show="sidebarExpanded" th:text="${menu1.name}"></span>
-                    </div>
-                    <svg class="h-4 w-4 transform transition-transform" 
-                         :class="open ? 'rotate-90' : ''" 
-                         x-show="sidebarExpanded"
-                         viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                    </svg>
-                </button>
-                
-                <!-- Level 2 Menu items -->
-                <div x-show="open && sidebarExpanded" x-collapse class="pl-8 space-y-1">
-                    <div th:each="menu2 : ${menu1.children}">
-                        <!-- Standard Item -->
-                        <a th:href="${menu2.url}" target="content"
-                           @click="activeMenuId = [[${menu2.id}]]"
-                           :class="activeMenuId === [[${menu2.id}]] ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'"
-                           class="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                            <i class="w-4 h-4" th:data-lucide="${menu2.icon != null && !menu2.icon.isEmpty() ? menu2.icon : 'help-circle'}"></i>
-                            <span th:text="${menu2.name}"></span>
-                        </a>
-                        
-                        <!-- Level 3 Menu nested items (if any) -->
-                        <div class="pl-4 mt-1 space-y-1" th:if="${not #lists.isEmpty(menu2.children)}">
-                            <a th:each="menu3 : ${menu2.children}"
-                               th:href="${menu3.url}" target="content"
-                               @click="activeMenuId = [[${menu3.id}]]"
-                               :class="activeMenuId === [[${menu3.id}]] ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-white'"
-                               class="flex items-center space-x-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors">
-                                <i class="w-3.5 h-3.5" th:data-lucide="${menu3.icon != null && !menu3.icon.isEmpty() ? menu3.icon : 'help-circle'}"></i>
-                                <span th:text="${menu3.name}"></span>
-                            </a>
+        <div class="relative z-10 max-w-3xl">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-xs font-semibold text-indigo-100 mb-4 border border-white/20">
+                <i class="w-3.5 h-3.5" data-lucide="sparkles"></i>
+                <span>全新现代单页面工作台已启动</span>
+            </div>
+            <h2 class="text-3xl font-extrabold tracking-tight mb-2">音乐故事 - 后台管理系统</h2>
+            <p class="text-indigo-100/90 text-sm leading-relaxed font-normal">
+                “声音之美是为乐，往事如烟皆为故，每一首音乐都藏着一个故事。” 欢迎回到您的控制中心。
+            </p>
+        </div>
+    </div>
+     
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left Column: Timeline & Log -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Recent Timeline Card -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800/80 p-6">
+                <div class="flex items-center justify-between pb-5 border-b border-slate-100 dark:border-slate-800/80 mb-6">
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2.5">
+                        <div class="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400">
+                            <i class="w-4 h-4" data-lucide="history"></i>
                         </div>
-                    </div>
+                        <span>最近纪事</span>
+                    </h3>
+                    <span class="text-xs text-slate-400 font-medium">最近更新</span>
                 </div>
-            </div>
-        </nav>
-        
-        <!-- Sidebar Footer -->
-        <div class="p-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500">
-            <span x-show="sidebarExpanded">© admin.ngcly.cn</span>
-            <button @click="sidebarExpanded = !sidebarExpanded" class="p-1 rounded hover:bg-slate-800 text-slate-400">
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
-        </div>
-    </aside>
- 
-    <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col overflow-hidden">
-        <!-- Top Navbar -->
-        <header class="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 z-10">
-            <!-- Left Header -->
-            <div class="flex items-center space-x-4">
-                <button @click="sidebarExpanded = !sidebarExpanded" 
-                        class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 hidden md:block">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                </button>
-                <div class="text-sm font-semibold text-gray-600 dark:text-gray-300">音书管理系统</div>
-            </div>
- 
-            <!-- Right Header -->
-            <div class="flex items-center space-x-6">
-                <!-- Weather Widget -->
-                <div class="hidden lg:flex items-center text-xs text-gray-500">
-                    <div id="tp-weather-widget" class="mt-1"></div>
-                    <script>(function(T,h,i,n,k,P,a,g,e){g=function(){P=h.createElement(i);a=h.getElementsByTagName(i)[0];P.src=k;P.charset="utf-8";P.async=1;a.parentNode.insertBefore(P,a)};T["ThinkPageWeatherWidgetObject"]=n;T[n]||(T[n]=function(){(T[n].q=T[n].q||[]).push(arguments)});T[n].l=+new Date();if(T.attachEvent){T.attachEvent("onload",g)}else{T.addEventListener("load",g,false)}}(window,document,"script","tpwidget","//widget.seniverse.com/widget/chameleon.js"))</script>
-                    <script>tpwidget("init", {
-                        "flavor": "slim",
-                        "location": "WT33C6J2C563",
-                        "geolocation": "enabled",
-                        "language": "zh-chs",
-                        "unit": "c",
-                        "theme": "chameleon",
-                        "container": "tp-weather-widget",
-                        "bubble": "enabled",
-                        "alarmType": "badge",
-                        "color": "#6B7280",
-                        "uid": "U78371FB98",
-                        "hash": "cd55c15865ecbe0f16ba78ca60ad51eb"
-                    });
-                    tpwidget("show");</script>
-                </div>
- 
-                <!-- Theme Toggle Button -->
-                <button @click="darkMode = !darkMode; 
-                                localStorage.setItem('theme', darkMode ? 'dark' : 'light'); 
-                                document.documentElement.classList.toggle('dark', darkMode);
-                                const iframe = document.getElementById('content');
-                                if (iframe && iframe.contentDocument) {
-                                    iframe.contentDocument.documentElement.classList.toggle('dark', darkMode);
-                                }"
-                        class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 focus:outline-none transition-colors"
-                        title="切换主题">
-                    <!-- Sun Icon (show when dark mode is active) -->
-                    <svg x-show="darkMode" class="h-5 w-5 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M14 12a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                    <!-- Moon Icon (show when light mode is active) -->
-                    <svg x-show="!darkMode" class="h-5 w-5 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                    </svg>
-                </button>
-
-                <!-- User Profile Dropdown -->
-                <div class="relative">
-                    <button @click="avatarDropdownOpen = !avatarDropdownOpen" 
-                            @click.away="avatarDropdownOpen = false"
-                            class="flex items-center space-x-3 focus:outline-none">
-                        <img th:src="${manager.avatar != null && !manager.avatar.isEmpty() ? manager.avatar : '/images/avatar.jpg'}" 
-                             class="h-9 w-9 rounded-full object-cover border border-gray-200" id="my-avatar">
-                        <span sec:authentication="name" class="text-sm font-medium text-gray-700 dark:text-gray-200" id="my-name"></span>
-                        <svg class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    
-                    <!-- Dropdown Options -->
-                    <div x-show="avatarDropdownOpen" 
-                         x-transition:enter="transition ease-out duration-100"
-                         x-transition:enter-start="transform opacity-0 scale-95"
-                         x-transition:enter-end="transform opacity-100 scale-100"
-                         x-transition:leave="transition ease-in duration-75"
-                         x-transition:leave-start="transform opacity-100 scale-100"
-                         x-transition:leave-end="transform opacity-0 scale-95"
-                         class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-150 dark:border-gray-700 py-1 z-25" 
-                         style="display: none;">
+                
+                <div class="flow-root px-2">
+                    <ul class="-mb-8">
+                        <!-- Item 1 -->
+                        <li>
+                            <div class="relative pb-8">
+                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-slate-200 dark:bg-slate-800" aria-hidden="true"></span>
+                                <div class="relative flex space-x-4">
+                                    <div>
+                                        <span class="h-8 w-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/30">
+                                            <i class="w-4 h-4" data-lucide="edit-3"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex-1 min-w-0 pt-1 flex justify-between space-x-4">
+                                        <div>
+                                            <p class="text-sm font-bold text-slate-800 dark:text-slate-100">加了些前台管理功能</p>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">磨了一年洋工，加了些前台管理功能，懒得无可救药。</p>
+                                        </div>
+                                        <div class="text-right text-xs whitespace-nowrap text-slate-400 font-medium">
+                                            <time datetime="2026-01-10">1月10日</time>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
                         
-                        <a th:href="@{'/sys/manager/edit.html?managerId='+${manager.id}}" target="content"
-                           @click="avatarDropdownOpen = false"
-                           class="block px-4 py-2 text-sm text-gray-750 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-                            基本资料
-                        </a>
-                        <button id="security-settings-btn"
-                                hx-get="/sys/manager/pwd.html"
-                                hx-target="#pwdModalContent"
-                                @click="avatarDropdownOpen = false; openSecurityModal = true"
-                                class="w-full text-left block px-4 py-2 text-sm text-gray-750 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-                            安全设置
-                        </button>
-                        <hr class="border-gray-200 dark:border-gray-700">
-                        <form name="out" th:action="@{/logout}" method="post" class="w-full">
-                            <button type="submit" class="w-full text-left block px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20">
-                                退出
-                            </button>
-                        </form>
-                    </div>
+                        <!-- Item 2 -->
+                        <li>
+                            <div class="relative pb-8">
+                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-slate-200 dark:bg-slate-800" aria-hidden="true"></span>
+                                <div class="relative flex space-x-4">
+                                    <div>
+                                        <span class="h-8 w-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/30">
+                                            <i class="w-4 h-4" data-lucide="smile"></i>
+                                        </span>
+                                    </div>
+                                    <div class="flex-1 min-w-0 pt-1 flex justify-between space-x-4">
+                                        <div>
+                                            <p class="text-sm font-bold text-slate-800 dark:text-slate-100">新的一年，新的开始</p>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">2025年，新的梦想，新的目标，新的挑战，新的机遇，新的人生，新的自己。</p>
+                                        </div>
+                                        <div class="text-right text-xs whitespace-nowrap text-slate-400 font-medium">
+                                            <time datetime="2026-01-01">1月1日</time>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
-        </header>
-        
-        <!-- Iframe Body Container -->
-        <main class="flex-1 bg-gray-100 dark:bg-gray-900 relative">
-            <iframe name="content" id="content" src="/home" class="w-full h-full border-0"></iframe>
-        </main>
-    </div>
-</div>
+     
+            <!-- Historical Log Timeline -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800/80 p-6">
+                <div class="flex items-center justify-between pb-5 border-b border-slate-100 dark:border-slate-800/80 mb-6">
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2.5">
+                        <div class="p-2 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400">
+                            <i class="w-4 h-4" data-lucide="calendar"></i>
+                        </div>
+                        <span>曾经岁月</span>
+                    </h3>
+                </div>
+                
+                <div class="flow-root px-2">
+                    <ul class="-mb-8">
+                        <!-- 2024 -->
+                        <li>
+                            <div class="relative pb-8">
+                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-slate-200 dark:bg-slate-800"></span>
+                                <div class="relative flex space-x-4">
+                                    <span class="h-8 w-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold text-xs border border-slate-200 dark:border-slate-700">
+                                        24
+                                    </span>
+                                    <div class="flex-1 min-w-0 pt-1.5 text-xs text-slate-600 dark:text-slate-300">
+                                        2024年，咸鱼的一年，大环境低下，无奈再续三年卖身契。
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <!-- 2023 -->
+                        <li>
+                            <div class="relative pb-8">
+                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-slate-200 dark:bg-slate-800"></span>
+                                <div class="relative flex space-x-4">
+                                    <span class="h-8 w-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold text-xs border border-slate-200 dark:border-slate-700">
+                                        23
+                                    </span>
+                                    <div class="flex-1 min-w-0 pt-1.5 text-xs text-slate-600 dark:text-slate-300">
+                                        2023年，红尘奔赴三千里，紫陌寻觅一良人。
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <!-- 2022 -->
+                        <li>
+                            <div class="relative pb-8">
+                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-slate-200 dark:bg-slate-800"></span>
+                                <div class="relative flex space-x-4">
+                                    <span class="h-8 w-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold text-xs border border-slate-200 dark:border-slate-700">
+                                        22
+                                    </span>
+                                    <div class="flex-1 min-w-0 pt-1.5 text-xs text-slate-600 dark:text-slate-300">
+                                        2022年，红码、核酸、隔离，终究还是逃不过一起咩咩。
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <!-- 2021 -->
+                        <li>
+                            <div class="relative pb-8">
+                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-slate-200 dark:bg-slate-800"></span>
+                                <div class="relative flex space-x-4">
+                                    <span class="h-8 w-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold text-xs border border-slate-200 dark:border-slate-700">
+                                        21
+                                    </span>
+                                    <div class="flex-1 min-w-0 pt-1.5 text-xs text-slate-600 dark:text-slate-300">
+                                        2021年，无休无止的无效加班，精神涣散，牛马选择了跳槽。
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
  
-<!-- Security Settings (Update Password) Modal -->
-<div x-show="openSecurityModal" 
-     class="fixed inset-0 z-50 overflow-y-auto" 
-     style="display: none;">
-    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div x-show="openSecurityModal"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
-             @click="openSecurityModal = false"></div>
+        <!-- Right Column: System Tips & Contacts -->
+        <div class="space-y-6">
+            <!-- System Tip Soft Box -->
+            <div class="bg-amber-500/10 border border-amber-500/30 rounded-3xl p-6 backdrop-blur-md">
+                <h3 class="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-3 flex items-center space-x-2">
+                    <i class="w-4 h-4" data-lucide="alert-triangle"></i>
+                    <span>安全使用提示</span>
+                </h3>
+                <div class="text-xs text-amber-700 dark:text-amber-300 space-y-2.5 leading-relaxed">
+                    <p><strong>注意：</strong>当前 VIP 用户所属的是管理员角色，请不要对此角色进行停用、修改、删除，否则重新登录之后就看不到数据了。</p>
+                    <p>新增菜单是需要授权才可以看见的，所以目前新增菜单后无法直接看到效果。</p>
+                    <p>目前管理员角色是没有授予删除和授权权限的，以防止基础数据丢失。</p>
+                </div>
+            </div>
  
-        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
- 
-        <div x-show="openSecurityModal"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="inline-block align-middle bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-            <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4 relative">
-                <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-600" @click="openSecurityModal = false">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-                <div id="pwdModalContent">
-                    <div class="flex justify-center p-6">
-                        <svg class="animate-spin h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
+            <!-- Contacts & Support Card -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800/80 p-6">
+                <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-4">联系与支持</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-850 border border-slate-100 dark:border-slate-800">
+                        <span class="text-xs font-semibold text-slate-700 dark:text-slate-200">作者 QQ 交流</span>
+                        <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=531237716&site=qq&menu=yes" 
+                           class="inline-flex items-center text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
+                            即刻发消息
+                            <i class="w-3.5 h-3.5 ml-1" data-lucide="external-link"></i>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
- 
-<!-- Password warning for initial user -->
-<script th:inline="javascript">
-    const init = [[${init}]];
-    if (init === true) {
-        setTimeout(() => {
-            alert('为了您的账号安全，欢迎加入，请尽快修改默认密码！');
-        }, 1000);
-    }
-    
-    // Sync theme to iframe on load
-    document.getElementById('content').addEventListener('load', function() {
-        const isDark = document.documentElement.classList.contains('dark');
-        if (this.contentDocument) {
-            this.contentDocument.documentElement.classList.toggle('dark', isDark);
-        }
-    });
-
-    // Initialize Lucide icons
-    lucide.createIcons();
-    
-    // Re-run Lucide icons creation after HTMX content swap
-    document.body.addEventListener('htmx:afterSwap', function() {
-        lucide.createIcons();
-    });
-</script>
  
 </body>
 </html>

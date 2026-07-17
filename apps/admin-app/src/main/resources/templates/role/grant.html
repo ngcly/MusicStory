@@ -9,31 +9,128 @@
 <div th:fragment="grantFragment" class="p-4" 
      x-data="{ 
         checkedIds: [],
+        menuTree: [],
+        allChildrenMap: {},
+        parentMap: {},
+        
         init() {
-            // Populate initially checked menu IDs from Thymeleaf
-            const initialIds = [/*[[${#strings.listJoin(menuSet.?[checked == true].![id], ',')}]]*/];
-            // Since Thymeleaf comments can be parsed, let's inject it safely
-            this.checkedIds = [[${menuSet.?[checked == true].![id]}]];
-        },
-        toggleId(id) {
-            if (this.checkedIds.includes(id)) {
-                this.checkedIds = this.checkedIds.filter(x => x !== id);
-            } else {
-                this.checkedIds.push(id);
+            // Decode the escaped JSON from Thymeleaf securely
+            const rawJson = `[[${grantMenuJson}]]`;
+            try {
+                this.menuTree = JSON.parse(rawJson) || [];
+            } catch(e) {
+                console.error('Failed to parse menuList JSON', e);
             }
+            
+            // Populate initially checked IDs
+            const initialIds = [[${menuSet.?[checked == true].![id]}]];
+            this.checkedIds = Array.isArray(initialIds) ? initialIds : [];
+            
+            // Build tree mapping relationships
+            const buildMaps = (nodes, parentNode = null) => {
+                nodes.forEach(node => {
+                    if (parentNode) {
+                        this.parentMap[node.id] = parentNode.id;
+                    }
+                    if (node.children && node.children.length > 0) {
+                        buildMaps(node.children, node);
+                    }
+                });
+            };
+            buildMaps(this.menuTree);
+            
+            // Map descendants for each parent node recursively
+            const getDescendants = (node) => {
+                let list = [];
+                if (node.children && node.children.length > 0) {
+                    node.children.forEach(child => {
+                        list.push(child.id);
+                        list = list.concat(getDescendants(child));
+                    });
+                }
+                this.allChildrenMap[node.id] = list;
+                return list;
+            };
+            this.menuTree.forEach(node => {
+                getDescendants(node);
+            });
+            
+            // Initialize indeterminate states for checkboxes
+            this.$nextTick(() => {
+                this.updateIndeterminates();
+            });
         },
-        toggleParent(id, childIds) {
-            const hasUnchecked = childIds.some(cid => !this.checkedIds.includes(cid));
-            if (hasUnchecked) {
-                // Check parent and all children
-                if (!this.checkedIds.includes(id)) this.checkedIds.push(id);
-                childIds.forEach(cid => {
-                    if (!this.checkedIds.includes(cid)) this.checkedIds.push(cid);
+        
+        toggleNode(id, isChecked) {
+            const descendants = this.allChildrenMap[id] || [];
+            if (isChecked) {
+                if (!this.checkedIds.includes(id)) {
+                    this.checkedIds.push(id);
+                }
+                descendants.forEach(dId => {
+                    if (!this.checkedIds.includes(dId)) {
+                        this.checkedIds.push(dId);
+                    }
                 });
             } else {
-                // Uncheck parent and all children
-                this.checkedIds = this.checkedIds.filter(x => x !== id && !childIds.includes(x));
+                this.checkedIds = this.checkedIds.filter(x => x !== id && !descendants.includes(x));
             }
+            
+            // Synchronize parent selections going up
+            this.syncParentsUp(id);
+            
+            // Refresh indeterminate states in DOM
+            this.$nextTick(() => {
+                this.updateIndeterminates();
+            });
+        },
+        
+        syncParentsUp(childId) {
+            const parentId = this.parentMap[childId];
+            if (!parentId) return;
+            
+            const parentNode = this.findNode(this.menuTree, parentId);
+            const directChildren = parentNode ? parentNode.children.map(c => c.id) : [];
+            const allChecked = directChildren.every(cId => this.checkedIds.includes(cId));
+            
+            if (allChecked) {
+                if (!this.checkedIds.includes(parentId)) {
+                    this.checkedIds.push(parentId);
+                }
+            } else {
+                this.checkedIds = this.checkedIds.filter(x => x !== parentId);
+            }
+            
+            this.syncParentsUp(parentId);
+        },
+        
+        findNode(nodes, id) {
+            for (let node of nodes) {
+                if (node.id === id) return node;
+                if (node.children && node.children.length > 0) {
+                    const found = this.findNode(node.children, id);
+                    if (found) return found;
+                }
+            }
+            return null;
+        },
+        
+        updateIndeterminates() {
+            Object.keys(this.allChildrenMap).forEach(pId => {
+                const parentId = Number(pId);
+                const descendants = this.allChildrenMap[parentId] || [];
+                if (descendants.length === 0) return;
+                
+                const checkedCount = descendants.filter(dId => this.checkedIds.includes(dId)).length;
+                const checkbox = document.getElementById('checkbox-' + parentId);
+                if (checkbox) {
+                    if (checkedCount > 0 && checkedCount < descendants.length) {
+                        checkbox.indeterminate = true;
+                    } else {
+                        checkbox.indeterminate = false;
+                    }
+                }
+            });
         }
      }">
      
@@ -50,11 +147,12 @@
             <!-- Level 1 loop -->
             <div th:each="menu1 : ${menuSet}" class="border-b border-gray-100 dark:border-gray-800 pb-3 last:border-0 last:pb-0">
                 <!-- Level 1 Row -->
-                <div class="flex items-center justify-between py-1 bg-indigo-50/50 dark:bg-indigo-950/20 px-2 rounded">
-                    <label class="inline-flex items-center text-sm font-bold text-gray-800 dark:text-white">
-                        <input type="checkbox" :checked="checkedIds.includes([[${menu1.id}]])"
-                               @change="toggleParent([[${menu1.id}]], [[${menu1.children.![id]}]])"
-                               class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 mr-2 h-4 w-4">
+                <div class="flex items-center justify-between py-1.5 bg-indigo-50/50 dark:bg-indigo-950/20 px-2 rounded">
+                    <label class="inline-flex items-center text-sm font-bold text-gray-855 dark:text-white">
+                        <input type="checkbox" :id="'checkbox-' + [[${menu1.id}]]"
+                               :checked="checkedIds.includes([[${menu1.id}]])"
+                               @change="toggleNode([[${menu1.id}]], $el.checked)"
+                               class="rounded border-gray-300 text-indigo-650 focus:ring-indigo-500 mr-2 h-4 w-4">
                         <span th:text="${menu1.name}"></span>
                     </label>
                 </div>
@@ -62,10 +160,11 @@
                 <!-- Level 2 loop -->
                 <div class="ml-6 mt-2 space-y-2" th:if="${not #lists.isEmpty(menu1.children)}">
                     <div th:each="menu2 : ${menu1.children}">
-                        <div class="flex items-center">
-                            <label class="inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-200">
-                                <input type="checkbox" :checked="checkedIds.includes([[${menu2.id}]])"
-                                       @change="toggleParent([[${menu2.id}]], [[${menu2.children.![id]}]])"
+                        <div class="flex items-center py-1">
+                            <label class="inline-flex items-center text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                <input type="checkbox" :id="'checkbox-' + [[${menu2.id}]]"
+                                       :checked="checkedIds.includes([[${menu2.id}]])"
+                                       @change="toggleNode([[${menu2.id}]], $el.checked)"
                                        class="rounded border-gray-300 text-indigo-650 focus:ring-indigo-500 mr-2 h-4 w-4">
                                 <span th:text="${menu2.name}"></span>
                             </label>
@@ -74,10 +173,11 @@
                         <!-- Level 3 loop (Permissions / Actions) -->
                         <div class="ml-6 mt-1 flex flex-wrap gap-2" th:if="${not #lists.isEmpty(menu2.children)}">
                             <div th:each="menu3 : ${menu2.children}" class="inline-flex items-center">
-                                <label class="inline-flex items-center text-xs text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 px-2 py-1 rounded border border-gray-150 dark:border-gray-700">
-                                    <input type="checkbox" :checked="checkedIds.includes([[${menu3.id}]])"
-                                           @change="toggleId([[${menu3.id}]])"
-                                           class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 mr-1.5 h-3.5 w-3.5">
+                                <label class="inline-flex items-center text-xs text-gray-550 dark:text-gray-400 bg-white dark:bg-gray-800 px-2 py-1 rounded border border-gray-150 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer">
+                                    <input type="checkbox" :id="'checkbox-' + [[${menu3.id}]]"
+                                           :checked="checkedIds.includes([[${menu3.id}]])"
+                                           @change="toggleNode([[${menu3.id}]], $el.checked)"
+                                           class="rounded border-gray-300 text-indigo-650 focus:ring-indigo-500 mr-1.5 h-3.5 w-3.5">
                                     <span th:text="${menu3.name}"></span>
                                 </label>
                             </div>
@@ -88,12 +188,12 @@
         </div>
  
         <div class="pt-4 flex justify-end space-x-2 border-t border-gray-100 dark:border-gray-700">
-            <button type="button" @click="openEdit = false; openCategory = false"
-                    class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            <button type="button" @click="openGrant = false"
+                    class="rounded-md border border-gray-300 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 取消
             </button>
-            <button type="submit" @click="openEdit = false; openCategory = false"
-                    class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            <button type="submit" @click="openGrant = false"
+                    class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 保存授权
             </button>
         </div>

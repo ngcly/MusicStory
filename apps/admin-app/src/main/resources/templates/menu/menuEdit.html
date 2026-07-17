@@ -8,8 +8,41 @@
  
 <div th:fragment="menuEditFragment" class="p-4"
      x-data="{
-        resourceType: '[[${menu.resourceType != null ? menu.resourceType : 'menu'}]]'
-     }">
+        resourceType: '[[${menu.resourceType != null ? menu.resourceType : 'menu'}]]',
+        initialState: '',
+        isSubmitting: false,
+        getIsDirty() {
+            const form = this.$el.querySelector('form');
+            if (!form) return false;
+            const current = new FormData(form);
+            const serialized = Array.from(current.entries()).map(e => e[0] + '=' + e[1]).join('&');
+            return this.initialState !== serialized;
+        },
+        init() {
+            this.$nextTick(() => {
+                const form = this.$el.querySelector('form');
+                if (form) {
+                    const current = new FormData(form);
+                    this.initialState = Array.from(current.entries()).map(e => e[0] + '=' + e[1]).join('&');
+                }
+            });
+        }
+     }"
+     @close-edit-modal.window="
+        if (openEdit) {
+            if (isSubmitting) {
+                openEdit = false;
+                return;
+            }
+            if (getIsDirty()) {
+                if (confirm('检测到您有未保存的修改，确定要直接关闭吗？')) {
+                    openEdit = false;
+                }
+            } else {
+                openEdit = false;
+            }
+        }
+     ">
      
     <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4"
         th:text="${menu.id == null ? '新增菜单' : '修改菜单'}"></h3>
@@ -17,7 +50,8 @@
     <form th:hx-put="${menu.id != null} ? '/sys/menu' : null"
           th:hx-post="${menu.id == null} ? '/sys/menu' : null"
           hx-swap="none"
-          class="space-y-4">
+          class="space-y-4"
+          @submit="isSubmitting = true">
           
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <input type="hidden" name="id" th:value="${menu.id}">
@@ -41,12 +75,12 @@
             <div class="flex items-center space-x-4">
                 <label class="inline-flex items-center">
                     <input type="radio" name="resourceType" value="menu" x-model="resourceType"
-                           class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                           class="h-4 w-4 border-gray-300 text-indigo-650 focus:ring-indigo-500">
                     <span class="ml-2 text-sm text-gray-700 dark:text-gray-200">菜单</span>
                 </label>
                 <label class="inline-flex items-center">
                     <input type="radio" name="resourceType" value="button" x-model="resourceType"
-                           class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                           class="h-4 w-4 border-gray-300 text-indigo-650 focus:ring-indigo-500">
                     <span class="ml-2 text-sm text-gray-700 dark:text-gray-200">按钮</span>
                 </label>
             </div>
@@ -78,12 +112,12 @@
         </div>
  
         <div class="pt-4 flex justify-end space-x-2 border-t border-gray-100 dark:border-gray-700">
-            <button type="button" @click="openEdit = false"
-                    class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            <button type="button" @click="$dispatch('close-edit-modal')"
+                    class="rounded-md border border-gray-300 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none">
                 取消
             </button>
-            <button type="submit" @click="openEdit = false"
-                    class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            <button type="submit" @click="isSubmitting = true; openEdit = false"
+                    class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none"
                     th:text="${menu.id == null ? '保存' : '修改'}">
             </button>
         </div>

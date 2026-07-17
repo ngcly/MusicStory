@@ -6,14 +6,50 @@
 </head>
 <body>
  
-<div th:fragment="roleEditFragment" class="p-4">
+<div th:fragment="roleEditFragment" class="p-4"
+     x-data="{
+        initialState: '',
+        isSubmitting: false,
+        getIsDirty() {
+            const form = this.$el.querySelector('form');
+            if (!form) return false;
+            const current = new FormData(form);
+            const serialized = Array.from(current.entries()).map(e => e[0] + '=' + e[1]).join('&');
+            return this.initialState !== serialized;
+        },
+        init() {
+            this.$nextTick(() => {
+                const form = this.$el.querySelector('form');
+                if (form) {
+                    const current = new FormData(form);
+                    this.initialState = Array.from(current.entries()).map(e => e[0] + '=' + e[1]).join('&');
+                }
+            });
+        }
+     }"
+     @close-edit-modal.window="
+        if (openEdit) {
+            if (isSubmitting) {
+                openEdit = false;
+                return;
+            }
+            if (getIsDirty()) {
+                if (confirm('检测到您有未保存的修改，确定要直接关闭吗？')) {
+                    openEdit = false;
+                }
+            } else {
+                openEdit = false;
+            }
+        }
+     ">
     <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4"
         th:text="${role.id == null ? '新增角色' : '修改角色'}"></h3>
         
     <form th:hx-put="${role.id != null} ? '/sys/role' : null"
           th:hx-post="${role.id == null} ? '/sys/role' : null"
           hx-swap="none"
-          class="space-y-4">
+          class="space-y-4"
+          @submit="isSubmitting = true">
           
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <input type="hidden" id="id" name="id" th:value="${role.id}">
@@ -43,13 +79,13 @@
                 <label class="inline-flex items-center">
                     <input type="radio" name="roleType" value="ADMIN"
                            th:checked="${role.roleType == null || role.roleType.toString() == 'ADMIN'}"
-                           class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                           class="h-4 w-4 border-gray-300 text-indigo-650 focus:ring-indigo-500">
                     <span class="ml-2 text-sm text-gray-700 dark:text-gray-200">后台角色</span>
                 </label>
                 <label class="inline-flex items-center">
                     <input type="radio" name="roleType" value="USER"
                            th:checked="${role.roleType != null && role.roleType.toString() == 'USER'}"
-                           class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                           class="h-4 w-4 border-gray-300 text-indigo-650 focus:ring-indigo-500">
                     <span class="ml-2 text-sm text-gray-700 dark:text-gray-200">前台角色</span>
                 </label>
             </div>
@@ -61,25 +97,25 @@
                 <label class="inline-flex items-center">
                     <input type="radio" name="available" value="true"
                            th:checked="${role.available == null || role.available}"
-                           class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                           class="h-4 w-4 border-gray-300 text-indigo-650 focus:ring-indigo-500">
                     <span class="ml-2 text-sm text-gray-700 dark:text-gray-200">启用</span>
                 </label>
                 <label class="inline-flex items-center">
                     <input type="radio" name="available" value="false"
                            th:checked="${role.available != null && !role.available}"
-                           class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                           class="h-4 w-4 border-gray-300 text-indigo-650 focus:ring-indigo-500">
                     <span class="ml-2 text-sm text-gray-700 dark:text-gray-200">停用</span>
                 </label>
             </div>
         </div>
  
         <div class="pt-4 flex justify-end space-x-2 border-t border-gray-100 dark:border-gray-700">
-            <button type="button" @click="openEdit = false"
-                    class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            <button type="button" @click="$dispatch('close-edit-modal')"
+                    class="rounded-md border border-gray-300 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none">
                 取消
             </button>
-            <button type="submit" @click="openEdit = false"
-                    class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            <button type="submit" @click="isSubmitting = true; openEdit = false"
+                    class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none"
                     th:text="${role.id == null ? '保存' : '修改'}">
             </button>
         </div>

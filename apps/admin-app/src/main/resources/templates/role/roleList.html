@@ -3,382 +3,318 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>角色列表</title>
-    <!-- Google Fonts - Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#4f46e5',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- HTMX -->
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <!-- Alpine.js -->
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        /* Custom scrollbar styles */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(156, 163, 175, 0.25);
-            border-radius: 3px;
-        }
-        .dark ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(99, 102, 241, 0.5);
-        }
-    </style>
-    <script>
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
 </head>
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 min-h-screen p-6"
-      x-data="{ openEdit: false, openGrant: false }">
-
-<!-- Top Navigation Bar -->
-<div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-6">
-    <nav class="flex" aria-label="Breadcrumb">
-        <ol class="inline-flex items-center space-x-1 md:space-x-2">
-            <li class="inline-flex items-center text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">系统设置</li>
-            <li>
-                <div class="flex items-center">
-                    <svg class="w-3.5 h-3.5 text-slate-300 dark:text-slate-650 mx-1" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                    </svg>
-                    <span class="ml-1 text-sm font-bold text-slate-800 dark:text-slate-200">角色列表</span>
-                </div>
-            </li>
-        </ol>
-    </nav>
-    <button class="p-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200/60 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-500 dark:text-slate-400 transition-colors" 
-            onclick="location.reload()" title="刷新">
-        <i class="w-4 h-4" data-lucide="refresh-cw"></i>
-    </button>
-</div>
-
-<!-- Search & Actions Row -->
-<div class="bg-white dark:bg-slate-850 rounded-2xl shadow-sm border border-slate-200/50 dark:border-slate-800/80 p-5 mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
-    <form id="search-form" hx-get="/sys/role.html" hx-target="#roleTableContainer" hx-swap="outerHTML" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 flex-1 items-end">
+<body>
+ 
+<div th:fragment="mainContent" class="p-6 space-y-6" x-data="{ openEdit: false, openGrant: false }">
+ 
+    <!-- Top Header Breadcrumb & Actions Bar -->
+    <div class="flex items-center justify-between">
         <div>
-            <label class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">角色名</label>
-            <input type="text" name="roleName" th:value="${roleParam != null ? roleParam.roleName : ''}"
-                   class="mt-1.5 block w-full rounded-xl border-slate-200 dark:border-slate-750 dark:bg-slate-900/50 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-100 dark:focus:ring-indigo-950/30 text-sm py-2 px-3 focus:outline-none transition-all placeholder-slate-400">
+            <h1 class="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">角色管理</h1>
+            <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">管理系统角色权限、分发权限资源与控制状态</p>
         </div>
-        <div>
-            <label class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">角色类型</label>
-            <select name="roleType" 
-                    class="mt-1.5 block w-full rounded-xl border-slate-200 dark:border-slate-750 dark:bg-slate-900/50 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-100 dark:focus:ring-indigo-950/30 text-sm py-2 px-3 focus:outline-none transition-all">
-                <option value=""></option>
-                <option value="ADMIN" th:selected="${roleParam != null && roleParam.roleType != null && roleParam.roleType.toString() == 'ADMIN'}">后台角色</option>
-                <option value="USER" th:selected="${roleParam != null && roleParam.roleType != null && roleParam.roleType.toString() == 'USER'}">前台角色</option>
-            </select>
-        </div>
-        <div>
-            <label class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">是否可用</label>
-            <select name="available" 
-                    class="mt-1.5 block w-full rounded-xl border-slate-200 dark:border-slate-750 dark:bg-slate-900/50 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-100 dark:focus:ring-indigo-950/30 text-sm py-2 px-3 focus:outline-none transition-all">
-                <option value=""></option>
-                <option value="false" th:selected="${roleParam != null && roleParam.available != null && !roleParam.available}">停用</option>
-                <option value="true" th:selected="${roleParam != null && roleParam.available != null && roleParam.available}">正常</option>
-            </select>
-        </div>
-        <div class="flex space-x-2">
-            <button type="submit" class="inline-flex justify-center items-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-750 focus:outline-none focus:ring-2 focus:ring-indigo-550 transition-colors w-full">
-                <i class="w-4 h-4 mr-1.5" data-lucide="search"></i>
-                查询
-            </button>
-            <button type="reset" onclick="setTimeout(() => { document.querySelector('#search-form button[type=submit]').click(); }, 50)" class="inline-flex justify-center items-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors w-full">
-                <i class="w-4 h-4 mr-1.5" data-lucide="rotate-ccw"></i>
-                重置
-            </button>
-        </div>
-    </form>
-    <div>
-        <button sec:authorize="hasAuthority('POST_/sys/role')"
-                hx-get="/sys/role/edit.html" 
-                hx-target="#editModalContent"
-                @click="openEdit = true"
-                class="inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-md hover:from-indigo-600 hover:to-purple-700 focus:outline-none transition-all w-full md:w-auto">
-            <i class="w-4 h-4 mr-1.5" data-lucide="plus"></i>
-            新增角色
+        <button class="p-2 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:shadow-sm transition-all" 
+                onclick="location.reload()" title="刷新">
+            <i class="w-4 h-4" data-lucide="rotate-cw"></i>
         </button>
     </div>
-</div>
-
-<!-- Table Container -->
-<div id="roleTableContainer" th:fragment="roleTable"
-     hx-trigger="roleListChanged from:body" 
-     hx-get="/sys/role.html" 
-     hx-include="#search-form" 
-     hx-target="this" 
-     hx-swap="outerHTML"
-     class="bg-white dark:bg-slate-850 rounded-2xl shadow-sm border border-slate-200/50 dark:border-slate-800/80 overflow-hidden">
  
-    <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-slate-100 dark:divide-slate-800/60">
-            <thead class="bg-slate-50/50 dark:bg-slate-900/40">
-                <tr>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">角色名</th>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">标识符</th>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">角色描述</th>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">角色类型</th>
-                    <th class="px-6 py-4 text-left text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">是否可用</th>
-                    <th class="px-6 py-4 text-right text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">操作</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-150 dark:divide-slate-800/60 bg-white dark:bg-slate-850">
-                <tr th:each="role : ${rolePage.content}" class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors group">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-900 dark:text-slate-100" th:text="${role.roleName}"></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400 font-medium" th:text="${role.roleCode}"></td>
-                    <td class="px-6 py-4 text-sm text-slate-550 dark:text-slate-350" th:text="${role.description != null && !role.description.isEmpty() ? role.description : '-'}"></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold"
-                              th:classappend="${role.roleType == 'ADMIN' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/30 dark:text-indigo-400 border border-indigo-150/20 dark:border-indigo-900/30' : 'bg-teal-50 text-teal-700 dark:bg-teal-950/30 dark:text-teal-400 border border-teal-150/20 dark:border-teal-900/30'}"
-                              th:text="${role.roleType == 'ADMIN' ? '后台角色' : '前台角色'}">
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <!-- Premium Switch Toggle -->
-                        <button class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none"
-                                th:hx-get="'/sys/role/toggle?roleId=' + ${role.id}"
-                                hx-swap="none"
-                                th:classappend="${role.available ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'}"
-                                role="switch">
-                            <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out"
-                                  th:classappend="${role.available ? 'translate-x-5' : 'translate-x-0'}"></span>
+    <!-- Search Card Container -->
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800/80 p-5">
+        <form id="search-form" hx-get="/sys/role.html" hx-target="#roleTableContainer" hx-swap="outerHTML" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <div>
+                <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">角色名称</label>
+                <input type="text" name="roleName" th:value="${roleParam != null ? roleParam.roleName : ''}"
+                       class="w-full rounded-xl border-slate-200 dark:border-slate-800 dark:bg-slate-950/60 shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 text-xs py-2.5 px-3.5 transition-all placeholder-slate-400" placeholder="检索角色名...">
+            </div>
+            <div>
+                <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">标识符</label>
+                <input type="text" name="roleCode" th:value="${roleParam != null ? roleParam.roleCode : ''}"
+                       class="w-full rounded-xl border-slate-200 dark:border-slate-800 dark:bg-slate-950/60 shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 text-xs py-2.5 px-3.5 transition-all placeholder-slate-400" placeholder="检索标识符...">
+            </div>
+            <div class="flex space-x-2 md:col-span-2">
+                <button type="submit" class="inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-indigo-500/20 active:scale-95 transition-all w-full">
+                    <i class="w-3.5 h-3.5 mr-1.5" data-lucide="search"></i>
+                    查询
+                </button>
+                <button type="reset" onclick="setTimeout(() => { document.querySelector('#search-form button[type=submit]').click(); }, 50)" class="inline-flex justify-center items-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-2.5 text-xs font-bold text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-850 active:scale-95 transition-all w-full">
+                    <i class="w-3.5 h-3.5 mr-1.5" data-lucide="rotate-ccw"></i>
+                    重置
+                </button>
+            </div>
+        </form>
+    </div>
+ 
+    <!-- Table Header Toolbar -->
+    <div class="flex justify-between items-center px-1">
+        <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">
+            角色数据列表
+        </div>
+        <div>
+            <button sec:authorize="hasAuthority('POST_/sys/role')"
+                    hx-get="/sys/role/edit.html" 
+                    hx-target="#editModalContent"
+                    @click="openEdit = true"
+                    class="inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-indigo-500/20 active:scale-95 transition-all">
+                <i class="w-4 h-4 mr-1.5" data-lucide="plus"></i>
+                新增角色
+            </button>
+        </div>
+    </div>
+ 
+    <!-- Role Table Container Card -->
+    <div id="roleTableContainer" th:fragment="roleTable" 
+         hx-trigger="roleListChanged from:body" 
+         hx-get="/sys/role.html" 
+         hx-include="#search-form" 
+         hx-target="this" 
+         hx-swap="outerHTML"
+         class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800/80 overflow-hidden">
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-100 dark:divide-slate-800/80">
+                <thead class="bg-slate-50/80 dark:bg-slate-950/50">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">角色名称</th>
+                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">标识符</th>
+                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">描述</th>
+                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">角色类型</th>
+                        <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">状态</th>
+                        <th class="px-6 py-4 text-right text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">操作</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800/80 bg-white dark:bg-slate-900">
+                    <tr th:each="role : ${rolePage.content}" class="hover:bg-slate-50/80 dark:hover:bg-slate-850/50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-xs font-bold text-slate-800 dark:text-slate-200" th:text="${role.roleName}"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400 font-mono" th:text="${role.roleCode}"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400" th:text="${role.description != null && !role.description.isEmpty() ? role.description : '-'}"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-xs">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold"
+                                  th:classappend="${role.roleType.toString() == 'ADMIN'} 
+                                    ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/40' 
+                                    : 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200/60 dark:border-amber-800/40'"
+                                  th:text="${role.roleType.toString() == 'ADMIN' ? '后台角色' : '前台角色'}">
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-xs" sec:authorize="!hasAuthority('PUT_/sys/role')">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold"
+                                  th:classappend="${role.available} 
+                                    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/40' 
+                                    : 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-200/60 dark:border-rose-800/40'"
+                                  th:text="${role.available ? '可用' : '禁用'}">
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-xs" sec:authorize="hasAuthority('PUT_/sys/role')">
+                            <!-- Toggle switch -->
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="checkbox" th:checked="${role.available}" class="sr-only peer"
+                                       th:hx-put="'/sys/role/state?roleId=' + ${role.id}"
+                                       hx-swap="none"
+                                       th:disabled="${#strings.equals(role.roleCode,'admin')}">
+                                <div class="relative w-9 h-5 bg-slate-200 peer-focus:outline-none dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500 rounded-full"></div>
+                            </label>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
+                            <div class="flex items-center justify-end space-x-1.5">
+                                <button th:hx-get="'/sys/role/grant.html?roleId=' + ${role.id} + '&type=1'" 
+                                        hx-target="#grantModalContent"
+                                        @click="openGrant = true"
+                                        class="p-2 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all hover:scale-105 active:scale-95"
+                                        title="查看权限">
+                                    <i class="w-4 h-4" data-lucide="eye"></i>
+                                </button>
+                                <button sec:authorize="hasAuthority('POST_/sys/role/grant')"
+                                        th:hx-get="'/sys/role/grant.html?roleId=' + ${role.id} + '&type=2'" 
+                                        hx-target="#grantModalContent"
+                                        @click="openGrant = true"
+                                        class="p-2 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all hover:scale-105 active:scale-95"
+                                        title="分配权限">
+                                    <i class="w-4 h-4" data-lucide="shield-check"></i>
+                                </button>
+                                <button sec:authorize="hasAuthority('PUT_/sys/role')"
+                                        th:hx-get="'/sys/role/edit.html?roleId=' + ${role.id}" 
+                                        hx-target="#editModalContent"
+                                        @click="openEdit = true"
+                                        class="p-2 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all hover:scale-105 active:scale-95"
+                                        title="编辑角色">
+                                    <i class="w-4 h-4" data-lucide="edit-2"></i>
+                                </button>
+                                <button sec:authorize="hasAuthority('DELETE_/sys/role')"
+                                        th:hx-delete="'/sys/role?roleId=' + ${role.id}"
+                                        hx-confirm="确定要删除此角色吗？"
+                                        hx-target="#roleTableContainer"
+                                        hx-swap="outerHTML"
+                                        class="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all hover:scale-105 active:scale-95"
+                                        title="删除角色">
+                                    <i class="w-4 h-4" data-lucide="trash-2"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(rolePage.content)}">
+                        <td colspan="6" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                            <div class="flex flex-col items-center justify-center space-y-2">
+                                <i class="w-8 h-8 text-slate-300 dark:text-slate-600" data-lucide="inbox"></i>
+                                <span class="text-xs">未找到相关的角色记录。</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+ 
+        <!-- Pagination -->
+        <div class="bg-white dark:bg-slate-900 px-6 py-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-800/80">
+            <div class="flex-1 flex justify-between sm:hidden">
+                <button th:if="${rolePage.hasPrevious()}"
+                        th:hx-get="'/sys/role.html?page=' + ${currentPage - 1} + '&size=' + ${size}"
+                        hx-include="#search-form"
+                        hx-target="#roleTableContainer"
+                        hx-swap="outerHTML"
+                        class="relative inline-flex items-center px-4 py-2 border border-slate-200 dark:border-slate-800 text-xs font-bold rounded-xl text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-850 transition-all">
+                    上一页
+                </button>
+                <button th:if="${rolePage.hasNext()}"
+                        th:hx-get="'/sys/role.html?page=' + ${currentPage + 1} + '&size=' + ${size}"
+                        hx-include="#search-form"
+                        hx-target="#roleTableContainer"
+                        hx-swap="outerHTML"
+                        class="ml-3 relative inline-flex items-center px-4 py-2 border border-slate-200 dark:border-slate-800 text-xs font-bold rounded-xl text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-850 transition-all">
+                    下一页
+                </button>
+            </div>
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                        显示第 <span class="font-bold text-slate-800 dark:text-slate-200" th:text="${(currentPage - 1) * size + 1}"></span> 至 
+                        <span class="font-bold text-slate-800 dark:text-slate-200" th:text="${(currentPage - 1) * size + rolePage.numberOfElements}"></span> 条，
+                        共 <span class="font-bold text-slate-800 dark:text-slate-200" th:text="${rolePage.totalElements}"></span> 条记录
+                    </p>
+                </div>
+                <div>
+                    <nav class="relative z-0 inline-flex rounded-xl shadow-sm -space-x-px border border-slate-200 dark:border-slate-800 overflow-hidden" aria-label="Pagination">
+                        <button th:disabled="${!rolePage.hasPrevious()}"
+                                th:hx-get="${rolePage.hasPrevious()} ? '/sys/role.html?page=' + ${currentPage - 1} + '&size=' + ${size} : null"
+                                hx-include="#search-form"
+                                hx-target="#roleTableContainer"
+                                hx-swap="outerHTML"
+                                class="relative inline-flex items-center px-3 py-2 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-850 disabled:opacity-40 transition-colors">
+                            <i class="w-4 h-4" data-lucide="chevron-left"></i>
                         </button>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div class="flex items-center justify-end space-x-1">
-                            <button th:hx-get="'/sys/role/grant.html?roleId=' + ${role.id} + '&type=1'" 
-                                    hx-target="#grantModalContent"
-                                    @click="openGrant = true"
-                                    class="p-1.5 rounded-lg text-slate-400 hover:text-indigo-650 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 transition-all hover:scale-105"
-                                    title="查看权限">
-                                <i class="w-4 h-4" data-lucide="eye"></i>
-                            </button>
-                            <button sec:authorize="hasAuthority('POST_/sys/role/grant')"
-                                    th:hx-get="'/sys/role/grant.html?roleId=' + ${role.id} + '&type=2'" 
-                                    hx-target="#grantModalContent"
-                                    @click="openGrant = true"
-                                    class="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 transition-all hover:scale-105"
-                                    title="分配权限">
-                                <i class="w-4 h-4" data-lucide="shield-check"></i>
-                            </button>
-                            <button sec:authorize="hasAuthority('PUT_/sys/role')"
-                                    th:hx-get="'/sys/role/edit.html?roleId=' + ${role.id}" 
-                                    hx-target="#editModalContent"
-                                    @click="openEdit = true"
-                                    class="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 transition-all hover:scale-105"
-                                    title="编辑角色">
-                                <i class="w-4 h-4" data-lucide="edit-2"></i>
-                            </button>
-                            <button sec:authorize="hasAuthority('DELETE_/sys/role')"
-                                    th:hx-delete="'/sys/role?roleId=' + ${role.id}"
-                                    hx-confirm="确定删除该角色吗？"
-                                    hx-target="closest tr"
-                                    hx-swap="outerHTML"
-                                    th:hx-headers="'{&quot;X-CSRF-TOKEN&quot;: &quot;' + ${_csrf.token} + '&quot;}'
-                                    class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all hover:scale-105"
-                                    title="删除角色">
-                                <i class="w-4 h-4" data-lucide="trash-2"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(rolePage.content)}">
-                    <td colspan="6" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
-                        <div class="flex flex-col items-center justify-center space-y-2">
-                            <i class="w-8 h-8 text-slate-300 dark:text-slate-650" data-lucide="inbox"></i>
-                            <span class="text-sm">未找到相关的角色。</span>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                        <button th:each="pageNum : ${#numbers.sequence(1, rolePage.totalPages == 0 ? 1 : rolePage.totalPages)}"
+                                th:hx-get="'/sys/role.html?page=' + ${pageNum} + '&size=' + ${size}"
+                                hx-include="#search-form"
+                                hx-target="#roleTableContainer"
+                                hx-swap="outerHTML"
+                                th:classappend="${pageNum == currentPage} ? 'z-10 bg-indigo-50 dark:bg-indigo-950/40 border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-850'"
+                                class="relative inline-flex items-center px-3.5 py-2 border-t border-b text-xs font-bold transition-all"
+                                th:text="${pageNum}">
+                        </button>
+                        <button th:disabled="${!rolePage.hasNext()}"
+                                th:hx-get="${rolePage.hasNext()} ? '/sys/role.html?page=' + ${currentPage + 1} + '&size=' + ${size} : null"
+                                hx-include="#search-form"
+                                hx-target="#roleTableContainer"
+                                hx-swap="outerHTML"
+                                class="relative inline-flex items-center px-3 py-2 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-850 disabled:opacity-40 transition-colors">
+                            <i class="w-4 h-4" data-lucide="chevron-right"></i>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+        </div>
     </div>
  
-    <!-- Pagination -->
-    <div class="bg-white dark:bg-slate-850 px-6 py-4 flex items-center justify-between border-t border-slate-100 dark:divide-slate-800/60 dark:border-slate-800/60">
-        <div class="flex-1 flex justify-between sm:hidden">
-            <button th:if="${rolePage.hasPrevious()}"
-                    th:hx-get="'/sys/role.html?page=' + ${currentPage - 1} + '&size=' + ${size}"
-                    hx-include="#search-form"
-                    hx-target="#roleTableContainer"
-                    hx-swap="outerHTML"
-                    class="relative inline-flex items-center px-4 py-2 border border-slate-200 dark:border-slate-700 text-sm font-semibold rounded-xl text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors">
-                上一页
-            </button>
-            <button th:if="${rolePage.hasNext()}"
-                    th:hx-get="'/sys/role.html?page=' + ${currentPage + 1} + '&size=' + ${size}"
-                    hx-include="#search-form"
-                    hx-target="#roleTableContainer"
-                    hx-swap="outerHTML"
-                    class="ml-3 relative inline-flex items-center px-4 py-2 border border-slate-200 dark:border-slate-700 text-sm font-semibold rounded-xl text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors">
-                下一页
-            </button>
-        </div>
-        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-            <div>
-                <p class="text-sm text-slate-500 dark:text-slate-400">
-                    当前显示第 <span class="font-bold text-slate-800 dark:text-slate-200" th:text="${(currentPage - 1) * size + 1}"></span> 至 
-                    <span class="font-bold text-slate-800 dark:text-slate-200" th:text="${(currentPage - 1) * size + rolePage.numberOfElements}"></span> 条，
-                    共 <span class="font-bold text-slate-800 dark:text-slate-200" th:text="${rolePage.totalElements}"></span> 条记录
-                </p>
-            </div>
-            <div>
-                <nav class="relative z-0 inline-flex rounded-xl shadow-sm -space-x-px border border-slate-200 dark:border-slate-800 overflow-hidden" aria-label="Pagination">
-                    <button th:disabled="${!rolePage.hasPrevious()}"
-                            th:hx-get="${rolePage.hasPrevious()} ? '/sys/role.html?page=' + ${currentPage - 1} + '&size=' + ${size} : null"
-                            hx-include="#search-form"
-                            hx-target="#roleTableContainer"
-                            hx-swap="outerHTML"
-                            class="relative inline-flex items-center px-3 py-2 bg-white dark:bg-slate-800 text-sm font-semibold text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-750 disabled:opacity-40 transition-colors">
-                        <i class="w-4 h-4" data-lucide="chevron-left"></i>
+    <!-- Edit Modal -->
+    <div x-show="openEdit" 
+         class="fixed inset-0 z-50 overflow-y-auto" 
+         @keydown.escape.window="$dispatch('close-edit-modal')"
+         @close-edit-modal.window="openEdit = false"
+         aria-labelledby="modal-title" role="dialog" aria-modal="true" style="display: none;">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div x-show="openEdit"
+                 x-transition:enter="ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 bg-slate-950/60 backdrop-blur-md transition-opacity" 
+                 @click="$dispatch('close-edit-modal')"></div>
+ 
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+ 
+            <div x-show="openEdit"
+                 x-transition:enter="ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave="ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 class="inline-block align-middle bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-100 dark:border-slate-800">
+                <div class="relative bg-white dark:bg-slate-900 p-6">
+                    <button class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 p-1.5 rounded-xl transition-colors z-10" @click="$dispatch('close-edit-modal')">
+                        <i class="w-5 h-5" data-lucide="x"></i>
                     </button>
-                    <button th:each="pageNum : ${#numbers.sequence(1, rolePage.totalPages == 0 ? 1 : rolePage.totalPages)}"
-                            th:hx-get="'/sys/role.html?page=' + ${pageNum} + '&size=' + ${size}"
-                            hx-include="#search-form"
-                            hx-target="#roleTableContainer"
-                            hx-swap="outerHTML"
-                            th:classappend="${pageNum == currentPage} ? 'z-10 bg-indigo-50 dark:bg-indigo-950/30 border-indigo-500 dark:border-indigo-650 text-indigo-600 dark:text-indigo-400' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-750'"
-                            class="relative inline-flex items-center px-4 py-2 border-t border-b text-sm font-bold transition-all"
-                            th:text="${pageNum}">
-                    </button>
-                    <button th:disabled="${!rolePage.hasNext()}"
-                            th:hx-get="${rolePage.hasNext()} ? '/sys/role.html?page=' + ${currentPage + 1} + '&size=' + ${size} : null"
-                            hx-include="#search-form"
-                            hx-target="#roleTableContainer"
-                            hx-swap="outerHTML"
-                            class="relative inline-flex items-center px-3 py-2 bg-white dark:bg-slate-800 text-sm font-semibold text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-750 disabled:opacity-40 transition-colors">
-                        <i class="w-4 h-4" data-lucide="chevron-right"></i>
-                    </button>
-                </nav>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Edit Modal -->
-<div x-show="openEdit" 
-     class="fixed inset-0 z-50 overflow-y-auto" 
-     aria-labelledby="modal-title" role="dialog" aria-modal="true" style="display: none;">
-    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div x-show="openEdit"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm transition-opacity" 
-             @click="openEdit = false"></div>
-
-        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-        <div x-show="openEdit"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="inline-block align-middle bg-white dark:bg-slate-850 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-100 dark:border-slate-800">
-            <div class="relative bg-white dark:bg-slate-850 p-6">
-                <button class="absolute top-4 right-4 text-slate-400 hover:text-slate-650 hover:bg-slate-100 dark:hover:bg-slate-800 p-1.5 rounded-lg transition-colors z-10" @click="openEdit = false">
-                    <i class="w-5 h-5" data-lucide="x"></i>
-                </button>
-                <div id="editModalContent" class="mt-2">
-                    <div class="flex justify-center p-12">
-                        <svg class="animate-spin h-8 w-8 text-indigo-650" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
+                    <div id="editModalContent" class="mt-2">
+                        <div class="flex justify-center p-12">
+                            <svg class="animate-spin h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Grant Modal -->
-<div x-show="openGrant" 
-     class="fixed inset-0 z-50 overflow-y-auto" 
-     aria-labelledby="modal-title" role="dialog" aria-modal="true" style="display: none;">
-    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div x-show="openGrant"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm transition-opacity" 
-             @click="openGrant = false"></div>
-
-        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-        <div x-show="openGrant"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="inline-block align-middle bg-white dark:bg-slate-850 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-slate-100 dark:border-slate-800">
-            <div class="relative bg-white dark:bg-slate-850 p-6">
-                <button class="absolute top-4 right-4 text-slate-400 hover:text-slate-650 hover:bg-slate-100 dark:hover:bg-slate-800 p-1.5 rounded-lg transition-colors z-10" @click="openGrant = false">
-                    <i class="w-5 h-5" data-lucide="x"></i>
-                </button>
-                <div id="grantModalContent" class="mt-2">
-                    <div class="flex justify-center p-12">
-                        <svg class="animate-spin h-8 w-8 text-indigo-650" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
+ 
+    <!-- Grant Modal -->
+    <div x-show="openGrant" 
+         class="fixed inset-0 z-50 overflow-y-auto" 
+         @keydown.escape.window="$dispatch('close-grant-modal')"
+         @close-grant-modal.window="openGrant = false"
+         aria-labelledby="modal-title" role="dialog" aria-modal="true" style="display: none;">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div x-show="openGrant"
+                 x-transition:enter="ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 bg-slate-950/60 backdrop-blur-md transition-opacity" 
+                 @click="$dispatch('close-grant-modal')"></div>
+ 
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+ 
+            <div x-show="openGrant"
+                 x-transition:enter="ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave="ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 class="inline-block align-middle bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-slate-100 dark:border-slate-800">
+                <div class="relative bg-white dark:bg-slate-900 p-6">
+                    <button class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 p-1.5 rounded-xl transition-colors z-10" @click="$dispatch('close-grant-modal')">
+                        <i class="w-5 h-5" data-lucide="x"></i>
+                    </button>
+                    <div id="grantModalContent" class="mt-2">
+                        <div class="flex justify-center p-12">
+                            <svg class="animate-spin h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+ 
 </div>
-
-<script>
-    // Initialize Lucide icons on page load
-    lucide.createIcons();
-
-    // Re-run Lucide icons creation after HTMX content swap
-    document.body.addEventListener('htmx:afterSwap', function() {
-        lucide.createIcons();
-    });
-</script>
+ 
 </body>
 </html>

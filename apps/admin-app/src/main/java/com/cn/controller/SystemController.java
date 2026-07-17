@@ -237,10 +237,10 @@ public class SystemController {
     @GetMapping("/role/grant.html")
     public String grantForm(@RequestParam long roleId, @RequestParam String type, Model model) throws JsonProcessingException {
         Collection<MenuDTO> menuSet = roleService.getMenuListWithChecked(roleId);
-        String menuList = JacksonUtil.getObjectMapper().writeValueAsString(menuSet);
+        String grantMenuJson = JacksonUtil.getObjectMapper().writeValueAsString(menuSet);
         model.addAttribute("type", type);
         model.addAttribute("roleId", roleId);
-        model.addAttribute("menuList", menuList);
+        model.addAttribute("grantMenuJson", grantMenuJson);
         model.addAttribute("menuSet", menuSet); // Pass as object too for easy rendering
         return "role/grant :: grantFragment";
     }
@@ -272,8 +272,8 @@ public class SystemController {
     public String menuList(
             @RequestHeader(value = "HX-Request", required = false) boolean hxRequest,
             Model model) {
-        List<Permission> menuList = roleService.getMenuList();
-        model.addAttribute("menuList", menuList);
+        List<Permission> permissionList = roleService.getMenuList();
+        model.addAttribute("permissionList", permissionList);
         if (hxRequest) {
             return "menu/menuList :: menuTable";
         }

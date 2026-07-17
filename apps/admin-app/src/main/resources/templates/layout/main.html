@@ -1,50 +1,269 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="zh"><!-- Thymeleaf为我们提供的Spring Security的标签支持 -->
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="utf-8">
-    <meta name="renderer" content="webkit" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <title>音书</title>
-    <link rel="stylesheet" href="/webjars/layui/dist/css/layui.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/public.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音书 - 后台管理系统</title>
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        slate: {
+                            850: '#151e2e',
+                            950: '#0b0f19',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <!-- Alpine.js Collapse Plugin (Must be included before Alpine core) -->
+    <script defer src="https://unpkg.com/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    <!-- Alpine.js Core -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- CSRF Meta Tags -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <style>
+        /* Custom scrollbar styles */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.2);
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.5);
+        }
+    </style>
     <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"/>
 </head>
-<body class="layui-layout-body">
-<div class="layui-layout layui-layout-admin">
-    <div class="layui-header">
-        <div class="layui-logo" style="position: unset;float: left">后台管理</div>
-        <!-- 头部区域（可配合layui已有的水平导航） -->
-        <!--<a href="javascript:;" class="iconfont icon-caidan hideMenu" title="侧边伸缩"></a>-->
-        <ul class="layui-nav layui-layout-left">
-            <li class="layui-nav-item layadmin-flexible" lay-unselect="">
-                <a href="javascript:;" layadmin-event="flexible" class="hideMenu" title="侧边伸缩">
-                    <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen overflow-hidden antialiased font-sans"
+      x-data="{ 
+        sidebarExpanded: true, 
+        avatarDropdownOpen: false,
+        openSecurityModal: false,
+        activeMenuId: null,
+        expandedMenus: [],
+        darkMode: localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+      }"
+      @pwd-updated.window="window.dispatchEvent(new CustomEvent('toast', { detail: { message: '密码修改成功！', type: 'success' } })); openSecurityModal = false">
+ 
+<!-- Top progress loading bar with glowing gradient -->
+<div id="loading-bar" class="fixed top-0 left-0 h-[3px] bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 z-50 transition-all duration-300 ease-out opacity-0 shadow-[0_0_8px_rgba(99,102,241,0.8)]" style="width: 0%"></div>
+ 
+<!-- Global Toast Notifications System -->
+<div x-data="{
+        toasts: [],
+        add(message, type = 'info') {
+            const id = Date.now();
+            this.toasts.push({ id, message, type });
+            setTimeout(() => {
+                this.toasts = this.toasts.filter(t => t.id !== id);
+            }, 3200);
+        }
+     }"
+     @toast.window="add($event.detail.message, $event.detail.type)"
+     class="fixed top-5 right-5 z-50 flex flex-col space-y-2.5 max-w-sm">
+    
+    <template x-for="toast in toasts" :key="toast.id">
+        <div x-transition:enter="transition ease-out duration-300 transform translate-y-2 opacity-0 scale-95"
+             x-transition:enter-end="translate-y-0 opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-200 transform translate-y-0 opacity-100 scale-100"
+             x-transition:leave-end="translate-y-2 opacity-0 scale-95"
+             :class="{
+                'bg-slate-900/90 border-emerald-500/40 text-emerald-400': toast.type === 'success',
+                'bg-slate-900/90 border-rose-500/40 text-rose-400': toast.type === 'error',
+                'bg-slate-900/90 border-indigo-500/40 text-indigo-400': toast.type === 'info',
+                'bg-slate-900/90 border-amber-500/40 text-amber-400': toast.type === 'warning'
+             }"
+             class="flex items-center space-x-3 px-4 py-3 rounded-2xl shadow-2xl border backdrop-blur-xl border-opacity-50">
+            
+            <!-- Success Icon -->
+            <template x-if="toast.type === 'success'">
+                <div class="p-1 rounded-lg bg-emerald-500/10 text-emerald-400">
+                    <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+            </template>
+            <!-- Error Icon -->
+            <template x-if="toast.type === 'error'">
+                <div class="p-1 rounded-lg bg-rose-500/10 text-rose-400">
+                    <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </div>
+            </template>
+            <!-- Info/Warning Icon -->
+            <template x-if="toast.type === 'info' || toast.type === 'warning'">
+                <div class="p-1 rounded-lg bg-indigo-500/10 text-indigo-400">
+                    <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </template>
+            
+            <span class="text-xs font-semibold text-slate-100 tracking-wide" x-text="toast.message"></span>
+        </div>
+    </template>
+</div>
+ 
+<!-- Root App Grid Layout -->
+<div class="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 w-full">
+    
+    <!-- Sidebar -->
+    <aside class="flex flex-col h-full bg-slate-950 text-slate-300 transition-all duration-300 border-r border-slate-800/80 shrink-0 z-30"
+           :class="sidebarExpanded ? 'w-64' : 'w-20'">
+        
+        <!-- Sidebar Brand -->
+        <div class="h-16 flex items-center justify-between px-5 border-b border-slate-800/80 bg-slate-950">
+            <div class="flex items-center space-x-3">
+                <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 flex items-center justify-center text-white font-black shadow-lg shadow-indigo-500/30 text-base">
+                    音
+                </div>
+                <span class="font-extrabold text-lg tracking-tight text-white" 
+                      x-show="sidebarExpanded" 
+                      x-transition>音书管理系统</span>
+            </div>
+        </div>
+        
+        <!-- Sidebar Navigation Menu -->
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1.5 scrollbar-thin">
+            <!-- Home Dashboard link -->
+            <div class="space-y-1">
+                <a hx-get="/home" hx-target="#main-content" hx-push-url="true"
+                   @click="activeMenuId = 'home'"
+                   :class="activeMenuId === 'home' || activeMenuId === null 
+                    ? 'bg-gradient-to-r from-indigo-600/20 to-violet-600/10 text-indigo-400 font-semibold border-l-2 border-indigo-500' 
+                    : 'text-slate-400 hover:bg-slate-900/80 hover:text-slate-100'"
+                   class="relative w-full flex items-center px-3.5 py-2.5 rounded-xl text-xs transition-all duration-200 cursor-pointer group">
+                    <div class="flex items-center space-x-3">
+                        <i class="w-4 h-4 transition-transform group-hover:scale-110" 
+                           :class="activeMenuId === 'home' || activeMenuId === null ? 'text-indigo-400' : 'text-slate-400 group-hover:text-slate-100'"
+                           data-lucide="layout-dashboard"></i>
+                        <span class="tracking-wide" x-show="sidebarExpanded">控制台仪表盘</span>
+                    </div>
                 </a>
-            </li>
-            <li class="layui-nav-item"><a href="">控制台</a></li>
-            <li class="layui-nav-item"><a href="">消息<span class="layui-badge-dot" id="my-todo"></span></a></li>
-            <li class="layui-nav-item">
-                <a href="javascript:;">其它系统</a>
-                <dl class="layui-nav-child">
-                    <dd><a href="http://ngcly.cn" target="_blank">前台页面</a></dd>
-                    <dd><a href="https://github.com/ngcly/MusicStory" target="_blank">源码页面</a></dd>
-                    <dd><a href="/clouds" target="_blank">云中遨游</a></dd>
-                    <!--<dd><a href="">授权管理</a></dd>-->
-                </dl>
-            </li>
-        </ul>
-        <ul class="layui-nav layui-layout-right">
-            <li class="layui-nav-item">
-                <!-- 心知天气信息 -->
-                <div class="weather">
-                    <div id="tp-weather-widget" style="margin: -4px"></div>
+            </div>
+
+            <!-- Dynamic Menu Tree -->
+            <div th:each="menu1 : ${menuList}" x-data="{ open: false }" class="space-y-1">
+                <!-- Level 1 Category Group -->
+                <button @click="open = !open" 
+                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:bg-slate-900/80 hover:text-slate-100 transition-all group">
+                    <div class="flex items-center space-x-3">
+                        <i class="w-4 h-4 text-slate-400 group-hover:text-slate-200 transition-transform group-hover:scale-110" 
+                           th:data-lucide="${menu1.icon != null && !menu1.icon.isEmpty() ? menu1.icon : 'folder'}"></i>
+                        <span class="tracking-wide" x-show="sidebarExpanded" th:text="${menu1.name}"></span>
+                    </div>
+                    <svg class="h-3.5 w-3.5 transform transition-transform duration-200 text-slate-500" 
+                         :class="open ? 'rotate-90 text-slate-300' : ''" 
+                         x-show="sidebarExpanded"
+                         viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                
+                <!-- Level 2 Menu Links -->
+                <div x-show="open && sidebarExpanded" x-collapse class="pl-4 space-y-1">
+                    <div th:each="menu2 : ${menu1.children}">
+                        <a th:hx-get="${menu2.url}" hx-target="#main-content" hx-push-url="true"
+                           th:data-menu-id="${menu2.id}"
+                           @click="activeMenuId = String($el.dataset.menuId)"
+                           :class="activeMenuId === String($el.dataset.menuId) 
+                            ? 'bg-gradient-to-r from-indigo-600/20 to-violet-600/10 text-indigo-400 font-semibold border-l-2 border-indigo-500' 
+                            : 'text-slate-400 hover:bg-slate-900/80 hover:text-slate-200'"
+                           class="relative flex items-center space-x-2.5 px-3.5 py-2 rounded-xl text-xs transition-all duration-200 cursor-pointer group">
+                            <i class="w-4 h-4 text-slate-400 shrink-0 group-hover:text-indigo-400 transition-colors" 
+                               th:data-lucide="${menu2.icon != null && !menu2.icon.isEmpty() ? menu2.icon : 'file-text'}"></i>
+                            <span th:text="${menu2.name}"></span>
+                        </a>
+                        
+                        <!-- Level 3 Menu nested items (if any) -->
+                        <div class="pl-4 mt-1 space-y-1" th:if="${not #lists.isEmpty(menu2.children)}">
+                            <a th:each="menu3 : ${menu2.children}"
+                               th:hx-get="${menu3.url}" hx-target="#main-content" hx-push-url="true"
+                               th:data-menu-id="${menu3.id}"
+                               @click="activeMenuId = String($el.dataset.menuId)"
+                               :class="activeMenuId === String($el.dataset.menuId) 
+                                ? 'text-indigo-400 font-semibold' 
+                                : 'text-slate-500 hover:text-slate-300'"
+                               class="flex items-center space-x-2 px-3 py-1.5 rounded-lg text-[11px] transition-colors cursor-pointer">
+                                <i class="w-3 h-3 text-slate-500 shrink-0" th:data-lucide="${menu3.icon != null && !menu3.icon.isEmpty() ? menu3.icon : 'dot'}"></i>
+                                <span th:text="${menu3.name}"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Sidebar Footer -->
+        <div class="p-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-500 bg-slate-950">
+            <span class="text-[11px] font-medium tracking-wide" x-show="sidebarExpanded">© admin.ngcly.cn</span>
+            <button @click="sidebarExpanded = !sidebarExpanded" 
+                    class="p-1.5 rounded-lg hover:bg-slate-900 text-slate-400 hover:text-slate-200 transition-colors">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+    </aside>
+ 
+    <!-- Right Main Layout Frame -->
+    <div class="flex-1 flex flex-col overflow-hidden relative">
+        
+        <!-- Glassmorphic Top Navbar -->
+        <header class="sticky top-0 z-20 h-16 backdrop-blur-md bg-white/80 dark:bg-slate-950/80 border-b border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between px-6 shrink-0 transition-colors">
+            <!-- Left Header -->
+            <div class="flex items-center space-x-4">
+                <button @click="sidebarExpanded = !sidebarExpanded" 
+                        class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-850 text-slate-500 dark:text-slate-400 transition-colors hidden md:block">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <div class="text-sm font-bold tracking-tight text-slate-800 dark:text-slate-100">音书工作台</div>
+            </div>
+ 
+            <!-- Right Header Controls -->
+            <div class="flex items-center space-x-5">
+                <!-- Weather Widget -->
+                <div class="hidden lg:flex items-center text-xs text-slate-500">
+                    <div id="tp-weather-widget" class="mt-1"></div>
                     <script>(function(T,h,i,n,k,P,a,g,e){g=function(){P=h.createElement(i);a=h.getElementsByTagName(i)[0];P.src=k;P.charset="utf-8";P.async=1;a.parentNode.insertBefore(P,a)};T["ThinkPageWeatherWidgetObject"]=n;T[n]||(T[n]=function(){(T[n].q=T[n].q||[]).push(arguments)});T[n].l=+new Date();if(T.attachEvent){T.attachEvent("onload",g)}else{T.addEventListener("load",g,false)}}(window,document,"script","tpwidget","//widget.seniverse.com/widget/chameleon.js"))</script>
                     <script>tpwidget("init", {
                         "flavor": "slim",
@@ -56,172 +275,208 @@
                         "container": "tp-weather-widget",
                         "bubble": "enabled",
                         "alarmType": "badge",
-                        "color": "#FFFFFF",
+                        "color": "#6B7280",
                         "uid": "U78371FB98",
                         "hash": "cd55c15865ecbe0f16ba78ca60ad51eb"
                     });
                     tpwidget("show");</script>
                 </div>
-            </li>
-            <li class="layui-nav-item">
-                <a href="javascript:;">
-                    <img th:src="${manager.avatar}" class="layui-nav-img" id="my-avatar">
-                    <!--非 sec 标签获取当前用户名的写法-->
-                    <!--<span th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}"></span>-->
-                    <span sec:authentication="name" id="my-name"></span><!--&lt;!&ndash; 获得当前用户的用户名 &ndash;&gt;-->
-                </a>
-                <dl class="layui-nav-child">
-                    <dd><a th:href="@{'/sys/manager/edit.html?managerId='+${manager.id}}" target="content">基本资料</a></dd>
-                    <dd><a href="javascript:void(0);" id="model">安全设置</a></dd>
-                </dl>
-            </li>
-            <li class="layui-nav-item">
-                <form name="out" th:action="@{/logout}" method="post">
-                    <a href="javascript:document.out.submit();" >退出</a>
-                </form>
-            </li>
-        </ul>
-    </div>
-
-    <div class="layui-side layui-bg-black">
-        <div class="layui-side-scroll">
-            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-                <li class="layui-nav-item layui-nav-itemed" th:each="menuList:${menuList}">
-                    <a class="" href="javascript:;"><i class="layui-icon" th:utext="${menuList.icon}"></i><cite th:text="${menuList.name}"></cite></a>
-                    <dl class="layui-nav-child">
-                        <dd th:each="menuChild:${menuList.children}">
-                            <!--<a href="javascript:;" th:data="${menuChild.menuUrl}" th:text="${menuChild.name}"></a>-->
-                            <a th:href="${menuChild.url}"><i class="layui-icon" th:utext="${menuChild.icon}"></i><cite th:text="${menuChild.name}"></cite></a>
-                            <dl class="layui-nav-child" th:if="${not #lists.isEmpty(menuChild.children)}">
-                                <dd th:each="threeChild:${menuChild.children}">
-                                    <a th:href="${threeChild.url}"><i class="layui-icon" th:utext="${threeChild.icon}"></i><cite th:text="${threeChild.name}"></cite></a>
-                                </dd>
-                            </dl>
-                        </dd>
-                    </dl>
-                </li>
-            </ul>
-
-        </div>
-    </div>
-
-    <div class="layui-body">
-        <!-- 内容主体区域 -->
-        <!--<div style="padding: 15px;" id="content">-->
-        <main id="content" class="child-body" layout:fragment="content"></main>
-        <!--</div>-->
-    </div>
-
-    <div class="layui-footer">
-        <!-- 底部固定区域 -->
-        © admin.ngcly.cn
-        <button class="layui-btn layui-btn-danger layui-btn-xs" style="margin-left: 20px">捐赠作者</button>
-        <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=531237716&site=qq&menu=yes"><img src="http://wpa.qq.com/pa?p=2:531237716:51" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>
+ 
+                <!-- Theme Toggle Pill Button -->
+                <button @click="darkMode = !darkMode; 
+                                localStorage.setItem('theme', darkMode ? 'dark' : 'light'); 
+                                document.documentElement.classList.toggle('dark', darkMode);"
+                        class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-850 text-slate-500 dark:text-slate-400 focus:outline-none transition-colors"
+                        title="切换暗黑/日间模式">
+                    <!-- Sun Icon -->
+                    <svg x-show="darkMode" class="h-5 w-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M14 12a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <!-- Moon Icon -->
+                    <svg x-show="!darkMode" class="h-5 w-5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+ 
+                <!-- User Profile Dropdown -->
+                <div class="relative">
+                    <button @click="avatarDropdownOpen = !avatarDropdownOpen" 
+                            @click.away="avatarDropdownOpen = false"
+                            class="flex items-center space-x-3 focus:outline-none p-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-850 transition-colors">
+                        <img th:src="${manager.avatar != null && !manager.avatar.isEmpty() ? manager.avatar : '/images/avatar.jpg'}" 
+                             class="h-8 w-8 rounded-full object-cover border border-slate-200 dark:border-slate-700 shadow-sm" id="my-avatar">
+                        <span sec:authentication="name" class="text-xs font-semibold text-slate-700 dark:text-slate-200" id="my-name"></span>
+                        <svg class="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    
+                    <!-- Dropdown Modal Box -->
+                    <div x-show="avatarDropdownOpen" 
+                         x-transition:enter="transition ease-out duration-150"
+                         x-transition:enter-start="transform opacity-0 scale-95"
+                         x-transition:enter-end="transform opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-100"
+                         x-transition:leave-start="transform opacity-100 scale-100"
+                         x-transition:leave-end="transform opacity-0 scale-95"
+                         class="absolute right-0 mt-2 w-52 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 py-1.5 z-30" 
+                         style="display: none;">
+                        
+                        <a th:hx-get="@{'/sys/manager/edit.html?managerId='+${manager.id}}" hx-target="#main-content" hx-push-url="true"
+                           @click="avatarDropdownOpen = false"
+                           class="flex items-center space-x-2.5 px-4 py-2.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-850 transition-colors cursor-pointer">
+                            <i class="w-4 h-4 text-slate-400" data-lucide="user"></i>
+                            <span>基本资料</span>
+                        </a>
+                        <button id="security-settings-btn"
+                                hx-get="/sys/manager/pwd.html"
+                                hx-target="#pwdModalContent"
+                                @click="avatarDropdownOpen = false; openSecurityModal = true"
+                                class="w-full flex items-center space-x-2.5 px-4 py-2.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-850 transition-colors text-left">
+                            <i class="w-4 h-4 text-slate-400" data-lucide="key"></i>
+                            <span>安全设置</span>
+                        </button>
+                        <hr class="my-1 border-slate-100 dark:border-slate-800">
+                        <form name="out" th:action="@{/logout}" method="post" class="w-full">
+                            <button type="submit" class="w-full flex items-center space-x-2.5 px-4 py-2.5 text-xs font-medium text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors text-left">
+                                <i class="w-4 h-4 text-rose-500" data-lucide="log-out"></i>
+                                <span>安全退出</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Body Workspace -->
+        <main id="main-content" class="flex-1 bg-slate-50 dark:bg-slate-950 relative overflow-y-auto">
+            <div th:replace="~{${contentTemplate} :: mainContent}">
+                <!-- Inner sub-views injected here -->
+            </div>
+        </main>
     </div>
 </div>
-<script src="/webjars/layui/dist/layui.js"></script>
+ 
+<!-- Security Settings (Update Password) Modal -->
+<div x-show="openSecurityModal" 
+     class="fixed inset-0 z-50 overflow-y-auto" 
+     style="display: none;">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div x-show="openSecurityModal"
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-slate-950/60 backdrop-blur-md transition-opacity" 
+             @click="openSecurityModal = false"></div>
+ 
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+ 
+        <div x-show="openSecurityModal"
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             class="inline-block align-middle bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-100 dark:border-slate-800">
+            <div class="bg-white dark:bg-slate-900 px-6 pt-6 pb-6 relative">
+                <button class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" @click="openSecurityModal = false">
+                    <i class="w-5 h-5" data-lucide="x"></i>
+                </button>
+                <div id="pwdModalContent">
+                    <div class="flex justify-center p-8">
+                        <svg class="animate-spin h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<script th:inline="javascript">
+    const init = [[${init}]];
+    if (init === true) {
+        setTimeout(() => {
+            alert('为了您的账号安全，欢迎加入，请尽快修改默认密码！');
+        }, 1000);
+    }
+</script>
+ 
 <script>
-    //JavaScript代码区域
-    layui.use(['element','layer'], function(){
-        var element = layui.element,
-             layer = layui.layer;
-        $ = layui.jquery;
-
-        //隐藏左侧导航
-        // $(".hideMenu").click(function(){
-        //     $(".layui-layout-admin").toggleClass("showMenu");
-        // })
-        $(function(){
-            $(".hideMenu").on("click",function(){
-                $('#LAY_app_flexible').removeClass("layui-icon-shrink-right");
-                $('#LAY_app_flexible').addClass("layui-icon-spread-left");
-                const oClass = $(".layui-side").hasClass("mini");
-                if(!oClass){
-                    $(".layui-side").animate({
-                        width:"50px"
-                    })
-                    $(".layui-body").animate({
-                        left:"50"
-                    })
-                    $(".layui-footer").animate({
-                        left:"50"
-                    })
-                }else{
-                    $('#LAY_app_flexible').removeClass("layui-icon-spread-left");
-                    $('#LAY_app_flexible').addClass("layui-icon-shrink-right");
-                    $(".layui-side").animate({
-                        width:"200px"
-                    })
-                    $(".layui-body").animate({
-                        left:"200"
-                    })
-                    $(".layui-footer").animate({
-                        left:"200"
-                    })
-
-                }
-                $(".layui-side").toggleClass("mini");
-            });
-            //mini 模式下添加 tips
-            $('.layui-nav-tree a').hover(function(){
-                if($(".layui-side").hasClass('mini')){
-                    const tipText = $(this).find('cite').text();
-                    layer.tips(tipText, this);
-                }
-            },function(){
-                layer.closeAll('tips');
-            });
-
-        });
-
-        //修改密码窗口
-        $('#model').on('click',function () {
-            layer.open({
-                type: 2 //Page层类型
-                ,skin: 'layui-layer-molv'
-                ,area: ['460px', '320px']
-                ,title: ['更新密码','font-size:18px']
-                ,shadeClose: true
-                ,shade: 0 //遮罩透明度
-                ,maxmin: true //允许全屏最小化
-                ,content:'/sys/manager/pwd.html'
-            });
-        });
-
-        const init = [[${init}]];
-        if(init === true){
-            layer.open({
-                type: 1
-                ,title: false //不显示标题栏
-                ,closeBtn: false
-                ,area: '300px;'
-                ,shade: 0.8
-                ,id: 'LAY_ly' //设定一个id，防止重复弹出
-                ,btn: ['知道了']
-                ,btnAlign: 'c'
-                ,moveType: 1 //拖拽模式，0或者1
-                ,content: '<div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">' +
-                '欢迎加入，请尽快修改密码！<br></div>'
-            });
+    lucide.createIcons();
+    document.body.addEventListener('htmx:afterSwap', function() {
+        lucide.createIcons();
+    });
+ 
+    document.body.addEventListener('htmx:configRequest', function(evt) {
+        const bar = document.getElementById('loading-bar');
+        if (bar) {
+            bar.style.width = '30%';
+            bar.style.opacity = '1';
         }
 
-        /**
-         * 捐赠作者
-         */
-        $(".layui-footer button").click(function () {
-            layer.tab({
-                area: ["330px", "350px"],
-                tab: [{
-                    title: "支付宝",
-                    content: "<img src='/images/zfb.jpg' width='200' height='300' style='margin-left: 60px' alt='alipay'>"
-                }, {
-                    title: "微信",
-                    content: "<img src='/images/wx.jpg' width='200' height='300' style='margin-left: 60px' alt='wechat'>"
-                }]
-            });
-        });
+        // Global Automatic CSRF Token Injection for all HTMX requests
+        const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+        if (csrfToken && csrfHeader && evt.detail && evt.detail.headers) {
+            evt.detail.headers[csrfHeader] = csrfToken;
+        }
+    });
+ 
+    document.body.addEventListener('htmx:beforeSend', function() {
+        const bar = document.getElementById('loading-bar');
+        if (bar) {
+            bar.style.width = '70%';
+        }
+    });
+ 
+    document.body.addEventListener('htmx:afterRequest', function(evt) {
+        const bar = document.getElementById('loading-bar');
+        if (bar) {
+            bar.style.width = '100%';
+            setTimeout(() => {
+                bar.style.opacity = '0';
+                setTimeout(() => {
+                    bar.style.width = '0%';
+                }, 300);
+            }, 200);
+        }
+ 
+        const xhr = evt.detail ? evt.detail.xhr : null;
+        const reqConfig = evt.detail ? evt.detail.requestConfig : null;
+        const method = (reqConfig && reqConfig.method) ? reqConfig.method.toUpperCase() : '';
+        const status = xhr ? xhr.status : 0;
+ 
+        if (method !== 'GET' && status >= 200 && status < 300) {
+            window.dispatchEvent(new CustomEvent('toast', { 
+                detail: { message: '操作成功！', type: 'success' } 
+            }));
+        }
+    });
+ 
+    document.body.addEventListener('htmx:responseError', function(evt) {
+        let msg = '服务异常，请稍后再试';
+        const xhr = evt.detail ? evt.detail.xhr : null;
+        if (xhr) {
+            if (xhr.status === 403) {
+                msg = '抱歉，您没有权限执行该操作！';
+            } else if (xhr.status === 500) {
+                msg = '服务器内部错误，请稍后再试';
+            } else if (xhr.status === 400) {
+                msg = xhr.responseText || '请求参数不合法';
+            }
+        }
+        window.dispatchEvent(new CustomEvent('toast', { 
+            detail: { message: msg, type: 'error' } 
+        }));
     });
 </script>
+ 
 </body>
 </html>
